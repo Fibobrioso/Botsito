@@ -667,9 +667,11 @@ quien lo firma. **La fuente es la paráfrasis del consultor**, del encargo de es
 
 ## F7 · Lo que la auditoría dejó sin dueño
 
-1. **El documento: EN LA PARADA** (decisión 0). La auditoría cita `ADR-0087` en su línea 248, fuera
-   de un bloque `ids-inexistentes`, y copiada tal cual no sella. No se ha copiado. Sigue en
-   `C:\Users\USER\Desktop\AUDITORIA-2026-11-21.md` (377 líneas).
+1. **El documento: hecho tras la respuesta del consultor** (decisión 0, opción a; commit `13fd2d6e`).
+   La auditoría cita `ADR-0087` en su línea 248, fuera de un bloque `ids-inexistentes`, y copiada a
+   secas no sellaba. Va en `docs/validation/AUDITORIA-2026-11-21.md` con una cabecera propia (el
+   bloque con `ADR-0087`) y debajo el texto entregado, byte a byte (30.737 bytes, 377 líneas, sin
+   CR).
 2. **El panel de FTMO, hecho** (los cuatro textos de la línea de Technical Debt, cada uno por su
    régimen): `docs/runbooks/DEMO-FTMO.md` (runbook, editado: «Hecho, sin ejecución (declarado por
    Aleks el 2026-11-07)»); la descripción de `reloj_dia_riesgo` (spec, con `spec docs`); ADR-0090 §1
@@ -681,8 +683,8 @@ quien lo firma. **La fuente es la paráfrasis del consultor**, del encargo de es
    M1 del minuto, y que no contesta la pregunta) y la vela de otro color (`ev-v19-012924-64367863`,
    que entra en su `evidencia`), sin medir; `resuelve_en` sigue en F26. Las frases de R4.3 («la paga
    la activación de 7b») y de Technical Debt se corrigen en la orden de cierre (abajo).
-4. **A-35 y `bloqueante` (E20): propuesta en la PARADA** (decisión 5), con lo que dio 0.8. No se ha
-   cambiado.
+4. **A-35 y `bloqueante` (E20):** el consultor eligió (b): sigue en `true`. Solo cambió el texto de
+   `liquidez_m15_pivote_formado`, que ya no dice «BLOQUEANTE de RN-004» (commit `62a4152f`).
 5. **A-53 (E2), la reentrada de ADR-0083 D1 (E3) y A-43 (E6): no se activan.** Van como preguntas
    técnicas a la sesión siguiente (R4.6; abajo). A-43, además, la pregunta Aleks por WhatsApp antes
    de la corrida de (3); no ha llegado respuesta a la rama.
@@ -703,17 +705,26 @@ Este commit lleva F7.2 y F7.3 juntos (los dos son textos, sin motor), con spec 1
 - Las tensiones con que correría: `toma_antes_de_la_ventana` = `cuenta`, CONFIRMED, frente al «no es
   válido» de la 7a (A-43, `ev-v19-012529-685ae24d`); `orden_pendiente_al_abrir_escenario` =
   `se_mueve`, DEFAULT_AMBIGUOUS (A-53); A-35 sin respuesta (`liquidez_m15_mecha_que_vuelve` en
-  `solo_la_contraria`); RN-019, que no dispara nunca; `orden_stop_punto` y `sesgo_h4_rango_nuevo`,
-  según decida el consultor la PARADA de F1; y los frenos de la cuenta del mes (RN-032, RN-036), que
-  mueven parejas de rebote en julio (en esta rama, la pareja que se pierde la quita RN-032), que
-  ACTIVAR-SESION-07.md:684 dejó al consultor «antes de (3)» (decisión 6).
+  `solo_la_contraria`); RN-019, que no dispara nunca; `orden_stop_punto` (`ultimo_pivote_m1`) y
+  `sesgo_h4_rango_nuevo`, los dos DEFAULT_AMBIGUOUS, con A-48 y A-58 ABIERTAS (respuesta del
+  consultor del 2026-11-22, puntos 1 y 2); y los frenos de la cuenta del mes (RN-032, RN-036), que
+  mueven parejas de rebote en julio (en esta rama, la pareja que se pierde la quita RN-032) y **se
+  quedan como están, sin retocar** (punto 6: son parte del bot que va a operar, y la corrida está
+  pre-registrada con una cuenta por mes, ADR-0092 §8).
+- **Para el encargo de (3)** (punto 6, con sus palabras): como dato sin umbral, por cada sesión de
+  julio, las filas que cambian entre la corrida por mes y la diaria y qué freno lo explica. Con esto
+  queda cerrado el 6.a de la respuesta a la PARADA final de `trabajo/activar-sesion-07` (2026-11-18).
+- **E21** (la parte sin cifra): no se toca aquí; va a la rama que fije el margen del break even
+  (punto 4; `ambiguedades.yaml` no entra en el chore(cierre)).
 
 **Para la sesión siguiente (R4.6)**, las preguntas que quedan, en el lenguaje del trader y sin
 sugerir respuesta:
 - **A-35** (si no contesta por WhatsApp): «Cuando la mecha de una vela de 1 minuto pasa tu alto de 15
   minutos y vuelve, ¿dónde queda tu alto de 15 minutos?».
 - **Las zonas de control** (la sesión que él pidió dos veces): «¿Cuántas zonas de control puede haber
-  antes de que rompa el punto?», y «En esta lámina, ¿qué es lo que ves como zona de control?» (F4).
+  antes de que rompa el punto?».
+- **Qué ve como zona de control** (F4; punto 7): sobre la lámina del 2026-04-27 de 11 a 15, «en esta
+  lámina, ¿qué ves como zona de control?». Que Aleks la revise antes es opcional.
 - **El margen del break even** (A-13): «Cuando pones el break even, ¿cuánto tiene que pasar la vela el
   alto de tu zona de control?».
 - **S-22, sobre un día real**: «Aquí, ¿cuál es tu punto?».
@@ -726,9 +737,14 @@ sugerir respuesta:
 - **B-10**: la de PREGUNTAS-7B.md, tal como está.
 - **A-59** (nueva): «Cuando se forma la caja y el precio ya está más allá del 0, ¿qué haces con la
   orden?», sobre un día real, en compra y en venta.
-- **Lo que salga de la PARADA de F1**: A-48 («En este día, ¿dónde pones tu 0?», señalando en la
-  lámina) y A-58 (el dibujo 1: «Cuando la vela rompe tu rango y cierra de su color, ¿tu rango nuevo
-  va del alto al bajo de esa vela?», sobre una H4 real).
+- **A-48** (punto 1): sobre una lámina de un día de construcción con estructura interna en la zona
+  de control, «¿dónde pones aquí tu 0?». **Hipótesis del consultor para preparar esa sesión, sin
+  decidir nada:** la estructura interna de la zona de control es la misma pieza en A-48 (el 0 sube al
+  pivote interno, 0.3) y en RN-009 (el motor cuenta dos zonas y, con el tope de 1, descarta el
+  esquema, 0.3), y el trader se contradijo en la 7b sobre cuántas zonas le valen (F5); puede ser una
+  sola duda.
+- **A-58** (punto 2), solo por el dibujo 1, sobre una H4 real de construcción: «Cuando la vela rompe
+  tu rango y cierra de su color, ¿tu rango nuevo va del alto al bajo de esa vela?».
 - **B-15** (el 2026-07-01 de 11 a 15) y el día gastado del 2026-04-24, para la preparación; las
   reservas del 2026-01-22 y del 2026-07-16, sin usar.
 
@@ -784,13 +800,25 @@ contaba (S-2, pregunta 1, no resolvió).
     HISTORIA;
   - la 124 (hoy PS:125, la guardia de `cobertura_material` en `universo()`): dudosa según la
     auditoría; queda como está hasta medirla (heredado 7), sin texto nuevo.
-- Si el consultor acepta la decisión 5: la línea de A-35 pierde «y bloqueante».
+- La línea de A-35 no cambia (decisión 5: el consultor eligió (b), `bloqueante` sigue en `true`).
+- **Dos líneas nuevas** (respuesta del consultor del 2026-11-22, puntos 8c y 8d), tal cual:
+  - «- `motor laminas` no dibuja las esperas de ADR-0097 (ACTIVAR-SESION-08.md). Dueño: la rama que
+    genere las láminas de la sesión siguiente.» (141 bytes con su salto de línea);
+  - «- Tests que no miran el estado en los días sin ticks (`test_sello_respaldo`; ACTIVAR-SESION-08.md,
+    F2). Dueño: la corrida de (3), con los rechazos por motivo y día.» (168 bytes).
+  Las dos se acortaron a propósito: con la redacción larga (254 y 281 bytes) el PS quedaba en 25.073
+  bytes, por encima del tope.
+
+**La fila de errores del cierre** (`docs/runbooks/ERRORES-RECURRENTES.md`, punto 8e): el encargo
+daba «PICO DE MEMORIA en la última línea» como señal de que la memoria cortó un `make check`, y es la
+última línea de todos (auditor, 0.9); error del encargo, según el consultor.
 
 **Saldo de PROJECT_STATE.md** (simulado en memoria con un guion de la carpeta de trabajo sobre el PS
 de la rama, 24.809 bytes): AHORA +0, F −59, C −82, J −5, L −147, N +12, I +96, panel −158, visor
 +131, RN-019 +51, decisiones +59, y §2.5: la 86 +0, la 92 +54, la 119 −131, la 123 −92:
-**−271; queda en 24.538 bytes, por debajo de 25.000** (sin la de A-35, que depende de la decisión 5
-y quita unos bytes).
+**−271; quedaba en 24.538 bytes**. Con las dos líneas nuevas de Technical Debt (+141 y +168, puntos
+8c y 8d; la de A-35 no cambia): **+38; queda en 24.847 bytes, por debajo de 25.000** (medido con el
+mismo guion sobre el PS de la rama, que sigue en 24.809).
 
 **Hoja de ruta:**
 - **R4.3**, Estado: «ABIERTA (la 7a, ingerida y activada, ACTIVAR-SESION-07.md; la 7b, ingerida en
@@ -845,12 +873,12 @@ y quita unos bytes).
 | 21 | F4: cuadra; un test lo congela; qué enseñaba la lámina | Hecho | `test_zona_control_vela_contraria.py`; 0.6; la lámina, sin respuesta medible (decisión 7) |
 | 22 | F5: S-1 en la descripción, S-2, S-3/S-4, S-5, S-6, S-7 en VIDEO-JULIO, B-15, días gastados | Hecho | `cb02d3a9` (F5 en un commit con F3, F4 y la corrida de F2: desviación declarada) |
 | 23 | F6: la paráfrasis entera en el informe; recuadros en FTMO-REGLAS (R13 y §4), RESPUESTAS-FTMO, ADR-0082 §4; A-54 y los cuatro `freno_*` sin cambiar valor ni estado | Hecho | `89ce3ad0` |
-| 24 | F7.1: la auditoría en un commit propio, el primero tras la apertura | No hecho: en la PARADA | decisión 0 (ADR-0087 en su línea 248) |
+| 24 | F7.1: la auditoría en un commit propio, el primero tras la apertura | Hecho de otra forma | tras la respuesta del consultor (decisión 0, a), con cabecera y su bloque `ids-inexistentes`: `13fd2d6e`; no fue el primero tras la apertura |
 | 25 | F7.2: los cuatro textos del panel | Hecho | commit de F7 |
 | 26 | F7.3: A-16 no se cierra; recuadro en ADR-0092 §10; su texto gana §1.3 y la vela de otro color | Hecho | commit de F7 |
-| 27 | F7.4: propuesta de `bloqueante` para A-35 | Hecho (propuesta) | decisión 5 |
+| 27 | F7.4: propuesta de `bloqueante` para A-35 | Hecho | decisión 5; el consultor eligió (b); el texto de `liquidez_m15_pivote_formado`, `62a4152f` |
 | 28 | F7.5 y F7.6: A-53, la reentrada, A-43 y B-10, sin activar; la nota que cierra el E4 | Hecho | F7 |
-| 29 | F7.7: lo de la orden de cierre, con bytes | Hecho | «Para la orden de cierre» (24.538 bytes) |
+| 29 | F7.7: lo de la orden de cierre, con bytes | Hecho | «Para la orden de cierre» (24.847 bytes, con las dos líneas de 8c y 8d) |
 | 30 | Para la rama y la sesión siguientes | Hecho | su sección |
 | 31 | Informe con todo lo pedido; PROJECT_STATE < 25.000 | Hecho | 24.809 bytes en la rama |
 | 32 | Revisor con los seis alcances, push a `fix/` y CI, PARADA final | Hecho | «Informe del revisor» (0 bloquea, 7 importa, 6 menor; todos arreglados o contestados); run 45005647166 (solo el fallo aceptado); «PARADA final» |
@@ -1115,6 +1143,40 @@ de la cabecera de este informe.
 > Después: make check, push a fix/activar-sesion-08 y la CI de Linux con su run. Un informe corto: los commits nuevos, el tamaño de PROJECT_STATE y el saldo que quedaría con lo preparado para la orden de cierre (con las dos líneas nuevas de Technical Debt), y lo que no hayas podido aplicar.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Lo hecho con la respuesta del consultor (2026-11-22)
+
+0. **La auditoría, (a): hecho** en `13fd2d6e`, commit propio. `docs/validation/AUDITORIA-2026-11-21.md`:
+   título, procedencia («entregada por Aleks el 2026-11-21 y copiada tal cual»), bytes y sha256 del
+   fichero entregado, y el bloque `ids-inexistentes` con `ADR-0087` y su razón; debajo, el texto byte a
+   byte (el guion comprueba que el fichero del repo acaba en los 30.737 bytes entregados). `knowledge
+   validate` no rechazó ningún otro id del cuerpo (los demás, de `ADR-0002` a `ADR-0096` y
+   `ev-v19-012529-685ae24d`, existen).
+1. **A-48, (c): hecho.** `orden_stop_punto` sigue en `ultimo_pivote_m1`, DEFAULT_AMBIGUOUS, y A-48
+   ABIERTA; nada tocado en la spec. La pregunta reformulada y la hipótesis, en «Para la rama y la
+   sesión siguientes».
+2. **A-58, (a): hecho.** ABIERTA solo por el dibujo 1; `sesgo_h4_rango_nuevo` sigue
+   DEFAULT_AMBIGUOUS. La pregunta, sobre una H4 real de construcción, en la misma sección.
+3. **Las notas de S-3 y S-4, (a): hecho.** Siguen solo en el informe (F5).
+4. **E21, (a): hecho.** No se toca; anotado en «Para la corrida de (3)» para la rama del margen del
+   break even.
+5. **A-35, (b): hecho** en `62a4152f`, commit propio: `bloqueante` sigue en `true`; la descripción de
+   `liquidez_m15_pivote_formado` ya no dice «BLOQUEANTE de RN-004» (RN-004 VIGENTE, el parámetro
+   CONFIRMED, medidos) y dice que la que sigue abierta y bloqueante es A-35 por su segunda mitad
+   (`liquidez_m15_mecha_que_vuelve`). spec 19.1.5, `spec docs --escribir` y trailer `Fuente:
+   ev-v15-000553-9d95178a, ADR-0045, ADR-0097`. `test_kit.py` y la tabla de PROJECT_STATE no cambian.
+6. **Los frenos de la cuenta: hecho.** Se quedan como están; la petición para el encargo de (3),
+   escrita con sus palabras en «Para la corrida de (3)»; queda cerrado el 6.a de la respuesta del
+   2026-11-18.
+7. **La zona de control, (a): hecho.** La línea, en la lista de la sesión siguiente.
+8. a) **Hecho** en `62a4152f`: la frase, al §1 de ADR-0097 (tras el orden declarado).
+   b) Cubierto por el punto 6.
+   c) y d) **Preparadas** en «Para la orden de cierre», con sus bytes: 141 y 168. Con ellas, el PS
+   quedaría en **24.847 bytes** (hoy, 24.809 en la rama). La primera redacción, más larga, lo dejaba en
+   25.073, por encima del tope; se acortaron y lo digo.
+   e) **Preparada** en «Para la orden de cierre», para la fila de errores del cierre.
+
+**Lo que no pude aplicar:** nada.
 
 ## Estado
 
