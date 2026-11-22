@@ -659,3 +659,178 @@ tramos:
       precaucion: en la reserva, el trader abre por error el replay de otro dia, el 15 de abril de 2026 (dia de construccion), lo marca y lo opera, y lo compara con las laminas del 13 hasta que ve que no coinciden; un replay de otro dia, que la respuesta a) de Aleks no nombraba. Sin cifras ni desenlaces aqui
     acordado: >-
       encargo de trabajo/sesion-07 (2026-11-17), «ENTRADAS», a), y «REGLAS DE ESTA RAMA»; marcado por precaucion al leer la filtrada, a la espera de la decision de Aleks (PARADA del informe); ninguna cita de la rama cae dentro; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v20
+    t0: "0:16:18"
+    t1: "0:25:01"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 978,1 s a 1500,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "0:25:01"
+    t1: "0:25:34"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 1501,1 s a 1534,0 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "0:40:19"
+    t1: "0:41:44"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 2419,0 s a 2503,6 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "0:49:36"
+    t1: "0:52:05"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 2977,0 s a 3124,6 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "1:04:55"
+    t1: "1:06:48"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 3895,6 s a 4007,6 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "1:12:28"
+    t1: "1:13:05"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 4348,8 s a 4384,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "0:48:45"
+    t1: "0:49:39"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 2925,8 s a 2979,0 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:20:21"
+    t1: "1:21:00"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 4821,6 s a 4859,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:27:44"
+    t1: "1:28:27"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 5264,8 s a 5306,5 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:29:43"
+    t1: "1:30:30"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 5383,2 s a 5429,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:31:24"
+    t1: "1:32:11"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 5484,9 s a 5530,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:33:37"
+    t1: "1:34:57"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 5617,8 s a 5696,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:52:59"
+    t1: "1:54:13"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 6779,1 s a 6852,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "2:03:41"
+    t1: "2:04:47"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 7421,7 s a 7487,0 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "2:04:47"
+    t1: "2:05:30"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 7487,7 s a 7529,3 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "0:03:27"
+    t1: "0:14:49"
+    motivo: >-
+      precaucion: en S-1 (bloque tecnico de la sesion 7b), el trader pasa del esquema a un grafico real, y lo anuncia en voz, de un dia que la voz no dice de forma visible; nombra el desenlace de una operacion y el video del mapeo. Regla de la PARADA condicional del encargo: un grafico real del bloque tecnico sin el dia dicho en voz es no citable, y la pregunta se queda con lo citable de fuera. Sin cifras ni dias aqui
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «PARADA CONDICIONAL» (decisiones del consultor del 2026-11-17) y «EXTRACCION» (el video de mapeo); marcado al leer la filtrada; ninguna cita de la rama cae dentro; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "0:15:46"
+    t1: "0:15:51"
+    motivo: >-
+      precaucion: en S-2, al leer lo que nos ha dicho, el trader lo refiere al mapeo de estructura; el encargo manda declarar no citable lo que hable del video de mapeo, y aqui no se puede saber si habla del video. Sin cifras ni dias aqui
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EXTRACCION» (el video de mapeo); marcado por precaucion al leer la filtrada; ninguna cita de la rama cae dentro; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "0:27:19"
+    t1: "0:30:14"
+    motivo: >-
+      precaucion: en S-2 (bloque tecnico de la sesion 7b), el trader busca un break even en un grafico real, de un dia que la voz no dice de forma visible, y nombra el video de mapeo de estructura. Desde 0:27:19 y no desde 0:28:00: lo que dice ahi no deja saber si es el esquema o su grafico, y lo que no se sabe se niega. Regla de la PARADA condicional del encargo. Sin cifras ni dias aqui
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «PARADA CONDICIONAL» (decisiones del consultor del 2026-11-17) y «EXTRACCION» (el video de mapeo); marcado al leer la filtrada; el inicio, adelantado a 0:27:19 por la respuesta del consultor a la PARADA final de la rama (2026-11-21, punto 7); los items que citaban dentro, supersedados; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "0:32:09"
+    t1: "0:37:39"
+    motivo: >-
+      precaucion: en S-2 (bloque tecnico de la sesion 7b), el trader busca otro break even en un grafico real, de un dia que la voz no dice de forma visible, y nombra el video de mapeo de estructura; al final, para la pregunta de la toma, senala algo en pantalla que no se puede saber si es el grafico o el esquema. Regla de la PARADA condicional del encargo. Sin cifras ni dias aqui
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «PARADA CONDICIONAL» (decisiones del consultor del 2026-11-17) y «EXTRACCION» (el video de mapeo); marcado al leer la filtrada; ninguna cita de la rama cae dentro; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "0:39:21"
+    t1: "0:44:06"
+    motivo: >-
+      precaucion: en S-3 (bloque tecnico de la sesion 7b), el trader evalua la pregunta en su grafico real, de un dia que la voz no dice de forma visible. Regla de la PARADA condicional del encargo. Sin cifras ni dias aqui
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «PARADA CONDICIONAL» (decisiones del consultor del 2026-11-17); marcado al leer la filtrada; ninguna cita de la rama cae dentro; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "0:48:40"
+    t1: "0:49:18"
+    motivo: >-
+      precaucion: en S-3 (bloque tecnico de la sesion 7b), el trader vuelve a su grafico real, y lo anuncia en voz, de un dia que la voz no dice de forma visible. Regla de la PARADA condicional del encargo. Sin cifras ni dias aqui
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «PARADA CONDICIONAL» (decisiones del consultor del 2026-11-17); marcado al leer la filtrada; ninguna cita de la rama cae dentro; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "0:03:54"
+    t1: "0:04:02"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 08 (v21): el bloque [CUARENTENA 03:54–04:01] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-08 (2026-11-21); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "0:36:43"
+    t1: "0:36:52"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 08 (v21): el bloque [CUARENTENA 36:43–36:51] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-08 (2026-11-21); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:12:12"
+    t1: "1:13:32"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 08 (v21): el bloque [CUARENTENA 72:12–73:31] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-08 (2026-11-21); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "0:00:00"
+    t1: "0:47:39"
+    motivo: >-
+      precaucion: la sesion que abre v21, la 1 del bloque de dias segun la respuesta b) de Aleks: la voz dice el dia solo con su numero, sin mes, y la unica fecha con numero del arranque cae en un bloque de cuarentena; la voz no situa la sesion en un dia de construccion de forma visible. Regla de la PARADA condicional del encargo: entera no citable y sin extraer, y el dia previsto queda gastado. Sin cifras ni desenlaces aqui
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «PARADA CONDICIONAL» (decisiones del consultor del 2026-11-17); marcado al leer la filtrada; PARADA final del informe por si Aleks lo levanta; ninguna cita de la rama cae dentro; docs/validation/SESION-08-EXTRACCION.md

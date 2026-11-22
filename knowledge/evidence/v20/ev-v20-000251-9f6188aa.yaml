@@ -1,0 +1,18 @@
+id: ev-v20-000251-9f6188aa
+video_id: v20
+t0: 0:02:51
+t1: 0:03:03
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Entonces, si lo hace con Mecha, simplemente yo esperaría y trazaría esto como una zona lineal
+  de liquidez de M1 y esperaría que el precio rompa, ¿vale?
+afirmacion: 'en S-1: si lo hace con mecha, lo traza como zona lineal de liquidez de M1 y espera que el
+  precio rompa'
+tema: liquidez.m1_mecha_m15_cuerpo
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1 (A-35); no dice donde queda su alto de M15. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

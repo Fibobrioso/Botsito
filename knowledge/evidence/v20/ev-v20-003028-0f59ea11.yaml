@@ -1,0 +1,17 @@
+id: ev-v20-003028-0f59ea11
+video_id: v20
+t0: 0:30:28
+t1: 0:30:32
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Se forman antes de romper el punto y pueden formarse también después de romperlo.
+afirmacion: 'en S-2, pregunta 1: las zonas de control se forman antes de romper el punto y pueden formarse
+  tambien despues'
+tema: zona_control.antes_o_despues_de_romper
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-2 (RN-009); la letra que dice despues sale como la letra T en la filtrada. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

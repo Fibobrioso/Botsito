@@ -1,0 +1,22 @@
+id: ev-v20-002630-6271f57e
+video_id: v20
+t0: 0:26:30
+t1: 0:27:13
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si está demasiado extendido el precio, vale, no llega, o sea, a estar en medio de de nuestra
+  zona de entrada, bastaría con cuerpo, o sea, que rompa con poco cuerpo y cierre, para poder nosotros,
+  pues, poner en break-even la entrada, o inclusive con mecha.
+afirmacion: 'en S-2, pregunta 2: si el precio esta demasiado extendido y no llega a estar en medio de
+  la zona de entrada, bastaria con que rompa con poco cuerpo y cierre para poner la entrada en break even,
+  o incluso con mecha'
+tema: break_even.margen_segun_distancia
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v20-002744-e0555bb6
+notas: S-2 (A-13). Supersede a ev-v20-002744-e0555bb6, que cita dentro del tramo no citable que ahora
+  empieza en 0:27:19 (respuesta del consultor a la PARADA final, punto 7). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

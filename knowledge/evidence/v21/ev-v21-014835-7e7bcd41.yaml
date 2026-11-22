@@ -1,0 +1,18 @@
+id: ev-v21-014835-7e7bcd41
+video_id: v21
+t0: '1:48:35'
+t1: '1:48:47'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Porque vemos que si esta vela Pues la otra vela Tiene la mecha anterior y mucho más grande
+  Que esta de aquí Entonces por lo cual Trazaríamos nuestra caja hasta allí
+afirmacion: 'corrigiendo al bot: como la otra vela tiene la mecha mucho mas grande que esta, trazaria
+  la caja hasta alli'
+tema: mapeo.punto_breaker_sin_vela_contraria
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: Bloque de dias, 2026-01-19 de 11 a 15; ejemplo (nadie pregunto siempre o depende). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v21-large-v3-int8-float16-9a52aac1

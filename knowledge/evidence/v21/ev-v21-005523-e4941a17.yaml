@@ -1,0 +1,18 @@
+id: ev-v21-005523-e4941a17
+video_id: v21
+t0: 0:55:23
+t1: 0:55:33
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: control entonces este punto que era aquí como punto de entrada se hubiera descartado o sea
+  ya porque apenas me genera la segunda zona de control yo descarto porque sé que no cumple
+afirmacion: 'operando: el punto de entrada se descarta en cuanto se genera la segunda zona de control'
+tema: zona_control.demasiadas_antes_de_romper
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: Bloque de dias, 2026-04-15 de 7 a 11, antes de ver las laminas; ejemplo; va con A-20 y contra v20
+  0:30:23. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v21-large-v3-int8-float16-9a52aac1

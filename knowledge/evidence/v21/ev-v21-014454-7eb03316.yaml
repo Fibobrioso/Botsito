@@ -1,0 +1,19 @@
+id: ev-v21-014454-7eb03316
+video_id: v21
+t0: '1:44:54'
+t1: '1:45:12'
+modalidad: audio
+tipo: EXAMPLE_TRADE
+cita_literal: me corrijo yo mismo estoy buscando operaciones bajistas cuando el sesgo es alcista tú lo
+  planteas a el bol lo plantea bien
+afirmacion: 'se corrige a si mismo: buscaba operaciones bajistas cuando el sesgo es alcista, y el bot
+  lo plantea bien'
+tema: sesgo.rango_h4_mayor_no_mitigado
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: Bloque de dias, 2026-01-19 de 11 a 15 (dicho en voz en 1:44:41 y 1:52:11); retira su correccion
+  de 1:43:25. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v21-large-v3-int8-float16-9a52aac1

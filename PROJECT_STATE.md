@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/sesion-08
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardia-enlaces cerrada en main el 2026-11-20 (stable/F39i-guardia-enlaces): la guardia decide el material protegido por todas las formas de la ruta (enlaces, copias y clones fuera del repo) y niega Read y Grep sobre la carpeta Backtest de un mes no legible.
+trabajo/sesion-08, EN CURSO: la ingesta de la sesión 7b con el trader (grabada el 2026-11-20 y el 2026-11-21, v20 y v21) y su extracción por pregunta y por sesión del bloque de días, sin resolver nada (NA:F, R4.3). Encargo: docs/encargos/trabajo-sesion-08.md; informe: docs/validation/SESION-08-EXTRACCION.md.
 
 ## Stable Main State
 c6d5a9c2 · merge de `trabajo/guardia-enlaces` (tag `stable/F39i-guardia-enlaces`), sobre `stable/F39h-guardias-holdout` (fb1f02e9). Informe docs/validation/GUARDIA-ENLACES.md; el registro del cierre, al final de HISTORIA.
@@ -25,7 +25,7 @@ c6d5a9c2 · merge trabajo/guardia-enlaces: la guardia por todas las formas de la
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. La sesión 7, en dos días con el método de ADR-0093 (R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml; línea base, RECORRIDA-CONSTRUCCION-2.md). La 7a (id 2026-11-16-sesion-07) está ingerida (SESION-07-EXTRACCION.md) y ACTIVADA (ACTIVAR-SESION-07.md, F39e: sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; break even al cierre y con cuerpo, A-13 abierta solo por el margen). La 7b está lista para grabar (LAMINAS-7B.md, F39f): el bloque de días revisado (sin las sesiones de enero con menos de 60 H4), PREGUNTAS-7B.md con A-35, las zonas de control y el margen del break even, A-48, A-58, S-22 y S-19, sus láminas generadas fuera del repo (la clave, con Aleks) y SESION_EN_CURSO en "08". Siguiente, en este orden: (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6); (3) se lee con la contingencia de ADR-0093 §6 sin retocarla (decisión de Aleks del 2026-11-19; R4.3). El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
+F. La sesión 7, en dos días con el método de ADR-0093 (R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml; línea base, RECORRIDA-CONSTRUCCION-2.md). La 7a (id 2026-11-16-sesion-07) está ingerida (SESION-07-EXTRACCION.md) y ACTIVADA (ACTIVAR-SESION-07.md, F39e: sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; break even al cierre y con cuerpo, A-13 abierta solo por el margen). La 7b (id 2026-11-20-sesion-08, v20 y v21, grabada el 2026-11-20 y el 2026-11-21) está ingerida (SESION-08-EXTRACCION.md, F39j); la dirigió el trader y la sesión 1 del bloque quedó no citable. Siguiente, en este orden: (2) activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6), con su contingencia sin retocarla (decisión de Aleks del 2026-11-19; R4.3). El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
 
 
 
@@ -135,7 +135,8 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - EL DETECTOR DE CONTRADICCIONES NO VE LOS TEMAS HERMANOS (2026-09-17, rama del breaker de M1, informe §5).
 - LA VIA DE PROPUESTA NO ADMITE `supersede` (2026-09-17, rama del breaker de M1, informe §3).
 - UN CONFIRM SOBRE UN ITEM SUPERSEDIDO QUEDA INVISIBLE Y SIN AVISO (2026-09-17, rama del breaker de M1, informe §2).
-- Copia de seguridad de las crudas y los WAV … falta v18 y v19 (entera en HISTORIA, Technical Debt ACORTADA)
+- Copia de seguridad de las crudas y los WAV … falta v18, v19, v20 y v21 (entera en HISTORIA, Technical Debt ACORTADA)
+- A-35 sigue ABIERTA y bloqueante tras la 7b: su respuesta cayó en un tramo no citable (SESION-08-EXTRACCION.md §3.1); va al trader por WhatsApp con el esquema del PDF y entra por «Mensajes del trader».
 - Riesgos residuales del alias de la raíz (GUARDIA-ALIAS.md §5): si `os.path.realpath` lanza OSError la guardia compara la forma sin prefijos … (entera en HISTORIA, Technical Debt ACORTADA)
 - Las cotizaciones sin tick del bróker no usan la misma vela. En el cierre de la M1 k, Mercado.cotizacion (precio_invalido y stops_level, ADR-0057 §4) … (RESPALDO-M1.md §0.a y §0.b; entera en HISTORIA, Technical Debt ACORTADA)
 - El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A) … (entera en HISTORIA, Technical Debt ACORTADA)
@@ -172,8 +173,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 77 (2026-11-20).
+— ninguna desde el Archivo 78 (2026-11-21).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 77 (2026-11-20).
+— ninguna desde el Archivo 78 (2026-11-21).

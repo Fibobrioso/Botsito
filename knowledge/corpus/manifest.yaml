@@ -2273,8 +2273,8 @@ resumen:
     bytes: 6850662
     ficheros: 73
   video_original:
-    bytes: 85187627433
-    ficheros: 19
+    bytes: 98507386788
+    ficheros: 21
 umbral_hueco_segundos: 180
 version: 1
 videos:
@@ -2487,3 +2487,25 @@ videos:
   fps: 30/1
   sha256: cb57ad698c67ffc35f60e7eb87725010dbf4d0dd401c48d81be7bde34e5b8248
   video_id: v19
+- alto: 1080
+  ancho: 1920
+  audio: true
+  bytes: 4878875346
+  drive_id: ''
+  duracion_s: 4384.853
+  fecha_grabacion: '2026-11-20'
+  fichero: Grabación de pantalla 2026-11-20 182155.mp4
+  fps: 30/1
+  sha256: b63eedfc453570a51310b42dbb82c8d3bb03c4ccd2b859dc21205881eda84cb0
+  video_id: v20
+- alto: 1080
+  ancho: 1920
+  audio: true
+  bytes: 8440884009
+  drive_id: ''
+  duracion_s: 7585.485
+  fecha_grabacion: '2026-11-21'
+  fichero: Grabación de pantalla 2026-11-21 104411.mp4
+  fps: 30/1
+  sha256: 59a972a44ff6444f75d7e691f2085ea46654ac75288e285f947e48f19da54ef5
+  video_id: v21

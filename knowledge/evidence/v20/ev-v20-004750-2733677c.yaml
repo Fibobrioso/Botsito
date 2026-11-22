@@ -1,0 +1,16 @@
+id: ev-v20-004750-2733677c
+video_id: v20
+t0: 0:47:50
+t1: 0:47:57
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: La respuesta sería C, en otro sitio, ¿cuál? Con lo explicado, pues, anteriormente, ¿vale?
+afirmacion: 'en S-3 elige la opcion c: el 0 va en otro sitio, el explicado sobre el esquema'
+tema: caja.cero_donde_va
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (A-48). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

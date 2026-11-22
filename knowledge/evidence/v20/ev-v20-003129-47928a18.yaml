@@ -1,0 +1,20 @@
+id: ev-v20-003129-47928a18
+video_id: v20
+t0: 0:31:29
+t1: 0:31:34
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: pues la respuesta sería la letra T como lo he explicado anteriormente en el gráfico
+afirmacion: 'en S-2, pregunta 1: la respuesta seria una letra que la filtrada da como T, como lo ha explicado
+  en el grafico'
+tema: zona_control.antes_o_despues_de_romper
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v20-003028-0f59ea11
+notas: S-2 (RN-009). Supersede a ev-v20-003028-0f59ea11, cuya linea (0:30:28) es el trader leyendo la
+  pregunta y no su respuesta (revisor, a1); lo explicado en el grafico cae en el tramo no citable 0:28:00-0:30:14.
+  docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

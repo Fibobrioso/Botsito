@@ -387,7 +387,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Depende de:** R4.4 y R4.5.
 - **Quién:** la sesión prepara con el consultor; Aleks celebra los dos días con el trader; el consultor propone los números del pivote y Aleks los aprueba.
 - **Hecho cuando:** 7a y 7b ingeridas y activadas, y el pivote leído en la re-corrida siguiente. La deuda del panel de FTMO y A-16 la paga la activación de 7b (la de S-22 y S-19).
-- **Estado:** ABIERTA (la 7a, ingerida en trabajo/sesion-07 y activada en trabajo/activar-sesion-07, ACTIVAR-SESION-07.md; la 7b, preparada en trabajo/laminas-sesion-7b, LAMINAS-7B.md: láminas, preguntas revisadas y hoja 08; falta grabarla, ingerirla y activarla).
+- **Estado:** ABIERTA (la 7a, ingerida en trabajo/sesion-07 y activada en trabajo/activar-sesion-07, ACTIVAR-SESION-07.md; la 7b, grabada el 2026-11-20 y el 2026-11-21 e ingerida en trabajo/sesion-08, SESION-08-EXTRACCION.md; falta activarla, con la rama de S-22 y S-19, y leer el pivote).
 
 ### R4.4 · Trazas del motor y ablación por regla
 - **Refs:** ID:ADR-0092 · ID:ADR-0064 · ID:ADR-0066
@@ -415,7 +415,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### R4.6 · El ciclo de afinado por días
 - **Refs:** NA:F · ID:ADR-0093
-- **Qué es:** acuerdo de Aleks y el consultor (2026-11-19) para las sesiones siguientes a la 7b. Cada vuelta: (1) correr julio y clasificar las diferencias; (2) elegir de seis a ocho sesiones para el bloque de días por la compuerta de ADR-0093 §3 y por la pregunta a la que sirven, nunca por cómo le fue al bot, con dos o tres preguntas técnicas como mucho; (3) el trader opera la sesión entera, ve las láminas y corrige, y a cada corrección se le pregunta «¿siempre, solo aquí o de qué depende?»; (4) la extracción clasifica cada corrección en regla general, ejemplo o contradicción con lo fijado; (5) solo se activan las reglas generales, cada una con su test que rompe y su efecto medido en julio; (6) una fila en el Marcador. El material de construcción no es el límite: casi todos sus días dev pasan la compuerta (PREPARACION-SESION-7.md, la compuerta contada).
+- **Qué es:** acuerdo de Aleks y el consultor (2026-11-19) para las sesiones siguientes a la 7b. Cada vuelta: (1) correr julio y clasificar las diferencias; (2) elegir de seis a ocho sesiones para el bloque de días por la compuerta de ADR-0093 §3 y por la pregunta a la que sirven, nunca por cómo le fue al bot, con dos o tres preguntas técnicas como mucho; (3) el trader opera la sesión entera, ve las láminas y corrige, y a cada corrección se le pregunta «¿siempre, solo aquí o de qué depende?»; (4) la extracción clasifica cada corrección en regla general, ejemplo o contradicción con lo fijado; (5) solo se activan las reglas generales, cada una con su test que rompe y su efecto medido en julio; (6) una fila en el Marcador. El material de construcción no es el límite: casi todos sus días dev pasan la compuerta (PREPARACION-SESION-7.md, la compuerta contada). Una sesión del bloque de días solo cuenta como vuelta si Aleks está presente de principio a fin y hace la pregunta de cada corrección; si no puede estar, se cambia el día. Las láminas las enseña Aleks desde su pantalla; nunca se le pasa al trader la carpeta ni el ZIP (SESION-08-EXTRACCION.md §13).
 - **Depende de:** R4.3 (la 7b activada y el pivote leído).
 - **Quién:** el consultor prepara cada sesión; Aleks la dirige; la sesión ingiere y activa.
 - **Hecho cuando:** julio cumple los dos mínimos del pivote (ADR-0093 §6), o la lectura del pivote cambia el objetivo.
@@ -693,7 +693,9 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   de M1 cerrada; si se permite que las decisiones las calcule un programa externo en Python que
   envía las órdenes por el terminal; y si los topes de 200 órdenes simultáneas y 2.000 posiciones
   al día valen para Swing en MT5. Respuesta pendiente; si reabre ADR-0082 §4, será con un ADR
-  nuevo.
+  nuevo. FTMO contestó el 2026-11-20 (ticket MVT-CQNXT-065). La respuesta se registra
+  parafraseada, nunca literal, en la rama de la activación de la 7b (FTMO-REGLAS.md), con lo que
+  decide sobre A-54 y sobre ADR-0082 §4.
 - **Depende de:** la respuesta de FTMO.
 - **Quién:** Aleks pregunta; la sesión registra la respuesta parafraseada (RESPUESTAS-FTMO).
 - **Hecho cuando:** las respuestas están registradas.
@@ -717,7 +719,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Depende de:** nada. **Fecha límite: antes de grabar la próxima sesión con el trader.**
 - **Quién:** Aleks (el consultor no tiene acceso a su máquina ni a su Drive).
 - **Hecho cuando:** v6 a v10 están en Drive con su SHA256SUMS.
-- **Estado:** HECHA (2026-10-22, Aleks: data/transcripciones/v6 a v10 (158 ficheros) y SHA256SUMS-v6-v10.txt (158 líneas, una por fichero) en una carpeta privada de su Google Drive). Ampliada el 2026-11-07 con v15 a v17 (146 ficheros y SHA256SUMS-v15-v17.txt, en la misma carpeta privada).
+- **Estado:** ABIERTA: falta la copia de v18 a v21 (vídeos, audios, crudas, filtradas regeneradas, transcripciones y fotogramas; lista en SESION-08-EXTRACCION.md §9). La fecha límite de antes de la 7b venció sin la de v18 y v19 (auditoría del consultor del 2026-11-21).
 
 ## Carril: guardias y deuda
 

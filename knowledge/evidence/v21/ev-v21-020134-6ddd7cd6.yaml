@@ -1,0 +1,20 @@
+id: ev-v21-020134-6ddd7cd6
+video_id: v21
+t0: '2:01:34'
+t1: '2:01:52'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: este nivel porque eso es estructura interna o sea de la zona de control que aquí no nos
+  sirve o sea nos sirve trazarlo desde este nivel desde aquí que es el punto breaker más reciente sería
+  mi nivel 0
+afirmacion: 'corrigiendo al bot: la estructura interna de la zona de control no sirve; se traza desde
+  el punto breaker mas reciente, que seria su nivel 0'
+tema: caja.cero_donde_va
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: Bloque de dias, reserva 2026-01-21 de 7 a 11 (dicho en voz en 1:52:19 y 2:03:16); ejemplo (nadie
+  pregunto siempre o depende). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v21-large-v3-int8-float16-9a52aac1

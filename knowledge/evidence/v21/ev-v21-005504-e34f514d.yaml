@@ -1,0 +1,18 @@
+id: ev-v21-005504-e34f514d
+video_id: v21
+t0: 0:55:04
+t1: 0:55:10
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: entonces aquí no habría ningún trade porque fue con mecha, tiene que ser con cuerpo por
+  encima, aquí también fue con mecha,
+afirmacion: 'operando: aqui no habria trade porque fue con mecha; tiene que ser con cuerpo por encima'
+tema: liquidez.m15.toma_con_cuerpo_en_m1
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: Bloque de dias, 2026-04-15 de 7 a 11 (dicho en voz en 0:47:39 y 0:50:00), antes de ver las laminas;
+  ejemplo. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v21-large-v3-int8-float16-9a52aac1

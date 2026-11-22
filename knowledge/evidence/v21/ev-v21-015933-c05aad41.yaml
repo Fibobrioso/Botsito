@@ -1,0 +1,18 @@
+id: ev-v21-015933-c05aad41
+video_id: v21
+t0: '1:59:33'
+t1: '1:59:42'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: actualizar pues tendría que haber una zona en el desarrollo de una zona control variada
+  para ello poder actualizar el posible punto breaker que es el más reciente sería ese allí
+afirmacion: 'corrigiendo al bot: para actualizar el posible punto breaker tendria que haber el desarrollo
+  de una zona de control'
+tema: mapeo.punto_breaker_actualizacion
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: Bloque de dias, reserva 2026-01-21 de 7 a 11; ejemplo (nadie pregunto siempre o depende). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v21-large-v3-int8-float16-9a52aac1

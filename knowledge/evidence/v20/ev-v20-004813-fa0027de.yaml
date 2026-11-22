@@ -1,0 +1,16 @@
+id: ev-v20-004813-fa0027de
+video_id: v20
+t0: 0:48:13
+t1: 0:48:20
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: El cero, por lo general, va en una compra, el punto de entrada, ¿vale?
+afirmacion: 'en S-3: el 0, por lo general, va en el punto de entrada'
+tema: caja.cero_donde_va
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (A-48); sigue en 0:48:20 (en el posible punto breaker y al reves tambien). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

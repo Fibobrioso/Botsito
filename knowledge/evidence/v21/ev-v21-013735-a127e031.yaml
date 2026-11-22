@@ -1,0 +1,17 @@
+id: ev-v21-013735-a127e031
+video_id: v21
+t0: '1:37:35'
+t1: '1:37:41'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: Entonces aquí ya al caer, estoy cerrado con cuerpo por debajo Ya estaría yo, ya pondría
+  un break even la entrada
+afirmacion: 'operando: con el cierre con cuerpo por debajo, ya pondria la entrada en break even'
+tema: break_even.disparador_cierre_m1
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: Bloque de dias, 2026-01-19 de 11 a 15, antes de ver las laminas; ejemplo. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v21-large-v3-int8-float16-9a52aac1

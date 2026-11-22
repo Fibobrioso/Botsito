@@ -1,0 +1,17 @@
+id: ev-v20-010354-ada60dca
+video_id: v20
+t0: '1:03:54'
+t1: '1:03:59'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: a nivel, o sea, la orden tiene que estar a nivel entonces, si sube o retrocede solo toca
+  esperar, o sea, la activaría
+afirmacion: 'en S-6, para precisar: la orden tiene que estar a nivel; si sube o retrocede solo toca esperar'
+tema: entrada.orden.precio_mas_alla_del_cero
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-6 (S-19), la de Para precisar. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

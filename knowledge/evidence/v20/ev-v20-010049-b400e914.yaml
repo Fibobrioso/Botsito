@@ -1,0 +1,16 @@
+id: ev-v20-010049-b400e914
+video_id: v20
+t0: '1:00:49'
+t1: '1:01:23'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: una vela roja, una vela verde, o al revés, allí se traza un punto
+afirmacion: 'en S-5: una vela roja, una vela verde, o al reves, y alli se traza un punto'
+tema: mapeo.punto_breaker_vela_contraria
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-5 (S-22); antes, 0:59:52 Creo que y 0:59:54 no tiene que pasar el minimo de la racha. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

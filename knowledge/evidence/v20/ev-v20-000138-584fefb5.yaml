@@ -1,0 +1,20 @@
+id: ev-v20-000138-584fefb5
+video_id: v20
+t0: 0:01:38
+t1: 0:01:45
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Tiene que cerrar, al menos cuando hay la toma de liquidez de M15, la regla es que rompa
+  con cuerpo y cierre con cuerpo por arriba.
+afirmacion: 'en S-1: al menos cuando hay la toma de liquidez de M15, la regla es que rompa con cuerpo
+  y cierre con cuerpo por arriba'
+tema: liquidez.m15.toma_con_cuerpo_en_m1
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v20-000138-fe33bb73
+notas: S-1 (A-35); lo citable, antes del tramo del grafico real. Supersede a ev-v20-000138-fe33bb73, cuya
+  afirmacion cambiaba la condicion (revisor, a2). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

@@ -1,0 +1,20 @@
+id: ev-v20-003151-ac4eb016
+video_id: v20
+t0: 0:31:51
+t1: 0:32:04
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: y la respuesta sería C, otra cual con lo que he explicado anteriormente porque ya dije,
+  o sea, la diferencia de las zonas de control para puesta en break-even, enfocado a la puesta de break-even
+afirmacion: 'en S-2, pregunta 2: la respuesta seria la c, otra, por la diferencia de las zonas de control
+  para la puesta en break even'
+tema: break_even.margen_segun_distancia
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v20-002737-353f9542
+notas: S-2 (A-13). Supersede a ev-v20-002737-353f9542, que cita dentro del tramo no citable que ahora
+  empieza en 0:27:19 (respuesta del consultor a la PARADA final, punto 7). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

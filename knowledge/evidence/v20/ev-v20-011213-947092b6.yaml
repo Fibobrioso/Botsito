@@ -1,0 +1,17 @@
+id: ev-v20-011213-947092b6
+video_id: v20
+t0: '1:12:13'
+t1: '1:12:21'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: Que si es que no se llega a mostrar, simplemente, o sea, la B no se grabó, no se grabó y
+  eso.
+afirmacion: 'en S-7: no se llega a mostrar porque no se grabo; la b'
+tema: material.tarde_sin_video
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-7 (VIDEO-JULIO.md); el dia, dicho en voz en 1:06:50. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

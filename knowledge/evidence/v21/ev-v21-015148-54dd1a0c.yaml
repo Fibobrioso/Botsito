@@ -1,0 +1,18 @@
+id: ev-v21-015148-54dd1a0c
+video_id: v21
+t0: '1:51:48'
+t1: '1:51:55'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Estamos buscando operaciones alcistas. No nos importa la liquidez por arriba. Nos importa
+  la liquidez en M15 que está formado por debajo.
+afirmacion: 'corrigiendo al bot: buscando alcistas no importa la liquidez de arriba, sino la de M15 formada
+  por debajo'
+tema: liquidez.m15.lado_segun_sesgo
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: Bloque de dias, 2026-01-19 de 11 a 15; ejemplo (nadie pregunto siempre o depende). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v21-large-v3-int8-float16-9a52aac1

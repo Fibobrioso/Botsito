@@ -1,0 +1,19 @@
+id: ev-v20-002744-e0555bb6
+video_id: v20
+t0: 0:27:44
+t1: 0:27:54
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: por allí pero qué pasaría si hiciera este precio el precio llega se extiende demasiado genera
+  un rompimiento aquí ya te genera la zona de control basaría sólo con una mecha porque hay una
+afirmacion: 'en S-2, pregunta 2: si el precio se extiende demasiado y genera la zona de control, bastaria
+  solo con una mecha'
+tema: break_even.margen_segun_distancia
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-2 (A-13); la frase sigue en 0:27:54 (una distancia), que no se cita por acabar en el borde del
+  tramo 0:28:00. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

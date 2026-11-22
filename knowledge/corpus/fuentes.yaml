@@ -274,6 +274,53 @@ videos:
       reserva abre antes, por error, el replay del 2026-04-15 y lo opera hasta ver que no coincide
       (tramo de precaucion); con CINCO SILENCIOS, por pausas del trader
 
+  # LA SESION 7b CON EL TRADER, GRABADA EN DOS VIDEOS Y EN DOS DIAS (rama `trabajo/sesion-08`,
+  # docs/validation/SESION-08-EXTRACCION.md): un solo id de sesion, 2026-11-20-sesion-08, con la
+  # hoja de la sesion 08 (docs/sesion-7/HOJA-USADA-7B.md, codigos S-1 a S-7, y el bloque de dias de
+  # docs/sesion-7/PREGUNTAS-7B.md §1) y dos videos, cada uno con su fecha. Precedente: v18 y v19
+  # (sesion 7a). Segun Aleks (2026-11-21), no estuvo en toda la reunion y el trader dirigio las
+  # preguntas; los dias no se comprobaron antes de grabar (se comprobaron el 2026-11-21: False).
+  - video_id: v20
+    fichero: "Grabación de pantalla 2026-11-20 182155.mp4"
+    drive_id: null  # grabacion de sesion: nace en local, no viene de Drive (ADR-0011)
+    bytes: 4878875346
+    fecha_grabacion: "2026-11-20"
+    # PROCEDENCIA (el esquema no tiene campo de notas; va aqui y en `naturaleza`): primer video de la
+    # sesion 7b. Duracion 1:13:04 (4384,9 s), 1920x1080 a 30 fps, audio AAC estereo a 48 kHz
+    # (volumedetect: media -24,2 dB, maximo -0,2 dB). El audio tiene SEIS SILENCIOS (ffmpeg
+    # silencedetect a -50 dB y 30 s, el 2026-11-21): de 0:16:18 a 0:25:01, de 0:25:01 a 0:25:34, de
+    # 0:40:19 a 0:41:44, de 0:49:36 a 0:52:05, de 1:04:55 a 1:06:48 y de 1:12:28 al final (1:13:05).
+    # Estan en tramos_no_citables.yaml. Segun Aleks (2026-11-21), en pantalla solo salieron los
+    # esquemas del PDF, el replay de las sesiones abierto por el trader y las laminas; ninguna
+    # operacion de un dia fuera de construccion ni cifras de su cuenta.
+    naturaleza: >-
+      sesion 7b con el trader, primer video (2026-11-20-sesion-08, hoja de la sesion 08): el bloque
+      tecnico, las preguntas S-1 a S-6 del consultor sobre los esquemas del PDF y la de material S-7
+      al final, con respuestas del trader en voz; segun Aleks, las dirigio el trader porque Aleks no
+      estuvo en toda la reunion, y el trader abrio tambien su grafico real de julio (del 1 al 17,
+      segun Aleks); con SEIS SILENCIOS, el primero de casi nueve minutos
+
+  - video_id: v21
+    fichero: "Grabación de pantalla 2026-11-21 104411.mp4"
+    drive_id: null  # grabacion de sesion: nace en local, no viene de Drive (ADR-0011)
+    bytes: 8440884009
+    fecha_grabacion: "2026-11-21"
+    # PROCEDENCIA (el esquema no tiene campo de notas; va aqui y en `naturaleza`): segundo video de
+    # la sesion 7b, grabado el dia siguiente al primero (v20). Duracion 2:06:25 (7585,5 s),
+    # 1920x1080 a 30 fps, audio AAC estereo a 48 kHz (volumedetect: media -24,3 dB, maximo -0,1 dB).
+    # El audio tiene NUEVE SILENCIOS (ffmpeg silencedetect a -50 dB y 30 s, el 2026-11-21): de
+    # 0:48:45 a 0:49:39, de 1:20:21 a 1:21:00, de 1:27:44 a 1:28:27, de 1:29:43 a 1:30:30, de 1:31:24
+    # a 1:32:11, de 1:33:37 a 1:34:57, de 1:52:59 a 1:54:13, de 2:03:41 a 2:04:47 y de 2:04:47 a
+    # 2:05:30. Estan en tramos_no_citables.yaml. Segun Aleks (2026-11-21), en pantalla solo salio lo
+    # mismo que en v20.
+    naturaleza: >-
+      sesion 7b con el trader, segundo video, el dia siguiente (mismo id 2026-11-20-sesion-08, hoja
+      de la sesion 08): ninguna pregunta tecnica; el bloque de dias, segun Aleks las sesiones 1, 2, 3
+      y 4 de PREGUNTAS-7B.md §1 y la primera reserva, en el replay de FX Replay de ese dia que abre
+      el trader en directo, que marca y opera la sesion y corrige las laminas del bot, en unas
+      sesiones despues de operarla entera y en otras comparando a medida que avanza; con NUEVE
+      SILENCIOS
+
 carpetas:
   - ruta: "_procesado"
     papel: heredado_v2
