@@ -779,12 +779,12 @@ tramos:
     acordado: >-
       encargo de trabajo/sesion-08 (2026-11-21), «EXTRACCION» (el video de mapeo); marcado por precaucion al leer la filtrada; ninguna cita de la rama cae dentro; docs/validation/SESION-08-EXTRACCION.md
   - video_id: v20
-    t0: "0:28:00"
+    t0: "0:27:19"
     t1: "0:30:14"
     motivo: >-
-      precaucion: en S-2 (bloque tecnico de la sesion 7b), el trader busca un break even en un grafico real, de un dia que la voz no dice de forma visible, y nombra el video de mapeo de estructura. Regla de la PARADA condicional del encargo. Sin cifras ni dias aqui
+      precaucion: en S-2 (bloque tecnico de la sesion 7b), el trader busca un break even en un grafico real, de un dia que la voz no dice de forma visible, y nombra el video de mapeo de estructura. Desde 0:27:19 y no desde 0:28:00: lo que dice ahi no deja saber si es el esquema o su grafico, y lo que no se sabe se niega. Regla de la PARADA condicional del encargo. Sin cifras ni dias aqui
     acordado: >-
-      encargo de trabajo/sesion-08 (2026-11-21), «PARADA CONDICIONAL» (decisiones del consultor del 2026-11-17) y «EXTRACCION» (el video de mapeo); marcado al leer la filtrada; ninguna cita de la rama cae dentro; docs/validation/SESION-08-EXTRACCION.md
+      encargo de trabajo/sesion-08 (2026-11-21), «PARADA CONDICIONAL» (decisiones del consultor del 2026-11-17) y «EXTRACCION» (el video de mapeo); marcado al leer la filtrada; el inicio, adelantado a 0:27:19 por la respuesta del consultor a la PARADA final de la rama (2026-11-21, punto 7); los items que citaban dentro, supersedados; docs/validation/SESION-08-EXTRACCION.md
   - video_id: v20
     t0: "0:32:09"
     t1: "0:37:39"

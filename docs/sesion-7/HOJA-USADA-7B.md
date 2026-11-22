@@ -66,7 +66,8 @@ Las sesiones de la tabla de `PREGUNTAS-7B.md` §1 que se hicieron, en su orden r
 | 5 | reserva · 2026-01-21, 07-11 | `[112:19]` |
 
 **No se hicieron** las reservas del 2026-01-22 (11-15) y del 2026-07-16 (07-11). Según Aleks, el
-replay no se abrió antes de compartir pantalla (respuesta 5). En la sesión 2, la de 11 a 15 se operó
+replay no se abrió antes de compartir pantalla (respuesta 5). Las láminas las abrió el trader, no
+Aleks: desviación declarada (`SESION-08-EXTRACCION.md` §4.0 y §13, punto 1). En la sesión 2, la de 11 a 15 se operó
 después de abrir sus láminas; en la 3, la 4 y la reserva, la sesión se operó antes de verlas.
 
 ## 6. Lo que dice la entrada c)

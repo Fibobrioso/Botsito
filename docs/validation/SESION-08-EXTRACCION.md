@@ -291,12 +291,13 @@ de `tramos_no_citables.yaml` (§3.0). Cada «resuelve» es una propuesta: lo dec
   final de su pregunta: S-1 `[13:25]`, S-2 `[37:39]`, S-3 `[48:33]`, S-4 `[57:52]`, S-5 `[61:23]` (a
   medias: «cuando la roja» y «lo descarto», `[61:35]`) y S-6 `[63:44]`. S-7 no lleva.
 - **El gráfico real** (respuesta 4): el trader anuncia en voz que pasa a su gráfico o al mercado real
-  en S-1 (desde `[03:27]`), en S-2 (desde `[28:00]` y desde `[32:09]`) y en S-3 (desde `[39:21]` y
+  en S-1 (desde `[03:27]`), en S-2 (desde `[28:00]`, y el tramo desde `[27:19]`, §14; y desde
+  `[32:09]`) y en S-3 (desde `[39:21]` y
   desde `[48:40]`). Esas líneas abren los tramos y no se citan. **En ninguno dice el día en voz.**
   Según Aleks eran días de julio del 1 al 17, pero la voz no lo confirma. Por la regla de la PARADA
   condicional, cada uno es un tramo no citable, y la pregunta se queda con lo citable de fuera. Son
-  cinco tramos: **0:03:27–0:14:49, 0:28:00–0:30:14, 0:32:09–0:37:39, 0:39:21–0:44:06 y
-  0:48:40–0:49:18**. Sus límites salen de la voz y van por precaución hacia afuera (sin abrir
+  cinco tramos: **0:03:27–0:14:49, 0:28:00–0:30:14 (desde la respuesta del consultor a la PARADA final,
+  0:27:19–0:30:14, §14), 0:32:09–0:37:39, 0:39:21–0:44:06 y 0:48:40–0:49:18**. Sus límites salen de la voz y van por precaución hacia afuera (sin abrir
   fotogramas: ninguno antes de que la voz sitúe el tramo en un día). En S-1 nombra además el desenlace
   de una operación de ese gráfico; no se copia aquí.
 - **El vídeo de mapeo**: el trader lo nombra en S-1 y dos veces en S-2, siempre dentro de esos tramos.
@@ -313,8 +314,9 @@ de `tramos_no_citables.yaml` (§3.0). Cada «resuelve» es una propuesta: lo dec
 
 ### 3.1 S-1 (A-35, la única bloqueante): la mecha de un minuto que pasa tu alto de M15 y vuelve
 
-Vídeo v20, `[00:07]`–`[14:43]`. Lo citable está en `[00:07]`–`[03:27]`; de `[03:27]` a `[14:49]` el
-trader trabaja en su gráfico real, y ese tramo no es citable.
+Vídeo v20, `[00:07]`–`[14:43]`. Lo citable está en `[00:07]`–`[03:23]`; de `[03:27]` a `[14:49]` el
+trader trabaja en su gráfico real, y ese tramo no es citable (la línea `[03:24]` lo solapa y sale tapada
+en la filtrada regenerada, §14).
 
 - **Lo que dice, sobre el esquema:** «Tiene que cerrar, al menos cuando hay la toma de liquidez de
   M15, la regla es que rompa con cuerpo y cierre con cuerpo por arriba.» (`[01:38]`), «Si no, esto no
@@ -343,9 +345,10 @@ trader trabaja en su gráfico real, y ese tramo no es citable.
 ### 3.2 S-2 (RN-009 y A-13): tus zonas de control y el momento del break even
 
 Vídeo v20, `[14:57]`–`[38:04]`, con la pausa 0:16:18–0:25:34 en medio. Lo citable está en
-`[14:57]`–`[16:02]` (la lectura, menos `[15:46]`–`[15:51]`), `[25:35]`–`[27:54]`,
-`[30:14]`–`[32:07]` y `[37:39]`–`[38:04]`. Los dos gráficos reales (0:28:00–0:30:14 y
-0:32:09–0:37:39) no son citables.
+`[14:57]`–`[16:02]` (la lectura, menos `[15:46]`–`[15:51]`), `[25:35]`–`[27:13]`,
+`[30:14]`–`[32:06]` y `[37:39]`–`[38:04]`. Los dos gráficos reales (0:27:19–0:30:14, adelantado desde
+0:28:00 por la respuesta del consultor a la PARADA final, punto 7; y 0:32:09–0:37:39) no son citables,
+y la línea `[32:07]` solapa el segundo y sale tapada en la filtrada regenerada (§14).
 
 **Pregunta 1, las zonas de control (RN-009):**
 - Sobre el dibujo 1: «vale, la A» (`[26:14]`), «si sería una zona» (`[26:18]`), «de control válida,
@@ -359,7 +362,7 @@ Vídeo v20, `[14:57]`–`[38:04]`, con la pausa 0:16:18–0:25:34 en medio. Lo c
 - La opción: «pues la respuesta sería» (`[31:29]`), «la letra T» (`[31:30]`), «como lo he explicado
   anteriormente en el gráfico» (`[31:31]`; `ev-v20-003129-47928a18`, que supersede a
   `ev-v20-003028-0f59ea11`). Es una transcripción dudosa, no se abre ningún fotograma para ver la
-  letra (§3.0), y lo explicado en el gráfico cae en el tramo no citable 0:28:00–0:30:14. **Si se forman
+  letra (§3.0), y lo explicado en el gráfico cae en el tramo no citable 0:27:19–0:30:14. **Si se forman
   antes o también después de romper el punto no tiene respuesta citable.**
 - **Contradicción, dicha sin decidir (R4.6):** en `[26:20]` y `[30:23]` A, B y C le valen como zonas
   de control. En `[30:58]`, «si hay más de uno», se invalida el punto, que es lo fijado en A-20
@@ -377,16 +380,19 @@ Vídeo v20, `[14:57]`–`[38:04]`, con la pausa 0:16:18–0:25:34 en medio. Lo c
 - Sobre el dibujo 2: «si está demasiado extendido el precio, vale, no llega, o sea, a estar en medio
   de» (`[26:30]`), «de nuestra zona de entrada, bastaría con cuerpo, o sea, que rompa con poco cuerpo y
   cierre,» (`[27:00]`), «para poder nosotros, pues, poner en break-even la entrada, o inclusive con
-  mecha.» (`[27:07]`); «aquí entonces está en medio cuando está en medio y tendría que romper con
-  cuerpo y cerrar con cuerpo» (`[27:37]`), «rompimiento aquí ya te genera la zona de control basaría
-  sólo con una mecha porque hay una» (`[27:49]`).
+  mecha.» (`[27:07]`; `ev-v20-002630-6271f57e` y `ev-v20-002700-955a2dc8`). Lo que dice después, de
+  `[27:19]` a `[27:54]`, cae desde la respuesta del consultor en el tramo no citable 0:27:19–0:30:14, y
+  no se cita ni se resume: sus dos
+  ítems, `ev-v20-002737-353f9542` y `ev-v20-002744-e0555bb6`, quedan supersedados (§14).
 - La opción: «y la respuesta sería C, otra cual» (`[31:51]`), «porque ya dije, o sea, la diferencia»
   (`[31:55]`), «de las zonas de control» (`[31:57]`), «para puesta en break-even, enfocado»
-  (`[32:00]`).
-- **Basta cerrar por encima o pide margen**: «otra». **Depende de la distancia** entre la zona de
-  control y el nivel de entrada. Si la zona queda «en medio» del nivel de entrada, rompe y cierra con
-  cuerpo. Si el precio está «demasiado extendido», basta con poco cuerpo, «o inclusive con mecha».
-  **Cifra: ninguna. Unidad: ninguna. Siempre el mismo: no** (depende del escenario).
+  (`[32:00]`), «a la puesta de break-even» (`[32:02]`), «pues existe» (`[32:04]`), «el contexto»
+  (`[32:06]`; `ev-v20-003151-ac4eb016`).
+- **Basta cerrar por encima o pide margen**: «otra», por «la diferencia de las zonas de control para
+  puesta en break-even» y porque «existe el contexto». Lo único citable que dice de qué depende es lo de
+  `[26:30]`–`[27:13]`: si el precio está «demasiado extendido» y no llega a estar en medio de la zona de
+  entrada, basta con poco cuerpo, «o inclusive con mecha». El otro caso (la zona en medio) cae en el
+  tramo. **Cifra: ninguna. Unidad: ninguna. Siempre el mismo: no** (depende del contexto).
 - «Para confirmar al final» (`[37:39]`): «Bueno, mi zona de control, pues, es la condicional para
   poder pasar a break even.» (`[37:49]`), «La vela tiene que estar por encima del alto de la zona de
   control.» (`[37:53]`), «Eso, pues, específicamente es solo en casos, pues, para poder poner en break
@@ -395,9 +401,10 @@ Vídeo v20, `[14:57]`–`[38:04]`, con la pausa 0:16:18–0:25:34 en medio. Lo c
   dar después de la entrada entonces aquí» (`[68:49]`), «ocurre el retroceso después de haber activado
   la entrada» (`[68:52]`). Es lo que la 7a dejó en duda (la zona del break even se forma después de la
   entrada: `ev-v19-011640-1fdc33a7`).
-- **Propuesta: en parte**: no hay margen fijo. Con «depende», A-13 sigue abierta (el «Para Aleks» de
-  `PREGUNTAS-7B.md`). Regla general: sí, con su condición. «creo»: no. Compra y venta: lo dice para
-  la compra del dibujo 2 y no habla de la venta.
+- **Propuesta: en parte**: «otra», sin margen fijo; lo citable da un solo caso (el precio extendido:
+  poco cuerpo o mecha). Con «depende», A-13 sigue abierta (el «Para Aleks» de `PREGUNTAS-7B.md`). Regla
+  general: sí, con su condición. «creo»: no. Compra y venta: lo dice para la compra del dibujo 2 y no
+  habla de la venta.
 
 ### 3.3 S-3 (A-48): dónde pones el 0 de tu caja
 
@@ -736,7 +743,7 @@ estaba, sin nada nuevo de esta sesión.
    (v21 `[86:23]`). Regla general por su cuenta, que corrige una lámina del bot. Y pide dos veces
    una sesión para explicarlo (`[86:52]`, `[110:27]`).
 3. **El margen del break even**: en la 7a, «un par de puntos o un pip» (`ev-v19-011529-8ae8b581`); en
-   la 7b, «depende» de la distancia entre la zona y la entrada, sin cifra (§3.2).
+   la 7b, «otra», según «el contexto», sin cifra; lo citable da solo el caso del precio extendido (§3.2).
 4. **El sesgo de la sesión 4**: opera contra el sesgo que dice y se corrige él mismo (§4.4).
 5. **Los datos**: atribuye una diferencia con el bot a los datos («por los datos no coinciden», v21
    `[69:26]`).
@@ -752,7 +759,7 @@ estaba, sin nada nuevo de esta sesión.
 |---|---|---|
 | S-1, la mecha de un minuto que vuelve | A-35 | **no**: la opción, varias velas, el bajo y la frase caen en el tramo del gráfico real; lo citable no dice dónde queda el alto |
 | S-2, las zonas de control | RN-009 | **no**: «antes o después», sin respuesta citable; contradicción en cuántas; el bajo de la toma, no citable |
-| S-2, el margen del break even | A-13 | **en parte**: «otra», depende de la distancia; sin cifra |
+| S-2, el margen del break even | A-13 | **en parte**: «otra», depende del contexto; lo citable da solo el caso del precio extendido; sin cifra |
 | S-3, el 0 de la caja | A-48 | **en parte**: «otra», el punto más bajo de la zona de control que valida, su punto de entrada; la compra, sí |
 | S-4, el rango de 4 horas tras una ruptura | A-58 | **en parte**: el dibujo 2, la ruptura por abajo y «siempre en H4», sí; el dibujo 1, sin decir de qué vela |
 | S-5, el punto y la roja | S-22 | **no** la pregunta; las dos de «Para precisar», sí |
@@ -774,7 +781,7 @@ estaba, sin nada nuevo de esta sesión.
 | S-1, el bajo al revés | A-35 | v20 | 13:13 | no resuelve: dentro del tramo no citable | n/a | n/a | n/a |
 | **S-2, pregunta 1** | RN-009 | v20 | 25:35–31:34 | no resuelve: la letra sale como «T» y remite al gráfico no citable; contradicción: A, B y C le valen y «si hay más de uno» se invalida | sí, la de «más de uno» | no | no lo dice |
 | S-2, el bajo de la propia toma | RN-009 | v20 | 37:06–37:37 | no resuelve: la respuesta cae en el tramo no citable 0:32:09–0:37:39 | n/a | n/a | n/a |
-| **S-2, pregunta 2** | A-13 | v20 | 26:30–27:54; 31:51–32:07 | en parte: «otra»; depende de la distancia entre la zona de control y la entrada: con cuerpo si está en medio, con poco cuerpo o con mecha si está extendido; sin cifra ni unidad | sí, con su condición | no | habla de la compra |
+| **S-2, pregunta 2** | A-13 | v20 | 26:30–27:13; 31:51–32:06 | en parte: «otra», por la diferencia de las zonas de control y «el contexto»; lo citable da un caso: si el precio está demasiado extendido, poco cuerpo o mecha; sin cifra ni unidad | sí, con su condición | no | habla de la compra |
 | **S-3** | A-48 | v20 | 44:06–48:40 | en parte: «otra», el 0 en el punto más bajo de la zona de control que valida, que llama su punto de entrada; ni A ni B | sí | no | sí |
 | S-3, la compra | A-48 | v20 | 48:03–48:09 | resuelve: igual en una compra | sí | no | sí |
 | **S-4, dibujo 1** | A-58 | v20 | 52:59–54:51; 56:53–57:12 | en parte: «otra»; el rango pasa «a este bajo y esto este alto», sin decir de qué vela | no claro | «no sé» (54:23) | n/a |
@@ -803,6 +810,9 @@ y S-5). Del bloque, 4 sesiones extraídas y 1 no citable (sin extraer); dos rese
 
 ### 7.1 PARADA final (lo que no cuadra con las reglas del encargo o no lo prevén)
 
+> Respondida por el consultor el 2026-11-21 (§13) y aplicada (§14): 1, 3, 5 y 8, como están; 2 y 4, no
+> se levantan; 6, las filtradas regeneradas; 7, el tramo de S-2 desde 0:27:19.
+
 1. **Las láminas las abrió el trader**, no Aleks (§4.0): el encargo dice «Las láminas las enseñé yo».
    ¿Tuvo el trader la carpeta `laminas-sesion-7b-v1`, o una copia? Si es así, conviene decidir si la
    clave (qué carpeta es qué sesión) sigue sin salir de Aleks, y si eso cambia algo para la 7c.
@@ -824,10 +834,11 @@ y S-5). Del bloque, 4 sesiones extraídas y 1 no citable (sin extraer); dos rese
    cronológico (empieza por S-3 y S-4). Quien las lea ahora ve ese texto sin tapar: le pasó al revisor
    (a3). Volver a pasar el guion de `main` con `--solo-filtrar` los taparía. No lo hago: reescribe
    ficheros de la copia de seguridad y lo decide el consultor.
-7. **`[27:19]`–`[27:54]` de v20, ¿esquema o gráfico real?** (revisor): la voz dice «Linealmente, si lo
-   planteamos usando un gráfico alcista» (`[27:19]`), y el gráfico real lo anuncia en 0:28:00. Lo leí
+7. **`[27:19]`–`[27:54]` de v20, ¿esquema o gráfico real?** (revisor): lo que dice en `[27:19]` no deja
+   saber si dibuja sobre el esquema o sobre su gráfico, y el gráfico real lo anuncia en 0:28:00. Lo leí
    como el esquema dibujado; sin fotograma no se puede asegurar. De ahí salen `ev-v20-002737-353f9542` y
-   `ev-v20-002744-e0555bb6`. Si fuera el gráfico, el tramo empezaría en 0:27:19.
+   `ev-v20-002744-e0555bb6`. Si fuera el gráfico, el tramo empezaría en 0:27:19. (Respondido: empieza en
+   0:27:19, §14; la frase que aquí se citaba cae ahora dentro y se quitó.)
 8. **La clave de las láminas, fuera de git** (revisor): el informe da el minuto en que empieza cada repaso
    de láminas, como pide el encargo. Si en pantalla se viera el nombre de la carpeta, esos fotogramas
    (fuera de git, en esta máquina) dejarían deducir la clave. No lo sé, porque no se abren.
@@ -864,7 +875,7 @@ y S-5). Del bloque, 4 sesiones extraídas y 1 no citable (sin extraer); dos rese
   presentes». Ninguno abierto.
 - `knowledge/corpus/tramos_no_citables.yaml`: 15 «SIN AUDIO» (6 de v20 y 9 de v21), 3 de cuarentena (de
   v21) y 7 de precaución (6 de v20 y 1 de v21).
-- `knowledge/evidence/v20/` (30 ítems: 24 y 6 que supersedan a otros tantos, §12) y
+- `knowledge/evidence/v20/` (32 ítems: 24 y 8 que supersedan a otros tantos, §12 y §14) y
   `knowledge/evidence/v21/` (11). `evidence contradictions`:
   «OK: knowledge/evidence/_contradicciones.yaml con 0 contradicciones abiertas».
 - v20 y v21 en `SESIONES_EN_CUARENTENA` y sus tests.
@@ -900,12 +911,28 @@ y S-5). Del bloque, 4 sesiones extraídas y 1 no citable (sin extraer); dos rese
   - los vídeos: `corpus/Estrategia del trader/Grabación de pantalla 2026-11-20 182155.mp4` y
     `Grabación de pantalla 2026-11-21 104411.mp4`;
   - `C:\Users\USER\Desktop\sesion-08-audio\`: `sesion-08-v20.wav` y `sesion-08-v21.wav`, las crudas
-    (`sesion-08-v20.cruda-NO-LEER.jsonl` y `.txt`, y las de v21), las filtradas (`.filtrada.md`), los
-    registros (`.registro.txt`) y las carpetas `sesion-08-v20-trabajo` y `sesion-08-v21-trabajo`;
+    (`sesion-08-v20.cruda-NO-LEER.jsonl` y `.txt`, y las de v21), **las filtradas regeneradas el
+    2026-11-21** (`sesion-08-v20.filtrada.md`, sha256 `952dd3620bdf…`, y `sesion-08-v21.filtrada.md`,
+    `9886c64a558d…`; §14; si ya se copiaron las de antes, se sustituyen), los registros
+    (`.registro.txt`, reescritos con ellas) y las carpetas `sesion-08-v20-trabajo` y
+    `sesion-08-v21-trabajo`;
   - `data/transcripciones/v20/` (270 MB) y `data/transcripciones/v21/` (466 MB);
   - `data/fotogramas/v20/` (1,9 GB) y `data/fotogramas/v21/` (3,9 GB).
-- **Para la activación de la 7b**: el **2026-04-24 de 07 a 11 queda gastado** (§4.1) mientras la
-  PARADA 2 no lo levante; y las reservas del 2026-01-22 y del 2026-07-16 siguen sin usar.
+- **Para la activación de la 7b**: el **2026-04-24 de 07 a 11 queda gastado** (§4.1; la PARADA 2 no lo
+  levanta, §13); y las reservas del 2026-01-22 y del 2026-07-16 siguen sin usar.
+- **A-35 en Technical Debt** (respuesta del consultor, «Además»): `- A-35 sigue ABIERTA y bloqueante
+  tras la 7b: su respuesta cayó en un tramo no citable (SESION-08-EXTRACCION.md §3.1); va al trader por
+  WhatsApp con el esquema del PDF y entra por «Mensajes del trader».` (**207 bytes** con su fin de
+  línea). **Cabe en PROJECT_STATE**: hoy 24.576 bytes en `main`; con la F (−164), la copia de seguridad
+  (+10) y esta línea (+207), unos 24.629, por debajo de 25.000. Sin medir: lo que el cierre cambie en
+  Current Branch, Current Feature, Stable Main State y Last Stable Commit; el margen que queda, unos 370
+  bytes, se comprueba con `wc -c` al cerrar.
+- **Las lecciones para la orden de cierre** (respuesta del consultor, puntos 1, 3 y 6), tal cual:
+  - «Las láminas las enseña Aleks desde su pantalla; nunca se le pasa al trader la carpeta ni el ZIP».
+  - «Una sesión del bloque de días solo cuenta como ciclo de R4.6 si Aleks está presente de principio a
+    fin y hace la pregunta de cada corrección; si no puede estar, se cambia el día».
+  - «Un tramo de precaución que se añade después de generar la filtrada obliga a regenerarla antes de
+    que nadie más la lea».
 
 ## 10. El cierre de la rama: sellos, push y CI
 
@@ -933,7 +960,7 @@ Antes del sello de `69ccd8a2`, con todo estadiado:
 **La verificación final de la skill**, tras el commit `69ccd8a2`: `git diff --name-status main...HEAD --
 knowledge/evidence knowledge/corpus/transcripciones knowledge/corpus/fotogramas data/manifests`: **39
 `A`** y nada más (35 ítems, 2 transcripciones, 2 extracciones de fotogramas). Con los 6 que supersedan
-(§12), 45 `A`.
+(§12), 45 `A`; con los 2 de la respuesta del consultor (§14), 47.
 
 **Push y CI**: `git push origin trabajo/sesion-08:refs/heads/fix/sesion-08` (con `69ccd8a2`), sin
 negativa. La CI de Linux es el **run 44957773501**: `completed`, `failure`, `headSha` `69ccd8a2…`, con
@@ -995,16 +1022,107 @@ negativa. La CI de Linux es el **run 44957773501**: `completed`, `failure`, `hea
 - «Lo que no pude comprobar»: las filtradas sin tapar, la duda de `[27:19]`–`[27:54]` y la clave fuera de
   git, a la PARADA final (§7.1, puntos 6 a 8).
 
+## 13. Respuesta del consultor a la PARADA final
+
+Dada por Aleks (consultor) el 2026-11-21, en un solo mensaje. Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA final de trabajo/sesion-08 (§7.1 de SESION-08-EXTRACCION.md), 2026-11-21. Cópiala tal cual al informe, en una sección «Respuesta del consultor a la PARADA final». Si pasas de medianoche, la fila de HOLDOUT-EXPOSICIONES del 2026-11-22 va antes del primer make check de ese día (G2).
+>
+> 1. Las láminas las abrió el trader: se declara como desviación, sin más en esta rama. Todos los días del bloque son de construcción (casos_ocultos False), así que no hay exposición de holdout. La clave solo protege que el trader no sepa qué sesión es cada carpeta antes de operarla, y eso ya lo recoge el punto 5. Lo que haya pasado con la carpeta lo contesta Aleks fuera de la rama; si cambia algo, entra en la preparación de la 7c. Para la orden de cierre, la lección: «Las láminas las enseña Aleks desde su pantalla; nunca se le pasa al trader la carpeta ni el ZIP».
+>
+> 2. La sesión 1 (el 24 de abril, de 07 a 11): NO se levanta. «24» sin mes no sitúa el día: el mismo número cae en meses que no son de construcción, y la respuesta b) de Aleks dice lo previsto, no lo que se abrió (respuesta del consultor a la PARADA 2 de la 7a). Se queda entera no citable, sin extraer y con el día gastado, como está. No se abre ningún fotograma para comprobarlo.
+>
+> 3. Sin regla general en el bloque: se acepta tal cual. Toda corrección cuenta como ejemplo, salvo la de [86:23], que generaliza el trader por su cuenta. Lección para la orden de cierre: «Una sesión del bloque de días solo cuenta como ciclo de R4.6 si Aleks está presente de principio a fin y hace la pregunta de cada corrección; si no puede estar, se cambia el día».
+>
+> 4. El tramo de S-1: NO se levanta. Que Aleks recuerde que eran días de julio del 1 al 17 no sustituye a la voz, y él mismo dijo que no lo recuerda del todo. A-35 sigue ABIERTA y bloqueante. La pregunta va al trader por WhatsApp, con el esquema del PDF, fuera de esta rama; su respuesta entrará por la vía de «Mensajes del trader».
+>
+> 5. La sesión 2, operada después de abrir sus láminas: sus correcciones se quedan como ejemplos y se marca que no fue a ciegas, como ya está escrito. No cuenta como sesión operada a ciegas para el Marcador ni para R4.6.
+>
+> 6. Las filtradas: SÍ, se regeneran en esta rama con el guion de main y --solo-filtrar, una por vídeo, para que tapen los tramos de precaución (los seis de v20 y el de la sesión 1 de v21). Antes:
+>    a) Comprueba que la filtrada no está en ningún manifiesto inmutable (knowledge/corpus/transcripciones/, data/manifests/). Si lo está, PARADA.
+>    b) Comprueba que --solo-filtrar lee tramos_no_citables.yaml del árbol actual y no transcribe de nuevo.
+>    Después: el hash de cada filtrada antes y después, en el informe; cuántos segmentos tapa ahora cada una; y que ningún ítem de evidencia de la rama cita una línea que quede tapada (la puerta de la skill, otra vez).
+>    Lo que leyó el revisor dentro de un tramo de precaución (a3) se declara en HOLDOUT-EXPOSICIONES.md como exposición posible, con el tramo y sin contenido, si no está ya declarado así. Para la orden de cierre, la lección: «Un tramo de precaución que se añade después de generar la filtrada obliga a regenerarla antes de que nadie más la lea».
+>
+> 7. [27:19]–[27:54] de v20: por precaución, el tramo no citable de S-2 empieza en 0:27:19. «Linealmente, si lo planteamos usando un gráfico alcista» no deja saber si es el esquema o su gráfico, y lo que no se sabe se niega. Los dos ítems ev-v20-002737-353f9542 y ev-v20-002744-e0555bb6 citan dentro: aplica el régimen de la evidencia que corresponda (supersede si el régimen lo admite para retirar una cita que cae en un tramo no citable, o lo que diga la puerta de la skill). Si ningún régimen lo permite sin romper la inmutabilidad, PARADA con las opciones. Rehaz la fila de S-2, pregunta 2, de la tabla final y la cobertura con lo que quede citable (31:51–32:07 y lo de fuera).
+>
+> 8. Los fotogramas de los repasos de láminas: no se abren, como hasta ahora. No hace falta nada más: están fuera de git y el informe no da ni el número de láminas ni la carpeta.
+>
+> Además, para la orden de cierre:
+> - Deja preparada en §9 una línea de Technical Debt sobre A-35 (sigue ABIERTA y bloqueante tras la 7b, pendiente de la respuesta por WhatsApp), si cabe en el tope de PROJECT_STATE; si no cabe, va en R4.3, en la hoja de ruta.
+> - Para la copia de seguridad, la lista de §9 se actualiza con las filtradas regeneradas.
+>
+> Lo que sigue: un commit con 6, 7 y esta respuesta en el informe (make check sellado antes); push a fix/sesion-08 y CI de Linux, con el número del run de 097f04c9 y del commit nuevo; revisor con alcance en lo nuevo (las filtradas regeneradas contra tramos_no_citables.yaml, la evidencia retirada o supersedida y la tabla final), y su informe pegado al final.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 14. La respuesta del consultor, aplicada (2026-11-21)
+
+- **1, 3 y 5**: se quedan como están en §4 y §7 (desviaciones declaradas; toda corrección, ejemplo,
+  salvo `[86:23]`; la sesión 2, no a ciegas). En `HOJA-USADA-7B.md` §5 se añade que las láminas las
+  abrió el trader. Las lecciones, en §9.
+- **2 y 4**: no se levanta ni la sesión 1 ni el tramo de S-1. A-35 sigue ABIERTA y bloqueante; su línea de
+  Technical Debt, en §9.
+- **6, antes**: (a) ningún manifiesto nombra una filtrada: `grep -rln -i filtrada data/manifests
+  knowledge/corpus/transcripciones` no devuelve nada (exit 0, sin líneas); (b) en
+  `scripts/transcribir_sesion.py` de `main` (`git diff --quiet main`: exit 0), `procesar` lee los tramos
+  con `tramos_del_video(video, RAIZ)`, es decir, `tramos_no_citables.yaml` del árbol actual, y con
+  `--solo-filtrar` relee la cruda que ya existe sin transcribir (registra «modo: solo filtrar (la cruda
+  ya existia; ASR no ejecutado)»), y escribe la filtrada y el registro fuera del repositorio.
+- **6, la regeneración**, con el tramo de S-2 ya en 0:27:19 (punto 7), una llamada por vídeo:
+  `uv run python scripts/transcribir_sesion.py --audio C:/Users/USER/Desktop/sesion-08-audio/sesion-08-v20.wav --sesion 08 --video v20 --solo-filtrar`, y lo mismo con v21.
+
+  | Filtrada | sha256 antes | sha256 después | Segmentos tapados ahora | Bloques |
+  |---|---|---|---|---|
+  | `sesion-08-v20.filtrada.md` | `928445e1ad80…` | `952dd3620bdf…` | 293, por tramos (de 685; antes, 4) | 8 `[NO CITABLE]` |
+  | `sesion-08-v21.filtrada.md` | `2f6d07382049…` | `9886c64a558d…` | 440: 431 por tramos y 9 por tramos y cuarentena a la vez (de 1140; antes, 14) | 7 `[NO CITABLE]` |
+
+  Las crudas no cambian (sha256 igual antes y después: `b5db174809c7…` y `b2577d1181d4…`). Los bloques
+  nuevos: v20 `[39:21–44:05]`, `[48:40–49:18]`, `[03:24–14:45]`, `[15:46–15:50]`, `[27:19–30:08]` y
+  `[32:07–37:38]`, además de los dos de los silencios que ya estaban; v21 `[00:00–47:33]`, que se come el
+  bloque de cuarentena 0:03:54 y el de 0:36:43; el de 1:12:12 pasa a `[NO CITABLE]`. Dos bloques
+  empiezan un segmento antes que su tramo porque ese segmento lo solapa: `[03:24]` (tramo 0:03:27) y
+  `[32:07]` (tramo 0:32:09). Ninguna de las dos líneas se cita (§3.1 y §3.2 dicen ahora hasta `[03:23]`
+  y hasta `[32:06]`).
+- **6, la puerta**: `uv run botsito knowledge validate` (log fuera del repo) da «OK: 753 items de
+  evidencia, 0 contradicciones abiertas, historial intacto» y ningún ERROR. Su comprobación
+  `ventanas_no_citables` (`validation/knowledge.py:102-129`) rechaza todo ítem activo cuya ventana
+  solape un tramo o un segmento de la cruda que solape un tramo, que es lo que la filtrada tapa.
+  `evidence contradictions`: 0 abiertas.
+- **6, la lectura del revisor**: declarada como exposición posible en `HOLDOUT-EXPOSICIONES.md`, con el
+  tramo y sin contenido (fila nueva del 2026-11-21).
+- **7**: el tramo de S-2 empieza en **0:27:19** (antes 0:28:00), con su motivo y su `acordado`. El régimen
+  que vale es el de la evidencia: `knowledge validate` solo comprueba contra los tramos los ítems
+  activos, y un ítem supersedado «no cuenta: no se cita» (`validation/knowledge.py:103-107`). Así que
+  se supersede, sin romper la inmutabilidad: `ev-v20-002630-6271f57e` (`[26:30]`–`[27:13]`, el precio
+  extendido) supersede a `ev-v20-002744-e0555bb6`, y `ev-v20-003151-ac4eb016` (`[31:51]`–`[32:04]`, la
+  opción) supersede a `ev-v20-002737-353f9542`, con el mismo tema
+  (`break_even.margen_segun_distancia`). `ev-v20-002737-ffbdf9b1` ya estaba supersedado (§12). §3.2, la
+  fila de §6 y la de §5.2 se rehacen con lo que queda citable: `[26:30]`–`[27:13]` y
+  `[31:51]`–`[32:06]`.
+- **8**: ningún fotograma abierto.
+- **El texto de dentro del tramo nuevo**: con el tramo desde 0:27:19, tres sitios del informe quedaban con
+  texto de dentro: el resumen de `[27:19]`–`[27:54]` en §3.2, la frase de `[27:19]` en §7.1 (punto 7) y la
+  misma frase en el informe del revisor. Se quitaron, y en el del revisor queda la marca de lo quitado.
+  La respuesta del consultor (§13) la cita también y se deja: se copia tal cual.
+- **La CI**: el run de `097f04c9` es el **44962532780** (`completed`, `failure`; un solo fallo, el esperado,
+  `test_state_check_ok_on_real_repo`; «1 failed, 3497 passed, 101 skipped»). El del commit de esta
+  respuesta, y el revisor de lo nuevo, al pie.
+
 ## Estado
 
-Rama lista para revisión, NO cerrada. La PARADA final (§7.1), para el consultor.
+Rama lista para revisión, NO cerrada. La PARADA final (§7.1), respondida por el consultor (§13) y
+aplicada (§14).
 
 ## Informe del revisor
 
 Subagente `revisor`, lanzado el 2026-11-21 con el informe ya terminado (`69ccd8a2`) y el alcance que pide
-el encargo («CIERRE DE LA RAMA», (1) a (3)). Pegado tal cual, con una sola excepción: en a6 copiaba un
-fragmento de la línea `[00:24]` de v21, que cae en el tramo no citable 0:00:00–0:47:39. Se quitó al
-pegar, y queda la marca «[fragmento de un tramo no citable, quitado al pegar]». Lo que se hizo con
+el encargo («CIERRE DE LA RAMA», (1) a (3)). Pegado tal cual, con dos excepciones: en a6 copiaba un
+fragmento de la línea `[00:24]` de v21, que cae en el tramo no citable 0:00:00–0:47:39; y en «Lo que no
+pude comprobar», la frase de `[27:19]` de v20, que cae desde §14 en el tramo 0:27:19–0:30:14. Se
+quitaron, y queda la marca «[fragmento de un tramo no citable, quitado al pegar]». Lo que se hizo con
 cada hallazgo, en §12.
 
 ### Informe del revisor · trabajo/sesion-08 · 2026-11-21
@@ -1086,7 +1204,7 @@ Resumen: 0 bloquea, 1 importa, 2 menor. Requisitos: 31 hechos, 2 parciales, 0 no
 Lo que la rama hace sin que el encargo lo pida: la columna «Empieza (situada por la voz)» en `HOJA-USADA-7B.md` §5 y un guion fuera del repo que compara marcas con tramos. Los dos están declarados (este último en la fila de HOLDOUT, punto 5) y no pasan de ahí. Lo que el encargo dice que no se toca está intacto (fila 31).
 
 #### Lo que no pude comprobar
-- **Si `[27:19]`–`[27:54]` de v20 es todavía el esquema o ya un gráfico real.** De ahí salen `ev-v20-002737` y `ev-v20-002744`. La voz dice «si lo planteamos usando un gráfico alcista», y el anuncio del gráfico real es en 0:28:00. Para decidirlo haría falta un fotograma, y no se abre ninguno.
+- **Si `[27:19]`–`[27:54]` de v20 es todavía el esquema o ya un gráfico real.** De ahí salen `ev-v20-002737` y `ev-v20-002744`. La voz dice [fragmento de un tramo no citable, quitado al pegar], y el anuncio del gráfico real es en 0:28:00. Para decidirlo haría falta un fotograma, y no se abre ninguno.
 - **El riesgo que queda con la clave**: el informe da el minuto en que empieza cada repaso de láminas (`[55:33]`, el final de `[79:03]`, `[100:10]`, 1:57:19). Lo commiteado no dice qué carpeta es qué sesión, pero esos instantes señalan fotogramas que están en esta máquina, fuera de git. No sé si en pantalla se ve el nombre de la carpeta: no abro fotogramas. Tampoco miré si la columna «Filas» de `PREGUNTAS-7B.md` §1, que está en `main` desde antes, tiene relación con el número de láminas; no es de esta rama.
 - **La filtrada de v20 no tapa los siete tramos de precaución** (se añadieron después de generarla) y no va en orden cronológico: empieza por S-3 y S-4 y deja «SIN PREGUNTA» desde la l. 299. Quien la lea ahora ve el texto de los tramos sin tapar. Por eso me pasó lo de a3 (iii). Regenerarla con el guion de `main` los taparía; lo decide el consultor.
 - Lo que hay dentro de los tramos no citables (las menciones del vídeo de mapeo, el desenlace de S-1, la sesión 1 entera): no lo leí, salvo lo de a3.
