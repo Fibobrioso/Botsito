@@ -38,6 +38,12 @@ ADR-0067, el volumen y las órdenes simultáneas) o después (stops level, marge
 malo**: no se envía, espera y no gasta el punto. Esos otros motivos gastan el punto cuando el 0 está
 del lado bueno.
 
+**Aceptado por el consultor tal como está** (respuesta del 2026-11-22 a la PARADA final de
+`trabajo/activar-sesion-08`, punto 8a): mientras espera no se envía nada; cuando el 0 pasa al lado
+bueno la orden se envía, y si en ese momento sigue vigente el cierre de mercado, el freno o el
+margen, el bróker la rechaza y el punto se gasta; si ya no, entra, como entraría cualquier orden
+colocada en ese momento. Cambia cuándo se gasta el punto, no si se gasta.
+
 Solo vale para la orden STOP en la ruptura (A-47); la límite de las líneas base antiguas no cambia.
 Con `orden_stop_lado_malo` = `se_gasta_el_punto` todo es como antes de este ADR.
 
