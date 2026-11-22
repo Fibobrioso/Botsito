@@ -38,12 +38,13 @@ Con `orden_stop_lado_malo` = `se_gasta_el_punto` todo es como antes de este ADR.
 - Sesión 6 (2026-11-04, S-19): que la orden se pone igual, «ya a mí me habilita»
   (`ev-v17-014103-8cf3e7fb`), y que, con la stop order y el precio por encima, el nivel de la caja
   se va actualizando (`ev-v17-014235-f3375358`, `ev-v17-014350-ec133d13`).
-- Sesión 7b (2026-11-20, S-6): «otra», inclinándose por la (b): «inclinaría más que nada que espero
-  que el cero quede al lado bueno y entonces la pongo» (`ev-v20-010243-21636d5f`); y, a «¿Y si el
-  precio vuelve por debajo del 0 antes de que pongas la orden?», que la orden tiene que estar a
-  nivel y, si sube o retrocede, «solo toca esperar» (`ev-v20-010354-ada60dca`). Lo dijo con «me
-  inclinaría»; la extracción lo da «en parte», sin regla general clara y sin decir si vale en
-  compra y en venta (`SESION-08-EXTRACCION.md` §3.6).
+- Sesión 7b (2026-11-20, S-6): la opción «otra» de la hoja, inclinándose por la (b): «inclinaría
+  más que nada que espero que el cero quede al lado bueno y entonces la pongo»
+  (`ev-v20-010243-21636d5f`); y, a «¿Y si el precio vuelve por debajo del 0 antes de que pongas la
+  orden?», que la orden tiene que estar a nivel y, si sube o retrocede, «solo toca esperar»
+  (`ev-v20-010354-ada60dca`). Lo dijo inclinándose, no como regla; la extracción lo da «en parte»,
+  sin regla general clara y sin decir si vale en compra y en venta (`SESION-08-EXTRACCION.md`
+  §3.6).
 
 **Lectura del consultor** (encargo, F2, con estas palabras): «no cierro nada. Cambio un
 comportamiento de ejecución que las dos sesiones contradicen y lo dejo como LECTURA DEL CONSULTOR,

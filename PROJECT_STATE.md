@@ -16,7 +16,7 @@ f4b5a9a2 · merge de `trabajo/sesion-08` (tag `stable/F39j-sesion-08`), sobre `s
 f4b5a9a2 · merge trabajo/sesion-08: la sesión 7b (v20 y v21) ingerida y extraída (SESION-08-EXTRACCION.md) · tag stable/F39j-sesion-08
 
 ## Tests Currently Passing
-2130 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2132 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

@@ -630,8 +630,15 @@ parametros:
       pregunta 1 (si una mecha de M1 posterior que pasa el alto y vuelve lo mueve) no la contesto,
       y la mecha de una verde (ev-v18-002701-62875550) cuenta como «en parte»: A-35 sigue ABIERTA y
       el valor no cambia (respuesta del consultor a la PARADA 4 de trabajo/sesion-07); la pregunta 1
-      va a la 7b reformulada. Lo lee quien construye los datos del dia (arnes y visor), no una
-      regla: engine/motor.py aplica el selector sobre domain/pivotes_m15.py
+      va a la 7b reformulada. EN LA SESION 7b (S-1, 2026-11-20; trabajo/activar-sesion-08), sobre
+      el esquema, lo unico citable es que la mecha de una M1 que pasa el alto de M15 sin romper con
+      cuerpo no es una toma de liquidez de M15 sino liquidez de M1: «la regla es que rompa con
+      cuerpo y cierre con cuerpo por arriba» y, si no, «se llegaría a considerar liquidez de M1»
+      (ev-v20-000138-82b9ab6a), y si lo hace con mecha la traza «como una zona lineal de liquidez
+      de M1» y espera que el precio rompa (ev-v20-000251-9f6188aa). No dice donde queda su alto de
+      M15 ni elige opcion: su opcion cayo en un tramo no citable (SESION-08-EXTRACCION.md §3.1).
+      No fija valor: A-35 sigue ABIERTA. Lo lee quien construye los datos del dia (arnes y visor),
+      no una regla: engine/motor.py aplica el selector sobre domain/pivotes_m15.py
     consumido_por: [ADR-0084]
     estado: DEFAULT_AMBIGUOUS
     valor: solo_la_contraria
@@ -816,11 +823,12 @@ parametros:
       el punto cambio; la comprobacion es la del broker (la misma cotizacion, que sin ticks es la
       M1 anterior al cierre). Lo que dijo el trader: en la sesion 6 (2026-11-04), que la orden «se
       pone igual» y el nivel de la caja se va actualizando (ev-v17-014103-8cf3e7fb,
-      ev-v17-014235-f3375358, ev-v17-014350-ec133d13); en la 7b (2026-11-20, S-6), «otra»,
-      inclinandose por esperar: «inclinaría más que nada que espero que el cero quede al lado bueno
-      y entonces la pongo» (ev-v20-010243-21636d5f), y que la orden tiene que estar a nivel y «solo
-      toca esperar» (ev-v20-010354-ada60dca); con «me inclinaría», en parte y sin regla general
-      clara (SESION-08-EXTRACCION.md §3.6), y sin decir si vale en compra y en venta. Las dos
+      ev-v17-014235-f3375358, ev-v17-014350-ec133d13); en la 7b (2026-11-20, S-6), la opcion
+      «otra» de la hoja, inclinandose por esperar: «inclinaría más que nada que espero que el cero
+      quede al lado bueno y entonces la pongo» (ev-v20-010243-21636d5f), y que la orden tiene que
+      estar a nivel y «solo toca esperar» (ev-v20-010354-ada60dca); inclinandose, no como regla, en
+      parte y sin regla general clara (SESION-08-EXTRACCION.md §3.6), y sin decir si vale en
+      compra y en venta. Las dos
       sesiones coinciden en que ese punto no se pierde. DEFAULT_AMBIGUOUS en `espera`: LECTURA DEL
       CONSULTOR del 2026-11-21 (encargo de trabajo/activar-sesion-08, F2), no una respuesta
       cerrada. Lo lee el cableado (engine/primitivas_broker.py, colocar_orden_limite), no una regla

@@ -2030,10 +2030,11 @@ ambiguedades:
       dicho: en la sesión 6 (2026-11-04), que la orden se pone igual, «ya a mí me habilita»
       (ev-v17-014103-8cf3e7fb), y que, con la stop order y el precio por encima, el nivel de la caja
       se va actualizando (ev-v17-014235-f3375358, ev-v17-014350-ec133d13); en la 7b (2026-11-20,
-      S-6), «otra», inclinándote por esperar: «inclinaría más que nada que espero que el cero quede
-      al lado bueno y entonces la pongo» (ev-v20-010243-21636d5f), y que la orden tiene que estar a
-      nivel y, si sube o retrocede, «solo toca esperar» (ev-v20-010354-ada60dca). Lo dijiste con «me
-      inclinaría» y sin decir si vale igual en compra y en venta (SESION-08-EXTRACCION.md §3.6). Las
+      S-6), la opción «otra» de la hoja, inclinándote por esperar: «inclinaría más que nada que
+      espero que el cero quede al lado bueno y entonces la pongo» (ev-v20-010243-21636d5f), y que la
+      orden tiene que estar a nivel y, si sube o retrocede, «solo toca esperar»
+      (ev-v20-010354-ada60dca). Lo dijiste inclinándote, no como regla, y sin decir si vale igual
+      en compra y en venta (SESION-08-EXTRACCION.md §3.6). Las
       dos sesiones coinciden en que ese punto no se pierde. Hasta tu respuesta el bot usa la LECTURA
       DEL CONSULTOR (orden_stop_lado_malo = espera, ADR-0097): la orden no se envía mientras la
       cotización deje el 0 del lado malo, sin gastar ni la caja ni el punto, y se envía en el primer

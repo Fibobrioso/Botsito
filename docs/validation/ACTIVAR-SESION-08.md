@@ -501,9 +501,124 @@ Cuadró en la fase 0 (0.5). Lo hecho, en un commit:
   mitad en la orden de cierre.
 - `generar_capa.py --comprobar`: `Generado.mqh` al día (el parámetro nuevo no está en ENTRAN).
 
-La corrida de julio tras F2, con su delta y si casan las filas declaradas, va en el commit siguiente
-(sobre este código commiteado).
+### F2, la corrida de julio (etiqueta `f2`, sobre 7592c73e)
+
+Las tres órdenes de D0 (fila de HOLDOUT del 2026-11-22, antes de correr), y `delta_julio.py` contra
+la base de esta rama:
+
+- `pivote-julio-f2.txt`: **T0 10; P5 18 (16 mismo lado, 2 otro lado); P6 en sesión 2; operaciones de
+  más 20**; P1 1, P2 8, P3 14, P4 32, P7 2.
+- **Delta contra el control (la base de esta rama, 11 y 19): parejas −1, operaciones de más +1.
+  Contra la línea base de `PIVOTES-SESION-7.yaml` (14 y 39): parejas −4, operaciones de más −19.**
+- `delta-julio-base-f2.txt`: 86 → 87 filas; 0 sesiones cambian de rn003; **4 filas cambian de
+  patrón, 2 aparecen, 1 desaparece**.
+- La sección «### Esperas» de `julio-f2.txt`: **6 esperas, 3 enviadas después** (07-06 07-11, 1,
+  enviada; 07-08 11-15, 1, nunca; 07-10 07-11, 4, dos enviadas).
+
+**Si casan las filas declaradas (las de 2026-07-06 07-11, 2026-07-08 11-15 y 2026-07-10 07-11):**
+
+- **(i) Ningún rechazo por `precio_invalido` al colocar en julio**: «Rechazos por motivo: ninguno»
+  (en la base, 5). **Casa.**
+- **(ii) Cada fila que cambia, una por una:**
+  - 2026-07-06 07-11, aparece un P5 de más (compra): **sesión declarada**; es la orden que esperó
+    desde las 05:06:59Z y se envió después (antes, rechazada).
+  - 2026-07-10 07-11, aparece un P5 de más, desaparece otro y una P2 del trader pasa de Δentrada 4 a
+    26 puntos: **sesión declarada**; las esperas de esa sesión (05:19:59Z, 05:21:59Z y 07:08:59Z) y
+    las órdenes que salieron de ellas (o1 y o6, `motor decisiones`).
+  - **2026-07-10 11-15, tres filas del trader pasan a P4 «sin orden»** (una T0 pareja y dos P7):
+    **no es una sesión declarada; la explica un freno de la cuenta.** `motor decisiones --bitacora
+    2026-07-10` (`data/activar-sesion-08/decisiones-f2/`): en la de 07 a 11, las órdenes enviadas tras
+    esperar se llenan y saltan su stop (pos-o6, pos-o7, y después pos-o8), y desde las 09:52 (07:52Z)
+    **RN-032** («no se abre una operación cuyo riesgo no cabe antes del límite de la firma») prohíbe
+    abrir; sigue prohibiendo toda la sesión de 11 a 15 (desde su primer cierre, 11:00), así que la
+    orden que en la base emparejaba con el trader (o15) ya no se coloca. En la base, RN-032 también
+    disparaba ese día, pero después de o15. `motor decisiones` compara por día, sesión, lado, instante
+    y entrada, y no ve el lote ni el stop: que el riesgo no quepa se lee de la prohibición de RN-032,
+    no de un lote.
+  - **Casa**, con la de 11 a 15 explicada por el freno.
+- **(iii) Las peticiones del día más cargado no suben**: el 2026-07-02, 45 en la base y 45 tras F2.
+  **Casa.** (El 2026-07-06 sube de 37 a 41 y el 2026-07-10 baja de 22 a 12; el máximo diario sigue
+  siendo 45, tope 2000.)
+
+**CASA.** Ninguna cifra de esta corrida decide un parámetro (ADR-0093 §4): `orden_stop_lado_malo`
+sigue DEFAULT_AMBIGUOUS y A-59 ABIERTA. Para el consultor, sin decidir: el delta en parejas es −1, y
+la que se pierde la quita un freno de la cuenta (RN-032), que es la tensión que ACTIVAR-SESION-07.md
+dejó para antes de (3) («los frenos de la cuenta del mes … que mueven parejas de rebote en julio»).
+
+## F3 · S-5 (S-22): NO SE ACTIVA
+
+El motor no cambia. Lo que dijo el trader en la 7b (S-5, `SESION-08-EXTRACCION.md` §3.5): leyó las dos
+opciones, dudó y pidió más planteamiento, y acabó en «una vela roja, una vela verde, o al revés, allí
+se traza un punto» (`ev-v20-010049-b400e914`), que es lo que el bot hace hoy (ADR-0085 §3).
+
+- **Las dos filas de «Para precisar» NO se activan**, aunque la tabla final las dé como «resuelve»
+  (sin pasar ningún mínimo no hay punto, `ev-v20-010049-4cb7f481`; basta la mecha,
+  `ev-v20-010049-12e69e6d`): responden dentro de una condición (que la roja pase un mínimo) que él
+  mismo no afirmó, y sueltas no son una regla (decisión del consultor, F3).
+- **Las lecturas del consultor del 2026-11-06 para esta fase** («el último pivote que vale»,
+  ACTIVAR-SESION-06-MOTOR.md, respuesta a la PARADA, decisión 0) **quedan sin objeto**: no hay
+  condición que haga que un pivote «no valga».
+- Recuadro fechado en ADR-0085 §3, junto al del 2026-11-05: la «rama de motor» a la que aquel
+  mandaba la condición (`trabajo/activar-sesion-06-motor`) la dejó en PARADA, el consultor la mandó a
+  la sesión 7 «y después en rama propia», y esa rama es esta; la condición no entra.
+- S-22 va a la sesión siguiente, dentro del bloque de días, sobre un día de construcción.
+- Ni `ultimo_punto_de_ruptura`, ni `_pivotes_m1`, ni los 20 tests de ACTIVAR-SESION-06-MOTOR.md §d se
+  tocan. (El 52 % es con la lectura (a); con la (b), el 69 %: ACTIVAR-SESION-06-MOTOR.md:154.)
+
+## F4 · La zona de control pide una vela contraria (v21 [86:23], `ev-v21-012623-bbdaf48a`)
+
+**Cuadró** (0.6): el motor ya lo cumple. No se toca el motor ni RN-009. Entra
+`tests/unit/test_zona_control_vela_contraria.py` (4), que lo **congela**: para todas las secuencias
+de colores de hasta 7 velas tras la toma (verde, roja y sin cuerpo; 3.279 por lado), en compra y en
+venta, cada zona de control que cuenta `pivotes_de_control` tiene al menos una vela contraria al
+impulso entre la primera vela del impulso y la que la forma; y todas del color del impulso no dan
+ninguna zona. Pasa en `main` y en la rama (el dominio no cambia).
+
+**Qué enseñaba la lámina y por qué él lo leyó como zona** (0.6): las dos zonas de control que contó el
+bot el 2026-04-27 de 11 a 15 tienen dos velas rojas cada una; lo que él leyó como «zona» con todas
+las velas verdes no lo dice nada de lo que se puede mirar (decisión 7 de la PARADA). Ningún registro
+de feedback sobre RN-009 (el encargo lo prohíbe: se contradijo sobre las zonas en la misma sesión);
+la constancia, en este informe y en la lista de la sesión siguiente.
+
+## F5 · Lo que se registra sin tocar el motor
+
+- **S-1 (A-35):** la descripción de `liquidez_m15_mecha_que_vuelve` gana solo lo citable: la mecha de
+  una M1 que pasa el alto de M15 sin romper con cuerpo no es una toma de M15 sino liquidez de M1
+  (`ev-v20-000138-82b9ab6a`, `ev-v20-000251-9f6188aa`); no dice dónde queda su alto. Sin valor nuevo;
+  **A-35 ABIERTA**, `liquidez_m15_mecha_que_vuelve` sigue en `solo_la_contraria`, DEFAULT_AMBIGUOUS.
+- **S-2, pregunta 1 (RN-009):** no resuelve y se contradijo en cuántas zonas (§5.1, punto 1 de la
+  extracción). Nada se activa. A la sesión siguiente; él pidió dos veces una sesión para explicarlo
+  (v21 [86:52] y [110:27], sin ítem propio).
+- **S-2, pregunta 2 (A-13, el margen):** «otra», según el contexto, sin cifra. No se activa: **A-13
+  sigue ABIERTA solo por el margen** y no nace ningún parámetro. El E21 de la auditoría queda sin
+  objeto en su parte de la cifra; la otra parte, en la decisión 4 de la PARADA.
+- **S-3 y S-4: lo que dijo sin duda, como notas que no fijan valor** (decisión 3 de la PARADA: por
+  ahora solo aquí, porque F1 prohíbe tocar `orden_stop_punto`, `sesgo_h4_rango_nuevo`, A-48 y A-58):
+  - S-3, la compra: «Ahora, para precisar, ¿lo haces igual en una compra? Exacto, lo hago igual en
+    una compra.» (`ev-v20-004803-377e65aa`).
+  - S-4, el dibujo 2: con una vela de color contrario que rompe por encima, sigue buscando
+    alcistas y el rango queda en el mismo nivel hasta que lo rompa una vela de su color
+    (`ev-v20-005520-80eba002`).
+  - S-4, siempre en H4: «siempre marca su rango en su temporalidad mayor»
+    (`ev-v20-005723-f1eff54a`, la afirmación del ítem).
+  - S-4, la ruptura por abajo, igual: **sin ítem de evidencia** (v20 [57:42]–[57:50], extracción
+    §3.4); no se cita aquí más que por la extracción, y la evidencia está protegida en esta rama.
+- **S-5:** lo de F3. **S-6:** lo de F2.
+- **S-7:** resuelve una pregunta de material: la tarde del 10 de julio no se grabó
+  (`ev-v20-011213-947092b6`). Recuadro fechado en `VIDEO-JULIO.md`, junto al pasaje de la pregunta
+  (§10, «Bloque técnico, dos preguntas»).
+- **B-15** (la fila P1 del 2026-07-01 de 11 a 15; la respuesta del consultor a la PARADA final de la
+  7a la mandaba a la 7b): no se preguntó; va al bloque de días de la sesión siguiente.
+- **Para la preparación de la sesión siguiente:** el 2026-04-24 de 07 a 11 queda gastado; las
+  reservas del 2026-01-22 (de 11 a 15) y del 2026-07-16 (de 07 a 11) siguen sin usar.
+- `spec_version` 19.1.0 → **19.1.1** (parche: solo una descripción), `spec manifest --escribir` y
+  `spec docs --escribir`; trailer `Fuente:` con los dos ítems de S-1.
+
+Este commit lleva también la corrida de julio tras F2 (arriba), que se hizo sobre 7592c73e: F3, F4 y
+F5 no cambian el motor, así que la corrida es la del código de este commit. Desviación declarada:
+F3, F4 y F5 van en un mismo commit, con la corrida de F2, para no gastar tres `make check` en
+cambios que no tocan el motor.
 
 ## Estado
 
-EN CURSO: fase 0 escrita; F2 hecha (falta su corrida de julio); siguen las demás.
+EN CURSO: fase 0 escrita; F2 hecha y su corrida de julio casa; F3, F4 y F5 hechas; siguen F6 y F7.
