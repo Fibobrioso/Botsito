@@ -123,3 +123,43 @@ en el bloque, como dice el propio encargo: el bloque solo admite ids de fuente (
 > Push a fix/activar-sesion-08 y CI de Linux (el único fallo aceptado es el de state check por el nombre fix/); dame el número del run. Después, la PARADA final con: lo de F1, A-59 tal como quedó redactada, los deltas, lo que quedó en PARADA y lo que no te convence.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA final (2026-11-22)
+
+Dada por Aleks el 2026-11-22, en un solo mensaje. Copiada tal cual. Nombra `ADR-0087`, que no
+existe a propósito (lo cita la auditoría del 2026-11-21), y por eso va declarado aquí:
+
+```ids-inexistentes
+ADR-0087 — no existe a propósito; lo nombra la auditoría del 2026-11-21 (punto 0 de esta respuesta)
+```
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Respuesta del consultor a la PARADA de trabajo/activar-sesion-08 (2026-11-22). Cópiala tal cual al final del informe, con la fecha, en un commit propio, y aplícala punto por punto. Si la aplicas otro día que no sea el 2026-11-22, la fila de HOLDOUT-EXPOSICIONES de ese día va antes del primer make check.
+>
+> 0. La auditoría: (a). Cabecera propia (título, procedencia: «entregada por Aleks el 2026-11-21 y copiada tal cual», y el bloque ids-inexistentes con ADR-0087 y su razón) y debajo el texto sin tocar una línea, en un commit propio. Si knowledge validate rechaza otro id del cuerpo, va al mismo bloque con su razón y lo dices; si es algo que el bloque no cubre, PARADA de este punto solo.
+>
+> 1. A-48 (S-3): (c). orden_stop_punto sigue en ultimo_pivote_m1, DEFAULT_AMBIGUOUS, y A-48 ABIERTA. Porqué: 0.3 y 0.4 dicen que la lectura de hoy y la suya coinciden con un retroceso limpio y se separan cuando la zona tiene estructura interna, y sus palabras no dicen cuál es la suya. En «Para la rama y la sesión siguientes», la pregunta reformulada sobre una lámina de un día de construcción con estructura interna en la zona de control: «¿dónde pones aquí tu 0?». Y, como hipótesis para preparar esa sesión, sin decidir nada: la estructura interna de la zona de control es la misma pieza en A-48 (el 0 sube al pivote interno) y en RN-009 (el motor cuenta dos zonas y descarta el esquema), y el trader se contradijo en la 7b sobre cuántas zonas le valen; puede ser una sola duda.
+>
+> 2. A-58 (S-4): (a). A-58 ABIERTA solo por el dibujo 1; sesgo_h4_rango_nuevo sigue DEFAULT_AMBIGUOUS. La pregunta, sobre una H4 real de construcción.
+>
+> 3. Las notas de S-3 y S-4: (a). Solo en el informe hasta que A-48 y A-58 se decidan.
+>
+> 4. E21: (a). No se toca aquí; va a la rama que fije el margen del break even (ambiguedades.yaml no entra en el chore(cierre)).
+>
+> 5. A-35 y bloqueante: (b), se queda en true. Porqué: según tu 0.8, el campo hace dos cosas que siguen haciendo falta: validation/knowledge.py:845-848 impide que una bloqueante se cierre por decisión del consultor, y cases/cuestionario.py:132 la pone primera en el cuestionario. A-35 tiene que contestarla el trader y tiene que ir primera. Lo único que se arregla es el texto que está mal: la descripción de liquidez_m15_pivote_formado deja de decir «BLOQUEANTE de RN-004» (RN-004 está VIGENTE y ese parámetro CONFIRMED) y dice que la que sigue abierta y bloqueante es A-35, por su segunda mitad (liquidez_m15_mecha_que_vuelve). Commit propio, con spec docs --escribir y su trailer Fuente: con un id que exista. test_kit.py y la tabla de PROJECT_STATE no cambian.
+>
+> 6. Los frenos de la cuenta antes de (3): se quedan como están en la corrida que cuenta, sin retocar. Porqué: son parte del bot que va a operar, la corrida está pre-registrada con una cuenta por mes (ADR-0092 §8) y que muevan parejas de rebote es lo que pasaría en vivo; el caso extremo, la cuenta frenada antes del 17, ya lo cubre la contingencia del 2026-11-19. Para el encargo de (3), y escrito así en «Para la corrida de (3)»: como dato sin umbral, por cada sesión de julio, las filas que cambian entre la corrida por mes y la diaria y qué freno lo explica. Con esto queda cerrado lo que dejé pendiente el 2026-11-18 (respuesta a la PARADA final de trabajo/activar-sesion-07, 6.a).
+>
+> 7. Qué leyó el trader como zona de control: (a). Una línea en la lista de la sesión siguiente: sobre la lámina del 2026-04-27 de 11 a 15, «en esta lámina, ¿qué ves como zona de control?». Que Aleks la revise antes es opcional.
+>
+> 8. Sobre lo que no te convence:
+>    a) El orden de F2 con los otros motivos de rechazo: se acepta como está. Porqué: mientras espera no se envía nada; cuando el 0 pasa al lado bueno la orden se envía, y si en ese momento sigue vigente el cierre de mercado, el freno o el margen, el bróker la rechaza y el punto se gasta; si ya no, entra, como entraría cualquier orden colocada en ese momento. Cambia cuándo se gasta el punto, no si se gasta. Añade esta frase al §1 de ADR-0097 (el ADR nace en esta rama y aún no está en main), en el mismo commit que el punto 5 o en uno propio.
+>    b) Que la pareja que se pierde la quite RN-032: queda cubierto por el punto 6.
+>    c) Que las láminas no enseñen la espera: línea de Technical Debt para la orden de cierre, con dueño la rama que genere las láminas de la sesión siguiente. Prepárala en «Para la orden de cierre» con sus bytes.
+>    d) Los tests que pasan sin mirar el estado en los días sin ticks (test_sello_respaldo): línea de Technical Debt, preparada igual; la corrida de (3) dará los rechazos por motivo y por día.
+>    e) La señal de PICO DE MEMORIA: error mío del encargo, va a la fila de errores del cierre.
+>
+> Después: make check, push a fix/activar-sesion-08 y la CI de Linux con su run. Un informe corto: los commits nuevos, el tamaño de PROJECT_STATE y el saldo que quedaría con lo preparado para la orden de cierre (con las dos líneas nuevas de Technical Debt), y lo que no hayas podido aplicar.
+>
+> Rama lista para revisión, NO cerrada.
