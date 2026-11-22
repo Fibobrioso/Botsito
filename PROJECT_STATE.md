@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/recorrida-construccion-3
 
 ## Current Feature
-Ninguna abierta: trabajo/activar-sesion-08 cerrada en main (stable/F39k-activar-sesion-08). Lo siguiente, en la Next Action (F, paso (3)).
+trabajo/recorrida-construccion-3 EN CURSO (R4.3, F paso (3)): la corrida que cuenta con la 7b, el pivote y la meta pre-registrada. Encargo docs/encargos/trabajo-recorrida-construccion-3.md; informe docs/validation/RECORRIDA-CONSTRUCCION-3.md.
 
 ## Stable Main State
 f04868cc · merge de `trabajo/activar-sesion-08` (tag `stable/F39k-activar-sesion-08`), sobre `stable/F39j-sesion-08` (f4b5a9a2). Informe docs/validation/ACTIVAR-SESION-08.md; el registro del cierre, al final de HISTORIA.
@@ -171,8 +171,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 79 (2026-11-21).
+— ninguna desde el Archivo 80 (2026-11-22).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 79 (2026-11-21).
+— ninguna desde el Archivo 80 (2026-11-22).
