@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 19.0.5` · hash `a5f53065d3e0…`
+`spec_version 19.1.0` · hash `e467bfd71869…`
 
-113 en total: 103 con valor y 10 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+114 en total: 104 con valor y 10 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -78,6 +78,7 @@
 | `orden_limite_nace` | `al_aparecer_punto_de_breaker` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-755c534e` | cuando se coloca por primera vez la orden limite de una zona |
 | `orden_pendiente_al_abrir_escenario` | `se_mueve` | DEFAULT_AMBIGUOUS · en revision por A-53 | estrategia | `fb-2026-09-29-sesion-03-c7fa3068` | que pasa con una orden sin llenar del escenario anterior cuando la sesion abre otro |
 | `orden_pendiente_al_abrir_sesion` | `se_retira` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-45e624c5` | que pasa con una orden sin llenar al abrir la sesion siguiente y al llegar ventana_fin |
+| `orden_stop_lado_malo` | `espera` | DEFAULT_AMBIGUOUS · en revision por A-59 | estrategia | `ev-v20-010243-21636d5f` | que hace el bot con la orden stop cuyo 0 ya queda del lado malo del precio al ir a colocarla |
 | `orden_stop_punto` | `ultimo_pivote_m1` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-002201-2b2f20aa` | el posible punto de breaker en el que nace la orden stop |
 | `parciales` | `no` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0905fd59` | si/no |
 | `perdida_maxima_diaria` | `4.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | porcentaje del saldo que declara base_calculo_perdida_diaria |
@@ -162,6 +163,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `lote_margen_libre_fraccion` → ADR-0081
 - `lote_si_no_cabe` → ADR-0081
 - `modelo_llenado` → F24, F27
+- `orden_stop_lado_malo` → ADR-0097
 - `orden_stop_punto` → ADR-0064
 - `perdida_trader_alcance` → ADR-0053
 - `perdida_trader_magnitud` → ADR-0053
@@ -538,6 +540,12 @@ Opciones: `se_mueve`, `se_retira`.
 la orden de entrada que sigue pendiente cuando abre la sesion siguiente o cuando llega ventana_fin (RN-035; ADR-0066). `se_retira`: se cancela en la apertura -y, desde el 2026-10-12, tambien al llegar ventana_fin por la propia regla- y la sesion nueva empieza de cero. `sigue_hasta_ventana_fin`: sigue viva, sin reubicarse con los puntos de la sesion nueva, hasta el llenado o la ventana, que es lo que hacia el motor hasta el 2026-10-01 (DECISION 3 de ADR-0064) y deja la sesion nueva sin poder colocar (RN-011). Fue PROVISIONAL hasta la pregunta 5 de la sesion 4 («Si a las 11 o a las 3 tienes una orden stop puesta que no se ha llenado, ¿qué haces con ella?», A-30 y A-39). El valor salia de que cada sesion es «un mundo diferente» (fb-2026-09-29-sesion-03-5021677e, A-46 RESUELTA). CONFIRMADO POR EL TRADER el 2026-10-04 (sesion 4, S-5, v10 0:54:27): «sí, se quita, porque siempre se va a ir actualizando la orden» (ev-v10-005427-1a0867af). A-30 y A-39 RESUELTAS. La retirada a ventana_fin la hace RN-035 desde el 2026-10-12 (trabajo/activar-sesion-04-motor); la cancelacion del cableado al terminar el dia (ADR-0053 §6) queda como red de seguridad. El nombre del parametro no cambia
 
 Opciones: `se_retira`, `sigue_hasta_ventana_fin`.
+
+### `orden_stop_lado_malo`
+
+la orden stop que, al ir a colocarla, la cotizacion deja con el 0 del lado malo (una compra stop por debajo del ask, una venta stop por encima del bid; ADR-0057 §2-§4), es S-19 (A-59, ADR-0097). `se_gasta_el_punto`: se envia, el broker la rechaza por precio_invalido y el rechazo gasta el punto (ADR-0083 D1; la decision 1 de ADR-0064), lo de antes del 2026-11-22. `espera`: no se envia (ninguna peticion), la caja no queda usada y el punto no se gasta; se envia en el primer cierre de M1 en que el 0 vigente quede del lado bueno, y RN-006 la mueve si el punto cambio; la comprobacion es la del broker (la misma cotizacion, que sin ticks es la M1 anterior al cierre). Lo que dijo el trader: en la sesion 6 (2026-11-04), que la orden «se pone igual» y el nivel de la caja se va actualizando (ev-v17-014103-8cf3e7fb, ev-v17-014235-f3375358, ev-v17-014350-ec133d13); en la 7b (2026-11-20, S-6), «otra», inclinandose por esperar: «inclinaría más que nada que espero que el cero quede al lado bueno y entonces la pongo» (ev-v20-010243-21636d5f), y que la orden tiene que estar a nivel y «solo toca esperar» (ev-v20-010354-ada60dca); con «me inclinaría», en parte y sin regla general clara (SESION-08-EXTRACCION.md §3.6), y sin decir si vale en compra y en venta. Las dos sesiones coinciden en que ese punto no se pierde. DEFAULT_AMBIGUOUS en `espera`: LECTURA DEL CONSULTOR del 2026-11-21 (encargo de trabajo/activar-sesion-08, F2), no una respuesta cerrada. Lo lee el cableado (engine/primitivas_broker.py, colocar_orden_limite), no una regla
+
+Opciones: `se_gasta_el_punto`, `espera`.
 
 ### `orden_stop_punto`
 

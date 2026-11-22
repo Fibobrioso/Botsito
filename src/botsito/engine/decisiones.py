@@ -5,7 +5,7 @@
 por la compuerta del arnes, como la seccion de rentabilidad sobre construccion (ADR-0092 §6, y su
 NOTA para la ablacion): sus recuentos no son una medida, ninguna rama de spec ni de motor se
 justifica con ellos, y las ramas de spec citan al trader (`ev-*`, `fb-*`). Como se convierte una
-respuesta del trader en regla lo fijara el ADR del metodo (RUMBO §1); esto no lo adelanta. Una
+respuesta del trader en regla lo fija ADR-0093 (§4); esto no lo adelanta. Una
 operacion de mas del bot no se llama error (VIDEO-JULIO.md §10, punto 4).
 
 **La bitacora** es un observador pasivo (`MotorCableado.observador`): recibe cada cierre de M1
@@ -280,6 +280,7 @@ class _Dia:
     ordenes: dict[str, str] = field(default_factory=dict)  # id -> estado visto
     posiciones: dict[str, bool] = field(default_factory=dict)  # id -> abierta vista
     no_enviadas: int = 0
+    esperas: int = 0  # las de ADR-0097 ya escritas
     hechos: dict[str, str] = field(default_factory=dict)
 
 
@@ -500,6 +501,12 @@ class Bitacora:
             ms, zid, motivo, _ = zona_id_t
             salida.append(f"orden NO enviada en {zid} a las {self._hora_ms(c, ms)}: {motivo}")
         d.no_enviadas = len(c.ctx.no_enviadas)
+        for desde, zid, _ in c.ctx.esperas[d.esperas :]:
+            salida.append(
+                f"orden NO enviada en {zid} a las {self._hora_ms(c, desde)}: el 0 queda del lado "
+                "malo; espera sin gastar la caja ni el punto (ADR-0097)"
+            )
+        d.esperas = len(c.ctx.esperas)
         for oid in sorted(c.broker.ordenes, key=lambda x: int(x[1:])):
             o = c.broker.ordenes[oid]
             if d.ordenes.get(oid) == o.estado:
@@ -511,6 +518,12 @@ class Bitacora:
                     f"orden {oid} ({o.tipo}, {o.lado}) en {zid}: precio {precio}, stop {stop}, "
                     f"objetivo {_precio(o.objetivo, c.escala)}, lote {o.lotes}; estado {o.estado}"
                 )
+                tras = next((e[0] for e in c.ctx.esperas if e[2] == oid), None)
+                if tras is not None:
+                    salida.append(
+                        f"orden {oid}: enviada tras esperar desde las {self._hora_ms(c, tras)}, "
+                        "cuando el 0 queda del lado bueno (ADR-0097)"
+                    )
             else:
                 salida.append(
                     f"orden {oid}: {d.ordenes[oid]} -> {o.estado} a las "

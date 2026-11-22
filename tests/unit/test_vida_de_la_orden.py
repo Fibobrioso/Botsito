@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import dataclasses
 from decimal import Decimal
+from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
@@ -119,10 +120,14 @@ def test_sin_apalancamiento_en_el_perfil_las_columnas_de_margen_dicen_sin_medida
 
 
 def test_una_orden_rechazada_sale_con_el_motivo_del_broker_y_cuenta_por_motivo(
-    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    vocabulario: dict[str, dict[str, Any]], tmp_path: Path
 ) -> None:
     """En RUTA_STOP el precio esta por encima de la entrada cuando se coloca: una compra STOP alli
-    queda del lado equivocado y el broker la rechaza (ADR-0057, `test_cableado`)."""
+    queda del lado equivocado y el broker la rechaza (ADR-0057, `test_cableado`). CAMBIA A
+    PROPOSITO el 2026-11-22 (trabajo/activar-sesion-08, ADR-0097): con `orden_stop_lado_malo` =
+    `espera`, el valor por defecto, esa orden ya no se envia; el rechazo y su fila se prueban con la
+    otra opcion, `se_gasta_el_punto` (`test_orden_lado_malo` prueba la espera)."""
+    registro = tc._registro_se_gasta(tmp_path)
     motor = tc._motor(registro, vocabulario, tc._mercado(tc.RUTA_STOP))
     motor.tipo_orden = STOP_EN_RUPTURA
     motor.correr_dia(tc._dia())

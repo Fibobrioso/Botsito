@@ -1,14 +1,11 @@
 # Encargo · trabajo/activar-sesion-08
 
 Dado por Aleks (consultor) el 2026-11-21, en un solo mensaje. Copiado tal cual. El ADR que el
-encargo manda escribir en F2 va declarado aquí en un bloque `ids-inexistentes`, como exige
-`knowledge validate` (la forma del commit de apertura de `trabajo/activar-sesion-07`, 76f163c7);
-sale del bloque en el commit que lo crea. A-59 no va en el bloque, como dice el propio encargo: el
-bloque solo admite ids de fuente (`ev-*`, `fb-*`, `ADR-NNNN`).
-
-```ids-inexistentes
-ADR-0097 — el encargo lo manda escribir en F2 (la orden cuyo 0 queda del lado malo espera); aún no existe
-```
+encargo manda escribir en F2, ADR-0097, iba declarado aquí en un bloque `ids-inexistentes`, como
+exige `knowledge validate` (la forma del commit de apertura de `trabajo/activar-sesion-07`,
+76f163c7), y salió del bloque (y el bloque con él) en el commit que lo crea, el de F2. A-59 no fue
+en el bloque, como dice el propio encargo: el bloque solo admite ids de fuente (`ev-*`, `fb-*`,
+`ADR-NNNN`).
 
 > Modelo: Opus · Esfuerzo: alto
 >

@@ -16,7 +16,7 @@ f4b5a9a2 · merge de `trabajo/sesion-08` (tag `stable/F39j-sesion-08`), sobre `s
 f4b5a9a2 · merge trabajo/sesion-08: la sesión 7b (v20 y v21) ingerida y extraída (SESION-08-EXTRACCION.md) · tag stable/F39j-sesion-08
 
 ## Tests Currently Passing
-2122 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2130 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -73,6 +73,7 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 | A-55 | qué hace FTMO con las órdenes pendientes antes de un cierre largo, y qué mercado cuenta | medicion | no | F33 |
 | A-56 | la regla del objetivo dicha por el trader frente a lo que mide su material | medicion | no | F26 |
 | A-58 | qué alto y qué bajo forman el rango de H4 cuando una H4 lo rompe | pregunta | no | F18 |
+| A-59 | qué haces con la orden cuando se forma la caja y el precio ya está más allá del 0 | pregunta | no | F20, F22 |
 
 Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 - Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49 (A-49 RESUELTA por la sesión 6); C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.

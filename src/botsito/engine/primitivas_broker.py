@@ -50,7 +50,7 @@ from botsito.engine.interprete import (
     Resultado,
     Tri,
 )
-from botsito.engine.llenado import OBJETIVO, STOP, Lado
+from botsito.engine.llenado import OBJETIVO, STOP, TIPO_STOP, Lado
 from botsito.engine.primitivas import primitivas_escritas
 from botsito.engine.racha import ACUMULADOR_RACHA, RachaError, SeguidorRacha, cuenta_como_perdida
 from botsito.engine.tope_trader import (
@@ -69,6 +69,7 @@ from botsito.engine.zonas import (
     marcar_rechazada,
     marcar_usada,
     orden_nace_en_el_punto,
+    punto_de_la_zona,
     punto_rechazado,
     terminar,
     zona_del_punto,
@@ -101,6 +102,11 @@ TODO_INTENTO = "todo_intento"
 # Las opciones de `orden_pendiente_al_abrir_sesion` (RN-035, A-30)
 SE_RETIRA = "se_retira"
 SIGUE_HASTA_VENTANA_FIN = "sigue_hasta_ventana_fin"
+# Las opciones de `orden_stop_lado_malo` (A-59, ADR-0097): la stop cuyo 0 queda del lado malo
+# se envia y el rechazo del broker gasta el punto (lo de ADR-0083 D1), o espera sin enviarse
+PARAMETRO_LADO_MALO = "orden_stop_lado_malo"
+LADO_MALO_SE_GASTA = "se_gasta_el_punto"
+LADO_MALO_ESPERA = "espera"
 # Los dos acumuladores del trader (RN-020) los alimenta el tope del trader (A-44,
 # engine/tope_trader.py) cuando esta fijado o en diagnostico; sin el, siguen siendo hueco.
 ACUMULADORES_DEL_TRADER = (ACUMULADOR_DIA, ACUMULADOR_SEMANA)
@@ -167,6 +173,13 @@ class ContextoDia:
     # las ordenes que el bot NO envio (ADR-0081 §2 y §3): (instante ms, zona, motivo, lote del
     # riesgo). El motivo es `minimo`, o `no_operar:` seguido de los limites que mordieron
     no_enviadas: list[tuple[int, str, str, Decimal]] = field(default_factory=list)
+    # las ordenes stop que ESPERAN porque su 0 queda del lado malo (ADR-0097, A-59): una entrada por
+    # punto y sesion que empieza a esperar, (instante ms del primer cierre en que no se envio, zona
+    # de ese cierre, id de la orden que por fin se envio o None). No es un no envio de los de
+    # ADR-0081: no gasta la caja ni el punto. Lo leen la traza, el informe y `motor decisiones`
+    esperas: list[tuple[int, str, str | None]] = field(default_factory=list)
+    # (sesion, punto) -> indice en `esperas` de la espera abierta de ese punto
+    espera_abierta: dict[tuple[str | None, str], int] = field(default_factory=dict)
 
 
 def _casa_por(pedido: str, real: str | None) -> bool:
@@ -529,6 +542,12 @@ def primitivas_cableadas(
             raise CableadoError(f"lote_si_no_cabe = {valor!r}: el cableado no sabe hacer eso")
         return valor
 
+    def _lado_malo() -> str:
+        valor = registro.opcion(PARAMETRO_LADO_MALO)
+        if valor not in (LADO_MALO_SE_GASTA, LADO_MALO_ESPERA):
+            raise CableadoError(f"{PARAMETRO_LADO_MALO} = {valor!r}: el cableado no sabe hacer eso")
+        return valor
+
     def _lote_final(lado: Lado, lote_riesgo: Decimal) -> tuple[Decimal | None, tuple[str, ...]]:
         """ADR-0081 §2: el lote del riesgo contra el tope de volumen del perfil y el margen libre
         del broker por `lote_margen_libre_fraccion`, con el precio que convierte el margen en este
@@ -642,7 +661,30 @@ def primitivas_cableadas(
             ctx.orden = None
             return []
         assert lote is not None  # el camino «no se coloca» ya salio arriba
+        punto = punto_de_la_zona(estado, momento.sesion, z.id) or z.id
+        if (
+            tipo_orden == STOP_EN_RUPTURA
+            and _lado_malo() == LADO_MALO_ESPERA
+            and ctx.broker.lado_equivocado_al_colocar(TIPO_STOP, lado, z.entrada, ctx.instante_ms)
+        ):
+            # ADR-0097 (A-59, LECTURA DEL CONSULTOR): la stop cuyo 0 queda del lado malo NO se
+            # envia -ninguna peticion-, la caja no queda usada y el punto no se gasta. La
+            # comprobacion es la del broker (la misma cotizacion y la misma `lado_equivocado`).
+            # RN-011 y RN-015 la vuelven a preparar en el cierre siguiente; se envia en el primero
+            # en que el 0 quede del lado bueno, y RN-006 la mueve si el punto cambio. Lo demas que
+            # gasta un punto sigue como en ADR-0083: el rechazo al llenar, otro rechazo al colocar
+            # y el no envio de arriba
+            clave = (momento.sesion, punto)
+            if clave not in ctx.espera_abierta:
+                ctx.espera_abierta[clave] = len(ctx.esperas)
+                ctx.esperas.append((ctx.instante_ms, z.id, None))
+            ctx.orden = None
+            return []
         id = f"o{len(ctx.broker.ordenes) + 1}"
+        abierta = ctx.espera_abierta.pop((momento.sesion, punto), None)
+        if abierta is not None:
+            desde, zona_espera, _ = ctx.esperas[abierta]
+            ctx.esperas[abierta] = (desde, zona_espera, id)
         colocar = (
             ctx.broker.colocar_stop if tipo_orden == STOP_EN_RUPTURA else ctx.broker.colocar_limite
         )
@@ -655,8 +697,10 @@ def primitivas_cableadas(
         ctx.sesion_de_orden[id] = momento.sesion
         marcar_usada(estado, momento.sesion, z.id)
         if isinstance(r, Rechazo):
-            # el rechazo al colocar gasta el punto (ADR-0083, D1; la decision 1 de ADR-0064); el
-            # rechazo al LLENAR lo gasta el cableado al ver el evento (`_el_punto_tras_el_evento`)
+            # el rechazo al colocar gasta el punto (ADR-0083, D1; la decision 1 de ADR-0064); con
+            # `orden_stop_lado_malo` = `espera` (ADR-0097) una stop del lado malo no llega aqui: no
+            # se envia (arriba). El rechazo al LLENAR lo gasta el cableado al ver el evento
+            # (`_el_punto_tras_el_evento`)
             ctx.eventos.append(EventoBroker(r.instante_ms, "rechazo", r.orden_id, z.por))
             marcar_rechazada(estado, momento.sesion, z.id)
         ctx.orden = None

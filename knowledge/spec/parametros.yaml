@@ -801,6 +801,36 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-11-04-sesion-06-a1cc60d0
+  - nombre: orden_stop_lado_malo
+    categoria: estrategia
+    tipo: enum
+    unidad: que hace el bot con la orden stop cuyo 0 ya queda del lado malo del precio al ir a colocarla
+    opciones: [se_gasta_el_punto, espera]
+    descripcion: >-
+      la orden stop que, al ir a colocarla, la cotizacion deja con el 0 del lado malo (una compra
+      stop por debajo del ask, una venta stop por encima del bid; ADR-0057 §2-§4), es S-19 (A-59,
+      ADR-0097). `se_gasta_el_punto`: se envia, el broker la rechaza por precio_invalido y el
+      rechazo gasta el punto (ADR-0083 D1; la decision 1 de ADR-0064), lo de antes del 2026-11-22.
+      `espera`: no se envia (ninguna peticion), la caja no queda usada y el punto no se gasta; se
+      envia en el primer cierre de M1 en que el 0 vigente quede del lado bueno, y RN-006 la mueve si
+      el punto cambio; la comprobacion es la del broker (la misma cotizacion, que sin ticks es la
+      M1 anterior al cierre). Lo que dijo el trader: en la sesion 6 (2026-11-04), que la orden «se
+      pone igual» y el nivel de la caja se va actualizando (ev-v17-014103-8cf3e7fb,
+      ev-v17-014235-f3375358, ev-v17-014350-ec133d13); en la 7b (2026-11-20, S-6), «otra»,
+      inclinandose por esperar: «inclinaría más que nada que espero que el cero quede al lado bueno
+      y entonces la pongo» (ev-v20-010243-21636d5f), y que la orden tiene que estar a nivel y «solo
+      toca esperar» (ev-v20-010354-ada60dca); con «me inclinaría», en parte y sin regla general
+      clara (SESION-08-EXTRACCION.md §3.6), y sin decir si vale en compra y en venta. Las dos
+      sesiones coinciden en que ese punto no se pierde. DEFAULT_AMBIGUOUS en `espera`: LECTURA DEL
+      CONSULTOR del 2026-11-21 (encargo de trabajo/activar-sesion-08, F2), no una respuesta
+      cerrada. Lo lee el cableado (engine/primitivas_broker.py, colocar_orden_limite), no una regla
+    consumido_por: [ADR-0097]
+    estado: DEFAULT_AMBIGUOUS
+    valor: espera
+    ambiguedad_id: A-59
+    fuente:
+      tipo: evidence
+      id: ev-v20-010243-21636d5f
   - nombre: caja_se_fija
     categoria: ejecucion
     tipo: enum

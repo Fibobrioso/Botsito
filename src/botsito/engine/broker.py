@@ -555,6 +555,21 @@ class Broker:
         self._peticiones.append(Peticion(instante_ms, PETICION_COLOCAR, id, True))
         return orden
 
+    def lado_equivocado_al_colocar(
+        self, tipo: str, lado: Lado, precio: int, instante_ms: int
+    ) -> bool:
+        """Si una pendiente de `tipo` en `precio` quedaria del lado equivocado colocada en
+        `instante_ms` (ADR-0057 §2-§4): la MISMA cotizacion (`Mercado.cotizacion`, el ultimo tick
+        anterior o igual al instante; sin ticks, la ultima M1 CERRADA, que en el cierre de la M1 k
+        es la k-1) y la MISMA `lado_equivocado` con las que `_precio_infringido` la rechaza. Sin
+        cotizacion, False (no se juzga). La usa tambien el cableado ANTES de enviar la orden stop
+        (ADR-0097): no hace ninguna peticion ni cambia nada del broker."""
+        q = self.mercado.cotizacion(instante_ms, self.config.spread_supuesto)
+        if q is None:
+            return False
+        bid, ask, _ = q
+        return lado_equivocado(tipo, lado, precio, bid, ask)
+
     def _precio_infringido(
         self, tipo: str, lado: Lado, precio: int, stop: int, objetivo: int, instante_ms: int
     ) -> str | None:
@@ -566,7 +581,7 @@ class Broker:
         if q is None:
             return None
         bid, ask, _ = q
-        if lado_equivocado(tipo, lado, precio, bid, ask):
+        if self.lado_equivocado_al_colocar(tipo, lado, precio, instante_ms):
             return MOTIVO_PRECIO_INVALIDO
         minimo = self.stops_level
         if minimo:

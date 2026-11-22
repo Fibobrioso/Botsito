@@ -340,13 +340,34 @@ def test_tras_un_rechazo_al_llenar_el_punto_no_se_vuelve_a_colocar_con_ninguna_c
 # ------------------------------------- el rechazo al colocar y el no envio siguen gastando
 
 
-def test_el_rechazo_al_colocar_sigue_gastando_el_punto(
+def test_el_0_del_lado_malo_ya_no_gasta_el_punto_y_la_orden_espera(
     registro: Registro, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """CAMBIA DE SENTIDO A PROPOSITO el 2026-11-22 (trabajo/activar-sesion-08, ADR-0097; antes,
+    `test_el_rechazo_al_colocar_sigue_gastando_el_punto`). La caja: CAJA, y OTRA_CAJA desde Z+4. En
+    Z el precio ya esta por encima del punto: la stop de compra queda del lado malo y, con
+    `orden_stop_lado_malo` = `espera`, no se envia ni gasta el punto. En el cierre de Z+4 el precio
+    ya esta por debajo y se ve la otra caja: o1 se coloca en ella (zona:2), sin ningun rechazo."""
+    ruta = {Z - 5: E + 10, Z + 3: E - 10}
+    motor, _ = _correr(registro, ruta, {Z: CAJA, Z + 4: OTRA_CAJA}, monkeypatch)
+    broker = motor.brokers[DIA]
+    assert not broker.traza().rechazos
+    (o1,) = broker.ordenes.values()
+    assert o1.id == "o1" and o1.colocada_ms == _cierre(Z + 4)
+    assert motor.trazas_broker[DIA].zona_de_orden["o1"] == "zona:2"
+    assert not zonas.punto_rechazado(motor.estados[DIA], SESION, "zona:1")
+    assert [(z, o) for _, z, o in motor.trazas_broker[DIA].esperas] == [("zona:1", "o1")]
+
+
+def test_con_se_gasta_el_punto_el_rechazo_al_colocar_sigue_gastando_el_punto(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """La caja: CAJA, y OTRA_CAJA desde Z+4. En Z el precio ya esta por encima del punto: la stop
     de compra queda del lado equivocado y el broker la rechaza al colocar (`precio_invalido`,
     ADR-0057). Despues el precio baja y la otra caja se ve: el punto esta gastado (ADR-0064,
-    decision 1, que ADR-0083 conserva para el rechazo). Pasa en los dos."""
+    decision 1, que ADR-0083 conserva para el rechazo). Desde ADR-0097, con la opcion
+    `se_gasta_el_punto` de `orden_stop_lado_malo`."""
+    registro = tc._registro_se_gasta(tmp_path)
     ruta = {Z - 5: E + 10, Z + 3: E - 10}
     motor, _ = _correr(registro, ruta, {Z: CAJA, Z + 4: OTRA_CAJA}, monkeypatch)
     broker = motor.brokers[DIA]

@@ -420,8 +420,15 @@ def test_sin_ticks_el_punto_se_libera_y_se_vuelve_a_colocar_en_el_cierre_de_la_v
     """ADR-0083 D2 con ADR-0091 §4 (la ruta de D3a de `test_punto_usado`, sin ticks): o1 se llena
     con la vela que rompe el punto y su stop salta con la vela Z+6. El stop se sella en el ultimo
     milisegundo de Z+6, el `avanzar` del cierre de Z+6 lo pasa a la cuenta y libera la zona, y en
-    ESE cierre o2 vuelve al mismo punto con la misma caja. En `main` el stop se sellaba en el fin
-    de Z+6, lo veia el cierre de Z+7 y o2 se colocaba un cierre despues."""
+    ESE cierre el punto ya esta libre. En `main` el stop se sellaba en el fin de Z+6, lo veia el
+    cierre de Z+7 y o2 se colocaba un cierre despues.
+
+    CAMBIA A PROPOSITO el 2026-11-22 (trabajo/activar-sesion-08, ADR-0097). Medido al cambiarlo:
+    sin ticks, la cotizacion del cierre de Z+6 es la M1 anterior, todavia por encima del punto, asi
+    que hasta esta rama o2 se ENVIABA en ese cierre y el broker la RECHAZABA por `precio_invalido`
+    (este test miraba el instante y no el estado; con `se_gasta_el_punto` sigue saliendo asi). Con
+    `orden_stop_lado_malo` = `espera`, o2 espera desde el cierre de Z+6 -donde el punto ya esta
+    libre, que es lo que este test fija de ADR-0091- y se coloca en el de Z+7, con la misma caja."""
     z, e = tu.Z, tu.E
     ruta = {**tu.ANTES, z + 3: tu.ROMPE, z + 6: tu.PIERDE, z + 9: tu.ROMPE, z + 12: tu.GANA}
     motor = _correr_sin_ticks(registro, ruta, {z: tu.CAJA}, monkeypatch)
@@ -433,9 +440,11 @@ def test_sin_ticks_el_punto_se_libera_y_se_vuelve_a_colocar_en_el_cierre_de_la_v
         RESPALDO_M1,
         _cierre(z + 6),
     )
+    assert motor.trazas_broker[tu.DIA].esperas == [(_cierre(z + 6), "zona:1", "o2")]
     o2 = ordenes["o2"]
     assert (o2.precio, o2.stop, o2.objetivo) == (e, e - 16, e + 60)  # la misma caja
-    assert o2.colocada_ms == _cierre(z + 6)  # en el cierre de la vela del stop
+    assert o2.colocada_ms == _cierre(z + 7)  # el primer cierre en que el 0 queda del lado bueno
+    assert not motor.brokers[tu.DIA].traza().rechazos
 
 
 def test_sin_ticks_un_rechazo_al_llenar_gasta_el_punto_en_el_cierre_de_la_vela_del_llenado(

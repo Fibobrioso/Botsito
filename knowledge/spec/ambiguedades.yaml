@@ -2022,3 +2022,43 @@ ambiguedades:
     decidida_el: null
     clase: pregunta
     bloqueante: false
+  - id: A-59
+    titulo: qué haces con la orden cuando se forma la caja y el precio ya está más allá del 0
+    pregunta: >-
+      Cuando se forma la caja y el precio ya está más allá del 0, ¿qué haces con la orden: entras
+      igual, esperas a que el 0 quede del lado bueno, mueves el 0 o la descartas? Lo que nos has
+      dicho: en la sesión 6 (2026-11-04), que la orden se pone igual, «ya a mí me habilita»
+      (ev-v17-014103-8cf3e7fb), y que, con la stop order y el precio por encima, el nivel de la caja
+      se va actualizando (ev-v17-014235-f3375358, ev-v17-014350-ec133d13); en la 7b (2026-11-20,
+      S-6), «otra», inclinándote por esperar: «inclinaría más que nada que espero que el cero quede
+      al lado bueno y entonces la pongo» (ev-v20-010243-21636d5f), y que la orden tiene que estar a
+      nivel y, si sube o retrocede, «solo toca esperar» (ev-v20-010354-ada60dca). Lo dijiste con «me
+      inclinaría» y sin decir si vale igual en compra y en venta (SESION-08-EXTRACCION.md §3.6). Las
+      dos sesiones coinciden en que ese punto no se pierde. Hasta tu respuesta el bot usa la LECTURA
+      DEL CONSULTOR (orden_stop_lado_malo = espera, ADR-0097): la orden no se envía mientras la
+      cotización deje el 0 del lado malo, sin gastar ni la caja ni el punto, y se envía en el primer
+      cierre de M1 en que quede del lado bueno. Lo que se buscó en el corpus antes de redactarla
+      (2026-11-22, kb find --solo evidencia, sin lo oculto): «lado bueno» (1 resultado:
+      ev-v20-010243-21636d5f) y «cero» por prefijo (23 resultados: los tres de la sesión 6, los dos
+      de la 7b y los de S-3 y del bloque de días de la 7b, que dicen dónde va el 0 y no qué se hace
+      con una orden cuyo 0 ya está pasado; ev-v15-010451-5b123278 habla del 0 justo en la línea).
+      Ninguno más habla de una orden cuyo 0 ya está pasado al formarse la caja.
+    resuelve_en: [F20, F22]
+    # NACE el 2026-11-22 (rama trabajo/activar-sesion-08, ADR-0097; encargo del consultor del
+    # 2026-11-21, F2.1). Es S-19 de la sesion 6, preguntada otra vez en la 7b (S-6), que respondio
+    # «en parte». Clase pregunta y NO bloqueante: el bot opera con la lectura del consultor
+    # (DEFAULT_AMBIGUOUS) y la respuesta del trader entra como RESOLVE_UNKNOWN sobre esta
+    # ambiguedad en la sesion siguiente o por escrito.
+    evidencia:
+      - ev-v17-014103-8cf3e7fb
+      - ev-v17-014235-f3375358
+      - ev-v17-014350-ec133d13
+      - ev-v20-010243-21636d5f
+      - ev-v20-010354-ada60dca
+    parametros: [orden_stop_lado_malo]
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false

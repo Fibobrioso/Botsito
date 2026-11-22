@@ -9,7 +9,6 @@ paso (2) de la F de la Next Action). Tag previsto: `stable/F39k-activar-sesion-0
 local ni en origin: `git tag -l 'stable/F39k*'` y `git ls-remote --tags origin 'stable/F39k*'` vacíos).
 
 ```ids-inexistentes
-ADR-0097 — el encargo lo manda escribir en F2; sale de este bloque en el commit que lo crea
 ADR-0087 — no existe a propósito; lo nombra la auditoría del 2026-11-21 (decisión 0)
 ```
 
@@ -433,6 +432,78 @@ F1 va siempre a la PARADA. F2 CUADRA y F4 cuadra en lo medido (con la decisión 
 S-3 y S-4, decisión 3), F6 y F7.2, F7.3, F7.5, F7.6 y F7.7 no dependen de ninguna decisión de arriba y
 se hacen. F7.1 (decisión 0) y F7.4 (decisión 5) esperan.
 
+## F2 · S-6 (S-19): la orden cuyo 0 queda del lado malo espera (ADR-0097)
+
+**Con las palabras del encargo:** «DESVIACIÓN DECLARADA de "en parte no se cierra" y de "solo se
+activan las reglas generales" (R4.6): no cierro nada. Cambio un comportamiento de ejecución que las
+dos sesiones contradicen y lo dejo como LECTURA DEL CONSULTOR, bajo un parámetro DEFAULT_AMBIGUOUS y
+una ambigüedad nueva que queda ABIERTA, como se hizo con ADR-0084 y ADR-0094.»
+
+Cuadró en la fase 0 (0.5). Lo hecho, en un commit:
+
+- **Tests antes que el código** (`tests/unit/test_orden_lado_malo.py`, 8): en compra y en venta, el
+  precio vuelve y la orden se coloca en el primer cierre en que vale (el de Z+4, el primero cuya
+  cotización —el último tick de la M1 de Z+3— deja el 0 del lado bueno); no vuelve, y no hay orden
+  ni petición; con `se_gasta_el_punto`, el rechazo y el punto gastado de antes; la comprobación y el
+  rechazo miran la misma cotización; y por el camino real, el 2026-07-08 (la o15 de 11 a 15 salía
+  rechazada). **Con el código de `main` fallaron los 8**: los seis que esperan, por el rechazo por
+  `precio_invalido` (en compra, en venta y la o15 del 8 de julio), y los dos que nombran el
+  parámetro o el método nuevo, porque no existían.
+- **Los que congelaban el rechazo que gasta el punto, cambiados de sentido A PROPÓSITO:**
+  `test_punto_usado.py` (`test_el_rechazo_al_colocar_sigue_gastando_el_punto` →
+  `test_el_0_del_lado_malo_ya_no_gasta_el_punto_y_la_orden_espera`, y el de antes, con
+  `se_gasta_el_punto`); `test_cableado.py` (`…_la_orden_se_rechaza` → `…_la_orden_no_se_envia`, y el
+  de antes con `se_gasta_el_punto`); `test_vida_de_la_orden.py`, la fila de la orden rechazada, con
+  `se_gasta_el_punto`. El ayudante `_registro_se_gasta` vive en `test_cableado.py`.
+- **Un hallazgo del primer `make check` de F2 (6 fallos), y lo que se hizo:**
+  - cinco goldens que comparan el informe de la simulación con `main` byte a byte
+    (`test_cuenta_por_mes.py::test_la_salida_es_la_de_main`, dos casos, y
+    `test_metodo_adr0092.py::test_lo_que_ya_salia_es_byte_a_byte_lo_de_main`, tres) fallaban por la
+    sección nueva de esperas, que salía siempre, también vacía. Ahora **solo sale si hay alguna
+    espera**: sin esperas el informe es el de antes, byte a byte;
+  - `test_sello_respaldo.py::test_sin_ticks_el_punto_se_libera_y_se_vuelve_a_colocar_en_el_cierre_de_la_vela_del_stop`:
+    **medido al fallar, con la opción de antes**: sin ticks, la cotización del cierre de Z+6 es la
+    M1 anterior, todavía por encima del punto, así que la reentrada o2 se enviaba en ese cierre y el
+    bróker la **rechazaba** por `precio_invalido` (el test miraba el instante y no el estado, y
+    pasaba). Con la espera, o2 espera desde el cierre de Z+6 —donde el punto ya está libre, que es lo
+    que el test fija de ADR-0091— y se coloca en el de Z+7, con la misma caja, y se llena. Cambia a
+    propósito, con su porqué en el docstring. Es un caso más de la deuda de las cotizaciones sin tick
+    (la k−1), y de por qué F2 importa: la reentrada tras un stop sin ticks moría por la cotización.
+- **Motor:** `Broker.lado_equivocado_al_colocar` (`engine/broker.py`): la misma `Mercado.cotizacion`
+  y la misma `lado_equivocado`, y `_precio_infringido` la llama (no hay una segunda copia).
+  `colocar_orden_limite` (`engine/primitivas_broker.py`), tras el lote de ADR-0081 y antes de enviar:
+  si es stop, `orden_stop_lado_malo` = `espera` y el 0 queda del lado malo, no envía, no marca la
+  caja usada ni el punto gastado, y apunta la espera una vez por punto y sesión
+  (`ContextoDia.esperas`); al enviarse la orden de ese punto, la espera lleva su id.
+  `zonas.punto_de_la_zona`. **El orden con el lote, declarado:** si a la vez el lote no cabe
+  (ADR-0081) y el 0 queda del lado malo, manda el lote: no se envía y gasta el punto, como dice
+  ADR-0083 D1 («todo lo demás que gasta un punto sigue»).
+- **Traza y salidas:** la sección «### Esperas …» del informe del arnés (`cableado.CABECERA_ESPERAS`,
+  con «esperas: N (enviadas despues: M)»); en `motor decisiones`, «orden NO enviada en zona:X a las
+  HH:MM: el 0 queda del lado malo; espera sin gastar la caja ni el punto (ADR-0097)» y, al enviarse,
+  «orden oN: enviada tras esperar desde las HH:MM, cuando el 0 queda del lado bueno (ADR-0097)». Las
+  láminas no enseñan la espera (leen solo los no envíos de ADR-0081): lo dice el ADR.
+- **La vela que mira** (encargo, F2.2): la de `Mercado.cotizacion` en el instante del cierre de la M1
+  k (`k·60000 − 1`): con ticks, el último tick anterior o igual; sin ticks, la M1 k−1. Es la misma
+  con la que rechaza el bróker.
+- **Spec:** `orden_stop_lado_malo` (estrategia, enum `[se_gasta_el_punto, espera]`,
+  DEFAULT_AMBIGUOUS en `espera`, bajo A-59, fuente `ev-v20-010243-21636d5f`); **A-59 ABIERTA**
+  (pregunta, no bloqueante, `resuelve_en` F20 y F22, con lo que se buscó en el corpus); la
+  descripción de `toca_colocar_orden_limite` (auditor, H1); `spec_version` 19.0.5 → **19.1.0**
+  (menor: un parámetro nuevo; ninguna forma cambia), `spec manifest --escribir` y `spec docs
+  --escribir`. Ningún registro de feedback: A-59 no se cierra.
+- **ADR-0097**, con recuadro en ADR-0083 §1 y en ADR-0064 (decisión 1) y su fila en el índice (y las
+  de los dos); sale del bloque `ids-inexistentes` del encargo y de este informe.
+- **PROJECT_STATE.md:** A-59 en Known Ambiguities (`test_kit.py`) y «Tests Currently Passing» a 2130
+  (`state check`); 24.809 bytes.
+- **De paso, una línea de Technical Debt que se paga** (auditor, H6): `engine/decisiones.py:7-8` ya
+  dice que el método lo fija ADR-0093 (§4). La línea «Dos textos que ADR-0093 deja viejos» pierde esa
+  mitad en la orden de cierre.
+- `generar_capa.py --comprobar`: `Generado.mqh` al día (el parámetro nuevo no está en ENTRAN).
+
+La corrida de julio tras F2, con su delta y si casan las filas declaradas, va en el commit siguiente
+(sobre este código commiteado).
+
 ## Estado
 
-EN CURSO: fase 0 escrita; sigue con las fases que cuadran.
+EN CURSO: fase 0 escrita; F2 hecha (falta su corrida de julio); siguen las demás.

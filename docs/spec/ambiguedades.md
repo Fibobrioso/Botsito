@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 19.0.5` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 19.1.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (10)
+## ABIERTA (11)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -75,6 +75,12 @@ Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa
 Cuando una H4 rompe tu rango, ¿qué alto y qué bajo forman el rango nuevo? Y si la vela que lo rompe cierra del color contrario, ¿qué pasa con el rango? Lo que nos has dicho (sesion 7a, S-1): el rango es la vela verde grande y sigues buscando compras (ev-v18-000249-bb7b1c07); el lado cambia con una ruptura, con mecha o con cuerpo, y el color de la vela (ev-v18-000408-c48297b1); manda el rango mayor que no tiene mitigada la liquidez, ni por encima ni por debajo, hasta que se mitiga (ev-v18-000912-52594a58); y, en parte, que para el rango nuevo «tenemos que ver qué vela o sea si es alcista o bajista y rompe o por encima o por debajo» (ev-v18-000822-57145b90). No dijiste si el rango nuevo son el alto y el bajo de esa vela, ni qué hace con el rango una vela que lo rompe y cierra del color contrario. Hasta tu respuesta el bot usa la LECTURA DEL CONSULTOR (sesgo_h4_rango_nuevo = vela_que_rompe_con_su_color, ADR-0094): la vela que rompe y cierra de su color es el rango nuevo, su alto y su bajo; la que rompe y cierra del color contrario no cambia el rango. Lo que se busco en el corpus antes de redactarla (2026-11-18, kb find, sin lo oculto): «nuevo rango» como frase (1 resultado: ev-v18-000822-57145b90); «actualiz» y «rango» por prefijo (8: ev-v11-000038-fef9789d, el segmento de v12 0:06:38 «arriba con una vela verde para poder actualizar rango alcista nuevamente», ev-v18-000822-57145b90, ev-v18-000912-52594a58 y ev-v18-011054-fbf8e9ae, «este rango ya ha sido mitigado entonces lo actualizamos a ese nivel», mas dos superseded); «rango» y «mitig» por prefijo (15, los de arriba y las correcciones del bloque de dias de la 7a, ev-v9-000902-25db5bf5 «el sesgo es alcista mientras que no se mitigue, pues, con mecha o con cuerpo por debajo de esta vela»). Ninguno dice que alto y que bajo forman el rango nuevo; los dos que mas se acercan van de evidencia abajo.
 
 Afecta a: `sesgo_h4_rango_nuevo`.
+
+### A-59 · qué haces con la orden cuando se forma la caja y el precio ya está más allá del 0 · pregunta
+
+Cuando se forma la caja y el precio ya está más allá del 0, ¿qué haces con la orden: entras igual, esperas a que el 0 quede del lado bueno, mueves el 0 o la descartas? Lo que nos has dicho: en la sesión 6 (2026-11-04), que la orden se pone igual, «ya a mí me habilita» (ev-v17-014103-8cf3e7fb), y que, con la stop order y el precio por encima, el nivel de la caja se va actualizando (ev-v17-014235-f3375358, ev-v17-014350-ec133d13); en la 7b (2026-11-20, S-6), «otra», inclinándote por esperar: «inclinaría más que nada que espero que el cero quede al lado bueno y entonces la pongo» (ev-v20-010243-21636d5f), y que la orden tiene que estar a nivel y, si sube o retrocede, «solo toca esperar» (ev-v20-010354-ada60dca). Lo dijiste con «me inclinaría» y sin decir si vale igual en compra y en venta (SESION-08-EXTRACCION.md §3.6). Las dos sesiones coinciden en que ese punto no se pierde. Hasta tu respuesta el bot usa la LECTURA DEL CONSULTOR (orden_stop_lado_malo = espera, ADR-0097): la orden no se envía mientras la cotización deje el 0 del lado malo, sin gastar ni la caja ni el punto, y se envía en el primer cierre de M1 en que quede del lado bueno. Lo que se buscó en el corpus antes de redactarla (2026-11-22, kb find --solo evidencia, sin lo oculto): «lado bueno» (1 resultado: ev-v20-010243-21636d5f) y «cero» por prefijo (23 resultados: los tres de la sesión 6, los dos de la 7b y los de S-3 y del bloque de días de la 7b, que dicen dónde va el 0 y no qué se hace con una orden cuyo 0 ya está pasado; ev-v15-010451-5b123278 habla del 0 justo en la línea). Ninguno más habla de una orden cuyo 0 ya está pasado al formarse la caja.
+
+Afecta a: `orden_stop_lado_malo`.
 
 ## DECIDIDA (8)
 
