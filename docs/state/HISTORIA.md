@@ -20138,3 +20138,48 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 77 (2026-11-20).
+
+# Registro de cierre · `trabajo/sesion-08` (2026-11-21)
+
+- Orden de cierre del consultor del 2026-11-21, tras revisar `9a6d2bbe` (CI de `097f04c9`: run
+  44962532780; de `34711ce2`: run 44966071283), pegada por Aleks en la conversación de la sesión. El
+  cierre se hace el 2026-11-21 y la fila de HOLDOUT de ese día ya estaba en la rama, así que no hace
+  falta el commit de la fila.
+- Tag: `stable/F39j-sesion-08`. El merge es `git rev-parse "stable/F39j-sesion-08^{commit}"` (su sha
+  queda en `Last Stable Commit`).
+- **Lo hecho** (tramo R4, R4.3, NA:F paso (2); sin tocar spec, feedback, casos, motor, cifras,
+  `SESION_EN_CURSO` ni `scripts/transcribir_sesion.py`): la sesión 7b con el trader (id
+  `2026-11-20-sesion-08`) entra como v20 (2026-11-20, el bloque técnico) y v21 (2026-11-21, el bloque
+  de días), en cuarentena; 15 tramos SIN AUDIO, 3 de cuarentena y 7 de precaución (los gráficos
+  reales del bloque técnico sin día dicho, una mención del mapeo y la sesión 1 del bloque, cuyo día
+  la voz no sitúa); las filtradas, regeneradas para que tapen los tramos de precaución; 41 ítems de
+  evidencia (24 de v20 y 11 de v21, más 8 que supersedan a otros tantos de v20); `HOJA-USADA-7B.md`
+  y el recuadro de `PREGUNTAS-7B.md`; el informe `SESION-08-EXTRACCION.md`, con S-1 (A-35) sin
+  respuesta citable, S-2 a S-6 en parte o sin resolver, S-7 resuelta (la tarde del 10 de julio no
+  se grabó), y el bloque de días con toda corrección como ejemplo salvo una (nadie hizo la pregunta
+  de cada corrección; el trader dirigió la sesión y abrió las láminas).
+- **Respuesta del consultor a la PARADA final** (§13 y §14 del informe): la sesión 1 y el tramo de S-1
+  no se levantan; A-35 sigue ABIERTA y bloqueante; las filtradas, regeneradas con `--solo-filtrar`;
+  el tramo de S-2 de v20, desde 0:27:19.
+- **Commits de la rama**:
+  - `5fc0f9fd` la apertura (encargo, contrato y Archivo 78 de PROJECT_STATE);
+  - `7fcc7990` el registro de v20 y v21, en cuarentena, con sus silencios SIN AUDIO;
+  - `66ea16bd` v20 transcrita y filtrada (ningún bloque en cuarentena);
+  - `ca547e77` la extracción del bloque técnico, sus tramos de precaución y sus fotogramas;
+  - `565ea236` v21 transcrita y filtrada, sus tres bloques de cuarentena;
+  - `69ccd8a2` el bloque de días, la evidencia, la hoja usada y la tabla final;
+  - `097f04c9` los hallazgos del primer revisor;
+  - `34711ce2` la respuesta del consultor a la PARADA final, tal cual y aplicada;
+  - `9a6d2bbe` los hallazgos del revisor de lo nuevo;
+  - `d1727782` el fragmento de `[27:19]` quitado de §13 (orden de cierre, punto 1);
+  - y este, `chore(cierre)`: sale el contrato; entran este registro, la fila de ERRORES-RECURRENTES,
+    la F nueva de la Next Action, la línea de la copia de seguridad y la de A-35 en Technical Debt, y
+    en la hoja de ruta R4.3 (Estado), R4.6 (las dos lecciones del método), A.4 (ABIERTA) y A.2 (la
+    respuesta de FTMO, sin su contenido).
+- **CI de Linux por `fix/sesion-08`**, todas con un solo fallo, el esperado
+  (`test_state_check_ok_on_real_repo`, por el nombre de la rama): 44957773501 (`69ccd8a2`),
+  44962532780 (`097f04c9`), 44966071283 (`34711ce2`), 44970214168 (`9a6d2bbe`) y 44972965999
+  (`d1727782`; su resultado, en el informe final del cierre).
+- **Desviaciones** (declaradas en el informe, §7.2): los días de grabación, comprobados después de
+  grabar; el trader dirigió las preguntas y abrió las láminas; el replay, abierto en directo; la
+  sesión 2, operada tras abrir sus láminas.
