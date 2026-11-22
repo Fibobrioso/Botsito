@@ -398,7 +398,41 @@ recuento; los casos dev de los cuatro meses por la compuerta del arnés (día, s
 entrada y stop); los manifiestos y los ticks de los 76 días dev (sin calentamiento); las salidas de días
 dev de `data/activar-sesion-08/`; y el auditor, que leyó solo el repo.
 
+### §0.8 La fase 1 (el README y el guion de la meta, antes de correr)
+
+- `docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/README.md`, en su propio commit (`c5bdad44`,
+  17:02:54), antes de correr: qué es cada fichero y los comandos literales.
+- `anexos/RECORRIDA-CONSTRUCCION-3/techo_parejas.py`, con los tres modos (`control`, `techo` y `parejas`;
+  los tres corren antes el control y salen con 4 si no pasa). Lee `META-TECHO-PAREJAS.yaml`,
+  `PIVOTES-SESION-7.yaml` y `criterio_fidelidad.yaml` y escribe él mismo la lectura del techo, la de las
+  parejas, la salida A a D y la precedencia con el pivote (que lee de `pivote-julio.txt` y de los mínimos
+  del yaml del pivote). Su docstring dice pieza a pieza el modelo de ADR-0098 §1, lo que llama suelto del
+  motor (§0.3 f) y lo que reproduce. No imprime ninguna operación del trader con su R ni ningún R por
+  clase, sesión o dirección; por mes, solo d), e) y f) por cuenta, y julio entero como diagnóstico.
+- Lo que el guion hace donde §1 no lo dice con todas las letras, las tres lecturas de §0.3 f), y dos
+  más: el R del bot de cada pareja sale de la repetición del control (exacta y verificada al céntimo con
+  «### Posiciones»), no de la columna redondeada; y un `manual` fuera del control se cierra a mercado en
+  su instante, para que la cuenta del mes siga igual.
+- `test_techo_parejas.py`, su test de humo sobre datos sintéticos (fechas de 2030): una salida A, una B,
+  una C y una D construidas a mano; las fronteras en el otro sentido; el control que falla con un
+  céntimo y con una posición de más o de menos; el remuestreo de la diferencia frente a su cuenta a mano
+  (un día; tres días con 50 réplicas, repitiendo el sorteo); la caja derivada, el objetivo, el lote y la
+  salida del pivote. `make check` no lo recoge:
+
+  ```
+  $ uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/test_techo_parejas.py -p no:cacheprovider -v
+  14 passed in 0.61s
+  ```
+
+  `ruff format` (2 sin cambios), `ruff check` («All checks passed!») y `mypy` («no issues found in 2
+  source files») sobre los dos.
+- **El ensayo del control sobre `data/activar-sesion-08/julio-f2.txt`** (el motor de hoy, julio; declarado
+  en la fila complementaria del día), solo el modo `control`: 30 posiciones del bot, 30 en el control,
+  ninguna fuera, **30 de 30 reproducidas al céntimo**, «control: PASA». El primer intento se paró al
+  leer «### Ordenes», que acaba en una línea de resumen; se arregló la lectura (un error de programación
+  del guion, no una pieza del modelo) y el segundo dio lo de arriba.
+
 ## Estado
 
-EN CURSO: fase 0 escrita, con su PARADA condicional en un solo punto (§0.5, decisión 0); la rama sigue
-con la fase 1.
+EN CURSO: fase 0 escrita, con su PARADA condicional en un solo punto (§0.5, decisión 0); fase 1 hecha;
+la rama sigue con la fase 2.

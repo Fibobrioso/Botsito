@@ -62,3 +62,32 @@ Las líneas `TIEMPO` y `MEMORIA` de cada corrida van por pantalla, no al fichero
 - `test_techo_parejas.py`: su test de humo, sobre datos sintéticos (fechas de 2030), en los dos sentidos;
   `make check` no lo recoge (`testpaths = ["tests"]`):
   `uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/test_techo_parejas.py -p no:cacheprovider`.
+
+Los comandos de la fase 4, desde la raíz y después de las corridas (los tres corren primero el control
+y salen con 4 si no pasa: PARADA 4, ningún R del trader):
+
+1. `uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/techo_parejas.py control docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt`
+   → `control.txt`.
+2. Si pasa: `uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/techo_parejas.py parejas docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/pivote-julio.txt`
+   → `meta.txt` (el control, el techo, las parejas y la salida A a D con la precedencia del pivote).
+
+### Antes de correr (2026-11-22)
+
+```
+$ uv run ruff format docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/techo_parejas.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/test_techo_parejas.py
+2 files left unchanged
+$ uv run ruff check docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/
+All checks passed!
+$ uv run mypy docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/techo_parejas.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/test_techo_parejas.py
+Success: no issues found in 2 source files
+$ uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/test_techo_parejas.py -p no:cacheprovider -v
+14 passed
+```
+
+**El ensayo del control** sobre `data/activar-sesion-08/julio-f2.txt` (julio, el motor de hoy; fila
+complementaria del 2026-11-22 de HOLDOUT-EXPOSICIONES), con el guion en la carpeta de trabajo de la
+sesión y el modo `control` solo (ningún R del trader): «posiciones del bot en la salida: 30; entran en
+el control: 30; fuera: 0; reproducidas al centimo (lote, motivo, instante del cierre, PnL neto): 30 de
+30; control: PASA». Un primer ensayo se paró en la lectura de «### Ordenes», que acaba en una línea de
+resumen («ordenes: …»): `_seccion` para ahora en la primera línea sin columnas. Es un error de
+lectura del guion, no una pieza del modelo.
