@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 19.1.1` · hash `90364a2901a8…`
+`spec_version 19.1.2` · hash `9a5eabdaee2c…`
 
 114 en total: 104 con valor y 10 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -399,19 +399,19 @@ Opciones: `standard`, `swing`.
 
 ### `freno_bucle_minutos`
 
-la ventana del freno contra bucles (ADR-0067): freno_bucle_repeticiones peticiones iguales dentro de estos minutos cortan el envio el resto del dia. PROVISIONAL bajo A-54
+la ventana del freno contra bucles (ADR-0067): freno_bucle_repeticiones peticiones iguales dentro de estos minutos cortan el envio el resto del dia. PROVISIONAL bajo A-54. FTMO respondio el 2026-11-20 (ticket MVT-CQNXT-065; parafrasis del consultor en docs/validation/ACTIVAR-SESION-08.md) que para el limite de 2.000 peticiones solo cuentan las acciones de trading (abrir, cerrar y modificar ordenes, incluido mover el stop o el objetivo) y que las lecturas no cuentan; no dijo si cuentan las rechazadas ni las cancelaciones por separado, ni que hace el servidor al pasarse: el valor no cambia y A-54 sigue ABIERTA
 
 ### `freno_bucle_repeticiones`
 
-el freno contra bucles (ADR-0067): tantas peticiones IGUALES -el mismo contenido, sin mirar el id: colocar con el mismo lado, precio, stop, objetivo y lote, o modificar lo mismo a los mismos precios- dentro de freno_bucle_minutos cortan el envio el resto del dia, como el corte. Un dia normal no repite una peticion: reubicar cambia el precio. PROVISIONAL bajo A-54
+el freno contra bucles (ADR-0067): tantas peticiones IGUALES -el mismo contenido, sin mirar el id: colocar con el mismo lado, precio, stop, objetivo y lote, o modificar lo mismo a los mismos precios- dentro de freno_bucle_minutos cortan el envio el resto del dia, como el corte. Un dia normal no repite una peticion: reubicar cambia el precio. PROVISIONAL bajo A-54. FTMO respondio el 2026-11-20 (ticket MVT-CQNXT-065; parafrasis del consultor en docs/validation/ACTIVAR-SESION-08.md) que para el limite de 2.000 peticiones solo cuentan las acciones de trading (abrir, cerrar y modificar ordenes, incluido mover el stop o el objetivo) y que las lecturas no cuentan; no dijo si cuentan las rechazadas ni las cancelaciones por separado, ni que hace el servidor al pasarse: el valor no cambia y A-54 sigue ABIERTA
 
 ### `freno_peticiones_aviso`
 
-el aviso del freno de peticiones (ADR-0067, engine/freno.py): el dia que el bot llega a este numero de peticiones al servidor, el freno lo apunta en la traza y en el log. No frena, y va por debajo de freno_peticiones_corte. PROVISIONAL bajo A-54: es un margen del proyecto, no una cifra de FTMO, y se revisa cuando la demo diga que cuenta como mensaje. El dia mas cargado medido en construccion fueron 13 peticiones (docs/validation/ESCENARIOS-POR-SESION.md §6.4)
+el aviso del freno de peticiones (ADR-0067, engine/freno.py): el dia que el bot llega a este numero de peticiones al servidor, el freno lo apunta en la traza y en el log. No frena, y va por debajo de freno_peticiones_corte. PROVISIONAL bajo A-54: es un margen del proyecto, no una cifra de FTMO, y se revisa cuando la demo diga que cuenta como mensaje. El dia mas cargado medido en construccion fueron 13 peticiones (docs/validation/ESCENARIOS-POR-SESION.md §6.4). FTMO respondio el 2026-11-20 (ticket MVT-CQNXT-065; parafrasis del consultor en docs/validation/ACTIVAR-SESION-08.md) que para el limite de 2.000 peticiones solo cuentan las acciones de trading (abrir, cerrar y modificar ordenes, incluido mover el stop o el objetivo) y que las lecturas no cuentan; no dijo si cuentan las rechazadas ni las cancelaciones por separado, ni que hace el servidor al pasarse: el valor no cambia y A-54 sigue ABIERTA
 
 ### `freno_peticiones_corte`
 
-el corte del freno de peticiones (ADR-0067): desde aqui, ese dia el broker niega todo lo que no protege la cuenta, y solo deja cancelar, cerrar a mercado y mover el stop hacia el break even, que cuentan igual. Va por debajo de firma_mensajes_dia_max (el broker se niega a armarse si no) y deja ese hueco para lo que protege, que esta acotado por firma_ordenes_simultaneas_max y las posiciones abiertas. PROVISIONAL bajo A-54: margen del proyecto, no cifra de FTMO
+el corte del freno de peticiones (ADR-0067): desde aqui, ese dia el broker niega todo lo que no protege la cuenta, y solo deja cancelar, cerrar a mercado y mover el stop hacia el break even, que cuentan igual. Va por debajo de firma_mensajes_dia_max (el broker se niega a armarse si no) y deja ese hueco para lo que protege, que esta acotado por firma_ordenes_simultaneas_max y las posiciones abiertas. PROVISIONAL bajo A-54: margen del proyecto, no cifra de FTMO. FTMO respondio el 2026-11-20 (ticket MVT-CQNXT-065; parafrasis del consultor en docs/validation/ACTIVAR-SESION-08.md) que para el limite de 2.000 peticiones solo cuentan las acciones de trading (abrir, cerrar y modificar ordenes, incluido mover el stop o el objetivo) y que las lecturas no cuentan; no dijo si cuentan las rechazadas ni las cancelaciones por separado, ni que hace el servidor al pasarse: el valor no cambia y A-54 sigue ABIERTA
 
 ### `huso_grafico`
 

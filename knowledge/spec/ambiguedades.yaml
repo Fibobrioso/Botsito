@@ -1831,7 +1831,14 @@ ambiguedades:
       las modificaciones, las cancelaciones) está preguntado al soporte de FTMO: enviado por
       Aleks el 2026-10-03 en el ticket VDW-DPMWR-965, preguntas 1 a 4 de su correo (literal en
       docs/validation/FTMO-REGLAS.md; docs/validation/FUENTES-FTMO.md), respondida en parte el
-      2026-10-05 (FTMO-REGLAS.md, recuadro de esa fecha).
+      2026-10-05 (FTMO-REGLAS.md, recuadro de esa fecha). El 2026-11-20 FTMO contestó otro correo
+      de Aleks (ticket MVT-CQNXT-065; paráfrasis del consultor en
+      docs/validation/ACTIVAR-SESION-08.md): para ese límite solo cuentan las acciones de trading
+      (abrir, cerrar y modificar órdenes, incluido mover el stop o el objetivo), las lecturas no
+      cuentan ni se consideran hiperactividad, y los límites valen igual para la cuenta Swing en
+      MT5. El reloj ya estaba contestado (2026-10-05: medianoche CE(S)T). Sigue sin respuesta: si
+      una petición RECHAZADA cuenta, si una CANCELACIÓN cuenta por separado (la del 2026-11-20 no
+      las nombra) y qué hace el servidor al pasarse.
       Si cuenta más de lo que cuenta el freno, los umbrales se revisan. Ningún ítem del corpus
       habla del límite: su fuente es documental, R13 de docs/validation/FTMO-REGLAS.md.
     resuelve_en: [F33]

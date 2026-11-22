@@ -2027,7 +2027,13 @@ parametros:
       numero de peticiones al servidor, el freno lo apunta en la traza y en el log. No frena, y va
       por debajo de freno_peticiones_corte. PROVISIONAL bajo A-54: es un margen del proyecto, no una
       cifra de FTMO, y se revisa cuando la demo diga que cuenta como mensaje. El dia mas cargado
-      medido en construccion fueron 13 peticiones (docs/validation/ESCENARIOS-POR-SESION.md §6.4)
+      medido en construccion fueron 13 peticiones (docs/validation/ESCENARIOS-POR-SESION.md §6.4).
+      FTMO respondio el 2026-11-20 (ticket MVT-CQNXT-065; parafrasis del consultor en
+      docs/validation/ACTIVAR-SESION-08.md) que para el limite de 2.000 peticiones solo cuentan
+      las acciones de trading (abrir, cerrar y modificar ordenes, incluido mover el stop o el
+      objetivo) y que las lecturas no cuentan; no dijo si cuentan las rechazadas ni las
+      cancelaciones por separado, ni que hace el servidor al pasarse: el valor no cambia y A-54
+      sigue ABIERTA
     estado: DEFAULT_AMBIGUOUS
     valor: 1000
     ambiguedad_id: A-54
@@ -2045,7 +2051,13 @@ parametros:
       protege la cuenta, y solo deja cancelar, cerrar a mercado y mover el stop hacia el break even,
       que cuentan igual. Va por debajo de firma_mensajes_dia_max (el broker se niega a armarse si no)
       y deja ese hueco para lo que protege, que esta acotado por firma_ordenes_simultaneas_max y las
-      posiciones abiertas. PROVISIONAL bajo A-54: margen del proyecto, no cifra de FTMO
+      posiciones abiertas. PROVISIONAL bajo A-54: margen del proyecto, no cifra de FTMO.
+      FTMO respondio el 2026-11-20 (ticket MVT-CQNXT-065; parafrasis del consultor en
+      docs/validation/ACTIVAR-SESION-08.md) que para el limite de 2.000 peticiones solo cuentan
+      las acciones de trading (abrir, cerrar y modificar ordenes, incluido mover el stop o el
+      objetivo) y que las lecturas no cuentan; no dijo si cuentan las rechazadas ni las
+      cancelaciones por separado, ni que hace el servidor al pasarse: el valor no cambia y A-54
+      sigue ABIERTA
     estado: DEFAULT_AMBIGUOUS
     valor: 1500
     ambiguedad_id: A-54
@@ -2062,7 +2074,13 @@ parametros:
       el freno contra bucles (ADR-0067): tantas peticiones IGUALES -el mismo contenido, sin mirar el
       id: colocar con el mismo lado, precio, stop, objetivo y lote, o modificar lo mismo a los mismos
       precios- dentro de freno_bucle_minutos cortan el envio el resto del dia, como el corte. Un dia
-      normal no repite una peticion: reubicar cambia el precio. PROVISIONAL bajo A-54
+      normal no repite una peticion: reubicar cambia el precio. PROVISIONAL bajo A-54.
+      FTMO respondio el 2026-11-20 (ticket MVT-CQNXT-065; parafrasis del consultor en
+      docs/validation/ACTIVAR-SESION-08.md) que para el limite de 2.000 peticiones solo cuentan
+      las acciones de trading (abrir, cerrar y modificar ordenes, incluido mover el stop o el
+      objetivo) y que las lecturas no cuentan; no dijo si cuentan las rechazadas ni las
+      cancelaciones por separado, ni que hace el servidor al pasarse: el valor no cambia y A-54
+      sigue ABIERTA
     estado: DEFAULT_AMBIGUOUS
     valor: 5
     ambiguedad_id: A-54
@@ -2077,7 +2095,13 @@ parametros:
     unidad: minutos de la ventana en que se cuentan las peticiones iguales
     descripcion: >-
       la ventana del freno contra bucles (ADR-0067): freno_bucle_repeticiones peticiones iguales
-      dentro de estos minutos cortan el envio el resto del dia. PROVISIONAL bajo A-54
+      dentro de estos minutos cortan el envio el resto del dia. PROVISIONAL bajo A-54.
+      FTMO respondio el 2026-11-20 (ticket MVT-CQNXT-065; parafrasis del consultor en
+      docs/validation/ACTIVAR-SESION-08.md) que para el limite de 2.000 peticiones solo cuentan
+      las acciones de trading (abrir, cerrar y modificar ordenes, incluido mover el stop o el
+      objetivo) y que las lecturas no cuentan; no dijo si cuentan las rechazadas ni las
+      cancelaciones por separado, ni que hace el servidor al pasarse: el valor no cambia y A-54
+      sigue ABIERTA
     estado: DEFAULT_AMBIGUOUS
     valor: 1
     ambiguedad_id: A-54

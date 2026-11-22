@@ -619,6 +619,45 @@ F5 no cambian el motor, así que la corrida es la del código de este commit. De
 F3, F4 y F5 van en un mismo commit, con la corrida de F2, para no gastar tres `make check` en
 cambios que no tocan el motor.
 
+## F6 · La respuesta de FTMO del 2026-11-20
+
+### La respuesta de FTMO del 2026-11-20
+
+FTMO contestó el 2026-11-20 (ticket MVT-CQNXT-065) al correo de Aleks del 2026-11-19 (las cuatro
+preguntas están en la hoja de ruta, A.2). **El correo no se copia** (su pie prohíbe compartirlo y el
+repositorio es público): ningún texto de esta rama lleva frases en inglés del correo ni el nombre de
+quien lo firma. **La fuente es la paráfrasis del consultor**, del encargo de esta rama (F6), tal cual:
+
+> (1) Para el límite de 2.000 peticiones diarias solo cuentan las acciones de trading: abrir, cerrar y modificar órdenes, incluido mover el stop o el objetivo.
+> (2) Las lecturas (precios, ticks, historial de velas, datos de la cuenta, órdenes y posiciones) no cuentan para ese límite ni se consideran hiperactividad, también leyendo una vez por vela de M1.
+> (3) Se permite que las decisiones las calcule un programa propio en Python que manda las órdenes por el terminal de MT5, siempre que la estrategia cumpla sus condiciones y no sea alta frecuencia ni arbitraje de latencia. FTMO no pide el código.
+> (4) Los límites de infraestructura valen igual para la cuenta Swing en MT5.
+
+### Lo hecho (commit propio, sin motor)
+
+- `docs/validation/FTMO-REGLAS.md` (informe cerrado): recuadro fechado junto a R13 (tras la tabla del
+  §2) y otro al final de su §4.
+- `docs/validation/RESPUESTAS-FTMO.md` (informe cerrado): recuadro al principio, que dice que hay
+  una respuesta posterior y dónde está.
+- A-54 (`ambiguedades.yaml`): su `pregunta` gana la respuesta y dice lo que falta (0.7): **si una
+  petición rechazada cuenta, si una cancelación cuenta por separado y qué hace el servidor al
+  pasarse**. **A-54 sigue ABIERTA.**
+- Los cuatro `freno_*` (`parametros.yaml`): su descripción gana la respuesta y lo que falta; **siguen
+  DEFAULT_AMBIGUOUS con su valor** (1000, 1500, 5 y 1). Están en ENTRAN de `generar_capa.py`, pero
+  la descripción no entra en `Generado.mqh`: `generar_capa.py --comprobar` lo da al día.
+- ADR-0082 §4 (D4): recuadro fechado, sin tocar el cuerpo ni el Estado. Dice qué quita la respuesta
+  (la razón de descartar la alternativa 4 y la parte de D4 que se apoya en el tope: «un bucle de
+  Python que sondea gasta presupuesto») y qué deja en pie, copiado de 0.7 sin añadir (el bot final es
+  un EA y una capa en Python habría que tirarla en F29, que es la razón de descartar la 3; el
+  Strategy Tester y el VPS sin cita de FTMO; la equivalencia de F30), y que reabrir D4 lo decide
+  Aleks con un ADR nuevo, que no existe. No decide nada.
+- `spec_version` 19.1.1 → **19.1.2** (parche: textos), `spec manifest --escribir`, `spec docs
+  --escribir`; trailer `Fuente: ADR-0067, ADR-0082` (el precedente del 2026-10-05 usó los ADR del
+  freno y de los cierres, 0e1457c7).
+- **Lo que la respuesta no paga** (para A.2 en la orden de cierre): P-D1, lo del heredado 27 (la
+  «maximum capital allocation rule» y el asterisco de «USD/LOT*») y la pregunta 6 de A-55 siguen sin
+  respuesta; y no dice nada del modo de margen que espera R6a.7.
+
 ## Estado
 
-EN CURSO: fase 0 escrita; F2 hecha y su corrida de julio casa; F3, F4 y F5 hechas; siguen F6 y F7.
+EN CURSO: fase 0 escrita; F2 hecha y su corrida de julio casa; F3, F4, F5 y F6 hechas; sigue F7.

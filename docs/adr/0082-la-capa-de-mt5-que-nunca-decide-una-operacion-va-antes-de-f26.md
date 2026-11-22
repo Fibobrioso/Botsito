@@ -98,6 +98,21 @@ MetaTrader convierte… con `cierres_desde_sesiones` y… `unir_cierres`»). El 
 `engine/freno.py:7-8` dice lo mismo que ADR-0067 §1; es código, y lo arregla R6a.4 (deuda en
 `PROJECT_STATE.md`).
 
+> **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, F6; no toca el cuerpo ni el Estado, y no
+> decide nada).** FTMO respondió el 2026-11-20 (ticket MVT-CQNXT-065; paráfrasis del consultor en
+> `docs/validation/ACTIVAR-SESION-08.md`) que las lecturas (precios, ticks, historial de velas,
+> datos de la cuenta, órdenes y posiciones) no cuentan para el límite de 2.000 peticiones ni se
+> consideran hiperactividad, también leyendo una vez por vela de M1, y que se permite que las
+> decisiones las calcule un programa propio en Python que manda las órdenes por el terminal de MT5,
+> si la estrategia cumple sus condiciones y no es alta frecuencia ni arbitraje de latencia. Eso
+> quita la razón por la que se descartó la alternativa 4 («Exige un puente en vivo que choca con el
+> tope de peticiones (D4)») y la parte de este D4 que se apoya en ese tope (la primera de las cuatro
+> razones de la investigación: «un bucle de Python que sondea gasta presupuesto»). Deja en pie las
+> demás: que el bot final es un EA (F29-F31) y una capa en Python habría que tirarla al llegar F29,
+> que es también la razón de haber descartado la alternativa 3; que el Strategy Tester y el VPS sin
+> puente no tienen cita de FTMO; y que la equivalencia entre dos implementaciones es la de F30.
+> Reabrir D4 lo decide Aleks con un ADR nuevo, que todavía no existe.
+
 ### 5. La reconciliación de la capa (respuesta a la PARADA, punto 4)
 
 En la capa, «reconciliación» quiere decir **reconstruir el estado al arrancar**: órdenes, posiciones
