@@ -803,7 +803,61 @@ correcciones de §2.5, que no se han medido una a una, y sin la de A-35).
 - Lo que la auditoría da y el encargo no lleva a F7.7 (auditor, H4): E19 (R5.3 sin letra), E22
   (textos «PROVISIONAL» en parámetros CONFIRMED), C2, C6 y su §2.3; quedan para el consultor.
 
+## El encargo, punto por punto
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Rama desde `main` en 00e6dc8b con `abrir-rama`; base y CI de `main` comprobadas (`gh run view` suelto) | Hecho | «Base comprobada»; run 44978301993, success, sobre 00e6dc8b; `e69bfd05` |
+| 2 | Contrato: tramo R4, riesgo alto, artefacto, lista blanca con lo protegido mandando; carpetas de feedback anteriores protegidas una a una | Hecho | `contrato.yaml`; la ruta de PREGUNTAS-7B.md corregida en `f5ee88f7` (desviación de la apertura) |
+| 3 | Tag previsto `stable/F39k-activar-sesion-08`, comprobado que no existe | Hecho | `git tag -l` y `git ls-remote` vacíos |
+| 4 | ADR-0097 en un bloque `ids-inexistentes` del encargo; sale en el commit que lo crea; A-59 fuera del bloque; ningún otro ADR | Hecho | `e69bfd05` y `7592c73e` (el bloque sale); el informe declara además ADR-0087 en su propio bloque, porque lo nombra al hablar de la auditoría |
+| 5 | La auditoría, del Escritorio, sin reconstruirla | Hecho de otra forma | no estaba al empezar; Aleks la dejó a mitad de la apertura; 377 líneas, no 378 |
+| 6 | PARADA condicional: fase 0 entera y commiteada; las fases que cuadran se hacen; F1 siempre a la PARADA | Hecho | `f5ee88f7`; «Lo que necesito que decidas» (decisiones 0 a 7) |
+| 7 | QUÉ NO CAMBIA: A-35 ABIERTA y su parámetro; S-22 sin tocar; RN-009, `pivotes_de_control` y `zonas_control_max_por_esquema`; `toma_antes_de_la_ventana`, `orden_pendiente_al_abrir_escenario`, ADR-0083 D1 PROVISIONAL, break_even_*; ninguna corrección del bloque activada salvo F4; sin corrida que cuente (nada al Marcador, PIVOTES-SESION-7.yaml intacto); PREREGISTRO.md y criterio_fidelidad.yaml intactos; sin cifras en formas; citas solo de ítems citables; ningún fotograma; Next Action y hoja de ruta sin tocar; Makefile, .claude/ y la guardia sin tocar; Generado.mqh sin cambio; el correo de FTMO sin copiar | Hecho | `git diff --stat main...HEAD` (abajo); `generar_capa.py --comprobar` al día en F2, F6 y F7; PROJECT_STATE solo cambia en Known Ambiguities (A-59), Tests Currently Passing y la cabecera de la rama |
+| 8 | Fechas de los registros de feedback | No aplica | ningún registro de feedback en la rama (nada se cierra; F1 a la PARADA; F5 sin registro) |
+| 9 | D0: las tres órdenes sueltas, sobre código commiteado; README antes de correr; al repo solo pivote y delta | Hecho | `anexos/ACTIVAR-SESION-08/` (README, pivote-julio-base, delta-julio-f39e-base, pivote-julio-f2, delta-julio-base-f2) |
+| 10 | Control de D0 (desviación declarada: repetir la de F2 de la 7a), fila por fila si sigue en la laptop | Hecho | 0.2: idéntico, 86 filas, 0 cambios |
+| 11 | Lecturas de calentamiento en la fila de HOLDOUT del día, antes de correr | Hecho | filas del 2026-11-21 (dos) y del 2026-11-22 (dos) |
+| 12 | Fase 0, 0.1 a 0.9 | Hecho | §0.1-§0.9 |
+| 13 | F1: solo se mide; a la PARADA con 0.3, 0.4 y las vías | Hecho | 0.3, 0.4; decisiones 1 y 2; nada tocado de `orden_stop_punto`, `sesgo_h4_rango_nuevo`, A-48 ni A-58 |
+| 14 | F1, las notas de F5 que no fijan valor | Hecho de otra forma | solo en el informe (F5), por el choque con F1 (decisión 3) |
+| 15 | F2: A-59 (pregunta, no bloqueante, con lo buscado en el corpus) y el parámetro DEFAULT_AMBIGUOUS en `espera`; tabla de PS | Hecho | `7592c73e`; `orden_stop_lado_malo` |
+| 16 | F2: la comprobación con lo mismo que el bróker, sin duplicar; la vela que mira; traza y `motor decisiones` lo nombran distinto | Hecho | `Broker.lado_equivocado_al_colocar`; sección «### Esperas»; líneas de la bitácora |
+| 17 | F2: ADR-0097, lo dicho frente a la lectura del consultor, recuadros en ADR-0083 y ADR-0064, filas del índice | Hecho | `docs/adr/0097-…`; recuadros; `docs/adr/README.md` |
+| 18 | F2: tests antes del código, compra y venta, no vuelve, camino real que rompe en `main`; los que congelaban el rechazo cambian a propósito | Hecho | `test_orden_lado_malo.py` (8; los 8 fallaban con el `src/` de `main`, idéntico entonces: la rama no lo había tocado); cambios a propósito en `test_punto_usado`, `test_cableado`, `test_vida_de_la_orden` y `test_sello_respaldo` |
+| 19 | F2: filas declaradas antes de correr con el cambio, y si casan | Hecho | 0.5 (declaradas en `f5ee88f7`); «F2, la corrida de julio»: CASA |
+| 20 | F3: no se activa; recuadro en ADR-0085 §3; lo dice el informe, también de las dos filas de «Para precisar» | Hecho | `cb02d3a9` |
+| 21 | F4: cuadra; un test lo congela; qué enseñaba la lámina | Hecho | `test_zona_control_vela_contraria.py`; 0.6; la lámina, sin respuesta medible (decisión 7) |
+| 22 | F5: S-1 en la descripción, S-2, S-3/S-4, S-5, S-6, S-7 en VIDEO-JULIO, B-15, días gastados | Hecho | `cb02d3a9` (F5 en un commit con F3, F4 y la corrida de F2: desviación declarada) |
+| 23 | F6: la paráfrasis entera en el informe; recuadros en FTMO-REGLAS (R13 y §4), RESPUESTAS-FTMO, ADR-0082 §4; A-54 y los cuatro `freno_*` sin cambiar valor ni estado | Hecho | `89ce3ad0` |
+| 24 | F7.1: la auditoría en un commit propio, el primero tras la apertura | No hecho: en la PARADA | decisión 0 (ADR-0087 en su línea 248) |
+| 25 | F7.2: los cuatro textos del panel | Hecho | commit de F7 |
+| 26 | F7.3: A-16 no se cierra; recuadro en ADR-0092 §10; su texto gana §1.3 y la vela de otro color | Hecho | commit de F7 |
+| 27 | F7.4: propuesta de `bloqueante` para A-35 | Hecho (propuesta) | decisión 5 |
+| 28 | F7.5 y F7.6: A-53, la reentrada, A-43 y B-10, sin activar; la nota que cierra el E4 | Hecho | F7 |
+| 29 | F7.7: lo de la orden de cierre, con bytes | Hecho | «Para la orden de cierre» (24.707 bytes) |
+| 30 | Para la rama y la sesión siguientes | Hecho | su sección |
+| 31 | Informe con todo lo pedido; PROJECT_STATE < 25.000 | Hecho | 24.809 bytes en la rama |
+| 32 | Revisor con los seis alcances, push a `fix/` y CI, PARADA final | Ver abajo | «Informe del revisor», «El cierre de la rama: CI» |
+
+**Lo que NO cambia, medido** (`git diff --stat main...HEAD` tras `46028e24`, 42 ficheros): ni el
+`Makefile`, ni `.claude/`, ni `scripts/`, ni `src/botsito/mql5bridge/` ni `mql5/`, ni
+`knowledge/evidence/`, `knowledge/feedback/`, `knowledge/cases/` ni `knowledge/corpus/`, ni
+`docs/plan/` (la hoja de ruta y `PIVOTES-SESION-7.yaml`), ni `PREREGISTRO.md`, ni
+`SESION-08-EXTRACCION.md` ni `PREGUNTAS-7B.md`. En `src/`, solo `engine/` (F2).
+
+## Exposiciones declaradas
+
+Cuatro filas de `docs/validation/HOLDOUT-EXPOSICIONES.md` de esta rama, cada una escrita antes de lo
+que declara: 2026-11-21, la apertura y la fase 0; 2026-11-21, el control de D0, los `motor
+decisiones` de 0.4 a 0.6 y las medidas de 0.3 y 0.6 (ampliada el mismo día, antes de correrlo, con el
+cálculo de los pivotes de control del 2026-04-27); 2026-11-22, lo que lee la rama ese día (los `make
+check`, la evidencia, `kb find --solo evidencia` y el test nuevo del 8 de julio, que calienta con
+junio); 2026-11-22, la corrida de julio tras F2 y su `motor decisiones` del 2026-07-10. Lo único
+reservado que se lee son velas para calentar el sesgo (marzo y junio de 2026), por el recuento.
+**Ningún fotograma de v20 ni de v21 se ha abierto**, por ninguna vía; ninguna transcripción ni
+filtrada; ningún libro, caso ni agregado.
+
 ## Estado
 
-EN CURSO: fase 0 escrita; F2 hecha y su corrida de julio casa; F3 a F6 hechas; F7.2, F7.3, F7.5 y
-F7.6 hechas, y F7.7 preparada; F7.1 y F7.4, en la PARADA. Faltan el revisor y la entrega.
+Trabajo de la rama hecho (F1, F7.1 y F7.4 en la PARADA); faltan la CI de Linux y el revisor.
