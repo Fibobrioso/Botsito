@@ -20695,3 +20695,74 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 79 (2026-11-21).
+
+# Registro de cierre · `trabajo/recorrida-construccion-3` (2026-11-22)
+
+- Orden de cierre del consultor del 2026-11-22, tras leer el informe entero, `meta.txt`,
+  `control.txt`, el encargo, ADR-0098 y su yaml, el README de anexos, el docstring de
+  `techo_parejas.py` y la NOTA de ADR-0070 §3, pegada por Aleks en la conversación de la sesión;
+  después, Aleks lanzó `/cerrar-rama trabajo/recorrida-construccion-3.`. El cierre se hace el
+  2026-11-22 y las filas de HOLDOUT de ese día ya están en la rama, así que no hace falta el commit de
+  la fila.
+- Tag: `stable/F39l-recorrida-construccion-3`. El merge es
+  `git rev-parse "stable/F39l-recorrida-construccion-3^{commit}"` (su sha queda en `Last Stable Commit`).
+- **Lo hecho** (tramo R4, R4.3, NA:F paso (3); RECORRIDA-CONSTRUCCION-3.md):
+  - **Fase P** (`539f7983`, 15:49:25, antes de ninguna corrida): ADR-0098, la meta pre-registrada (el
+    techo del trader y el R de las parejas, con cuatro salidas), `docs/plan/META-TECHO-PAREJAS.yaml`
+    fijado por `tests/unit/test_meta_techo_parejas.py` y el recuadro en ADR-0092 §6.
+  - **La corrida (3) de ADR-0070 §3** (17:39:11; cuenta por mes, 345,7 s, 638,5 MiB):
+    `habilita medir el conjunto de medida (2026-05) (ADR-0070): no (cobertura 15.2 % por debajo de 70.0 %; precision 14.4 % por debajo de 60.0 %)`.
+    Línea base vigente: `anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt` (NOTA de ADR-0070 §3);
+    repetida fuera del repo, idéntica byte a byte. La diaria: 22,7 % y 16,3 %.
+  - **El pivote de ADR-0093 §6**: las filas de julio repiten julio-f2 (D5); la cuenta de julio deja de
+    llenar por RN-032 desde el 2026-07-10, así que se lee la diaria por la contingencia: 19 parejas de
+    julio y 40 de más, se cumple uno, «una sesión más».
+  - **La meta de ADR-0098**: el control reproduce 235 de 235 posiciones al céntimo; el techo no gana
+    (esperanza −0,239 R en 191, percentil 95 −0,026); las parejas, ni una cosa ni otra (29): salida C,
+    que manda sobre el pivote.
+- **Respuestas del consultor a la PARADA final** (decisiones de Aleks del 2026-11-22):
+  0. `para_clasificar.py`: (a), no se corre en esta rama; la lista sin R la hace la rama que prepare la
+     sesión siguiente (R4.6), con un guion que no imprima R (ADR-0098 §4 c) manda sobre D9).
+  1. La línea de Technical Debt de D7: sale si ninguna de las 25 esperas cae en una de las 18 horas
+     perdidas; si alguna cae, se queda con el dueño cambiado (abajo, el cruce).
+  2. Lo que sigue a la salida C lo decide Aleks con un ADR (ADR-0098 §3 C): F17 en una prueba gratuita
+     nueva de FTMO; S-14 y A-16; Aleks contrasta la premisa con el trader, sin enseñarle ninguna cifra
+     de la medida. Hasta ese ADR no se graba ninguna sesión de fidelidad; la siguiente se prepara (R4.7).
+  3. Las lecturas declaradas donde ADR-0098 §1 no lo dice con todas las letras (§0.3 f y §0.8), y el a5
+     del revisor (el filtro de riesgo ≤ 0 sin decirlo): aceptados; no tuvieron efecto visible.
+- **El cruce de las esperas** (respuesta 1; sin correr nada y sin R): las 25 esperas de «### Esperas» de
+  `cuenta-por-mes.txt`, por el instante de su primer cierre sin enviar, contra las 18 horas perdidas por
+  manifiesto (RECORRIDA-CONSTRUCCION-3.md §0.3 b): **5 caen en una hora perdida** (2026-04-03 11-15,
+  09:51; 2026-04-07 11-15, 10:24; 2026-07-10 07-11, 05:19 y 05:21; 2026-08-17 11-15, 11:22; UTC). La
+  línea se queda en Technical Debt con el mismo texto y el dueño cambiado a «la rama que vuelva a tocar
+  el respaldo M1 o test_sello_respaldo»; no hay bloque de Technical Debt PAGADA.
+- **La F vieja**, que sale reescrita (texto literal):
+  > F. La sesión 7, en dos días con el método de ADR-0093 (R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml; línea base, RECORRIDA-CONSTRUCCION-2.md). La 7a (2026-11-16-sesion-07) ingerida y ACTIVADA (F39e: ADR-0094, A-58 abierta; break even al cierre, A-13 abierta por el margen). La 7b (2026-11-20-sesion-08, v20 y v21) ingerida (F39j) y ACTIVADA (ACTIVAR-SESION-08.md, F39k): la stop cuyo 0 queda del lado malo espera (ADR-0097, A-59 abierta); S-22 no cambia el motor; A-48 y A-58 siguen abiertas, a la sesión siguiente. Siguiente: (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6), con su contingencia sin retocarla (decisión de Aleks del 2026-11-19; R4.3) y los frenos de la cuenta como están (su efecto por sesión de julio, como dato); A-43, por WhatsApp: si no contesta antes, (3) corre con el valor de hoy. El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
+- **Hoja de ruta:** R3.10 nueva y HECHA; R4.3 HECHA (sin NA:F); R4.6 con ADR-0098, «para grabar, R4.7»
+  y su Estado nuevo; R4.7 nueva (la salida C, ABIERTA); R5.7 sustituida por ADR-0098 y HECHA; R5.2
+  con R3.10; A.5 y G.2 con sus añadidos; la fila del Marcador
+  `| 2026-11-22 | RECORRIDA-CONSTRUCCION-3.md | 15.2 / 14.4 | 22.7 / 16.3 | -0.429 | 321 |`.
+- **Commits de la rama** (9):
+  - `3457fb31` la apertura (encargo, contrato y Archivo 80 de PROJECT_STATE);
+  - `539f7983` ADR-0098, la meta pre-registrada antes de la corrida (3) (fase P);
+  - `acae32e8` la fase 0, con la PARADA condicional en un punto;
+  - `c5bdad44` el README de anexos, antes de correr;
+  - `bca9ba20` el guion de la meta de ADR-0098, antes de correr;
+  - `a48dabf8` la corrida (3), el pivote y la meta de ADR-0098;
+  - `f6fc829e` la NOTA en ADR-0070 §3 (D3);
+  - `ca19aa0f` el revisor y la entrega;
+  - y este, `chore(cierre)`: sale el contrato; entran este registro, la fila de ERRORES-RECURRENTES, la
+    Next Action y Technical Debt de la orden, y la hoja de ruta.
+- **CI:** la rama no se empujó (no toca la plataforma): ningún run de `fix/recorrida-construccion-3`.
+  CI de `main` sobre `19c171d7`, al abrir: run 45051429307, success.
+- **Contrato** (el último `make check` antes de este commit): `CONTRATO: 35 ficheros dentro del
+  contrato de trabajo/recorrida-construccion-3 (riesgo medio, artefacto
+  docs/validation/RECORRIDA-CONSTRUCCION-3.md, tramo 'R4', 4 comprobaciones para el revisor)` y `G2:
+  fila de HOLDOUT-EXPOSICIONES del 2026-11-22 para trabajo/recorrida-construccion-3, estadiada`.
+- **Filas de HOLDOUT-EXPOSICIONES de la rama** (las cuatro del 2026-11-22): la de la apertura (lo que
+  leen los `make check`, los casos dev, las corridas con su calentamiento y los guiones); la del ensayo
+  del control sobre julio-f2 y lo que la fase 0 leyó con guiones de la carpeta de trabajo; la de los
+  guiones nuevos de las fases 2 a 4; y la del revisor y la prueba del test contra `main`.
+- **Revisor** (opus): una pasada con los siete alcances del encargo, pegada en
+  RECORRIDA-CONSTRUCCION-3.md, «Informe del revisor»; lo hecho, en «Lo que se hizo con los hallazgos
+  del revisor».

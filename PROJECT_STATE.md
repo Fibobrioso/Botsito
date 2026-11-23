@@ -25,7 +25,7 @@ f04868cc · merge trabajo/activar-sesion-08: la sesión 7b activada (la stop del
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. La sesión 7, en dos días con el método de ADR-0093 (R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml; línea base, RECORRIDA-CONSTRUCCION-2.md). La 7a (2026-11-16-sesion-07) ingerida y ACTIVADA (F39e: ADR-0094, A-58 abierta; break even al cierre, A-13 abierta por el margen). La 7b (2026-11-20-sesion-08, v20 y v21) ingerida (F39j) y ACTIVADA (ACTIVAR-SESION-08.md, F39k): la stop cuyo 0 queda del lado malo espera (ADR-0097, A-59 abierta); S-22 no cambia el motor; A-48 y A-58 siguen abiertas, a la sesión siguiente. Siguiente: (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6), con su contingencia sin retocarla (decisión de Aleks del 2026-11-19; R4.3) y los frenos de la cuenta como están (su efecto por sesión de julio, como dato); A-43, por WhatsApp: si no contesta antes, (3) corre con el valor de hoy. El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
+F. La sesión 7, en dos días con el método de ADR-0093 (R4.3), ingerida y ACTIVADA: la 7a (F39e: ADR-0094, A-58 abierta; break even al cierre, A-13 abierta por el margen) y la 7b (F39k: la stop cuyo 0 queda del lado malo espera, ADR-0097, A-59 abierta); A-48 y A-58, a la sesión siguiente. La corrida (3) de ADR-0070 §3 dio «no» (cobertura 15.2 %, precisión 14.4 %; RECORRIDA-CONSTRUCCION-3.md). La línea base vigente es anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt. El pivote de ADR-0093 §6, por su contingencia sobre la diaria (19 parejas de julio y 40 de más): «una sesión más». La meta de ADR-0098: salida C (el techo no gana), que manda sobre el pivote; lo que pide antes de seguir, en R4.7: hasta el ADR de Aleks que la resuelva no se graba ninguna sesión de fidelidad, y la siguiente (R4.6) se prepara. El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. La letra C y R6a, en los huecos.
 
 
 
@@ -156,7 +156,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - El día quemado de holdout-2 no está en retirados.yaml (lo excluyen HOLDOUT-EXPOSICIONES, «Lo que esto obliga», 4, y PREREGISTRO.md) y casos_medidos lo cuenta. Dueño: la rama que dé uso a holdout-2 lo retira antes (ADR-0096 §2).
 - tests/unit/test_kit.py:706-707 (docstring de _autorizar) dice que el PREREGISTRO del proyecto «sigue vacio a proposito»: viejo desde ADR-0096. Lo corrige la rama que toque test_kit.py.
 - `motor laminas` no dibuja las esperas de ADR-0097 (ACTIVAR-SESION-08.md). Dueño: la rama que genere las láminas de la sesión siguiente.
-- Tests que no miran el estado en los días sin ticks (`test_sello_respaldo`; ACTIVAR-SESION-08.md, F2). Dueño: la corrida de (3), con los rechazos por motivo y día.
+- Tests que no miran el estado en los días sin ticks (`test_sello_respaldo`; ACTIVAR-SESION-08.md, F2). Dueño: la rama que vuelva a tocar el respaldo M1 o test_sello_respaldo.
 
 ## Reglas vivas
 Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de los manifiestos, el LF y UTF-8, Decisions and Rationale y Known Issues: `docs/runbooks/DECISIONES-DE-PROCESO.md`, en sus secciones del mismo nombre.
