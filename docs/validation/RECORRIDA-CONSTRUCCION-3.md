@@ -1,6 +1,7 @@
 # RECORRIDA-CONSTRUCCION-3 · La corrida (3): la 7b activada, sobre toda la construcción, el pivote de ADR-0093 §6 y la meta de ADR-0098: el techo del trader y el R de las parejas (R4.3, entrada F)
 
-> PLANTILLA hasta la entrega: la fase 0 está escrita; las corridas, el pivote y la meta van en §1 a §8.
+> Entregado el 2026-11-22: la corrida (3) da «no»; el pivote, por su contingencia, «una sesión más»; la
+> meta de ADR-0098, salida C. Rama lista para revisión, NO cerrada.
 
 Rama `trabajo/recorrida-construccion-3`, abierta el 2026-11-22 desde `main` en 19c171d7 (commit de
 estado sobre el merge f04868cc del tag `stable/F39k-activar-sesion-08`). Encargo:
@@ -500,7 +501,9 @@ pendiente cancelada»; «Ordenes no enviadas por el bot»: ninguna.
 
 ```
 ### Material sin video (ADR-0092 §11; DIAGNOSTICO, ningun umbral lo lee)
+libros sin video: 2026-01, 2026-04, 2026-08, salvo 2026-04-29; cuentan como CON video, provisionales hasta que T lo compruebe: 2026-07 (fuente: ACTIVAR-SESION-05.md §0.b.7)
 operaciones del bot quitadas (break_even en un dia sin video): 42
+cascada sin ellas, total | sin orden del bot en su (dia, sesion, direccion) 70 | orden, con la entrada fuera de tolerancia 74 | entrada, con el stop fuera de tolerancia 38 | entrada; el caso no trae stop 0 | en el nivel, no llenada 4 | en el nivel, llenada fuera de tolerancia de instante 1 | las cuatro piezas 11
 esperanza sin ellas (media del R neto, 193 operaciones): -0.443
 ### Rentabilidad (ADR-0092 §3; DIAGNOSTICO sobre construccion, ADR-0092 §6: la puerta solo se mide sobre 2025-06, 2025-07, 2025-08, 2025-09, 2025-10, 2025-11, fase fondeada)
 FASE de esta corrida: reto
@@ -558,15 +561,24 @@ dispara un freno de la cuenta en la corrida 1, y ninguna en las 11 sin freno. En
 racha y la pérdida total empiezan de cero cada día.
 
 **La primera sesión con freno de cada cuenta mensual de la corrida 1**, y el saldo al corte de ese día
-(curva por día del bloque de la cuenta):
-- 2026-01: 2026-01-13 11-15 (RN-032); saldo al corte 105043.10;
-- 2026-04: ningún freno de la cuenta dispara en una sesión con operaciones del trader;
+(curva por día del bloque de la cuenta). Las sesiones salen de «## Por sesion» (las que tienen
+operaciones del trader) y de las líneas «gate» de «## Avisos de orden dentro de una clase», que nombran
+también las sesiones sin operaciones del trader (corregido tras el hallazgo b1 del revisor: la primera
+versión miraba solo «Por sesion» y daba abril sin freno):
+- 2026-01: 2026-01-13 11-15 (RN-032, con operaciones del trader); saldo al corte 105043.10; localizadas
+  RN-032 en 5 sesiones y RN-036 en 5;
+- 2026-04: **2026-04-21 11-15 (RN-036, una sesión sin operaciones del trader, de «Avisos»)**; saldo al
+  corte 102736.77; RN-036 en 1 sesión, RN-032 en ninguna;
 - 2026-07: 2026-07-03 07-11 (RN-036); saldo al corte 96308.41; RN-032, desde 2026-07-10 07-11 hasta el 17
-  (saldo al corte del 10: 92374.52), y el bot no llena ninguna orden desde 2026-07-10 11-15;
-- 2026-08: 2026-08-20 07-11 (RN-036); saldo al corte 93007.08; RN-032, del 2026-08-26 al 31.
+  (saldo al corte del 10: 92374.52), y el bot no llena ninguna orden desde 2026-07-10 11-15; RN-032 en 12
+  sesiones y RN-036 en 2;
+- 2026-08: 2026-08-20 07-11 (RN-036); saldo al corte 93007.08; RN-032, del 2026-08-26 al 31; RN-032 en 6
+  sesiones y RN-036 en 2.
 
 RN-032 dispara en 25 de las 152 sesiones (23 de las 104 con operaciones del trader) y RN-036 en 10 (7);
-RN-020 en ninguna (`resumen-cuenta-por-mes.txt`).
+RN-020 en ninguna (`resumen-cuenta-por-mes.txt`). Así se localizan las 10 de RN-036 y 23 de las 25 de
+RN-032: las 2 de RN-032 en sesiones sin operaciones del trader no salen en ninguna línea «gate» de
+«Avisos», y la salida no las nombra en otro sitio; quedan sin localizar.
 
 ### §1.2 D7, los rechazos por motivo y por día
 
@@ -823,7 +835,7 @@ tiene 24.669). Las líneas, tal como las aplicaría la orden de cierre:
 |---|---|---|---|
 | `trabajo/recorrida-construccion-3` | (1) El bloque `ids-inexistentes` solo exime al documento que lo lleva: citar el ADR del encargo en PROJECT_STATE, en la fila de HOLDOUT o en la cabecera del informe antes de que exista tumba `knowledge validate` (cuatro errores en la apertura). (2) Una decisión del encargo choca con el ADR que el mismo encargo pre-registra: D9 pedía `para_clasificar.py`, que imprime un R por clase, y ADR-0098 §4 c) lo prohíbe. (3) D10 pedía atribuir «un rechazo de ADR-0097», y ADR-0097 no rechaza: espera (auditor). (4) La contingencia del pivote se activó sin SUSPENDIDA, por un freno que deja de llenar (RN-032 desde el 10 de julio). (5) Un guion que lee una sección de la salida tiene que parar en su línea de resumen («ordenes: …»): el ensayo del control sobre una salida ya expuesta lo cazó antes de la corrida. | (1) «id citado que no existe» en el primer `knowledge validate`. (2) un guion de `main` que imprime R sobre una clase. (3) la palabra «rechazo» junto a ADR-0097. (4) días al final del mes sin equity mínima en la curva de la cuenta. (5) `IndexError` al partir una línea sin columnas. | (1) El id solo en el encargo hasta el commit que lo crea. (2) Antes de correr, cruzar cada guion pedido con lo que el pre-registro prohíbe imprimir. (3) El rastro de ADR-0097 es «### Esperas» y los `precio_invalido` que desaparecen. (4) Leer la contingencia con la curva y «disparadas», antes del pivote. (5) Ensayar el guion de la meta sobre una salida ya expuesta del motor de hoy antes de la corrida que cuenta. |
 
-## El encargo frente a lo hecho
+## El encargo, punto por punto
 
 | # | Punto del encargo | Hecho | Evidencia |
 |---|---|---|---|
@@ -831,9 +843,23 @@ tiene 24.669). Las líneas, tal como las aplicaría la orden de cierre:
 | 2 | Variable del reaper y /model | Hecho | `echo`: `REAP=1`; Opus 5.5, alto |
 | 3 | La fila de HOLDOUT, lo primero, por recuento | Hecho | 14:32:37, antes del primer `make check` (§0.3 h); filas complementarias del día |
 | 4 | Los dos ficheros de Aleks, leídos; sin fechas reservadas | Hecho (el yaml llegó a mitad) | «Desviaciones de la apertura» |
-| 5 | abrir-rama, contrato, encargo, `ids-inexistentes` con ADR-0098 | Hecho | `3457fb31`; contrato.yaml |
-| 6 | Fase P: ADR, yaml, test, índice, recuadro, sale del bloque | Hecho | `539f7983`, 15:49:25; §0.2 |
-| 7 | Fase 0, a a j, con el auditor y la PARADA condicional | Hecho; PARADA en un punto | `acae32e8`; §0.3 a §0.5 |
+| 5 | abrir-rama, contrato (lista blanca, lo protegido manda), encargo, `ids-inexistentes` con ADR-0098 | Hecho | `3457fb31`; `contrato.yaml`; `docs/plan/` y `tests/` protegidos por ficheros, no enteros |
+| 6a | P.1: el ADR, igual salvo las dos marcas; el diff en el informe | Hecho | §0.2 |
+| 6b | P.2: el yaml byte a byte, con LF | Hecho | §0.2 (sha en el árbol y en el índice) |
+| 6c | P.3: el test con todo lo pedido y uno que rompe | Hecho; falla con `main` | §0.2; «La entrega» |
+| 6d | P.4: fila del índice y recuadro tras la NOTA del 2026-11-09 | Hecho | §0.2 |
+| 6e | P.5: sale del bloque; state check, ruff, mypy, make check; sha y hora | Hecho | `539f7983`, 15:49:25; corrida 1 a las 17:39:11 |
+| 7a | Fase 0, a) opciones, perfil, fase, cuenta por mes, nombre de la 2 | Hecho | §0.3 a |
+| 7b | b) ticks y horas perdidas | Hecho | §0.3 b |
+| 7c | c) la comisión del perfil | Hecho | §0.3 c |
+| 7d | d) recuentos de partida | Hecho: 76 y 198 | §0.3 d |
+| 7e | e) los guiones de `main` sobre la salida de hoy; su test de humo | Hecho; choque con D14 | §0.3 e; decisión 0 |
+| 7f | f) la factibilidad de ADR-0098 §1 | Hecho: CUADRA | §0.3 f |
+| 7g | g) herencias | Hecho | §0.3 g |
+| 7h | h) la fila antes del primer `make check` | Hecho | §0.3 h |
+| 7i | i) tiempo y memoria | Hecho | §0.3 i |
+| 7j | j) la premisa de D5 | Hecho: se sostiene | §0.3 j |
+| 7k | El auditor del encargo y la PARADA condicional | Hecho; PARADA en un punto | §0.4, §0.5; `acae32e8` |
 | 8 | Fase 1: README en su commit, guion, test, ruff/mypy | Hecho | `c5bdad44`, `bca9ba20`; §0.8 |
 | 9 | Fase 2: las tres corridas, una a una | Hecho | §1, §2 |
 | 10 | D1, veredicto literal; D2, línea base | Hecho | §1 |
@@ -850,29 +876,257 @@ tiene 24.669). Las líneas, tal como las aplicaría la orden de cierre:
 | 21 | Fase 4: control y, si pasa, techo, parejas y salida | Hecho: pasa; salida C | §4 |
 | 22 | §7, líneas del cierre medidas sobre una copia | Hecho | §7 |
 | 23 | §8, fila de ERRORES preparada | Hecho | §8 |
-| 24 | Revisor (opus) con los siete alcances | Al final del informe | su informe |
+| 24 | Revisor (opus) con los siete alcances | Hecho; hallazgos contestados | su informe, al final |
+| 25 | QUÉ NO CAMBIA: nada de `src/`, `knowledge/`, `scripts/`, el Makefile ni `.claude/`; ningún parámetro ni regla | Hecho | `git diff --stat main...HEAD` («La entrega») |
+| 26 | QUÉ NO CAMBIA: `criterio_fidelidad.yaml`, `PREREGISTRO.md`, `PIVOTES-SESION-7.yaml`; ninguna ambigüedad | Hecho | ibídem |
+| 27 | QUÉ NO CAMBIA: ninguna cifra fija un valor ni toca ADR-0070 ni ADR-0092 (diagnóstico) | Hecho | §1, §4: todo marcado diagnóstico o leído del yaml |
+| 28 | QUÉ NO CAMBIA: informes cerrados y líneas base existentes intactos | Hecho | `anexos/RECORRIDA-CONSTRUCCION-2/` sin cambios |
+| 29 | QUÉ NO CAMBIA: la Next Action y la hoja de ruta, solo preparadas | Hecho | §7; PROJECT_STATE solo cambia Current Branch/Feature, los dos «ninguna desde el Archivo 80» y el recuento de tests |
+| 30 | Lo que se puede mirar: nada fuera de los días dev; nada anterior a su día; búsquedas sobre rutas literales | Hecho | «Exposiciones»; `antes_del_dia.py` y la comprobación a mano del informe |
+| 31 | Autorización: solo los tres comandos del arnés y el guion de la fase 4; nunca a la par de un `make check` ni entre sí | Hecho | §1, §2; los tiempos de cada uno |
+| 32 | PROJECT_STATE con las líneas aplicadas, medido sobre una copia; PARADA si pasa de 24.900 | Hecho: 24.505 / 24.337 | §7 |
 
 **Desviaciones:** el yaml llegó a mitad de la apertura; la fila de HOLDOUT declara junio para los `make
 check`, como la skill (el encargo nombraba solo marzo); la fase P va antes del auditor, contra el orden de
 `fase-cero`; las citas de ADR-0098 fuera del encargo se quitaron hasta que existió; D10 atribuye con
 «### Esperas» y no con «un rechazo de ADR-0097», que no existe; `para_clasificar.py` no se corrió (decisión
 0); el pivote se lee sobre la diaria porque la contingencia aplica; el guion de la meta pasó por un
-segundo ensayo tras arreglar la lectura de «### Ordenes».
+segundo ensayo tras arreglar la lectura de «### Ordenes»; el comando de `meta.txt` usó
+`pivote-julio-diaria.txt` y no el `pivote-julio.txt` que el README escribió antes de correr (por la
+contingencia; el README ya lo dice); las salidas capturadas de la consola (`control.txt`, `meta.txt`, los
+dos `pivote-julio*`, los dos `delta-julio-*` y `frenos-julio.txt`) salieron con CRLF y se les quitó el CR
+con `sed -i 's/\r$//'` antes de commitear, como a los patrones; tras el revisor, `frenos_julio.py` mira
+también las líneas «gate» de «Avisos» (b1) y el test de humo lleva datos de verdad sintéticos (b4).
 
-**Comandos ejecutados** (desde la raíz; los de las corridas, del encargo, literales):
-- `uv run botsito motor arnes --simular --salida docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt`
-- `uv run botsito motor arnes --simular --diagnostico-cuenta-diaria --salida docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diaria.txt`
-- `uv run botsito motor arnes --simular --salida <carpeta de trabajo>/cuenta-por-mes-repetida.txt` y `diff` contra la commiteada
-- `uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/patrones.py <salida> --filas > <destino>` y `sed -i 's/\r$//' <destino>`, para las dos salidas
-- `uv run python -B docs/validation/anexos/PREPARACION-SESION-7/pivote_julio.py <patrones>`, para las dos
-- `uv run python -B docs/validation/anexos/ACTIVAR-SESION-07/delta_julio.py <4 argumentos>`: f2 → corrida 1 (D5) y corrida 1 → diaria (D6)
-- los dos `diff` de D10 y `diff_por_seccion.py` sobre cada uno; `resumen_corrida.py` sobre las dos salidas
-- `techo_parejas.py control` y `parejas` (README); `frenos_julio.py`; `simular_cierre.py`; `antes_del_dia.py` (el de `main`) sobre los ficheros nuevos de la carpeta: ninguna fecha de material fuera de la construcción ni anterior a su día (las que marca son de calendario, de 2026-11-08 a 2026-11-22, sintéticas de 2030 o de un día dev)
+**Comandos ejecutados**, desde la raíz y literales, en este orden (las tres corridas, una a una y nunca
+a la par de un `make check`; `techo_parejas.py` corrió después de la corrida 3 y antes de
+`resumen_corrida.py`, y no imprime su tiempo):
+
+```
+uv run botsito motor arnes --simular --salida docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt
+uv run botsito motor arnes --simular --diagnostico-cuenta-diaria --salida docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diaria.txt
+uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/patrones.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt --filas > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-cuenta-por-mes.txt
+sed -i 's/\r$//' docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-cuenta-por-mes.txt
+uv run python -B docs/validation/anexos/PREPARACION-SESION-7/pivote_julio.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-cuenta-por-mes.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/pivote-julio.txt
+uv run python -B docs/validation/anexos/ACTIVAR-SESION-07/delta_julio.py data/activar-sesion-08/patrones-julio-f2.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-cuenta-por-mes.txt data/activar-sesion-08/julio-f2.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/delta-julio-f2-cuenta-por-mes.txt
+uv run botsito motor arnes --simular --salida <carpeta de trabajo de la sesión>/cuenta-por-mes-repetida.txt
+uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/patrones.py "docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diaria.DIAGNOSTICO.cuenta=diaria.txt" --filas > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-diaria.txt
+sed -i 's/\r$//' docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-diaria.txt
+uv run python -B docs/validation/anexos/PREPARACION-SESION-7/pivote_julio.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-diaria.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/pivote-julio-diaria.txt
+diff docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diff-linea-base.txt
+diff "docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/diaria.DIAGNOSTICO.cuenta=diaria.txt" "docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diaria.DIAGNOSTICO.cuenta=diaria.txt" > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diff-diaria.txt
+uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/diff_por_seccion.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diff-linea-base.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diff-linea-base-por-seccion.txt
+uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/diff_por_seccion.py "docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/diaria.DIAGNOSTICO.cuenta=diaria.txt" "docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diaria.DIAGNOSTICO.cuenta=diaria.txt" docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diff-diaria.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diff-diaria-por-seccion.txt
+diff docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt <carpeta de trabajo de la sesión>/cuenta-por-mes-repetida.txt
+uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/techo_parejas.py control docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/control.txt
+uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/techo_parejas.py parejas docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/pivote-julio-diaria.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/meta.txt
+uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/resumen_corrida.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/resumen-cuenta-por-mes.txt
+uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/resumen_corrida.py "docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diaria.DIAGNOSTICO.cuenta=diaria.txt" > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/resumen-diaria.txt
+uv run python -B docs/validation/anexos/ACTIVAR-SESION-07/delta_julio.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-diaria.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt "docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diaria.DIAGNOSTICO.cuenta=diaria.txt" > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/delta-julio-cuenta-por-mes-diaria.txt
+uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/frenos_julio.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/delta-julio-cuenta-por-mes-diaria.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/frenos-julio.txt
+uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/simular_cierre.py > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/simular-cierre.txt
+sed -i 's/\r$//' control.txt delta-julio-cuenta-por-mes-diaria.txt delta-julio-f2-cuenta-por-mes.txt frenos-julio.txt meta.txt pivote-julio-diaria.txt pivote-julio.txt   # desde la carpeta de anexos
+uv run python -B ../RECORRIDA-CONSTRUCCION-2/antes_del_dia.py <los ficheros nuevos de la carpeta>   # desde la carpeta de anexos
+```
+
+`frenos_julio.py` y `sed` sobre `frenos-julio.txt` se repitieron tras el revisor (b1). `antes_del_dia.py`
+(el de `main`) no marca ninguna fecha de material fuera de la construcción ni anterior a su día en las
+salidas; las que marca en el README, en `simular_cierre.py` y en el test son de calendario (de 2026-11-08 a
+2026-11-22), sintéticas de 2030 o de un día dev. Sobre este informe el guion se rompe (`ValueError: day is
+out of range for month`, al leer como fecha el id del manifiesto `eurusd-ticks-2026-08-75bd3a08`; revisor,
+a4): se comprobó a mano, y el revisor lo repitió: todas las fechas del informe son de calendario o de días
+dev de construcción.
+
+## La entrega (entregar-rama)
+
+- **Lo que no cambia** (`git diff --stat main...HEAD`, antes de este commit): 35 ficheros, todos dentro
+  del contrato; ninguno en `src/`, `knowledge/`, `scripts/`, `.claude/`, `tools/` ni el Makefile; en
+  `tests/`, solo `tests/unit/test_meta_techo_parejas.py`. `uv run python scripts/contrato_rama.py`:
+  «CONTRATO: 35 ficheros dentro del contrato … tramo 'R4', 4 comprobaciones» y «G2: fila de
+  HOLDOUT-EXPOSICIONES del 2026-11-22 para trabajo/recorrida-construccion-3, estadiada».
+- **El test que rompe a propósito, con el código de `main`**: un worktree desacoplado de `main` (19c171d7)
+  en la carpeta de trabajo de la sesión (skill `comparar-con-main`; la guardia niega `git clone`), con
+  `tests/unit/test_meta_techo_parejas.py` de la rama copiado dentro: `uv run pytest
+  <worktree>/tests/unit/test_meta_techo_parejas.py -p no:cacheprovider` → **4 failed**
+  (`test_el_yaml_es_el_pre_registrado`, `test_las_cifras_las_salidas_y_la_precedencia_son_las_de_adr_0098`,
+  `test_una_banda_cambiada_rompe`, `test_el_minimo_que_no_remite_al_pivote_rompe`: `FileNotFoundError`, en
+  `main` no está `docs/plan/META-TECHO-PAREJAS.yaml`) y 1 passed (`test_el_bloque_rentabilidad_al_que_remite_existe`,
+  porque ese bloque ya está en `main`). En la rama, 5 passed (§0.2). El worktree se quitó (`git worktree
+  remove --force`).
+- **CI de Linux:** no hace falta; la rama no toca `.claude/`, hooks, rutas ni código de plataforma.
+- **PROJECT_STATE:** 24.801 bytes en la rama (`wc -c`); el del cierre, 24.505 o 24.337 (§7).
 
 **Exposiciones de cada día:** todo el trabajo es del 2026-11-22; sus cuatro filas en HOLDOUT-EXPOSICIONES
-(la de la apertura, la del ensayo del control y lo de la fase 0, la de los guiones nuevos, y la del
-revisor).
+(la de la apertura; la del ensayo del control y lo de la fase 0; la de los guiones nuevos; y la del revisor
+y la prueba del test contra `main`).
+
+## Lo que se hizo con los hallazgos del revisor
+
+- **a1 (importa), el comando de `meta.txt` y los comandos literales:** arreglado. El README da ahora el
+  comando que se corrió (con `pivote-julio-diaria.txt`, por la contingencia) y nombra el cambio; «Comandos
+  ejecutados» los da literales y en orden.
+- **b1 (importa), D6 por cuenta sin las sesiones sin trader:** arreglado. `frenos_julio.py` mira también
+  las líneas «gate» de «Avisos»; abril tiene freno (RN-036, 2026-04-21 11-15, sin trader, saldo al corte
+  102736.77); RN-036 queda localizado en sus 10 sesiones y RN-032 en 23 de 25; las 2 que faltan no salen
+  en ninguna parte de la salida y se dice (§1.1).
+- **b2 (importa), el README no decía qué son seis ficheros:** arreglado (`frenos_julio.py`,
+  `frenos-julio.txt`, `simular_cierre.py`, `simular-cierre.txt`, `delta-julio-cuenta-por-mes-diaria.txt` y
+  `pivote-julio-diaria.txt`, con sus comandos y la nota de los CR).
+- **b3 (importa), «El encargo, punto por punto»:** arreglado: la tabla se llama así y lleva la fase P y la
+  fase 0 punto por punto y las filas de «QUÉ NO CAMBIA», la autorización y el tope de PROJECT_STATE.
+- **a2 (menor), el rótulo de plantilla:** sustituido por la línea de entrega.
+- **a3 (menor), dos líneas de «### Material sin video»:** añadidas; el bloque es ahora literal entero.
+- **a4 (menor), `antes_del_dia.py` sobre el informe:** no se puede correr (se rompe con el id de un
+  manifiesto); dicho en «Comandos ejecutados», con la comprobación a mano. Arreglar el guion de `main`
+  queda fuera de esta rama.
+- **a5 (menor), el techo descarta sin decirlo las posiciones con riesgo ≤ 0:** en esta corrida no descarta
+  ninguna (191 llenadas y cerradas = 198 − 7 no colocables, y N = 191). No se cambia el guion ni se vuelve a
+  correr la medida: lo digo aquí.
+- **b4 (menor), datos del test de humo no del todo sintéticos y un nombre:** arreglado (valores
+  sintéticos, `test_tres_dias_como_la_cuenta_a_mano`); 14 passed.
+- **Lo que no pudo comprobar:** D11 (la copia se borró, como manda el encargo); la hora de la corrida 1 es la
+  de `date` justo antes de lanzarla, y el revisor la encontró coherente con el mtime de la salida; la
+  normalización de los CR, ahora declarada; el paso 3 de la entrega, ahora en «La entrega».
+
+## Informe del revisor (subagente `revisor`, opus, 2026-11-22), tal cual
+
+> ## Informe del revisor · trabajo/recorrida-construccion-3 · 2026-11-22
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 4 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | El informe dice que `meta.txt` sale «de los comandos del README», pero el README nombra otro fichero de pivote que el que se usó. En ningún sitio está escrito el comando literal que produjo `meta.txt`. Además, «Comandos ejecutados» da marcadores (`<salida>`, `<4 argumentos>`, «(README)») en vez de los comandos literales que pide el encargo. | `RECORRIDA-CONSTRUCCION-3.md:662` dice «de los comandos del README (exit 0 los dos)». El README del commit `bca9ba20` (`anexos/RECORRIDA-CONSTRUCCION-3/README.md`, línea añadida 2 de la fase 4) da `techo_parejas.py parejas … patrones-cuenta-por-mes.txt …/pivote-julio.txt`. En cambio `meta.txt:39` dice `pivote de ADR-0093 §6 (de pivote-julio-diaria.txt)`. Ver también `RECORRIDA-CONSTRUCCION-3.md:866-870`. |
+> | a2 | menor | Sigue en la cabecera el rótulo de plantilla, que ya no es verdad. | `RECORRIDA-CONSTRUCCION-3.md:3`: «> PLANTILLA hasta la entrega: la fase 0 está escrita; …» |
+> | a3 | menor | El bloque «líneas literales» de la sección del método no está entero y no lo dice: faltan dos líneas de «### Material sin video». | El informe, en `RECORRIDA-CONSTRUCCION-3.md:501-515`, salta las líneas 3379 («libros sin video: …») y 3381 («cascada sin ellas, total | …») de `cuenta-por-mes.txt`. |
+> | a4 | menor | `antes_del_dia.py` no se pasó sobre el informe, aunque §0.4.11 dice que se haría «también sobre los .py y el informe». El guion de `main` además se rompe con el informe: toma como fecha el id de un manifiesto. Lo comprobé a mano y el informe no lleva ninguna fecha reservada ni anterior a su día (todas son de calendario o de días dev). | `uv run python -B ../RECORRIDA-CONSTRUCCION-2/antes_del_dia.py … ../../RECORRIDA-CONSTRUCCION-3.md` da `ValueError: day is out of range for month`. Lo provoca `RECORRIDA-CONSTRUCCION-3.md:109`, `eurusd-ticks-2026-08-75bd3a08`. |
+> | a5 | menor | El techo descarta sin decirlo las posiciones con riesgo ≤ 0. En esta corrida no descarta ninguna (191 = 198 − 7 no colocables), pero un descarte no se vería en la salida. | `techo_parejas.py:816`: `filas = [f for f in filas_de(rep) if f.riesgo > 0]`. En `meta.txt:9-11`: 198 operaciones, 7 no colocables, 191 llenadas. |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `scripts/contrato_rama.py` da `CONTRATO: 35 ficheros dentro del contrato … 4 comprobaciones` y `G2: fila … estadiada`, exit 0. `state check` da OK, exit 0.
+> - **make check.** No lo ejecuto porque escribe. En `make-check.log`: «3612 passed, 6 xfailed», «SELLO: make check en verde sobre el arbol 6744cf30…», que es igual a `git rev-parse f6fc829e^{tree}`, y «PICO DE MEMORIA … 320 MiB». `knowledge validate`, dentro del mismo log: «OK: 753 items…». El índice tiene ahora estadiada la fila del revisor en HOLDOUT, así que el árbol estadiado ya no es el sellado: hace falta otro make check antes del próximo commit.
+> - **Trailers `Fuente:`.** No aplican: ningún commit toca `knowledge/spec` ni `knowledge/cases`.
+> - **Holdout y material.** Nada bajo `knowledge/cases/holdout`. Hay cinco filas del 2026-11-22 en `HOLDOUT-EXPOSICIONES.md:185-189`, por recuento: marzo entero y holdout-3 solo como velas para calentar. No se abrió ningún fotograma, libro ni agregado.
+> - **Regímenes de cambio.** No hay cambios en evidence, feedback, manifests, corpus ni `libros.yaml`.
+> - **Ambigüedades.** Sin cambios.
+> - **ADR.** El `## Estado` de ADR-0098 empieza por «ACTIVE». ADR-0070 y ADR-0092 solo ganan una NOTA y un recuadro, sin tocar el cuerpo (`git diff main...HEAD`).
+> - **Informes cerrados.** Ninguno cambia. En `docs/validation/` solo cambian HOLDOUT (se añaden filas) y el informe nuevo.
+> - **Citas.** No hay ningún sitio nuevo con `cita`.
+> - **Cifras.** Nada en `src/`.
+> - **Citas de código contrastadas:** `arnes.py:80-82`, `primitivas_broker.py:272-308` (break even con `posterior_a`), `cableado.py:396-470` (bucle del día y fin del día), `cableado.py:1312`, `cuenta.py:476-484`, `broker.py:558-571` y `criterio_fidelidad.py:580-585` y `:611`. Todas sostienen lo que dice el informe.
+> - **Evidencia nueva.** No hay ítems nuevos.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 3 importa, 1 menor. Requisitos: 34 hechos (uno de ellos de otra forma, declarado), 5 parciales, 0 no hechos; 1 en curso (este revisor).
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Base: main 19c171d7, el tag en f04868cc, sin otras ramas, el tag previsto libre | Hecho | `git rev-parse` da 19c171d7… y f04868cc… (= `main^1`). `git branch --list` da main y la rama. `git tag --list "stable/F39l*"` sale vacío. |
+> | 2 | /model y la variable REAP | Hecho (declarado) | Informe:18 |
+> | 3 | Fila de HOLDOUT primero, por recuento | Hecho | HOLDOUT:185 y la G2 en verde |
+> | 4 | Los dos ficheros de Aleks, leídos | Hecho | Informe:22-24 |
+> | 5 | Contrato: R4, riesgo medio, artefacto, rutas | Hecho | `contrato.yaml:1-17` |
+> | 6 | Bloque `ids-inexistentes` y su retirada en el commit P | Hecho | `git diff 3457fb31 539f7983 -- docs/encargos/…` |
+> | 7 | P.1: el ADR, igual salvo las dos marcas | Hecho | `diff` contra el Escritorio: solo `3c3` y `292c292`. Lo mismo con el blob de 539f7983. |
+> | 8 | P.2: el yaml, byte a byte y en LF | Hecho | `cmp` exit 0 en el árbol y en el blob de 539f7983 |
+> | 9 | P.3: el test, con todo lo pedido y uno que rompe | Hecho | `tests/unit/test_meta_techo_parejas.py:26-133` |
+> | 10 | P.4: fila del índice y recuadro, tal cual, tras la NOTA del 2026-11-09 | Hecho | Diff de ADR-0092 y de `docs/adr/README.md` |
+> | 11 | P.5: mensaje, sha y hora; el P antes de la corrida 1 | Hecho | 539f7983 es de 15:49:25 y bca9ba20 de 17:39:04. `cuenta-por-mes.txt` tiene mtime 17:45:03, que menos 345,7 s da 17:39:17: cuadra con 17:39:11. |
+> | 12 | Fase 0, puntos a) a j) con fichero:línea | Hecho | §0.3 |
+> | 13 | PARADA condicional | Hecho | §0.5 (decisión 0) |
+> | 14 | README: qué es cada fichero y los comandos literales | Parcial | Ver b2 |
+> | 15 | Guion de tres modos que escribe su lectura y la salida | Hecho | `techo_parejas.py:692-1048` |
+> | 16 | Test de humo en los dos sentidos | Hecho | `uv run pytest …/test_techo_parejas.py -p no:cacheprovider -v` da 14 passed |
+> | 17 | ruff y mypy | Hecho (declarado) | README, «Antes de correr» |
+> | 18 | Las tres corridas, literales y una a la vez | Hecho (según el informe) | §1 y §2. Las dos salidas son exit 0 y llevan sus TIEMPO. |
+> | 19 | Los guiones posteriores a las corridas | Parcial | `para_clasificar.py` no se corrió: decisión 0, declarada |
+> | 20 | Líneas TIEMPO/MEMORIA y nombres de fichero | Hecho | Informe:443-444 y 609-610 |
+> | 21 | D3: NOTA en commit propio, tras la fase 2 | Hecho | f6fc829e toca solo ADR-0070. La NOTA trae el veredicto literal y la frase de la línea base. |
+> | 22 | D1: veredicto literal | Hecho | `cuenta-por-mes.txt:13` = informe:454 |
+> | 23 | D2: línea base | Hecho | No hay cambios en `anexos/RECORRIDA-CONSTRUCCION-2/` |
+> | 24 | D4: pivote, contingencia y la nota de S-22 | Hecho | Ver el alcance 3 abajo |
+> | 25 | D5: control de julio | Hecho | Ver el alcance 3 abajo |
+> | 26 | D6: frenos por sesión de julio y por cuenta | Parcial | Ver b1 |
+> | 27 | D7: rechazos | Hecho | `cuenta-por-mes.txt:3035` «ninguno». `grep -c "| rechazada |"` da 0. |
+> | 28 | D8: parámetros DEFAULT_AMBIGUOUS | Hecho | Hay 10 `estado: DEFAULT_AMBIGUOUS` en `parametros.yaml`, los mismos que la tabla de §1.3 |
+> | 29 | D9: patrones y lista para clasificar | Parcial | Los patrones están (tablas iguales a los anexos). La lista espera a la decisión 0, declarada. |
+> | 30 | D10: diffs y atribución | Hecho de otra forma | Atribuye por «### Esperas» y no por «rechazo»; declarado en §0.4.1. Las cifras están verificadas: 3527→3393, 2360/2226, rechazos de RC-2 8/11/9/4, stop_movido de RC-2. |
+> | 31 | D11: determinismo | Hecho (según el informe) | La copia se borró: no se puede verificar |
+> | 32 | D12 | Hecho | 345,7 s, 317,7 s y 372,6 s, todas por debajo de 645 MiB |
+> | 33 | D13 | Hecho | `git diff main --stat -- src knowledge scripts .claude tests Makefile` da solo `tests/unit/test_meta_techo_parejas.py` |
+> | 34 | D14 y §4 c) | Hecho | Ver el alcance 4 abajo |
+> | 35 | Fase 3: líneas literales del método | Hecho, con la omisión a3 | §1 |
+> | 36 | Fase 4 en `meta.txt` y §4, literal | Hecho | El bloque de §4 es igual a `meta.txt:3-40` |
+> | 37 | Informe: tabla, desviaciones, comandos literales, exposiciones | Parcial | Comandos no literales (a1) y tabla con otro nombre (b3) |
+> | 38 | §7: líneas del cierre medidas sobre una copia | Hecho | Volví a correr `simular_cierre.py`: salida idéntica a `simular-cierre.txt` (24505 y 24337 bytes; a, b, c vacíos) |
+> | 39 | Revisor | En curso | Este informe |
+> | 40 | Qué no cambia: criterio_fidelidad, PREREGISTRO, PIVOTES, informes cerrados, Next Action, hoja de ruta | Hecho | `git diff --stat main...HEAD` (35 ficheros, todos dentro del contrato) |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | D6 pide «en qué sesión se frena cada cuenta mensual», pero `frenos_julio.py` solo mira «## Por sesion», que lista únicamente las sesiones con operaciones del trader. Por eso la cuenta de abril sale como sin freno, cuando RN-036 actúa el 2026-04-21 11-15, una sesión sin trader (saldo al corte de ese día: 102736.77). También quedan sin localizar las 2 sesiones de RN-032 sin trader (25 − 23). | En «Avisos», `cuenta-por-mes.txt:426-431` da `2026-04-21 11-15: gate … RN-036`. En «Por sesion» solo existe `2026-04-21 07-11` (línea 816). Las sesiones con RN-036 en «Avisos» son exactamente 10, como «RN-036: 10 de 152; 7 de 104» (línea 50); las 3 sin trader son 01-14 11-15, 01-26 11-15 y 04-21 11-15. La curva da `2026-04-21 | 102736.77…` (línea 1369). El informe (§1.1, línea 563) dice solo «ningún freno … en una sesión con operaciones del trader». |
+> | b2 | importa | El README no dice qué son seis ficheros commiteados, aunque el encargo pide «qué es cada fichero». Y el comando de la meta que da no es el que se corrió (ver a1). | `Grep "frenos|simular|pivote-julio-diaria|delta-julio-cuenta"` sobre el README no encuentra `frenos_julio.py`, `frenos-julio.txt`, `simular_cierre.py`, `simular-cierre.txt`, `delta-julio-cuenta-por-mes-diaria.txt` ni `pivote-julio-diaria.txt`. El README no cambió después de `bca9ba20` (`git log` de ese fichero). |
+> | b3 | importa | El informe no tiene «El encargo, punto por punto». Hay una tabla parecida, «## El encargo frente a lo hecho», con 24 filas gruesas, sin las filas de «QUÉ NO CAMBIA» y sin los puntos de la fase 0 uno por uno. El nombre no casa con la verificación de la skill. | `RECORRIDA-CONSTRUCCION-3.md:826-853`. `.claude/skills/entregar-rama/SKILL.md:47-50` y `:107`. |
+> | b4 | menor | El test de humo dice que sus datos son «sintéticos», pero la fila del control es la posición real 2026-01-02 pos-o7 con el año cambiado a 2030. Ya estaba igual en la línea base de RC-2, así que no filtra nada de la corrida (3). El test `test_dos_dias_…` usa tres días. | `test_techo_parejas.py:106` (`"24.30","stop","…12:13:04.894…","-340.20"`) frente a `RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt:3251`. `test_techo_parejas.py:142-143`. |
+>
+> **Los siete alcances del encargo:**
+> 1. **Pre-registro.** 539f7983 (15:49:25) va antes de bca9ba20 (17:39:04), que va antes de la corrida 1: mtime 17:45:03 menos 345,7 s. El `diff` del ADR solo cambia las dos líneas `<FECHA-DEL-COMMIT>`, igual en el árbol y en el blob del commit P. El `cmp` del yaml da 0.
+> 2. **La corrida 1.** El veredicto no lleva «opción fuera de la lista», y la diaria sí («no (opción fuera de la lista: --diagnostico-cuenta-diaria; …)»): con la lista cerrada de `arnes.py:80-82` y `:286-289`, eso prueba que la corrida 1 usó solo opciones de la lista. «DIAGNOSTICO» sale solo en las líneas 3378 y 3384, títulos de la sección del método, igual que en RC-2 (2 apariciones). Ninguna línea lleva el rótulo `[DIAGNOSTICO-CUENTA-…]` (en la diaria lo llevan todas). El veredicto es el literal.
+> 3. **El pivote.**
+>    - Los mínimos 19 y 33 y las salidas son los del yaml (`PIVOTES-SESION-7.yaml`).
+>    - La contingencia está aplicada como está escrita. RN-032 aparece en «disparadas» en las 12 sesiones del 07-10 al 07-17, y el bot tiene 0 desde 07-10 11-15. La curva de julio no tiene equity mínima del 13 al 17 (líneas 1377-1399). La cuenta acaba EN_CURSO.
+>    - Las 87 filas de julio de `data/activar-sesion-08/patrones-julio-f2.txt` y de `patrones-cuenta-por-mes.txt` son idénticas en texto: `diff` de las líneas «| 2026-07-» da exit 0, 87 contra 87. `delta-julio-f2-cuenta-por-mes.txt` da 0, 0 y 0.
+> 4. **techo_parejas.py frente a ADR-0098 §1.**
+>    - Pieza a pieza coincide con el motor: bucle del día y fin del día como `cableado.py:396-470`; `m1_entre` como `motor.py:144-148`; break even como `primitivas_broker.py:286-308`; lote como `_lote_resuelto`, `redondear_lote` y `_lote_final`; objetivo como `fijar_objetivo`; caja derivada con `REDONDEO_DEL_STOP`; las lecturas como el yaml.
+>    - El control cubre las 235 filas de «### Posiciones» (líneas 3129-3363, «posiciones: 235»), con los 6 `manual` dentro.
+>    - No imprime ningún R por operación del trader, ni por clase, sesión o dirección.
+>    - Las lecturas declaradas en §0.3 f) y §0.8 no tienen efecto visible. No hay dos posiciones vivas a la vez (0) ni ningún manual fuera (0). Tomar el R del bot de la repetición coincide con el de la corrida: recalculé PnL neto entre «riesgo al colocar» de los 30 T0 desde `cuenta-por-mes.txt`, y quitando una pareja sale −0.1401, que cuadra con el −0.140 de `meta.txt`.
+>    - Una nota: el control no prueba las piezas que solo usa el trader (colocación en el cierre de la M1 anterior, no colocable, no llenada). §1 no pide que las pruebe.
+> 5. **Tablas frente a salidas.** Coinciden todas las filas que revisé, más de tres por mes en §1 a §6: el resumen por mes (879-883), la cascada (3370-3374), los bloques de cuenta y su curva, las peticiones, `frenos-julio.txt` (vuelto a correr: mismas 37 líneas, solo cambian los CR), §2 (diaria:950-955 y 3914-3916), los patrones (cabeceras de los tres anexos), `meta.txt` y los diffs por sección.
+> 6. **Nada protegido cambia.** `git diff main --stat` sobre src, knowledge, scripts, .claude, tests y Makefile da solo `tests/unit/test_meta_techo_parejas.py`.
+> 7. **Fechas.** `antes_del_dia.py` de `main` (idéntico) sobre los 23 ficheros de la carpeta da 0 líneas mal en todas las salidas. Lo que marca en el README, en `simular_cierre.py` y en el test son fechas de calendario (2026-11-08 a 2026-11-22) o sintéticas de 2030. En el ADR, el yaml, el encargo y ADR-0070 marca solo fechas de calendario. En el informe lo hice a mano porque el guion se rompe (a4). No hay ninguna fecha de un día reservado.
+>
+> ### Lo que no pude comprobar
+> - La CI de main (run 45051429307): no lancé `gh`.
+> - D11: la copia repetida se borró. Me fío del informe.
+> - La hora 17:39:11 de inicio de la corrida 1 solo es coherente con el mtime; no hay ningún registro.
+> - No ejecuté `techo_parejas.py` (carga ticks, y el encargo lo prohíbe), así que M1 y M2 no los recalculé, salvo la comprobación del R del bot.
+> - Nueve salidas capturadas de stdout (`control.txt`, `meta.txt`, los dos `pivote-julio*`, `frenos-julio.txt`, los dos delta…) tienen el mismo mtime, 18:08:02, y están en LF. Parece una normalización de saltos que el informe no declara (solo declara el `sed` de los patrones). Tampoco sé en qué momento corrió `techo_parejas.py` respecto a las corridas: el informe no da su TIEMPO.
+> - Las 2 sesiones de RN-032 sin trader: la salida no las localiza.
+> - `knowledge validate` y `make check`: no los corro porque escriben. Me baso en `make-check.log`.
+> - El paso 3 de entregar-rama (el test falla con `main`) está anunciado en HOLDOUT:189 pero el informe todavía no lo muestra.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current; git merge-base main HEAD; git log --format='%h %ad %s' --date=iso main..HEAD; git diff --stat main...HEAD; git status --short`
+> 2. `uv run python scripts/contrato_rama.py`
+> 3. `uv run botsito state check`; `tail`/`grep` de `make-check.log`
+> 4. `diff` del borrador del ADR del Escritorio con `docs/adr/0098-…md`; `cmp` del yaml del Escritorio con `docs/plan/META-TECHO-PAREJAS.yaml`; los mismos con `git show 539f7983:…`
+> 5. `head`/`grep` de `cuenta-por-mes.txt`, de la diaria, de los patrones (los tres), de `pivote-julio*.txt`, `control.txt`, `meta.txt`, `delta-*.txt`, `frenos-julio.txt`, `resumen-cuenta-por-mes.txt`, `simular-cierre.txt` y `diff-linea-base-por-seccion.txt`
+> 6. `sed -n` de `src/botsito/engine/arnes.py`, `primitivas_broker.py`, `cableado.py`, `motor.py`, `cuenta.py`, `broker.py` y `cases/criterio_fidelidad.py`
+> 7. `diff <(grep "| 2026-07-" data/activar-sesion-08/patrones-julio-f2.txt) <(grep "| 2026-07-" …/patrones-cuenta-por-mes.txt)`
+> 8. `uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/test_techo_parejas.py -p no:cacheprovider -v` (14 passed)
+> 9. `uv run python -B …/frenos_julio.py …/cuenta-por-mes.txt …/delta-julio-cuenta-por-mes-diaria.txt` (con `wc` y `tail`)
+> 10. `uv run python -B …/simular_cierre.py`
+> 11. `git diff main --stat -- src knowledge scripts .claude tests Makefile`; `git diff --cached --stat`
+> 12. `uv run python -B ../RECORRIDA-CONSTRUCCION-2/antes_del_dia.py <23 ficheros de la carpeta> <informe> …` (se rompe con el informe); lo mismo sobre el ADR-0098, el yaml, el test, el encargo, ADR-0070 y `contrato.yaml`
+> 13. `git log --format='== %h %s' --name-status main..HEAD`; `git log` con las fechas de autor y de commit; `git rev-parse f6fc829e^{tree}`; `git diff 3457fb31 539f7983 -- docs/encargos/…`; `git diff main...HEAD` de PROJECT_STATE, ADR-0070, ADR-0092, el índice de ADR y HOLDOUT
+> 14. `uv run python -c '…'`: recálculo del R del bot de los 30 T0 a partir de «### Posiciones» (solo lectura)
+> 15. Grep de `cuenta-por-mes.txt` (RN-032 y RN-036, secciones, 2026-04-21), de `parametros.yaml` (DEFAULT_AMBIGUOUS), de `HOJA-DE-RUTA.md` (Marcador), del README y del SKILL de entregar-rama
+>
+> Negativas de la guardia (no las rodeé): una redirección `>` a `$TMP` (solo_lectura), `awk` con programa, un bucle `for`, la sustitución `<(...)` con fichero del repo y la asignación `A=…`. Las reescribí sin escribir nada y sin esquivar lo que bloquean.
+
+## Lo que necesitas decidir (PARADA final)
+
+0. **`para_clasificar.py` sobre las corridas de (3)** (§0.5, decisión 0): (a) no correrlo; (b) correrlo
+   tal cual; (c) un guion nuevo que dé la lista sin el R. Recomiendo (c).
+1. **La línea de Technical Debt de D7** («Tests que no miran el estado en los días sin ticks»): la
+   corrida 1 no tiene ningún rechazo (§1.2). Opciones: (a) sale; (b) se queda. Recomiendo (a), porque
+   su dueño era esta corrida y la corrida no da ningún rechazo que mirar. Coste de (b): 168 bytes de
+   PROJECT_STATE.
+2. **Lo que sigue a la salida C** (ADR-0098 §3: F17, S-14 y A-16, y Aleks con el trader; la sesión
+   siguiente se prepara y no se graba hasta un ADR de Aleks): lo decides tú. La F de §7 no lo adelanta.
 
 ## Estado
 
-EN CURSO: fases P, 0, 1, 2, 3 y 4 hechas; la NOTA de ADR-0070 y el revisor, a continuación.
+Rama lista para revisión, NO cerrada.

@@ -15,7 +15,10 @@ Lee SOLO salidas: la corrida 1 (cuenta por mes) y el delta de julio entre ella y
    dispara ninguno, «ningun freno dispara en la sesion» y la causa queda sin atribuir.
 2. Por cada cuenta mensual de la corrida 1: la primera sesion en que dispara RN-032 o RN-036, y el
    saldo al corte de ese dia, de la curva por dia del bloque de la cuenta (la salida no da el
-   saldo por sesion).
+   saldo por sesion). Las sesiones salen de «## Por sesion» (las que tienen operaciones del
+   trader) y de las lineas «gate» de «## Avisos de orden dentro de una clase», que nombran las
+   reglas de una sesion aunque no tenga operaciones del trader (hallazgo b1 del revisor); se dice
+   de donde sale cada una y, por mes, cuantas sesiones con cada freno se localizan asi.
 
 Las fechas son de dias dev de construccion; no imprime ningun precio.
 """
@@ -32,6 +35,7 @@ POR_SESION = re.compile(
     r"bloqueadas (.*)$"
 )
 FILA_DELTA = re.compile(r"^(?:[+-] )?.*?: (?:trader|bot) \| (\d{4}-\d{2}-\d{2}) \| (\S+) \| ")
+AVISO_GATE = re.compile(r"^- (\d{4}-\d{2}-\d{2}) (\S+): gate (.*)$")
 CURVA = re.compile(r"^(\d{4}-\d{2}-\d{2}) \| (\S+) \| (\S+) \| (\S+)$")
 FRENOS = ("RN-032", "RN-036")
 
@@ -107,28 +111,51 @@ def main(corrida: Path, delta: Path) -> int:
     )
     print()
     print("## 2. Por cuenta mensual de la corrida 1: la primera sesion con un freno y el saldo al")
-    print("corte de ese dia (curva por dia del bloque de la cuenta)")
+    print("corte de ese dia (curva por dia del bloque de la cuenta); las sesiones, de «## Por")
+    print("sesion» (con operaciones del trader) y de las lineas «gate» de «## Avisos de orden")
+    print("dentro de una clase» (con o sin ellas)")
     saldos = curvas(corrida)
+    con_freno = frenos_por_sesion(corrida, por_sesion)
     for mes in sorted(saldos):
-        primera = next(
-            (
-                (dia, ses, [f for f in FRENOS if f in d])
-                for (dia, ses), (_, _, d, _) in sorted(por_sesion.items())
-                if dia.startswith(mes) and any(f in d for f in FRENOS)
-            ),
-            None,
-        )
-        if primera is None:
-            print(
-                f"{mes}: ningun freno de la cuenta dispara en una sesion con operaciones del trader"
-            )
+        del_mes = sorted((k, v) for k, v in con_freno.items() if k[0].startswith(mes))
+        cuenta = Counter(f for _, (fs, _) in del_mes for f in fs)
+        recuento = ", ".join(f"{f} en {cuenta[f]} sesiones" for f in FRENOS) or "ninguno"
+        if not del_mes:
+            print(f"{mes}: ningun freno de la cuenta localizado en ninguna sesion ({recuento})")
             continue
-        dia, ses, frenos = primera
+        (dia, ses), (frenos, donde) = del_mes[0]
         print(
-            f"{mes}: primera sesion con freno {dia} {ses} ({', '.join(frenos)}); saldo al corte "
-            f"de ese dia {saldos[mes].get(dia, 'sin dia en la curva')}"
+            f"{mes}: primera sesion con freno {dia} {ses} ({', '.join(frenos)}; {donde}); saldo "
+            f"al corte de ese dia {saldos[mes].get(dia, 'sin dia en la curva')}; localizadas: "
+            f"{recuento}"
         )
     return 0
+
+
+def frenos_por_sesion(
+    corrida: Path, por_sesion: dict[tuple[str, str], tuple[int, int, list[str], str]]
+) -> dict[tuple[str, str], tuple[list[str], str]]:
+    """Las sesiones con RN-032 o RN-036, de «Por sesion» y de las lineas «gate» de «Avisos»."""
+    vistos: dict[tuple[str, str], set[str]] = {}
+    for clave, (_, _, disparadas, _) in por_sesion.items():
+        vistos.setdefault(clave, set()).update(f for f in FRENOS if f in disparadas)
+    for ln in corrida.read_text(encoding="utf-8").splitlines():
+        m = AVISO_GATE.match(ln)
+        if m:
+            reglas = {r.strip() for r in m.group(3).split(",")}
+            vistos.setdefault((m.group(1), m.group(2)), set()).update(
+                f for f in FRENOS if f in reglas
+            )
+    return {
+        clave: (
+            sorted(fs),
+            "con operaciones del trader"
+            if clave in por_sesion
+            else "sesion sin operaciones del trader, de «Avisos»",
+        )
+        for clave, fs in vistos.items()
+        if fs
+    }
 
 
 if __name__ == "__main__":

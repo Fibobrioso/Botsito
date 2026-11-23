@@ -36,7 +36,23 @@ Las líneas `TIEMPO` y `MEMORIA` de cada corrida van por pantalla, no al fichero
   y `sed -i 's/\r$//' <destino>` → `patrones-cuenta-por-mes.txt` y `patrones-diaria.txt`.
 - `pivote_julio.py` (de `anexos/PREPARACION-SESION-7/`), sobre los patrones de la corrida 1 (o de la 2,
   si la contingencia de ADR-0093 §6 lo pide): sale con 1 cuando no da 14 y 39, que no es un fallo
-  → `pivote-julio.txt`.
+  → `pivote-julio.txt` (la corrida 1) y, como la contingencia aplicó (la cuenta de julio deja de
+  llenar por RN-032 desde el 2026-07-10), `pivote-julio-diaria.txt` (la 2, la que se lee):
+  `uv run python -B docs/validation/anexos/PREPARACION-SESION-7/pivote_julio.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-diaria.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/pivote-julio-diaria.txt`.
+- `delta_julio.py` otra vez, de la corrida 1 a la diaria (D6):
+  `uv run python -B docs/validation/anexos/ACTIVAR-SESION-07/delta_julio.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-diaria.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt "docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/diaria.DIAGNOSTICO.cuenta=diaria.txt"`
+  → `delta-julio-cuenta-por-mes-diaria.txt`.
+- `frenos_julio.py` (nuevo, D6): solo lee la corrida 1 y ese delta; por sesión de julio, las filas que
+  cambian y el freno que dispara (RN-032 o RN-036 en «disparadas»), y por cuenta mensual la primera
+  sesión con freno (de «Por sesion» y de las líneas «gate» de «Avisos») con su saldo al corte:
+  `uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/frenos_julio.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/delta-julio-cuenta-por-mes-diaria.txt`
+  → `frenos-julio.txt`.
+- `simular_cierre.py` (nuevo, §7): las líneas del cierre en memoria sobre copias, contra
+  `test_hoja_de_ruta` y `test_project_state`; no escribe en el repo:
+  `uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/simular_cierre.py` → `simular-cierre.txt`.
+- Las salidas capturadas de la consola (`control.txt`, `meta.txt`, `pivote-julio*.txt`,
+  `delta-julio-*.txt`, `frenos-julio.txt`) salen con CRLF en Windows; se les quitó el CR con
+  `sed -i 's/\r$//'` antes de commitear, como a los patrones.
 - `delta_julio.py` (de `anexos/ACTIVAR-SESION-07/`), el control de julio de D5:
   `uv run python docs/validation/anexos/ACTIVAR-SESION-07/delta_julio.py data/activar-sesion-08/patrones-julio-f2.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-cuenta-por-mes.txt data/activar-sesion-08/julio-f2.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt`
   → `delta-julio-f2-cuenta-por-mes.txt`.
@@ -68,8 +84,11 @@ y salen con 4 si no pasa: PARADA 4, ningún R del trader):
 
 1. `uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/techo_parejas.py control docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt`
    → `control.txt`.
-2. Si pasa: `uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/techo_parejas.py parejas docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/pivote-julio.txt`
+2. Si pasa: `uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/techo_parejas.py parejas docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/patrones-cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/pivote-julio-diaria.txt`
    → `meta.txt` (el control, el techo, las parejas y la salida A a D con la precedencia del pivote).
+   El último argumento es el pivote que se lee: el de la diaria, porque la contingencia aplicó (escrito
+   antes de correr con `pivote-julio.txt`, que era el de la corrida 1; las parejas de M2 son siempre las
+   de la corrida 1, ADR-0098 §1).
 
 ### Antes de correr (2026-11-22)
 
@@ -91,3 +110,7 @@ el control: 30; fuera: 0; reproducidas al centimo (lote, motivo, instante del ci
 30; control: PASA». Un primer ensayo se paró en la lectura de «### Ordenes», que acaba en una línea de
 resumen («ordenes: …»): `_seccion` para ahora en la primera línea sin columnas. Es un error de
 lectura del guion, no una pieza del modelo.
+
+**Tras el revisor (hallazgo b4):** la fila del control del test de humo copiaba una posición real de la
+línea base anterior con el año cambiado; ahora sus valores son sintéticos (`o1`, 1,00 lotes, -100,00) y
+el test de tres días se llama así. Mismo comando: `14 passed`. `techo_parejas.py` no cambia.

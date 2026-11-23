@@ -102,29 +102,29 @@ def test_las_fronteras_rompen_en_el_otro_sentido() -> None:
 # --------------------------------------------------------------------------- el control
 
 
-def _fila(neto: str = "-340.20") -> tp.FilaControl:
-    return tp.FilaControl("o7", "24.30", "stop", "2030-01-02T12:13:04.894000+00:00", neto)
+def _fila(neto: str = "-100.00") -> tp.FilaControl:
+    return tp.FilaControl("o1", "1.00", "stop", "2030-01-02T10:00:59.999000+00:00", neto)
 
 
 def test_el_control_pasa_con_las_mismas_posiciones() -> None:
     assert (
-        tp.comparar_control({("2030-01-02", "o7"): _fila()}, {("2030-01-02", "o7"): _fila()}) == []
+        tp.comparar_control({("2030-01-02", "o1"): _fila()}, {("2030-01-02", "o1"): _fila()}) == []
     )
 
 
 def test_el_control_falla_con_un_centimo() -> None:
     dif = tp.comparar_control(
-        {("2030-01-02", "o7"): _fila("-340.20")}, {("2030-01-02", "o7"): _fila("-340.21")}
+        {("2030-01-02", "o1"): _fila("-100.00")}, {("2030-01-02", "o1"): _fila("-100.01")}
     )
-    assert dif == ["2030-01-02 o7: neto -340.20 frente a -340.21"]
+    assert dif == ["2030-01-02 o1: neto -100.00 frente a -100.01"]
 
 
 def test_el_control_falla_si_falta_o_sobra_una() -> None:
-    assert tp.comparar_control({("2030-01-02", "o7"): _fila()}, {}) == [
-        "2030-01-02 o7: la repeticion no la llena"
+    assert tp.comparar_control({("2030-01-02", "o1"): _fila()}, {}) == [
+        "2030-01-02 o1: la repeticion no la llena"
     ]
-    assert tp.comparar_control({}, {("2030-01-02", "o7"): _fila()}) == [
-        "2030-01-02 o7: la repeticion llena una que el motor no"
+    assert tp.comparar_control({}, {("2030-01-02", "o1"): _fila()}) == [
+        "2030-01-02 o1: la repeticion llena una que el motor no"
     ]
 
 
@@ -139,7 +139,7 @@ def test_un_solo_dia_da_la_media_de_sus_diferencias() -> None:
     assert (p, descartadas) == (D(3), 0)
 
 
-def test_dos_dias_como_la_cuenta_a_mano() -> None:
+def test_tres_dias_como_la_cuenta_a_mano() -> None:
     dias = ["2030-01-02", "2030-01-03", "2030-01-04"]
     difs = [("2030-01-02", D(1)), ("2030-01-03", D(3)), ("2030-01-03", D(5))]
     # a mano: cada replica sortea tres dias con reemplazo y agrupa sus diferencias
