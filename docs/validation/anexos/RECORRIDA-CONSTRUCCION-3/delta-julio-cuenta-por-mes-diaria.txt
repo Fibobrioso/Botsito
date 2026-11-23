@@ -1,0 +1,88 @@
+delta de 2026-07: base patrones-cuenta-por-mes.txt / cuenta-por-mes.txt; nuevo patrones-diaria.txt / diaria.DIAGNOSTICO.cuenta=diaria.txt
+filas de 2026-07: base 87, nuevo 107
+
+## rn003 por sesion (base -> nuevo)
+2026-07-01 07-11: alcista -> alcista
+2026-07-01 11-15: alcista -> alcista
+2026-07-02 11-15: alcista -> alcista
+2026-07-03 07-11: alcista -> alcista
+2026-07-03 11-15: alcista -> alcista
+2026-07-06 07-11: alcista -> alcista
+2026-07-06 11-15: alcista -> alcista
+2026-07-07 07-11: alcista -> alcista
+2026-07-07 11-15: alcista -> alcista
+2026-07-08 07-11: alcista -> alcista
+2026-07-08 11-15: alcista -> alcista
+2026-07-09 07-11: alcista -> alcista
+2026-07-09 11-15: alcista -> alcista
+2026-07-10 07-11: alcista -> alcista
+2026-07-10 11-15: bajista -> bajista
+2026-07-13 07-11: bajista -> bajista
+2026-07-13 11-15: alcista -> alcista
+2026-07-14 07-11: alcista -> alcista
+2026-07-14 11-15: alcista -> alcista
+2026-07-15 07-11: alcista -> alcista
+2026-07-15 11-15: alcista -> alcista
+2026-07-16 07-11: alcista -> alcista
+2026-07-16 11-15: alcista -> alcista
+2026-07-17 07-11: bajista -> bajista
+2026-07-17 11-15: bajista -> bajista
+sesiones de 2026-07: 25; cambian de rn003: 0
+
+## filas que cambian de patron: 34
+P3 otra zona [otra entrada] -> P2 entrada [Δentrada minima 11 puntos]: trader | 2026-07-03 | 07-11 | compra | 2026-07-03T07:24:00+00:00 | 1.14528
+P3 otra zona [otra entrada] -> T0 pareja: trader | 2026-07-03 | 07-11 | compra | 2026-07-03T07:43:00+00:00 | 1.14502
+P4 sin orden -> P3 otra zona [otra entrada]: trader | 2026-07-03 | 11-15 | compra | 2026-07-03T10:02:00+00:00 | 1.14423
+P2 entrada [Δentrada minima 26 puntos] -> P2 entrada [Δentrada minima 4 puntos]: trader | 2026-07-10 | 07-11 | compra | 2026-07-10T08:01:25+00:00 | 1.14378
+P4 sin orden -> P7 entradas repetidas [Δentrada 1 puntos, bot ya emparejado]: trader | 2026-07-10 | 11-15 | venta | 2026-07-10T10:55:30+00:00 | 1.14339
+P4 sin orden -> P7 entradas repetidas [Δentrada 0 puntos, bot ya emparejado]: trader | 2026-07-10 | 11-15 | venta | 2026-07-10T10:56:25+00:00 | 1.14338
+P4 sin orden -> T0 pareja: trader | 2026-07-10 | 11-15 | venta | 2026-07-10T10:58:40+00:00 | 1.14338
+P4 sin orden -> T0 pareja: trader | 2026-07-13 | 07-11 | venta | 2026-07-13T05:17:55+00:00 | 1.14066
+P4 sin orden -> P2 entrada [Δentrada minima 11 puntos]: trader | 2026-07-13 | 11-15 | compra | 2026-07-13T09:44:05+00:00 | 1.14295
+P4 sin orden -> P2 entrada [Δentrada minima 10 puntos]: trader | 2026-07-13 | 11-15 | compra | 2026-07-13T09:54:45+00:00 | 1.14296
+P4 sin orden -> P3 otra zona [otra entrada]: trader | 2026-07-13 | 11-15 | compra | 2026-07-13T11:25:05+00:00 | 1.14278
+P4 sin orden -> T0 pareja: trader | 2026-07-14 | 07-11 | compra | 2026-07-14T06:30:30+00:00 | 1.13878
+P4 sin orden -> T0 pareja: trader | 2026-07-14 | 07-11 | compra | 2026-07-14T06:55:30+00:00 | 1.13876
+P4 sin orden -> P2 entrada [Δentrada minima 21 puntos]: trader | 2026-07-14 | 11-15 | compra | 2026-07-14T09:35:15+00:00 | 1.13976
+P4 sin orden -> P3 otra zona [otra entrada]: trader | 2026-07-14 | 11-15 | compra | 2026-07-14T09:48:20+00:00 | 1.13984
+P4 sin orden -> P2 entrada [Δentrada minima 6 puntos]: trader | 2026-07-14 | 11-15 | compra | 2026-07-14T10:29:05+00:00 | 1.13953
+P4 sin orden -> T0 pareja: trader | 2026-07-14 | 11-15 | compra | 2026-07-14T10:33:40+00:00 | 1.13961
+P4 sin orden -> P2 entrada [Δentrada minima 19 puntos]: trader | 2026-07-14 | 11-15 | compra | 2026-07-14T10:44:05+00:00 | 1.1394
+P4 sin orden -> P3 otra zona [otra entrada]: trader | 2026-07-14 | 11-15 | compra | 2026-07-14T11:06:45+00:00 | 1.13923
+P4 sin orden -> T0 pareja: trader | 2026-07-15 | 07-11 | compra | 2026-07-15T05:06:55+00:00 | 1.14368
+P4 sin orden -> P3 otra zona [otra entrada]: trader | 2026-07-15 | 07-11 | compra | 2026-07-15T07:12:25+00:00 | 1.1431
+P4 sin orden -> P3 otra zona [otra entrada]: trader | 2026-07-15 | 11-15 | compra | 2026-07-15T10:05:50+00:00 | 1.1418
+P4 sin orden -> P3 otra zona [otra entrada]: trader | 2026-07-15 | 11-15 | compra | 2026-07-15T10:45:45+00:00 | 1.14142
+P4 sin orden -> P3 otra zona [otra entrada]: trader | 2026-07-15 | 11-15 | compra | 2026-07-15T12:00:55+00:00 | 1.14146
+P4 sin orden -> P3 otra zona [otra entrada]: trader | 2026-07-15 | 11-15 | compra | 2026-07-15T12:14:10+00:00 | 1.14092
+P4 sin orden -> T0 pareja: trader | 2026-07-16 | 07-11 | compra | 2026-07-16T06:00:10+00:00 | 1.14654
+P4 sin orden -> P2 entrada [Δentrada minima 6 puntos]: trader | 2026-07-16 | 11-15 | compra | 2026-07-16T09:36:00+00:00 | 1.14624
+P4 sin orden [posible M (hora perdida 2026-07-16T11Z)] -> P3 otra zona [misma entrada, otra hora] [posible M (hora perdida 2026-07-16T11Z)]: trader | 2026-07-16 | 11-15 | compra | 2026-07-16T11:19:40+00:00 | 1.1462
+P4 sin orden [posible M (hora perdida 2026-07-16T11Z)] -> P3 otra zona [otra entrada] [posible M (hora perdida 2026-07-16T11Z)]: trader | 2026-07-16 | 11-15 | compra | 2026-07-16T11:55:40+00:00 | 1.1467
+P4 sin orden -> T0 pareja: trader | 2026-07-17 | 07-11 | venta | 2026-07-17T05:46:05+00:00 | 1.14409
+P4 sin orden -> P2 entrada [Δentrada minima 15 puntos]: trader | 2026-07-17 | 07-11 | venta | 2026-07-17T06:27:45+00:00 | 1.14498
+P4 sin orden -> P2 entrada [Δentrada minima 7 puntos]: trader | 2026-07-17 | 07-11 | venta | 2026-07-17T06:45:05+00:00 | 1.1449
+P4 sin orden -> P3 otra zona [otra entrada]: trader | 2026-07-17 | 07-11 | venta | 2026-07-17T07:05:35+00:00 | 1.14508
+P4 sin orden -> P2 entrada [Δentrada minima 7 puntos]: trader | 2026-07-17 | 11-15 | venta | 2026-07-17T11:44:50+00:00 | 1.14332
+## filas que aparecen: 20
++ P5 de mas [mismo lado]: bot | 2026-07-03 | 07-11 | compra | 2026-07-03T06:03:31.550000+00:00 | 1.14499
++ P5 de mas [mismo lado]: bot | 2026-07-03 | 07-11 | compra | 2026-07-03T07:24:42.409000+00:00 | 1.14545
++ P5 de mas [mismo lado]: bot | 2026-07-03 | 07-11 | compra | 2026-07-03T07:35:41.827000+00:00 | 1.14517
++ P5 de mas [mismo lado]: bot | 2026-07-03 | 11-15 | compra | 2026-07-03T09:13:34.172000+00:00 | 1.14495
++ P5 de mas [mismo lado]: bot | 2026-07-10 | 07-11 | compra | 2026-07-10T07:59:02.973000+00:00 | 1.14374
++ P5 de mas [mismo lado]: bot | 2026-07-13 | 07-11 | venta | 2026-07-13T07:13:34.661000+00:00 | 1.14076
++ P5 de mas [mismo lado]: bot | 2026-07-13 | 11-15 | compra | 2026-07-13T09:02:14.340000+00:00 | 1.14364
++ P5 de mas [mismo lado]: bot | 2026-07-13 | 11-15 | compra | 2026-07-13T09:55:33.091000+00:00 | 1.14306
++ P5 de mas [mismo lado]: bot | 2026-07-13 | 11-15 | compra | 2026-07-13T10:38:30.999000+00:00 | 1.14299
++ P5 de mas [mismo lado]: bot | 2026-07-14 | 11-15 | compra | 2026-07-14T09:21:03.806000+00:00 | 1.13997
++ P5 de mas [mismo lado]: bot | 2026-07-14 | 11-15 | compra | 2026-07-14T09:26:44.310000+00:00 | 1.13997
++ P5 de mas [mismo lado]: bot | 2026-07-15 | 07-11 | compra | 2026-07-15T05:04:01.046000+00:00 | 1.14366
++ P5 de mas [mismo lado]: bot | 2026-07-15 | 07-11 | compra | 2026-07-15T05:16:10.919000+00:00 | 1.14379
++ P5 de mas [mismo lado]: bot | 2026-07-15 | 07-11 | compra | 2026-07-15T06:45:00.912000+00:00 | 1.14388
++ P5 de mas [mismo lado]: bot | 2026-07-15 | 11-15 | compra | 2026-07-15T09:40:54.355000+00:00 | 1.14205
++ P5 de mas [mismo lado]: bot | 2026-07-16 | 11-15 | compra | 2026-07-16T09:35:57.617000+00:00 | 1.14618
++ P5 de mas [mismo lado] [posible M (hora perdida 2026-07-16T11Z)]: bot | 2026-07-16 | 11-15 | compra | 2026-07-16T11:03:59.999000+00:00 | 1.14618
++ P5 de mas [mismo lado] [posible M (hora perdida 2026-07-16T11Z)]: bot | 2026-07-16 | 11-15 | compra | 2026-07-16T12:40:41.881000+00:00 | 1.14572
++ P5 de mas [mismo lado]: bot | 2026-07-17 | 07-11 | venta | 2026-07-17T06:32:32.782000+00:00 | 1.14483
++ P5 de mas [mismo lado]: bot | 2026-07-17 | 11-15 | venta | 2026-07-17T11:49:48.753000+00:00 | 1.14325
+## filas que desaparecen: 0

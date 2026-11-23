@@ -186,6 +186,8 @@ tenía ADR: sale de `MASTER_PLAN.md` §0):
 > fijará el ADR del método (RUMBO-2026-11.md §1, la rama de la preparación de la sesión 7); esta
 > NOTA no lo adelanta.
 
+> **RECUADRO de ADR-0098 (2026-11-22, `trabajo/recorrida-construccion-3`; el cuerpo no se toca).** La medida de la meta de ADR-0098 (el techo del trader y el R de las parejas, sobre construcción) decide el método y el objetivo, como el pivote de ADR-0093 §6, nunca un parámetro de la spec, y sus cuatro salidas se escribieron antes de medir. Lo que este §6 prohíbe sigue igual: ninguna rama de spec o de motor se justifica con una cifra de rentabilidad de construcción, y un arreglo que nazca de la salida B de ADR-0098 se justifica con la diferencia de una pieza o con un hecho de la plataforma, nunca con el R.
+
 ### 7. El papel de la fidelidad, de F26, F27 y F35
 
 (La respuesta, punto 5.)

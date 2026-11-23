@@ -1,0 +1,39 @@
+# Los frenos de la cuenta (D6), de cuenta-por-mes.txt y delta-julio-cuenta-por-mes-diaria.txt; sin umbral
+
+## 1. Julio de 2026, por sesion: filas que cambian de la corrida 1 a la 2, y frenos
+dia sesion | trader | bot (corrida 1) | filas que cambian | frenos que disparan en la corrida 1 | bloqueadas (corrida 1)
+2026-07-01 07-11 | 2 | 1 | 0 | ningun freno dispara en la sesion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-01 11-15 | 1 | 2 | 0 | ningun freno dispara en la sesion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-02 11-15 | 6 | 5 | 0 | ningun freno dispara en la sesion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-03 07-11 | 2 | 1 | 5 | RN-036 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-03 11-15 | 1 | 0 | 2 | RN-036 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-06 07-11 | 4 | 4 | 0 | ningun freno dispara en la sesion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-06 11-15 | 1 | 1 | 0 | ningun freno dispara en la sesion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-07 07-11 | 4 | 3 | 0 | ningun freno dispara en la sesion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-07 11-15 | 4 | 2 | 0 | ningun freno dispara en la sesion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-08 07-11 | 1 | 2 | 0 | ningun freno dispara en la sesion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-08 11-15 | 1 | 0 | 0 | ningun freno dispara en la sesion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-09 07-11 | 1 | 2 | 0 | ningun freno dispara en la sesion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-09 11-15 | 1 | 1 | 0 | ningun freno dispara en la sesion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-10 07-11 | 8 | 4 | 2 | RN-032 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-10 11-15 | 3 | 0 | 3 | RN-032 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-13 07-11 | 1 | 0 | 2 | RN-032 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-13 11-15 | 3 | 0 | 6 | RN-032 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-14 07-11 | 2 | 0 | 2 | RN-032 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-14 11-15 | 6 | 0 | 8 | RN-032 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-15 07-11 | 2 | 0 | 5 | RN-032 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-15 11-15 | 4 | 0 | 5 | RN-032 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-16 07-11 | 1 | 0 | 1 | RN-032 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-16 11-15 | 3 | 0 | 6 | RN-032 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-17 07-11 | 4 | 0 | 5 | RN-032 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-17 11-15 | 1 | 0 | 2 | RN-032 | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+filas que cambian, en total: 54; en una sesion sin operaciones del trader: 0
+
+## 2. Por cuenta mensual de la corrida 1: la primera sesion con un freno y el saldo al
+corte de ese dia (curva por dia del bloque de la cuenta); las sesiones, de «## Por
+sesion» (con operaciones del trader) y de las lineas «gate» de «## Avisos de orden
+dentro de una clase» (con o sin ellas)
+2026-01: primera sesion con freno 2026-01-13 11-15 (RN-032; con operaciones del trader); saldo al corte de ese dia 105043.1000000; localizadas: RN-032 en 5 sesiones, RN-036 en 5 sesiones
+2026-04: primera sesion con freno 2026-04-21 11-15 (RN-036; sesion sin operaciones del trader, de «Avisos»); saldo al corte de ese dia 102736.7700000; localizadas: RN-032 en 0 sesiones, RN-036 en 1 sesiones
+2026-07: primera sesion con freno 2026-07-03 07-11 (RN-036; con operaciones del trader); saldo al corte de ese dia 96308.4100000; localizadas: RN-032 en 12 sesiones, RN-036 en 2 sesiones
+2026-08: primera sesion con freno 2026-08-20 07-11 (RN-036; con operaciones del trader); saldo al corte de ese dia 93007.0800000; localizadas: RN-032 en 6 sesiones, RN-036 en 2 sesiones

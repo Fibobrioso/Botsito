@@ -140,6 +140,25 @@ punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.
    > 2026-08-19 (11 días de trading de 21).
    > Por el punto 4, se sigue construyendo y mayo no se toca.
 
+   > **NOTA del 2026-11-22 (`trabajo/recorrida-construccion-3`, no reescribe el cuerpo, las NOTAS
+   > ni el recuadro anteriores).** La corrida que cuenta por este punto tras activar la sesión 7, con
+   > una cuenta por mes, sin ningún `--diagnostico-*`, con `--simular` y sobre toda la construcción
+   > (76 días dev, 198 operaciones del trader), da
+   > `habilita medir el conjunto de medida (2026-05) (ADR-0070): no (cobertura 15.2 % por debajo de 70.0 %; precision 14.4 % por debajo de 60.0 %)`.
+   > Desde esta rama la línea base vigente es anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt
+   > (en `docs/validation/`); la de `anexos/RECORRIDA-CONSTRUCCION-2/` no se toca, y el `diff` entre
+   > las dos está en `anexos/RECORRIDA-CONSTRUCCION-3/diff-linea-base.txt`
+   > (`docs/validation/RECORRIDA-CONSTRUCCION-3.md` §6). Entró en el motor desde la línea base
+   > anterior: la activación de la 7a (F39e: ADR-0094, el sesgo del rango vigente, y el break even al
+   > cierre y con cuerpo) y la de la 7b (F39k: ADR-0097, la stop cuyo 0 queda del lado malo espera);
+   > `trazas-ablacion`, `laminas` y `laminas-motivos` tocaron el motor sin cambiar la línea base (0
+   > bytes). Ninguna de las cuatro cuentas mensuales acabó SUSPENDIDA (las cuatro EN_CURSO,
+   > `PRIMERO EN TOCAR UN LIMITE: ninguno`); RN-032 dispara en 25 de las 152 sesiones (23 de las 104
+   > con operaciones del trader: 5 en enero, desde el 2026-01-13; 12 en julio, desde el 2026-07-10;
+   > 6 en agosto, desde el 2026-08-26); en la cuenta de julio el bot no llena ninguna orden desde la
+   > sesión 11-15 del 2026-07-10 (8 días de trading de 13), y por eso el pivote de ADR-0093 §6 se lee
+   > sobre la diaria (su contingencia). Por el punto 4, se sigue construyendo y mayo no se toca.
+
 4. **Si no llega, se sigue construyendo y mayo no se toca.** El umbral no se relaja después de ver
    una corrida: cambiarlo exige un ADR nuevo que declare lo visto.
 

@@ -1,0 +1,23 @@
+# diff-diaria.txt: RECORRIDA-CONSTRUCCION-2/diaria.DIAGNOSTICO.cuenta=diaria.txt -> RECORRIDA-CONSTRUCCION-3/diaria.DIAGNOSTICO.cuenta=diaria.txt
+# lineas: vieja 3957, nueva 3921; quitadas 1747, puestas 1711
+seccion | quitadas | puestas | quitadas por mes | puestas por mes
+## Criterio de fidelidad | 6 | 6 | - 6 | - 6
+## Embudo sobre el grafo de hechos | 4 | 4 | - 4 | - 4
+## Reglas disparadas por sesion | 16 | 16 | - 16 | - 16
+## Avisos de orden dentro de una clase | 72 | 119 | - 72 | - 119
+## RN-003 al abrir la sesion | 4 | 4 | - 4 | - 4
+## Por sesion | 50 | 50 | 2026-01 12, 2026-04 12, 2026-07 12, 2026-08 14 | 2026-01 12, 2026-04 12, 2026-07 12, 2026-08 14
+### Resumen por mes | 4 | 4 | 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1 | 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1
+### Embudo por mes: primer hecho del camino que falta en las sesiones con operaciones del trader y sin operacion del bot | 8 | 5 | 2026-01 2, 2026-04 2, 2026-07 2, 2026-08 2 | 2026-01 2, 2026-04 1, 2026-07 1, 2026-08 1
+### Por operacion | 155 | 151 | 2026-01 32, 2026-04 33, 2026-07 37, 2026-08 53 | 2026-01 36, 2026-04 32, 2026-07 34, 2026-08 49
+### Veredicto de la cuenta sobre el tramo | 2 | 2 | - 2 | - 2
+### Curva de equity | 1 | 1 | 2026-08 1 | 2026-08 1
+### Eventos del broker | 424 | 410 | - 2, 2026-01 93, 2026-04 113, 2026-07 71, 2026-08 145 | - 2, 2026-01 95, 2026-04 111, 2026-07 75, 2026-08 127
+### Ordenes | 741 | 644 | - 1, 2026-01 155, 2026-04 224, 2026-07 96, 2026-08 265 | - 1, 2026-01 146, 2026-04 176, 2026-07 103, 2026-08 218
+### Esperas: la orden stop cuyo 0 queda del lado malo no se envia | 0 | 37 | - | - 3, 2026-01 6, 2026-04 10, 2026-07 9, 2026-08 9
+### Rechazos por motivo | 4 | 1 | 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1 | - 1
+### Peticiones al servidor | 55 | 55 | - 1, 2026-01 13, 2026-04 14, 2026-07 9, 2026-08 18 | - 1, 2026-01 13, 2026-04 14, 2026-07 9, 2026-08 18
+### Posiciones | 185 | 186 | - 1, 2026-01 41, 2026-04 50, 2026-07 28, 2026-08 65 | - 1, 2026-01 43, 2026-04 51, 2026-07 30, 2026-08 61
+### Fidelidad por criterios | 6 | 6 | - 2, 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1 | - 2, 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1
+### Material sin video | 3 | 3 | - 3 | - 3
+### Rentabilidad | 7 | 7 | - 7 | - 7

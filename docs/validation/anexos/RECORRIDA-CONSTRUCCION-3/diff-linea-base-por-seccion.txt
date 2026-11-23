@@ -1,0 +1,25 @@
+# diff-linea-base.txt: RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt -> RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt
+# lineas: vieja 3527, nueva 3393; quitadas 2360, puestas 2226
+seccion | quitadas | puestas | quitadas por mes | puestas por mes
+## Criterio de fidelidad | 5 | 5 | - 5 | - 5
+## Embudo sobre el grafo de hechos | 5 | 5 | - 5 | - 5
+## Reglas disparadas por sesion | 18 | 18 | - 18 | - 18
+## Avisos de orden dentro de una clase | 152 | 200 | - 152 | - 200
+## RN-003 al abrir la sesion | 4 | 4 | - 4 | - 4
+## Por sesion | 69 | 69 | 2026-01 15, 2026-04 13, 2026-07 21, 2026-08 20 | 2026-01 15, 2026-04 13, 2026-07 21, 2026-08 20
+### Resumen por mes | 4 | 4 | 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1 | 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1
+### Embudo por mes: primer hecho del camino que falta en las sesiones con operaciones del trader y sin operacion del bot | 9 | 9 | 2026-01 2, 2026-04 2, 2026-07 3, 2026-08 2 | 2026-01 3, 2026-04 1, 2026-07 3, 2026-08 2
+### Por operacion | 204 | 193 | 2026-01 43, 2026-04 35, 2026-07 79, 2026-08 47 | 2026-01 34, 2026-04 35, 2026-07 60, 2026-08 64
+### Cuenta de 2026-01 | 23 | 23 | - 4, 2026-01 19 | - 4, 2026-01 19
+### Cuenta de 2026-04 | 23 | 23 | - 2, 2026-04 21 | - 2, 2026-04 21
+### Cuenta de 2026-07 | 17 | 17 | - 4, 2026-07 13 | - 4, 2026-07 13
+### Cuenta de 2026-08 | 25 | 25 | - 4, 2026-08 21 | - 4, 2026-08 21
+### Eventos del broker | 380 | 336 | - 2, 2026-01 101, 2026-04 113, 2026-07 100, 2026-08 64 | - 2, 2026-01 72, 2026-04 113, 2026-07 44, 2026-08 105
+### Ordenes | 1109 | 969 | - 1, 2026-01 351, 2026-04 331, 2026-07 232, 2026-08 194 | - 1, 2026-01 293, 2026-04 296, 2026-07 121, 2026-08 258
+### Esperas: la orden stop cuyo 0 queda del lado malo no se envia | 0 | 28 | - | - 3, 2026-01 3, 2026-04 10, 2026-07 6, 2026-08 6
+### Rechazos por motivo | 4 | 1 | 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1 | - 1
+### Peticiones al servidor | 55 | 55 | - 1, 2026-01 14, 2026-04 14, 2026-07 11, 2026-08 15 | - 1, 2026-01 14, 2026-04 14, 2026-07 11, 2026-08 15
+### Posiciones | 238 | 226 | - 1, 2026-01 79, 2026-04 69, 2026-07 53, 2026-08 36 | - 1, 2026-01 68, 2026-04 71, 2026-07 30, 2026-08 56
+### Fidelidad por criterios | 6 | 6 | - 2, 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1 | - 2, 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1
+### Material sin video | 3 | 3 | - 3 | - 3
+### Rentabilidad | 7 | 7 | - 7 | - 7

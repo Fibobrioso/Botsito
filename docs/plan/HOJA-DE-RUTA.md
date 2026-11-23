@@ -313,6 +313,20 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   los patrones: 31 pareja, 19 efecto de la cuenta, 4 error nuestro conocido (RN-019), 81 sin
   clase hasta T y 279 sin clase; la caja, dispersa.
 
+### R3.10 · La corrida (3): la 7b activada, sobre toda la construcción
+- **Refs:** ID:ADR-0070 · ID:ADR-0092 · ID:ADR-0097 · ID:ADR-0098
+- **Qué es:** la corrida del arnés que cuenta por ADR-0070 §3 sobre toda la construcción con el
+  motor de la 7b (F39k) y una cuenta por mes (ADR-0092 §8), con su diagnóstico de cuenta diaria,
+  los dos `diff` contra la línea base anterior, la lectura del pivote de ADR-0093 §6 y la medida
+  de la meta de ADR-0098, pre-registrada antes de correr.
+- **Depende de:** R3.9 y R4.3 (HECHAS).
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** el veredicto literal está en el informe y en ADR-0070 §3 y la línea base
+  vigente es la suya.
+- **Estado:** HECHA (`trabajo/recorrida-construccion-3`; RECORRIDA-CONSTRUCCION-3.md): «no»
+  (cobertura 15,2 %, precisión 14,4 %); línea base vigente
+  `anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt`.
+
 ## R4 · La sesión 5 con el trader y su activación
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
@@ -381,12 +395,12 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   A-44 RESUELTA; S-22 y S-19 van a la sesión 7 (R4.3).
 
 ### R4.3 · Preparar, celebrar y activar la sesión 7 (en dos días, 7a y 7b)
-- **Refs:** NA:F · ID:A-13 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-46 · ID:A-48 · ID:A-53 · ID:A-20 · ID:ADR-0083 · ID:ADR-0064 · ID:RN-009 · ID:A-58
+- **Refs:** ID:A-13 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-46 · ID:A-48 · ID:A-53 · ID:A-20 · ID:ADR-0083 · ID:ADR-0064 · ID:RN-009 · ID:A-58 · ID:ADR-0098
 - **Qué es:** con el método de ADR-0093 (RUMBO §1): como mucho seis preguntas técnicas por día y un bloque de días con las láminas de R4.5. Preparada en `trabajo/preparacion-sesion-7` (PREPARACION-SESION-7.md), con el reparto que aprobó el consultor el 2026-11-11: 7a (sesion-07), el rango de H4, el break even (A-13), las zonas de control del esquema (RN-009), A-35, cuándo se coloca la orden (ADR-0064) y las entradas válidas que deja sin tomar (F7 #10), más el bloque de días (docs/sesion-7/PREGUNTAS-7A.md); 7b (sesion-08), revisada el 2026-11-18 con lo que dejó la 7a (LAMINAS-7B.md): la mecha que vuelve en M15 (A-35), las zonas de control y el margen del break even (RN-009 y A-13), dónde pone el 0 de la caja (A-48), el rango de 4 horas después de una ruptura (A-58), S-22 y S-19, más el bloque de días y, al final, la tarde del 10 de julio (docs/sesion-7/PREGUNTAS-7B.md; la reentrada, A-53 y A-43, entre las que no caben). Las láminas de la 7b las generó trabajo/laminas-sesion-7b, con el motor de la activación de la 7a. El pivote, pre-registrado en docs/plan/PIVOTES-SESION-7.yaml (ADR-0093 §6). El pivote (decisión de Aleks del 2026-11-19): si en la corrida de (3) la cuenta por mes de julio acaba SUSPENDIDA o deja de llenar por un freno de la cuenta antes del 17, se aplica la contingencia de ADR-0093 §6 sin retocarla: se lee la corrida diaria de contexto, contra los mismos mínimos, y no se mezclan parejas de las dos corridas. El informe da las dos corridas y, como dato sin umbral, en qué sesión se frena la cuenta por mes y con qué saldo. La sesión siguiente a la 7b sigue R4.6.
 - **Depende de:** R4.4 y R4.5.
 - **Quién:** la sesión prepara con el consultor; Aleks celebra los dos días con el trader; el consultor propone los números del pivote y Aleks los aprueba.
 - **Hecho cuando:** 7a y 7b ingeridas y activadas, y el pivote leído en la re-corrida siguiente. La deuda del panel de FTMO la paga la activación de 7b; A-16 sigue ABIERTA con la regla de ADR-0092 §9 (ADR-0096).
-- **Estado:** ABIERTA (la 7a, ingerida y activada, ACTIVAR-SESION-07.md; la 7b, ingerida en trabajo/sesion-08 y activada en trabajo/activar-sesion-08, ACTIVAR-SESION-08.md: la stop del lado malo espera, ADR-0097, y S-22 no cambia el motor; falta leer el pivote en (3)).
+- **Estado:** HECHA (la 7a, ACTIVAR-SESION-07.md; la 7b, ACTIVAR-SESION-08.md; el pivote, leído en la corrida (3), RECORRIDA-CONSTRUCCION-3.md §3: la cuenta por mes de julio deja de llenar por RN-032 desde el 2026-07-10, así que se lee la diaria por la contingencia, con 19 parejas de julio y 40 de más: «una sesión más»; la meta de ADR-0098, en la misma corrida: salida C, que manda sobre el pivote).
 
 ### R4.4 · Trazas del motor y ablación por regla
 - **Refs:** ID:ADR-0092 · ID:ADR-0064 · ID:ADR-0066
@@ -413,12 +427,20 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Estado:** HECHA (trabajo/laminas, LAMINAS.md). Sus frases de causa, corregidas antes de grabar la 7a: la de cada gate sale de la rama que dispara (trabajo/laminas-motivos, LAMINAS-MOTIVOS.md).
 
 ### R4.6 · El ciclo de afinado por días
-- **Refs:** NA:F · ID:ADR-0093
+- **Refs:** NA:F · ID:ADR-0093 · ID:ADR-0098
 - **Qué es:** acuerdo de Aleks y el consultor (2026-11-19) para las sesiones siguientes a la 7b. Cada vuelta: (1) correr julio y clasificar las diferencias; (2) elegir de seis a ocho sesiones para el bloque de días por la compuerta de ADR-0093 §3 y por la pregunta a la que sirven, nunca por cómo le fue al bot, con dos o tres preguntas técnicas como mucho; (3) el trader opera la sesión entera, ve las láminas y corrige, y a cada corrección se le pregunta «¿siempre, solo aquí o de qué depende?»; (4) la extracción clasifica cada corrección en regla general, ejemplo o contradicción con lo fijado; (5) solo se activan las reglas generales, cada una con su test que rompe y su efecto medido en julio; (6) una fila en el Marcador. El material de construcción no es el límite: casi todos sus días dev pasan la compuerta (PREPARACION-SESION-7.md, la compuerta contada). Una sesión del bloque de días solo cuenta como vuelta si Aleks está presente de principio a fin y hace la pregunta de cada corrección; si no puede estar, se cambia el día. Las láminas las enseña Aleks desde su pantalla; nunca se le pasa al trader la carpeta ni el ZIP (SESION-08-EXTRACCION.md §13). Las preguntas técnicas que dejó la 7b: A-53, A-43, la reentrada de ADR-0083 D1 (con RN-019), B-10 y A-59 (ACTIVAR-SESION-08.md, "Para la sesión siguiente").
-- **Depende de:** R4.3 (la 7b activada y el pivote leído).
+- **Depende de:** R4.3 (la 7b activada y el pivote leído); para grabar, R4.7.
 - **Quién:** el consultor prepara cada sesión; Aleks la dirige; la sesión ingiere y activa.
-- **Hecho cuando:** julio cumple los dos mínimos del pivote (ADR-0093 §6), o la lectura del pivote cambia el objetivo.
-- **Estado:** método acordado, sin rama; empieza con la sesión siguiente a la 7b.
+- **Hecho cuando:** julio cumple los dos mínimos del pivote (ADR-0093 §6), o la lectura del pivote cambia el objetivo, o la lectura de ADR-0098 cambia el objetivo.
+- **Estado:** método acordado, sin rama; la sesión siguiente a la 7b se prepara y no se graba hasta que cierre R4.7 (salida C de ADR-0098 §3). La lista para clasificar, sin R, la hace la rama que la prepare.
+
+### R4.7 · La salida C de ADR-0098: los costes y la premisa, antes de seguir
+- **Refs:** NA:F · ID:ADR-0098 · ID:A-16 · F:F17
+- **Qué es:** lo que ADR-0098 §3 C pide antes de seguir, porque el techo del trader no gana con nuestros costes (RECORRIDA-CONSTRUCCION-3.md §4): F17 en una prueba gratuita nueva de FTMO (deslizamiento y spread reales; A.5); revisar el sesgo del material sin vídeo (S-14) y la otra serie de precios (A-16); y que Aleks contraste la premisa con el trader, con sus resultados reales, sin enseñarle ninguna cifra de la medida. La auditoría profunda del consultor (solo lectura, sin rama, desde AUDITORIA-2026-11-21.md) se centra en la premisa: de dónde sale la diferencia entre el techo y lo que el trader dice ganar. Hasta el ADR no se graba ninguna sesión de fidelidad.
+- **Depende de:** una prueba gratuita de FTMO viva para F17 (A.5).
+- **Quién:** Aleks (la prueba, el contraste con el trader y el ADR); el consultor (la auditoría y la propuesta del ADR); la sesión (F17, con el encargo del consultor).
+- **Hecho cuando:** un ADR de Aleks decide, con lo que salga, si se sigue y cómo (ADR-0098 §3 C).
+- **Estado:** ABIERTA.
 
 ## R5 · Fidelidad
 
@@ -439,7 +461,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Refs:** ID:ADR-0070 · ID:ADR-0043
 - **Qué es:** medir mayo, el conjunto de medida de ADR-0043, cuando la corrida de R3 llegue al
   umbral (ADR-0070).
-- **Depende de:** la corrida que cuenta (R3.9; ADR-0070 §3) con un "sí", y el ADR propio de la
+- **Depende de:** la corrida que cuenta (R3.10; ADR-0070 §3) con un "sí", y el ADR propio de la
   rama de medida (ADR-0070 §6). El sello del respaldo M1 (R3.6), el método (R3.7, ADR-0092)
   y la cuenta por mes (R3.8) están HECHOS.
 - **Quién:** la sesión, con el encargo del consultor.
@@ -486,16 +508,18 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Quién:** la sesión, con el encargo del consultor; la decisión de operar, Aleks (F35).
 - **Hecho cuando:** la medida está en su informe con el veredicto de ADR-0092 §3 y §4.
 
-### R5.7 · El R de las parejas (diagnóstico)
-- **Refs:** ID:ADR-0092
-- **Qué es:** lo de RUMBO §5: si el bot gana cuando sí replica al trader. Dos fases: el R del bot en sus parejas, de la corrida; después el del trader en las mismas operaciones, que pide leer la columna de resultado de los días dev de su libro (la ingesta no lo guarda: cases/ingesta.py), con su declaración el mismo día. Diagnóstico de construcción: no justifica ninguna rama (ADR-0092 §6).
-- **Depende de:** la corrida de ADR-0070 §3 tras la 7b (NA:F, paso 3). Medida antes, su R sería
-  el de unas parejas que las activaciones de la 7a y la 7b van a cambiar, y abriría dos veces la
-  columna de resultado del libro (decisión del consultor, 2026-11-12).
+### R5.7 · El techo del trader y el R de las parejas (ADR-0098)
+- **Refs:** ID:ADR-0092 · ID:ADR-0098
+- **Qué es:** lo de RUMBO §5, sustituido por la medida de ADR-0098, que la pre-registra con
+  cuatro salidas antes de correr: el techo del trader (sus operaciones repetidas con el bróker,
+  la cuenta y la gestión del bot) y el R de las parejas de la corrida (3), sin abrir la columna de
+  resultado del libro. Decide el método y el objetivo, nunca un parámetro (recuadro de ADR-0092 §6).
+- **Depende de:** R3.10 (HECHA).
 - **Quién:** la sesión, con el encargo del consultor.
-- **Hecho cuando:** las dos fases están en un informe.
-- **Estado:** ABIERTA.
-
+- **Hecho cuando:** la salida de ADR-0098 está en un informe.
+- **Estado:** HECHA (`trabajo/recorrida-construccion-3`; RECORRIDA-CONSTRUCCION-3.md §4): el
+  control reproduce 235 de 235 posiciones; el techo no gana (esperanza -0,239 R en 191, percentil
+  95 -0,026); las parejas, ni una cosa ni otra (29); **salida C**.
 ## R6a · La capa de MT5 que no decide operaciones (ADR-0082)
 
 Va en paralelo a R2-R5, en los huecos de espera (del trader, de FTMO, de la demo), sin quitarle
@@ -728,7 +752,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Qué es:** el panel del límite diario, HECHO el 2026-11-07 (medianoche de España; NA:A queda con
   lo opcional de las noticias); el BE de una venta que salta por el ASK (NA:M,
   ADR-0065 §6); y el grabador de spread y ticks de F17 (heredado 10), que también mide el
-  deslizamiento (ADR-0090 §7).
+  deslizamiento (ADR-0090 §7). La salida C de ADR-0098 lo pide antes de seguir (R4.7).
 - **Depende de:** una prueba gratuita de FTMO viva. Se puede repetir cuantas veces haga falta, con una sola activa a la vez (ftmo.com/es/ftmo-free-trial, leído por el consultor el 2026-11-09).
 - **Quién:** Aleks mira el panel; la sesión, con el encargo del consultor, lo demás.
 - **Hecho cuando:** el panel declarado (HECHO el 2026-11-07) y el grabador hecho; M, sin objeto mientras break_even_condicion sea cierre (NA:M).
@@ -778,6 +802,10 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   que compare las notas de cada registro de feedback con el ítem que cita (segunda rama seguida
   con notas que traen contenido de otros ítems: `trabajo/activar-sesion-05` y
   `trabajo/activar-sesion-05-motor`; ERRORES-RECURRENTES.md, «Patrones que ya se conocen»).
+  Y, de la revisión del consultor del 2026-11-19 y de trabajo/recorrida-construccion-3: en las
+  láminas, las etiquetas de nivel fuera de escala se pisan en la esquina de «M1 de cerca»; y
+  antes_del_dia.py (anexos/RECORRIDA-CONSTRUCCION-2) se rompe al leer como fecha el id de un
+  manifiesto (RECORRIDA-CONSTRUCCION-3.md, revisor a4).
 - **Depende de:** nada (J, antes de la próxima sesión que etiquete días).
 - **Quién:** el consultor (L, 6 y la decisión de 7 y 8); la sesión, en ramas propias.
 - **Hecho cuando:** cada una sale de PROJECT_STATE con su evidencia.
@@ -880,6 +908,7 @@ Una fila por corrida del arnés sobre toda la construcción (cobertura y precisi
 | 2026-10-27 | RECORRIDA-CONSTRUCCION.md | 3.5 / 13.2 | 20.7 / 15.6 | — | — |
 | 2026-10-29 | RESPALDO-M1.md | 3.5 / 13.2 | 20.2 / 15.4 | — | — |
 | 2026-11-08 | RECORRIDA-CONSTRUCCION-2.md | 15.7 / 13.9 | 20.2 / 14.6 | -0.533 | 425 |
+| 2026-11-22 | RECORRIDA-CONSTRUCCION-3.md | 15.2 / 14.4 | 22.7 / 16.3 | -0.429 | 321 |
 
 Cada rama que corra el arnés sobre toda la construcción añade su fila en su orden de cierre.
 Diagnóstico de construcción (ADR-0092 §6): ninguna cifra de aquí justifica una rama.

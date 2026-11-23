@@ -1,0 +1,50 @@
+# La meta, PRE-REGISTRADA antes de la corrida (3) (ADR-0098). Decisión de Aleks del 2026-11-22
+# (opción 2); números del consultor aprobados por Aleks el 2026-11-22. Las cifras de ADR-0092 §3 no
+# se copian: se leen de knowledge/cases/criterio_fidelidad.yaml (bloque rentabilidad). El mínimo de
+# parejas es el de docs/plan/PIVOTES-SESION-7.yaml (minimo_1_parejas_de_julio_al_menos).
+# NO SE EDITA: tests/unit/test_meta_techo_parejas.py fija su sha256, así que cambiar una cifra exige
+# cambiar ese test a la vista en el mismo commit.
+pre_registrado_el: "2026-11-22"
+decision: ADR-0098
+meses: construccion de criterio_fidelidad.yaml, solo días dev
+que_se_mide:
+  techo: >-
+    las operaciones del trader de los días dev de construcción, repetidas por el mismo bróker, la
+    misma cuenta (una por mes, en la fase de la corrida (3)) y la misma gestión que el bot, con el
+    modelo de ADR-0098 §1 (M1)
+  parejas: >-
+    las parejas T0 de la corrida (3) con una cuenta por mes sobre toda la construcción: R neto del
+    bot, R neto del trader en la misma operación (de M1) y su diferencia emparejada (ADR-0098 §1, M2)
+umbrales_de_adr_0092: criterio_fidelidad.yaml, bloque rentabilidad (a a f), con el deslizamiento en 0
+propios:
+  percentil_alto: 95
+  techo_no_gana_si_percentil_alto_por_debajo_de_r: "0.10"
+  parejas_minimo_desde: PIVOTES-SESION-7.yaml, minimos.minimo_1_parejas_de_julio_al_menos
+  parejas_ganan_media_bot_al_menos_r: "0.10"
+  parejas_pierden_media_bot_por_debajo_de_r: "0"
+  parejas_pierden_percentil_alto_de_la_diferencia_por_debajo_de_r: "0"
+  relecturas_de_d_antes_de_decidir: 2
+lecturas:
+  orden_de_lectura_del_techo: [gana, no_gana, no_concluyente]
+  techo:
+    gana: se cumplen a) a f) de ADR-0092 §3 con el deslizamiento en 0
+    no_gana: incumple d), e) o f); o la esperanza es menor que 0; o el percentil alto es menor que techo_no_gana_si_percentil_alto_por_debajo_de_r
+    no_concluyente: el resto, incluido N menor que n_minimo con esperanza al menos 0
+  parejas:
+    no_concluyente: N menor que el mínimo
+    ganan: media del bot al menos parejas_ganan_media_bot_al_menos_r y su percentil 5 mayor que 0
+    pierden: media del bot menor que 0 y percentil alto de la diferencia emparejada menor que 0
+    ni_una_cosa_ni_otra: el resto
+salidas:
+  A: el techo gana y las parejas ganan
+  B: el techo gana y las parejas pierden
+  C: el techo no gana
+  D: el resto
+precedencia_con_el_pivote:
+  C: manda sobre cualquier salida del pivote
+  B: retrasa la sesión que pida el pivote hasta que cierre su rama
+  A: con se_pivota, el mismo ADR del subconjunto; con una sesión más o se sigue, el objetivo cambia por ese ADR y la sesión se graba igual
+  D: manda el pivote
+adr_0092_6: >-
+  decide el método y el objetivo, nunca un parámetro de la spec; ningún arreglo de motor se
+  justifica con el R
