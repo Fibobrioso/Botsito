@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/recorrida-construccion-3
+main
 
 ## Current Feature
-trabajo/recorrida-construccion-3 EN CURSO (R4.3, F paso (3)): la corrida que cuenta con la 7b, el pivote y la meta pre-registrada. Encargo docs/encargos/trabajo-recorrida-construccion-3.md; informe docs/validation/RECORRIDA-CONSTRUCCION-3.md.
+Ninguna abierta: trabajo/recorrida-construccion-3 cerrada en main (stable/F39l-recorrida-construccion-3). Lo siguiente, en la Next Action (F).
 
 ## Stable Main State
-f04868cc · merge de `trabajo/activar-sesion-08` (tag `stable/F39k-activar-sesion-08`), sobre `stable/F39j-sesion-08` (f4b5a9a2). Informe docs/validation/ACTIVAR-SESION-08.md; el registro del cierre, al final de HISTORIA.
+88f678f7 · merge de `trabajo/recorrida-construccion-3` (tag `stable/F39l-recorrida-construccion-3`), sobre `stable/F39k-activar-sesion-08` (f04868cc). Informe docs/validation/RECORRIDA-CONSTRUCCION-3.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-f04868cc · merge trabajo/activar-sesion-08: la sesión 7b activada (la stop del lado malo espera, ADR-0097, A-59), FTMO del 2026-11-20 parafraseada y la auditoría del 2026-11-21 · tag stable/F39k-activar-sesion-08
+88f678f7 · merge trabajo/recorrida-construccion-3: la corrida (3) de ADR-0070 §3 («no»), el pivote por su contingencia («una sesión más») y la meta de ADR-0098 (salida C) · tag stable/F39l-recorrida-construccion-3
 
 ## Tests Currently Passing
 2137 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
