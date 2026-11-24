@@ -4,7 +4,7 @@ El ORDEN y el ESTADO vivos de todo lo pendiente (desde `trabajo/hoja-de-ruta`, 2
 inventario y fuentes en `docs/validation/HOJA-DE-RUTA.md` §0). `docs/plan/MASTER_PLAN.md` define
 las funcionalidades (§A); su §E queda como historia.
 
-Metas (Aleks): firme, el bot testeado y funcional para marzo de 2027; optimista, diciembre de 2026, que ya no cabe por los 3 meses de sombra de F34; y, desde el 2026-10-22, el bot operativo y generando dinero antes de agosto de 2027, cuando Aleks empieza sus prácticas.
+Metas (Aleks): firme, el bot testeado y funcional para marzo de 2027, que no cabe con ninguna vía (ADR-0098 §6); optimista, diciembre de 2026, que ya no cabe por los 3 meses de sombra de F34; y, desde el 2026-10-22, el bot operativo y generando dinero antes de agosto de 2027, cuando Aleks empieza sus prácticas.
 
 **Cómo se lee.** Cada entrada lleva sus referencias: `NA:X` (letra viva de la Next Action de
 `PROJECT_STATE.md`), `HER:n` (pendiente heredado), `ID:` (una ambigüedad `A-nn`, un `ADR-nnnn` o una
@@ -435,12 +435,20 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Estado:** método acordado, sin rama; la sesión siguiente a la 7b se prepara y no se graba hasta que cierre R4.7 (salida C de ADR-0098 §3). La lista para clasificar, sin R, la hace la rama que la prepare.
 
 ### R4.7 · La salida C de ADR-0098: los costes y la premisa, antes de seguir
-- **Refs:** NA:F · ID:ADR-0098 · ID:A-16 · F:F17
-- **Qué es:** lo que ADR-0098 §3 C pide antes de seguir, porque el techo del trader no gana con nuestros costes (RECORRIDA-CONSTRUCCION-3.md §4): F17 en una prueba gratuita nueva de FTMO (deslizamiento y spread reales; A.5); revisar el sesgo del material sin vídeo (S-14) y la otra serie de precios (A-16); y que Aleks contraste la premisa con el trader, con sus resultados reales, sin enseñarle ninguna cifra de la medida. La auditoría profunda del consultor (solo lectura, sin rama, desde AUDITORIA-2026-11-21.md) se centra en la premisa: de dónde sale la diferencia entre el techo y lo que el trader dice ganar. Hasta el ADR no se graba ninguna sesión de fidelidad.
+- **Refs:** NA:F · ID:ADR-0098 · ID:ADR-0099 · ID:A-16 · F:F17
+- **Qué es:** lo que ADR-0098 §3 C pide antes de seguir, porque el techo del trader no gana con nuestros costes (RECORRIDA-CONSTRUCCION-3.md §4): F17 en una prueba gratuita nueva de FTMO (deslizamiento y spread reales; A.5); revisar el sesgo del material sin vídeo (S-14) y la otra serie de precios (A-16); y que Aleks contraste la premisa con el trader, con sus resultados reales, sin enseñarle ninguna cifra de la medida. La auditoría profunda (solo lectura, sin rama; AUDITORIA-PROFUNDA-2026-11.md, que partió de AUDITORIA-2026-11-21.md) se centró en la premisa: de dónde sale la diferencia entre el techo y lo que el trader dice ganar. ADR-0099 decide medir primero tres cosas: el puente del techo pieza a pieza (R4.8, HECHA), F17 rediseñado (ADR-0099 §5; A.5) y el contraste de la premisa con el trader (ADR-0099 §6). Hasta el ADR no se graba ninguna sesión de fidelidad.
 - **Depende de:** una prueba gratuita de FTMO viva para F17 (A.5).
 - **Quién:** Aleks (la prueba, el contraste con el trader y el ADR); el consultor (la auditoría y la propuesta del ADR); la sesión (F17, con el encargo del consultor).
-- **Hecho cuando:** un ADR de Aleks decide, con lo que salga, si se sigue y cómo (ADR-0098 §3 C).
+- **Hecho cuando:** el ADR de Aleks que acota ADR-0099 §7 decide, con lo que salga, si se sigue y cómo (ADR-0098 §3 C).
 - **Estado:** ABIERTA.
+
+### R4.8 · El puente del techo pieza a pieza (ADR-0099)
+- **Refs:** ID:ADR-0099 · ID:ADR-0098
+- **Qué es:** el techo de ADR-0098 §1 con una pieza cambiada cada vez, sobre los días dev de construcción, con la lista cerrada de dieciséis variantes y las lecturas pre-registradas en docs/plan/PUENTE-TECHO.yaml (ADR-0099 §2-§3). Diagnóstico de construcción: ninguna cifra cambia un valor (ADR-0092 §6, recuadro de ADR-0099).
+- **Depende de:** nada (el pre-registro de ADR-0099).
+- **Quién:** la sesión, con el encargo del consultor; lee el consultor.
+- **Hecho cuando:** las dieciséis variantes medidas, con su lectura y el cierre del puente.
+- **Estado:** HECHA (trabajo/puente-techo, PUENTE-TECHO.md): lectura del puente «solo_juntas» (ninguna suelta deja de dar no_gana; todo_junto, no_concluyente); el cierre cierra con V1 y V2.
 
 ## R5 · Fidelidad
 
@@ -633,7 +641,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 ### R6.0 · Decisión de arquitectura en vivo
 - **Refs:** ID:ADR-0082 · F:F29 · F:F30 · F:F32
 - **Qué es:** lo de RUMBO-2026-11.md §4. La decisión la tomó ADR-0082 §4: la capa y el bot final
-  son un EA de MQL5; se descarta que Python decida en vivo, por el tope de peticiones. Aleks la
+  son un EA de MQL5; se descarta que Python decida en vivo, por el tope de peticiones (razón retirada por el recuadro del 2026-11-22 de ADR-0082; la decisión sigue). Aleks la
   confirmó el 2026-11-09. Si la revisión de los ingenieros reabre algo, será con un ADR nuevo.
 - **Depende de:** nada.
 - **Quién:** el consultor escribe el ADR con la medida; Aleks decide.
@@ -748,11 +756,11 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 ## Carril: guardias y deuda
 
 ### A.5 · Lo que queda de la demo de FTMO
-- **Refs:** NA:A · NA:M · HER:10 · F:F17
+- **Refs:** NA:A · NA:M · HER:10 · F:F17 · ID:ADR-0099
 - **Qué es:** el panel del límite diario, HECHO el 2026-11-07 (medianoche de España; NA:A queda con
   lo opcional de las noticias); el BE de una venta que salta por el ASK (NA:M,
-  ADR-0065 §6); y el grabador de spread y ticks de F17 (heredado 10), que también mide el
-  deslizamiento (ADR-0090 §7). La salida C de ADR-0098 lo pide antes de seguir (R4.7).
+  ADR-0065 §6); y F17 rediseñado (heredado 10; ADR-0099 §5): el historial de ticks del servidor
+  de la demo, el grabador de ticks y spread y la medida de las órdenes stop. La salida C de ADR-0098 lo pide antes de seguir (R4.7).
 - **Depende de:** una prueba gratuita de FTMO viva. Se puede repetir cuantas veces haga falta, con una sola activa a la vez (ftmo.com/es/ftmo-free-trial, leído por el consultor el 2026-11-09).
 - **Quién:** Aleks mira el panel; la sesión, con el encargo del consultor, lo demás.
 - **Hecho cuando:** el panel declarado (HECHO el 2026-11-07) y el grabador hecho; M, sin objeto mientras break_even_condicion sea cierre (NA:M).

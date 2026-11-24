@@ -20947,3 +20947,72 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 80 (2026-11-22).
+
+
+# Registro de cierre · `trabajo/puente-techo` (2026-11-24)
+
+- Orden de cierre de Aleks del 2026-11-24, tras la revisión del consultor, pegada en la conversación
+  de la sesión; después, Aleks lanzó `/cerrar-rama trabajo/puente-techo`. El cierre se hace el
+  2026-11-24 y la fila de HOLDOUT de ese día ya está en la rama, así que no hace falta el commit de la
+  fila: la rama tenía 8 commits y con el `chore(cierre)` son 9.
+- Tag: `stable/F39m-puente-techo`. El merge es
+  `git rev-parse "stable/F39m-puente-techo^{commit}"` (su sha queda en `Last Stable Commit`).
+- **Lo hecho** (tramo R4, R4.7; PUENTE-TECHO.md):
+  - **Fase A**: AUDITORIA-PROFUNDA-2026-11.md y AUDITORIA-CAZADOR-2026-11-23.md, copiadas tal cual
+    bajo su cabecera (los bytes del original, con sha256 medido).
+  - **Fase P** (`613aa40c`, 2026-11-23 23:32:13, antes de ninguna corrida): ADR-0099 (la salida C se
+    resuelve midiendo primero), `docs/plan/PUENTE-TECHO.yaml` fijado por
+    `tests/unit/test_puente_techo.py`, la fila del README de ADR y los recuadros en ADR-0092 §6 y
+    ADR-0098 §3.
+  - **Fase 0**: CUADRA, sin correr nada; se siguió sin PARADA, como pedía el encargo.
+  - **El puente** (`anexos/PUENTE-TECHO/puente.py`, las dieciséis variantes del yaml sobre los cuatro
+    meses dev de construcción): los controles pasan (D2 a 235 de 235 al céntimo; D2 b el bloque M1
+    igual al de `meta.txt`; D2 c 124 de 124; D9 la base repetida igual byte a byte). **La lectura del
+    puente, literal: «solo_juntas»**: las ocho sueltas dan no_gana; todo_junto, no_concluyente; las
+    cuatro de vuelta, no_gana. **El cierre del puente cierra con V1 y V2** (`v1_de_hoy` N 70 y
+    `v2_de_hoy` N 67, sobre abril y agosto, con los mismos fuera por el tope que publicó
+    VIABILIDAD-COMISION.md).
+  - **Fase 5**: la enmienda del 2026-11-24 en RUMBO-2026-11.md §4 y la NOTA en MASTER_PLAN.md.
+- **La PARADA antes de abrir**: el sha256 del borrador de ADR-0099 del Escritorio no casaba (era una
+  versión anterior); el consultor puso la buena (19.965 bytes, sha `aa4e95ff…`) y se siguió con el
+  encargo tal cual. Su respuesta, tal cual al final del encargo y en el informe.
+- **Respuestas de la orden de cierre:**
+  1. b2 del revisor (el test de humo no pasa el break even ni el tope por el bucle de `repetir`): NO
+     se completa. Las salidas reales muestran que los interruptores actúan y el guion es un
+     diagnóstico de anexos fuera de src/. Iría a Technical Debt solo si una rama futura reutiliza
+     `puente.py`: no se añade ahora ninguna línea.
+  2. Las líneas del cierre, aplicadas tal cual están en `anexos/PUENTE-TECHO/simular_cierre.py` y en
+     el §5 del informe; sin fila en el Marcador.
+  3. La fila de ERRORES-RECURRENTES: la del §6 del informe, tal cual, con la cuarta columna («Que se
+     le escapo») que la tabla exige y el §6 no traía, escrita con los dos hallazgos de la orden.
+- **La F**, sin que salga ni entre ninguna letra: gana al final la frase «ADR-0099: se mide primero; el
+  puente del techo, hecho (PUENTE-TECHO.md, lectura «solo_juntas»); F17 rediseñado (ADR-0099 §5) y el
+  contraste con el trader, pendientes.».
+- **Hoja de ruta:** la línea de Metas con ADR-0098 §6; R4.7 con ADR-0099 en sus Refs, la auditoría
+  profunda y las tres medidas de ADR-0099 en su «Qué es» y su «Hecho cuando» en el ADR que acota
+  ADR-0099 §7 (sigue ABIERTA); R4.8 nueva, el puente, HECHA; A.5 con F17 rediseñado y ADR-0099 en sus
+  Refs; R6.0 con la razón retirada por el recuadro del 2026-11-22 de ADR-0082.
+- **Commits de la rama** (9):
+  - `0f021d68` la apertura (encargo, contrato y Archivo 81 de PROJECT_STATE);
+  - `5974d36d` las dos auditorías de noviembre, copiadas tal cual (fase A);
+  - `613aa40c` ADR-0099, el puente del techo pre-registrado antes de correr (fase P);
+  - `6ba82dee` la fase 0, inventario sin correr nada (CUADRA);
+  - `f042fa10` el README del anexo, antes de correr;
+  - `da15d984` el guion del puente, sus controles, las dieciséis variantes y la lectura;
+  - `e9be7390` las dos notas de la fase 5 (RUMBO §4 y MASTER_PLAN);
+  - `5fab2992` el revisor y la entrega;
+  - y este, `chore(cierre)`: sale el contrato; entran este registro, la fila de ERRORES-RECURRENTES, la
+    F y la hoja de ruta.
+- **CI:** la rama no se empujó (no toca la plataforma): ningún run de `fix/puente-techo`. CI de `main`
+  sobre `8a10590b`, al abrir: run 45107787390, success.
+- **Contrato** (el último `make check` antes de este commit): `CONTRATO: 43 ficheros dentro del
+  contrato de trabajo/puente-techo (riesgo medio, artefacto docs/validation/PUENTE-TECHO.md, tramo
+  'R4', 4 comprobaciones para el revisor)` y `G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-24 para
+  trabajo/puente-techo, estadiada`.
+- **Filas de HOLDOUT-EXPOSICIONES de la rama** (dos): la del 2026-11-23 (la apertura, las dos
+  auditorías, el pre-registro y la fase 0) y la del 2026-11-24 (el README, el guion, las corridas, el
+  revisor y, en «3 bis», el guion de diagnóstico de D2 c, declarado después de correrlo).
+- **Revisor** (opus): una pasada con los ocho alcances del encargo, pegada en PUENTE-TECHO.md,
+  «Informe del revisor»; eje (a) 0 bloquea, 1 importa, 4 menor; eje (b) 0 bloquea, 5 importa, 0
+  menor; todo arreglado salvo b2 (respuesta 1). Lo hecho, en «Lo que se hizo con los hallazgos del
+  revisor».
