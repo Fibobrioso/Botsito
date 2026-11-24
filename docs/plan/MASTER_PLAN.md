@@ -34,6 +34,13 @@
 > pre-registran cada uno en la rama de su funcionalidad (kappa, la sesión que etiquete; paridad, F30
 > y F32; DSR, F27), antes de su primera medida. Esta NOTA es la actualización que la de ADR-0092
 > encargaba a G para la fila de F30 y la del pre-registro en §H: ninguna fila cambia.
+>
+> **NOTA (2026-11-24, rama `trabajo/puente-techo`, ADR-0099).** F17 deja de ser solo un grabador de
+> ticks y spread (hoy está PARCIAL: existe el guion de medición de la demo, con siete observaciones de
+> deslizamiento, ADR-0090 §7, y no el grabador): ADR-0099 §5 le añade la medida de las órdenes stop
+> (un guion que las coloca y registra el nivel, el tick que dispara y el llenado), porque un grabador
+> que no coloca órdenes no mide el deslizamiento que ADR-0092 §4 pide, y pone delante medir y exportar
+> el historial de ticks reales que el servidor de la demo ya sirve. La fila de F17 no se toca.
 
 Version Markdown del plan (la version completa con detalle de cada funcionalidad esta en
 `MASTER_PLAN.html`, instantanea congelada del 2026-09-03; este Markdown manda cuando difieren). Deriva del informe de investigacion

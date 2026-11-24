@@ -563,6 +563,17 @@ swaps. (menor) «Hoy 24.680 bytes» era el PROJECT_STATE de `main`, no el de la 
 check` entero; la línea de `pico_memoria.py ejecutar` fue a la salida medida (D9 la cazó); y la
 primera versión de D2 c reabría con la fuente «caso» las posiciones llenadas por el respaldo M1.
 
+## §7 · La fase 5: dos notas en docs/plan (commit propio)
+
+- `docs/plan/RUMBO-2026-11.md` §4: la enmienda del 2026-11-24, tal cual con la fecha del commit,
+  **justo detrás de la del 2026-11-10** y antes del cuerpo de §4: en ese fichero las enmiendas van en
+  la cabeza de la sección (`RUMBO-2026-11.md:37`), así que «al final de las que ya tiene» es ahí (lo
+  vio el auditor del encargo, §0.5 punto 8). El cuerpo no se toca.
+- `docs/plan/MASTER_PLAN.md`: la NOTA del 2026-11-24, tal cual, dentro del mismo bloque citado y
+  detrás de la del 2026-11-19 (ADR-0096), con su forma (`> **NOTA (fecha, rama …, ADR).**`). La fila
+  de F17 no se toca. «Siete observaciones» copia la cifra de ADR-0090 §7, que dice «Siete muestras»
+  y enumera nueve valores (§0.5 punto 9).
+
 ## El encargo, punto por punto
 
 | # | Lo que pide | Hecho | Evidencia |
