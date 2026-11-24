@@ -950,6 +950,11 @@ def correr_variante(
             f"colocacion): {c.rep.recuentos.total('no_colocables_en_minuto_sin_ticks')}",
             "",
         ]
+    if piezas.cambia_spread:  # D3: con el spread cambiado, cuantos eventos salen del respaldo
+        lineas += [
+            "eventos por fuente (sin R; el respaldo M1 no lleva el spread cambiado): "
+            + ", ".join(f"{k} {v}" for k, v in sorted(c.rep.por_fuente.items())),
+        ]
     if var.grupo != "cierre":
         cuatro = bloque(ent, c, lec, None, "Los cuatro meses", True)
         lineas += cuatro.lineas

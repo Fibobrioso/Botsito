@@ -142,3 +142,9 @@ no se rellenan.
 > - Si un make check muere por memoria (PICO DE MEMORIA en la última línea del log), espera a que acabe lo que corre y repite una sola vez.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA antes de abrir (2026-11-23)
+
+Copiada tal cual. Llegó antes de abrir la rama; se añade aquí en el commit de la entrega (revisor, b5).
+
+> Respuesta del consultor a la PARADA antes de abrir (2026-11-23): el ADR-0099-borrador.md del Escritorio era una versión anterior. Aleks ya ha puesto la buena (19.965 bytes). Vuelve a medir su sha256: si da aa4e95ff87144f4b748951fe6de16c68a1cb5950673b9815053eebd8bf58200b, sigue con el encargo tal cual, empezando por la rama y la fila de HOLDOUT-EXPOSICIONES antes del primer make check. Si no coincide, PARADA otra vez con el sha y los bytes, sin tocar nada.

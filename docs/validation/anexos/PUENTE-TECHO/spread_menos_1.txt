@@ -6,6 +6,7 @@ reproducidas al centimo (lote, motivo, instante del cierre, PnL neto): 235 de 23
 control: PASA
 
 ## Variante spread_menos_1 (suelta): [spread_menos_1]
+eventos por fuente (sin R; el respaldo M1 no lleva el spread cambiado): cierre_m1 83, respaldo_m1 16, ticks 378
 ### Los cuatro meses
 N (llenadas y cerradas): 196; no colocables: 2; no llenadas: 0; fuera por el tope de lotes: 0; fuera por el lote minimo: 0; fuera de la ventana: 0
 cerradas con riesgo no positivo (no entran): 0

@@ -1,6 +1,8 @@
 # PUENTE-TECHO · El puente del techo pieza a pieza, pre-registrado antes de correr (R4.7, entrada F)
 
-> PLANTILLA hasta la fase 0: el inventario lo escribe la fase 0 (skill fase-cero) en su commit.
+> Entregado el 2026-11-24: la lectura del puente es «solo_juntas» (ninguna suelta deja de dar
+> no_gana; todo_junto, no_concluyente); el cierre cierra con V1 y V2. Rama lista para revisión, NO
+> cerrada.
 
 Rama `trabajo/puente-techo`, abierta el 2026-11-23 desde `main` en 8a10590b (commit de estado sobre
 el merge 88f678f7 del tag `stable/F39l-recorrida-construccion-3`). Encargo:
@@ -32,8 +34,15 @@ existe ni en local ni en origin: `git tag -l "stable/F39m*"` y `git ls-remote --
 - **PARADA antes de abrir por el borrador del ADR.** La primera medida dio 18.215 bytes y
   `26c81a4ecb12e9da5f84936e65c25a3cedc8c6d9b98c2d743951fa92c3caadb0` (LF, sin BOM; tampoco
   coincidía con CRLF, sin el salto final ni con uno de más). Se paró sin tocar nada ni leer su texto.
-  Respuesta del consultor (2026-11-23): era una versión anterior; Aleks dejó la buena (19.965 bytes),
-  cuyo sha coincide. Solo entonces se abrió la rama.
+  La respuesta del consultor, tal cual (también al final del encargo):
+
+  > Respuesta del consultor a la PARADA antes de abrir (2026-11-23): el ADR-0099-borrador.md del
+  > Escritorio era una versión anterior. Aleks ya ha puesto la buena (19.965 bytes). Vuelve a medir
+  > su sha256: si da aa4e95ff87144f4b748951fe6de16c68a1cb5950673b9815053eebd8bf58200b, sigue con el
+  > encargo tal cual, empezando por la rama y la fila de HOLDOUT-EXPOSICIONES antes del primer make
+  > check. Si no coincide, PARADA otra vez con el sha y los bytes, sin tocar nada.
+
+  La segunda medida dio 19.965 bytes y ese sha: solo entonces se abrió la rama.
 - **La fila de HOLDOUT-EXPOSICIONES del día** se escribió y estadió tras crear la rama y antes de
   cualquier otra escritura, lectura de material o `make check`. Su punto (8) se corrigió, aún
   estadiada y antes del primer `make check`, tras leer la auditoría profunda: el encargo dice que las
@@ -156,15 +165,21 @@ se comprueba con D2 a y D2 b, no se supone.
    `posiciones_del_bot` salta toda posición sin orden (`cableado.py:1341-1343`: `o =
    broker.ordenes.get(p.orden_id)`; `if o is None: continue`). El auditor del encargo tenía razón:
    `filas_de` daría cero filas. Por eso el guion calcula las filas de esas posiciones con las mismas
-   fórmulas de `posiciones_del_bot` (`cableado.py:1323-1377`: `pnl`, la comisión del perfil por lado,
-   los swaps hasta el cierre y el riesgo = lotes × distancia de la entrada al stop de apertura /
-   escala × contrato) y lo comprueba con D2 c. El instante del caso, por la ingesta
-   (`arnes.dias_de_construccion`), es **al segundo**: de las 198 operaciones, 176 traen segundos
-   distintos de cero y ninguna fracción de segundo; todas en UTC (guion de recuentos de la carpeta
-   de trabajo). En la iteración del minuto del caso, el guion avanza el bróker hasta el milisegundo
-   anterior al instante del caso y abre allí, al precio del caso, con el lote del riesgo calculado con
-   la cuenta de ese momento y limitado por `_lote_final` (volumen 50 y margen libre al precio de
-   conversión del instante: `broker.py:1025` y `:1065`), como hacía `viabilidad_comision.py:157-181`.
+   fórmulas de `posiciones_del_bot` (`cableado.py:1323-1377`: `pnl`, la comisión del perfil por lado
+   y los swaps hasta el cierre), salvo el riesgo: `posiciones_del_bot` lo toma del precio y el stop
+   de la ORDEN (`cableado.py:1352`) y el guion, sin orden, de la entrada y el stop de apertura de la
+   posición (lotes × distancia / escala × contrato); los dos coinciden cuando la stop se llena a su
+   precio, que es el caso que compara D2 c (corrección del revisor, a3). El instante del caso, por la
+   ingesta (`arnes.dias_de_construccion`), es **al segundo**: de las 198 operaciones, 176 traen
+   segundos distintos de cero y ninguna fracción de segundo; todas en UTC (guion de recuentos de la
+   carpeta de trabajo). En la iteración del minuto del caso (que decide en el cierre de la M1
+   anterior), el guion calcula el lote del riesgo con el saldo de la cuenta y el margen libre del
+   bróker de ese cierre, y el precio de conversión del instante del caso (`_lote_final`: volumen 50 y
+   margen libre, `broker.py:1025` y `:1065`); después `abrir_conocida` avanza el bróker hasta el
+   instante del caso y abre allí, al precio del caso (`broker.py:673`, `:1109-1112`). Si en ese tramo,
+   de menos de un minuto, se cerrara otra posición, el lote saldría del saldo de antes: el efecto no
+   está medido (corrección del revisor, a1; en ninguna corrida hubo rechazos). `viabilidad_comision.py`
+   (:157-181) avanzaba hasta el milisegundo anterior y calculaba el lote con el saldo de entonces.
    `abrir_conocida` levanta `BrokerError` si el perfil no admite la posición
    (`_limite_infringido`, :1114, y `_margen_infringido`): se cuenta como rechazada con su motivo.
 4. `sin_las_de_mas_de_100_lotes`: el lote por riesgo es `lote_del_riesgo` (:546-548), antes de
@@ -214,7 +229,7 @@ la carpeta de trabajo que no imprime claves:
 Ninguna sin stop. Coinciden con la última cuenta (`RECORRIDA-CONSTRUCCION-3.md:129-136`).
 `casos_reservados(repo)`: 34 en total, 0 en los cuatro meses de construcción.
 
-**f) Las publicadas y qué era V1 y V2.** `VIABILIDAD-COMISION.md` §3, filas de 5 USD (:112-113): V1,
+**f) Las publicadas y qué era V1 y V2.** `VIABILIDAD-COMISION.md` §3, filas de 5 USD (:111-112): V1,
 70 operaciones, +0,70 bruta y +0,34 neta [−0,15; +0,85]; V2, 67, +0,88 y +0,47 [−0,13; +1,08]. Son
 las del yaml. En `scripts/viabilidad_comision.py`: `niveles()` (:66-83) lee el stop del libro como
 **el 1** (V1: stop en el 1, objetivo a 3·d, lote sobre d; V2: stop y lote en 0,8·d al punto más
@@ -437,7 +452,10 @@ Una fila por variante, copiada de su salida (`anexos/PUENTE-TECHO/<nombre>.txt`)
 comisión y swaps (media de `bruto / riesgo`); E neta, p5 y p95: la media del R neto y sus percentiles
 5 y 95 por `remuestreo_por_dias` (10000 réplicas, semilla 20261107, del bloque `rentabilidad`). Las de
 vuelta llevan el nombre de la pieza del techo que reponen sobre `todo_junto`. Ninguna corrida tuvo
-rechazos del bróker ni cerradas con riesgo no positivo; ninguna cerró al fin del día.
+rechazos del bróker ni cerradas con riesgo no positivo; ninguna cerró al fin del día. Los eventos que
+salen del respaldo M1 (D3, sin R), en las tres de spread: `spread_menos_1`, `respaldo_m1` 16, `ticks`
+378 y `cierre_m1` 83; `spread_menos_2`, 16, 378 y 85; `sin_spread`, 16, 380 y 88 (la base: 16, 368 y
+77). El respaldo no lleva el spread cambiado: sus 16 eventos son los mismos en las cuatro.
 
 **Los cuatro meses** (76 días dev):
 
@@ -508,7 +526,7 @@ LECTURA DEL PUENTE: solo_juntas
 Las dieciséis salen también en `todo.txt` (una sola corrida de `puente.py todo`, con el entorno
 construido una vez): sus 16 bloques son iguales a los de las corridas sueltas y su control al de
 `control.txt` (comparados con un guion de la carpeta de trabajo); como `todo` corrió con el guion
-final, eso también dice que el arreglo de D2 c no tocó la base. `lectura.txt` es su extracto literal.
+final, eso también dice que el arreglo de D2 c no tocó la base. `lectura.txt` copia de él, tal cual, las dos líneas del cierre con sus cabeceras y la lectura del puente, con dos líneas añadidas: la cabecera del fichero y el título «## El cierre del puente (ADR-0099 §2), sobre abril y agosto» (corrección del revisor, a4).
 En la línea del cierre, «antes de comision» es la E bruta de las tablas (antes de comisión y swaps;
 los swaps son 0: ninguna posición cruza la noche).
 
@@ -553,17 +571,9 @@ Las líneas, tal como las aplicaría la orden de cierre (el texto exacto, en `si
 
 ## §6 · La fila de ERRORES-RECURRENTES, preparada (no aplicada)
 
-Las columnas del revisor, cuando pase (abajo). **Del consultor, que llegaron a Claude Code: 5.** (importa)
-El sha256 del borrador del ADR no casaba: el Escritorio tenía una versión anterior (PARADA antes de
-abrir). (menor) D2 c decía «las nueve variantes»: son siete. (menor) La línea de la fila de HOLDOUT
-decía que las dos auditorías leyeron «solo ficheros commiteados»: la profunda corrió `kb find`, que
-recorre la transcripción filtrada. (menor) «La esperanza antes de comisión» es antes de comisión y de
-swaps. (menor) «Hoy 24.680 bytes» era el PROJECT_STATE de `main`, no el de la rama. **De la sesión,
-3:** el `ScheduleWakeup` de respaldo dejó `.claude/scheduled_tasks.lock` en el repo y tumbó un `make
-check` entero; la línea de `pico_memoria.py ejecutar` fue a la salida medida (D9 la cazó); y la
-primera versión de D2 c reabría con la fuente «caso» las posiciones llenadas por el respaldo M1.
+| `trabajo/puente-techo` | Una pasada, opus, con los ocho alcances del encargo (PUENTE-TECHO.md, «Informe del revisor»; lo hecho, en «Lo que se hizo con los hallazgos del revisor»): eje (a) 0 bloquea, 1 importa, 4 menor; eje (b) 0 bloquea, 5 importa, 0 menor. a1 (cuándo se calcula el lote de `abrir_conocida`: la frase del informe no era la del código), b1 (D3 pedía contar los eventos del respaldo en las de spread), b3 (comandos sin literal ni hora), b4 (el guion de diagnóstico, declarado después de correrlo), b5 (la respuesta del consultor, parafraseada), arreglados; b2 (el test de humo no pasa el break even ni el tope por el bucle), dicho y no arreglado. | **Del consultor, que llegaron a Claude Code: 5.** (importa) El sha256 del borrador del ADR no casaba: el Escritorio tenía una versión anterior (PARADA antes de abrir). (menor) D2 c decía «las nueve variantes»: son siete. (menor) La fila de HOLDOUT del encargo decía que las dos auditorías leyeron «solo ficheros commiteados»: la profunda corrió `kb find`, que recorre la transcripción filtrada. (menor) «La esperanza antes de comisión» es antes de comisión y de swaps. (menor) «Hoy 24.680 bytes» era el PROJECT_STATE de `main`. **De la sesión, 5:** el `ScheduleWakeup` de respaldo dejó `.claude/scheduled_tasks.lock` en el repo y tumbó un `make check` entero; la línea de `pico_memoria.py ejecutar` fue a la salida medida (D9 la cazó); la primera versión de D2 c reabría con la fuente «caso» las posiciones llenadas por el respaldo M1; las salidas con CRLF tumbaron otro `make check` (`test_no_crlf_in_tracked_text_files`); y el guion de diagnóstico de D2 c se declaró en HOLDOUT después de correrlo (el mismo día). |
 
-## §7 · La fase 5: dos notas en docs/plan (commit propio)
+## §7 · La fase 5: dos notas en docs/plan (commit propio, `e9be7390`)
 
 - `docs/plan/RUMBO-2026-11.md` §4: la enmienda del 2026-11-24, tal cual con la fecha del commit,
   **justo detrás de la del 2026-11-10** y antes del cuerpo de §4: en ese fichero las enmiendas van en
@@ -579,41 +589,88 @@ primera versión de D2 c reabría con la fuente «caso» las posiciones llenadas
 | # | Lo que pide | Hecho | Evidencia |
 |---|---|---|---|
 | 1 | Base comprobada; tag F39m libre; REAP | Hecho | apertura |
-| 2 | Fila de HOLDOUT del día antes de todo, y la del día nuevo | Hecho (23 y 24) | §0.4 i; §0.9 |
+| 2 | Fila de HOLDOUT del día antes de todo, y la del día nuevo | Hecho (23 y 24); el guion de diagnóstico de D2 c, declarado después de correrlo (el mismo día) | §0.4 i; §0.9; «Exposiciones» |
 | 3 | Los cuatro ficheros, sha256 y leídos enteros | Hecho; PARADA por el del ADR, resuelta | apertura |
 | 4 | abrir-rama con el contrato pedido | Hecho (`0f021d68`) | `contrato.yaml` |
 | 5 | Fase A, commit propio, primero | Hecho (`5974d36d`) | §0.2 |
 | 6 | Fase P, commit propio, antes de la fase 0 y de toda corrida | Hecho (`613aa40c`, 23:32:13) | §0.3; §1 |
 | 7 | Fase 0, a a j, con su auditor y CUADRA | Hecho (`6ba82dee`) | §0.4-§0.8 |
 | 8 | README en su commit antes de correr | Hecho (`f042fa10`, 00:46:14) | §0.9 |
-| 9 | `puente.py` con sus modos y su test de humo, los dos sentidos | Hecho; 15 passed | §0.9 |
-| 10 | D2 a, D2 b, D2 c, D8, D9, D10 | Hecho; D2 c con un arreglo declarado | §1 |
-| 11 | Las ocho sueltas, todo_junto y las cuatro de vuelta, a su fichero | Hecho; exit 0 las dieciséis | §2 |
-| 12 | El cierre y la lectura, en `lectura.txt` y literal | Hecho | §3, §4 |
-| 13 | Fase 5, las dos notas | en su commit | §7 |
-| 14 | Las líneas del cierre, medidas sobre una copia | Hecho | §5 |
-| 15 | Revisor (opus) con los ocho alcances | al final | «Informe del revisor» |
-| 16 | Nada de `src/`, `knowledge/`, `scripts/`, Makefile ni `.claude/` | Hecho | `git diff main --stat` |
-| 17 | Ninguna recomendación de spec ni de motor | Hecho | todo el informe |
+| 9 | `puente.py` con sus modos | Hecho | §0.9 |
+| 10 | Su test de humo: cada pieza en los dos sentidos | **Parcial** (15 passed): las piezas puras, D2 c, RN-002, las lecturas y el cierre; el break even «que se mueve y que no» y el tope «que entra y que sale» no pasan por el interruptor de `repetir` (revisor, b2) | §0.9; «Lo que se hizo» |
+| 11 | D2 a, D2 b, D2 c, D8, D9, D10 | Hecho; D2 c con un arreglo declarado | §1 |
+| 12 | D3: las diez piezas, con el recuento del respaldo en las de spread | Hecho (el recuento, desde la revisión: revisor, b1) | §2 |
+| 13 | Las ocho sueltas, todo_junto y las cuatro de vuelta, a su fichero | Hecho; exit 0 las dieciséis | §2 |
+| 14 | El cierre y la lectura, en `lectura.txt` y literal | Hecho | §3, §4 |
+| 15 | Fase 5, las dos notas | Hecho (`e9be7390`) | §7 |
+| 16 | Las líneas del cierre, medidas sobre una copia | Hecho | §5 |
+| 17 | Revisor (opus) con los ocho alcances | Hecho | «Informe del revisor» |
+| 18 | Nada de `src/`, `knowledge/`, `scripts/`, Makefile ni `.claude/` | Hecho | `git diff main --stat` |
+| 19 | Ninguna recomendación de spec ni de motor | Hecho | todo el informe |
 
 **Propuestas de otras variantes (D4), sin correrlas:** ninguna.
 
+**Los tests que rompen a propósito (entregar-rama, paso 3), hecho de otra forma.** Los dos de
+`tests/unit/test_puente_techo.py` que rompen (el desfase a 3; una suelta con una pieza que no existe)
+fallan con el yaml mutado y pasan con el del repo (6 passed). Contra `main` el test no puede pasar por
+construcción: allí no existen ni el yaml ni el test (`git cat-file -e main:docs/plan/PUENTE-TECHO.yaml`
+y `… main:tests/unit/test_puente_techo.py`, exit 128 los dos), así que no se montó el clon desechable.
+Sin CI de Linux: la rama no toca la plataforma (ni `.claude/`, ni hooks, ni rutas, ni código de
+sistema; `git diff --stat main...HEAD -- src knowledge scripts Makefile .claude` vacío).
+PROJECT_STATE en la rama: 24.728 bytes (tope 25.000).
+
 ## Los comandos ejecutados, con su hora (2026-11-24)
 
+Desde la raíz, una a una. Las horas con «~» salen de la hora de escritura de cada salida (`ls -l`);
+las demás, de `date`. Los guiones de la carpeta de trabajo de la sesión (fuera del repo) se nombran
+por su nombre.
+
 ```
-00:49:07  uv run python scripts/pico_memoria.py ejecutar -- uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py control docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/control.txt
-00:50:34  uv run python scripts/pico_memoria.py ejecutar -- uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py variante base docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/base.txt
-          (D2 b: sed de los dos bloques M1 a la carpeta de trabajo y diff, exit 0)
-~00:52    uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py variante base docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/base-repetida.txt
-          (D9: cmp base.txt base-repetida.txt, tras quitar la línea del medidor)
-~00:56    uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py conocida ... > conocida.txt   (exit 5: 122 de 124; copia en conocida-antes-del-arreglo.txt)
-~00:58    el mismo, con la fuente de apertura (exit 0: 124 de 124)
-00:59-01:20  uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py variante <nombre> ... > <nombre>.txt, las quince restantes en el orden del yaml (exit 0 todas)
-01:20-01:23  uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py todo ... > todo.txt
-          uv run python -B docs/validation/anexos/PUENTE-TECHO/simular_cierre.py > docs/validation/anexos/PUENTE-TECHO/simular-cierre.txt
+~00:47  uv run ruff format docs/validation/anexos/PUENTE-TECHO/puente.py docs/validation/anexos/PUENTE-TECHO/test_puente.py
+~00:47  uv run ruff check --output-format concise docs/validation/anexos/PUENTE-TECHO/puente.py docs/validation/anexos/PUENTE-TECHO/test_puente.py
+~00:47  uv run mypy docs/validation/anexos/PUENTE-TECHO/puente.py docs/validation/anexos/PUENTE-TECHO/test_puente.py
+~00:48  uv run pytest docs/validation/anexos/PUENTE-TECHO/test_puente.py -p no:cacheprovider -q --tb=line   (4 failed; arreglados)
+~00:48  uv run pytest docs/validation/anexos/PUENTE-TECHO/test_puente.py -p no:cacheprovider -v             (15 passed)
+00:49:07  uv run python scripts/pico_memoria.py ejecutar -- uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py control docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/control.txt 2> control.err
+00:50:34  uv run python scripts/pico_memoria.py ejecutar -- uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py variante base docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/base.txt 2> base.err
+~00:52  sed -n '/^## M1 · El techo/,/^## M2 · Las parejas/p' docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/meta.txt | sed '$d' > m1-meta.txt
+~00:52  sed -n '/^## M1 · El techo/,/^### D8/p' docs/validation/anexos/PUENTE-TECHO/base.txt | sed '$d' > m1-base.txt
+~00:52  diff m1-meta.txt m1-base.txt   (exit 0; repetido sobre las versiones del índice, git show :…, antes del commit: exit 0)
+~00:53  uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py variante base docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/base-repetida.txt
+~00:54  uv run --no-sync python -B quitar_pico.py docs/validation/anexos/PUENTE-TECHO/base.txt docs/validation/anexos/PUENTE-TECHO/control.txt
+~00:54  cmp base.txt base-repetida.txt   (exit 0)
+~00:56  uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py conocida docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/conocida.txt   (exit 5)
+~00:57  uv run --no-sync python -B diag_conocida.py <el día dev de julio que difería>   (motivos e instantes, sin precios)
+00:57:50  cp conocida.txt conocida-antes-del-arreglo.txt
+00:59:11  uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py conocida docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/conocida.txt   (exit 0)
+01:00:58  … variante objetivo_sobre_el_stop … > objetivo_sobre_el_stop.txt
+01:02:23  … variante sin_break_even … > sin_break_even.txt
+01:03:43  … variante entrada_al_precio_del_caso … > entrada_al_precio_del_caso.txt
+01:04:59  … variante sin_las_de_mas_de_100_lotes … > sin_las_de_mas_de_100_lotes.txt
+01:06:15  … variante desfase_menos_2 … > desfase_menos_2.txt
+01:07:39  … variante spread_menos_1 … > spread_menos_1.txt
+01:09:04  … variante spread_menos_2 … > spread_menos_2.txt
+01:10:34  … variante sin_spread … > sin_spread.txt
+01:12:04  … variante todo_junto … > todo_junto.txt
+01:13:27  … variante de_vuelta_objetivo_sobre_el_stop … > de_vuelta_objetivo_sobre_el_stop.txt
+01:14:47  … variante de_vuelta_sin_break_even … > de_vuelta_sin_break_even.txt
+01:16:06  … variante de_vuelta_entrada_al_precio_del_caso … > de_vuelta_entrada_al_precio_del_caso.txt
+01:17:25  … variante de_vuelta_sin_las_de_mas_de_100_lotes … > de_vuelta_sin_las_de_mas_de_100_lotes.txt
+01:18:50  … variante v1_de_hoy … > v1_de_hoy.txt
+01:20:05  … variante v2_de_hoy … > v2_de_hoy.txt
+01:22:46  uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py todo docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/todo.txt
+~01:25  uv run --no-sync python -B cruzar_todo.py docs/validation/anexos/PUENTE-TECHO   (16 de 16; control igual)
+~01:25  uv run --no-sync python -B hacer_lectura.py docs/validation/anexos/PUENTE-TECHO   (lectura.txt)
+~01:30  uv run python -B docs/validation/anexos/PUENTE-TECHO/simular_cierre.py > docs/validation/anexos/PUENTE-TECHO/simular-cierre.txt
+~01:58  uv run --no-sync python -B a_lf.py docs/validation/anexos/PUENTE-TECHO/*.txt   (21 de 23 pasados a LF)
+~02:00  uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py variante base docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > base-lf.txt   (con el guion en LF; cmp contra base.txt convertida: exit 0)
+~03:00  … variante spread_menos_1, spread_menos_2 y sin_spread, otra vez, con el recuento por fuente (revisor, b1)
+03:03   uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py todo docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/todo.txt   (otra vez, con el guion final)
 ```
 
-Las horas con «~» salen de la hora de escritura de cada salida (`ls -l`); las demás, de `date`.
+En las líneas con «…», el comando es `uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py
+variante <nombre> docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt >
+docs/validation/anexos/PUENTE-TECHO/<nombre>.txt`, literal, con el nombre de la línea.
 
 ## Exposiciones de cada día
 
@@ -621,10 +678,162 @@ Las horas con «~» salen de la hora de escritura de cada salida (`ls -l`); las 
   encargo en la configuración del kit) y §0.8.
 - **2026-11-24:** la fila de ese día: los `make check` (marzo y junio para calentar, como todos),
   `puente.py` y su test sobre los días dev de construcción sin calentamiento y los casos dev por la
-  ingesta, y el revisor. Nada más: ningún libro, imagen, fotograma, transcripción ni cruda, nada de
-  mayo y ningún mensaje del trader. El guion de diagnóstico de D2 c leyó un día dev de julio (el 16,
-  dentro del 1 al 17) e imprimió motivos e instantes de ese día, sin precios.
+  ingesta, y el revisor. **Una desviación:** el guion de diagnóstico de D2 c (un día dev de julio,
+  dentro del 1 al 17; motivos e instantes, sin precios) se declaró el mismo día pero DESPUÉS de
+  correrlo (su punto 3 bis lo dice); el encargo pide «antes de hacerla» (revisor, b4). No es material
+  reservado. Nada más: ningún libro, imagen, fotograma, transcripción ni cruda, nada de mayo y ningún
+  mensaje del trader.
+
+## Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Lo hecho |
+|---|---|---|
+| a1 | importa | Arreglado en §0.4 b.3: el lote sale del saldo y el margen del cierre de la M1 anterior y del precio de conversión del instante del caso; `abrir_conocida` avanza después hasta ese instante. El efecto de una posición que se cerrara en ese tramo no está medido, y se dice. |
+| a2 | menor | Arreglado: las filas de 5 USD están en `VIABILIDAD-COMISION.md:111-112`. |
+| a3 | menor | Arreglado en §0.4 b.3: `posiciones_del_bot` toma el riesgo de la orden; el guion, de la entrada y el stop de apertura; coinciden en lo que compara D2 c. |
+| a4 | menor | Arreglado: `lectura.txt` copia tal cual sus líneas de `todo.txt` y añade la cabecera y un título, y el informe lo dice. |
+| a5 | menor | Arreglado: fuera la línea «PLANTILLA hasta la fase 0»; el Estado, al día. |
+| b1 | importa | Arreglado: `puente.py` imprime los eventos por fuente en las tres variantes de spread (D3 lo pide; D5 dice «nada más», y gana D3 por ser la pieza); se repitieron las tres (cada salida cambia solo en esa línea: `git diff`) y `todo`. |
+| b2 | importa | **No arreglado; dicho.** El test de humo prueba las piezas puras (el tope, el objetivo, el desfase, el ASK, el stop al 0,8), D2 c por la orden stop y por `abrir_conocida`, RN-002 con y sin la H4 y la clasificación del break even, pero no pasa por `repetir` el interruptor del break even ni el del tope: haría falta un entorno sintético con una M1 que complete la zona de RN-014. Las salidas reales lo muestran (`sin_break_even`, «break even movido: 0»; `sin_las_de_mas_de_100_lotes`, «fuera por el tope de lotes: 8»), pero no son el test. Queda para tu decisión. |
+| b3 | importa | Arreglado: la lista de comandos, con los literales y su hora, de §«Los comandos ejecutados». |
+| b4 | importa | Arreglado: la desviación, en «Exposiciones de cada día» y en la fila de §6. |
+| b5 | importa | Arreglado: la respuesta del consultor a la PARADA de apertura, tal cual, en la apertura y al final del encargo. |
+
+## Informe del revisor
+
+> ## Informe del revisor · trabajo/puente-techo · 2026-11-24
+>
+> Base: `git merge-base main HEAD` = 8a10590b. Seis commits (0f021d68, 5974d36d, 613aa40c, 6ba82dee, f042fa10, da15d984), más la fase 5 estadiada (MASTER_PLAN.md +7, RUMBO-2026-11.md +2, PUENTE-TECHO.md +11). No hay ficheros sin seguir. Mientras revisaba corría un `make check` (empezó a las 02:31; el log lleva la línea «G2 … 2026-11-24 … estadiada» y aún no tiene SELLO), así que no ejecuté Python, pytest ni make.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 4 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | El informe describe la apertura de `entrada_al_precio_del_caso` como algo que el código no hace. El informe dice «el guion avanza el bróker hasta el milisegundo anterior al instante del caso y abre allí … con el lote del riesgo calculado con la cuenta de ese momento». El código calcula el saldo, el margen libre y el lote con el bróker y la cuenta en `hasta_ms`, que es el cierre de la M1 anterior. Después `abrir_conocida` avanza el bróker por su cuenta hasta `instante_ms`. Si en ese tramo de menos de un minuto se cierra otra posición, el lote sale del saldo anterior. Nadie ha medido el efecto (ninguna corrida tiene rechazos). Hay que corregir la frase, o medir y decir que no cambia nada. | PUENTE-TECHO.md:164-167; puente.py:484 (saldo), :494-497 (`_lote_final` en el estado de `hasta_ms`), :510-512; broker.py:673 y :1109-1112 (`_avanza_reloj` → `avanzar(instante_ms)`) |
+> | a2 | menor | Cita desplazada una línea: las filas de 5 USD de V1 y V2 están en :111-112, no en :112-113. | PUENTE-TECHO.md:217; `grep -n "^\| 5 \| V[12] " VIABILIDAD-COMISION.md` → 111 y 112 |
+> | a3 | menor | El informe dice que el riesgo de `posiciones_del_bot` es «lotes × distancia de la entrada al stop de apertura». En realidad usa el precio y el stop de la ORDEN. D2 c no puede notar la diferencia, porque solo compara las 124 posiciones con entrada igual al precio de la orden (puente.py:986). | PUENTE-TECHO.md:159-161; cableado.py:1352 `riesgo = o.lotes * Decimal(abs(o.precio - o.stop)) …` |
+> | a4 | menor | `lectura.txt` se llama «extracto literal» de `todo.txt`, pero lleva dos líneas que `todo.txt` no tiene: la cabecera y «## El cierre del puente (ADR-0099 §2), sobre abril y agosto». | `diff <(sed -n '353,380p' todo.txt) lectura.txt` → `0a1 >` y `1a3 >`; PUENTE-TECHO.md:511 |
+> | a5 | menor | El informe arrastra dos frases viejas. Sigue la línea «PLANTILLA hasta la fase 0», y el Estado dice «siguen la fase 5 y el revisor» con la fase 5 ya estadiada. | PUENTE-TECHO.md:3 y :630 |
+>
+> Comprobado sin hallazgos:
+> - **Contrato:** no lo ejecuté. Todas las rutas del diff están en `rutas_permitidas` (contrato.yaml:5-21). Ninguna está en `rutas_protegidas`.
+> - **Trailers `Fuente:`:** no aplican; ningún commit toca `knowledge/spec` ni `knowledge/cases` (`git diff --stat main...HEAD`).
+> - **Holdout y material:**
+>   - Nada toca `knowledge/cases/holdout/`.
+>   - Hay fila del 2026-11-23 y del 2026-11-24 en HOLDOUT-EXPOSICIONES.md (:189-190).
+>   - No hay fotogramas, transcripciones ni libros.
+>   - No hay agregados de meses reservados en las salidas.
+> - **Regímenes de cambio:** no hay nada en evidence, feedback, manifests ni corpus. Solo se añaden líneas (numstat «N 0») en HISTORIA.md (181), HOLDOUT (2), 0092 (2), 0098 (2), MASTER_PLAN (7) y RUMBO (2).
+> - **Ambigüedades:** no se cambian.
+> - **ADR-0099:** su `## Estado` empieza por `ACTIVE` (0099:296-298).
+> - **Informes cerrados:** no se edita ninguno. Los `docs/validation/*.md` del diff son nuevos, salvo HOLDOUT, que solo añade filas.
+> - **Sitios con `cita`:** la rama no añade ninguno.
+> - **Cifras:** puente.py no lleva ninguna cifra de los yaml. Las piezas con número se componen desde `propios` (:116-127) y se cotejan con el yaml (:1045).
+> - **Citas comprobadas contra su fuente:**
+>   - cableado.py:1341-1343 (`if o is None: continue`): correcta.
+>   - primitivas_broker.py:197-201 (`clasificar_cierre`): correcta.
+>   - broker.py:1118-1121 (`ordenes_simultaneas_max`): correcta.
+>   - viabilidad_trader.py:50 y :380-381 (`DESFASE_PUNTOS`): correcta.
+>   - viabilidad_comision.py:66-83 (`niveles()`): correcta.
+>   - VIABILIDAD-COMISION.md §2 (7 y 10 fuera con 5 USD, :91-94): correcta.
+> - **PROJECT_STATE:** 24.728 bytes en la rama y 24.680 en main, como dice el informe.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 4 importa, 0 menor. Requisitos: 32 hechos, 4 parciales, 0 no hechos. El revisor pegado al final del informe queda pendiente por diseño.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Base, tag, CI y ramas comprobados; tag F39m libre | Hecho | PUENTE-TECHO.md:13-18 |
+> | 2 | Modelo y REAP | Hecho | :19 |
+> | 3 | Fila de HOLDOUT antes de todo, y la del día nuevo | Hecho (el punto 8 se corrigió con lo medido, y se declara) | HOLDOUT:189-190; PUENTE-TECHO.md:37-42, :255-259 |
+> | 4 | Cuatro ficheros: sha256 y lectura entera | Hecho (hubo una PARADA por el ADR, resuelta) | :21-36 |
+> | 5 | Contrato pedido (R4, riesgo medio, artefacto, rutas) | Hecho | contrato.yaml |
+> | 6 | Encargo copiado, bloque `ids-inexistentes` y su retirada en el pre-registro | Hecho | `git show 613aa40c -- docs/encargos/…` |
+> | 7 | Antes del pre-registro, el id solo en el encargo | Hecho (contrato.yaml lleva el glob `docs/adr/0099-*.md` porque el encargo lo pide) | `git diff main 5974d36d` → solo contrato.yaml:11 |
+> | 8 | Fase A: cabecera y cuerpo tal cual | Hecho | `tail -n +12 … \| cmp -` → 0 (profunda); `tail -n +13 … \| cmp -` → 0 (cazador) |
+> | 9 | P.1: ADR igual salvo dos marcas, diff en el informe | Hecho | `diff Escritorio/ADR-0099-borrador.md docs/adr/0099-…` → solo 3c3 y 294c294, igual que PUENTE-TECHO.md:101-110 |
+> | 10 | P.2: yaml byte a byte | Hecho | `cmp` → 0; sha 31e70e0a… el mismo en el Escritorio, el repo y `git show 613aa40c:` |
+> | 11 | P.3: test del yaml | Hecho (no lo ejecuté) | tests/unit/test_puente_techo.py:24, :134-168 |
+> | 12 | P.4: índice y dos recuadros tal cual | Hecho | `git diff main -- docs/adr/…`: texto idéntico al encargo |
+> | 13 | P.5: sha y hora del pre-registro frente a la primera corrida | Hecho | PUENTE-TECHO.md:95, :379-380 |
+> | 14 | Fase 0 a-j en su commit | Hecho | 6ba82dee; PUENTE-TECHO.md:131-264 |
+> | 15 | README en su commit antes de correr | Hecho | f042fa10 a las 00:46:14, antes de la corrida de las 00:49:07 |
+> | 16 | puente.py con sus modos, lee los tres yaml, sin cifras | Hecho (más el modo `conocida`, justificado por D2 c) | puente.py:1050-1109 |
+> | 17 | Test de humo: cada pieza en los dos sentidos | Parcial | hallazgo b2 |
+> | 18 | D2 a | Hecho | control.txt:4-6 (235 de 235, igual que meta.txt:3-6) |
+> | 19 | D2 b | Hecho | `diff <(sed -n '9,29p' base.txt) <(sed -n '8,28p' meta.txt)` → vacío, exit 0 |
+> | 20 | D2 c | Hecho, con el arreglo de D12 declarado | conocida.txt:11-12; conocida-antes-del-arreglo.txt:11-14 |
+> | 21 | D3, las diez piezas | Parcial: falta el recuento de eventos del respaldo en las de spread | hallazgo b1 |
+> | 22 | D4, dieciséis variantes en orden | Hecho | todo.txt (cabeceras de :8 a :366) |
+> | 23 | D5 | Hecho | base.txt:33-53 y las demás salidas |
+> | 24 | D6, lectura leída del yaml | Hecho | puente.py:219-253; todo.txt:378-380 |
+> | 25 | D7 | Hecho | todo.txt:364, :376; PUENTE-TECHO.md:492-498 |
+> | 26 | D8 | Hecho | base.txt:30-31 |
+> | 27 | D9 | Hecho | `cmp base.txt base-repetida.txt` → 0; sha 6bd49ae0… en los dos |
+> | 28 | D10 | Hecho | PUENTE-TECHO.md:430-432 |
+> | 29 | Fase 5: dos notas tal cual | Hecho (estadiado, sin commitear) | `git diff --cached`: texto idéntico al encargo |
+> | 30 | Informe: apertura y §0 a §6 | Hecho | PUENTE-TECHO.md |
+> | 31 | Comandos literales con su hora | Parcial | hallazgo b3 |
+> | 32 | Líneas del cierre medidas sobre una copia | Hecho | simular-cierre.txt; simular_cierre.py:160-162 (escribe solo en un tempdir) |
+> | 33 | PROJECT_STATE ≤ 24.900 | Hecho (24.740 en el cierre; 24.899 en la rama) | simular-cierre.txt:9 |
+> | 34 | Ninguna recomendación de spec ni de motor | Hecho | grep «ecomiend\|habría que\|debería\|mejor»: solo §0.6 (:324-330), opciones de procedimiento |
+> | 35 | Toda exposición, ANTES de hacerla | Parcial | hallazgo b4 |
+> | 36 | Nada de src/, knowledge/, scripts/, Makefile ni .claude/ | Hecho | `git diff --stat main...HEAD` y `--cached`: ninguna de esas rutas |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | D3 pide, para las tres variantes de spread, que «el guion cuente cuántos eventos salen del respaldo». puente.py calcula `por_fuente` en todas las variantes (:551) pero solo lo imprime en `base` (:941-952). Las salidas de spread no lo traen, y el informe no lo declara como «hecho de otra forma». Choca con D5 («nada más»): hay que decirlo y elegir. | encargo:54; sin_spread.txt:8-29 (sin línea de fuentes); puente.py:941-952 |
+> | b2 | importa | La fase 1 pide que el test de humo pruebe en los dos sentidos que cada pieza cambia lo que dice («el break even que se mueve y que no; la operación de más de 100 lotes que entra y que sale»). El test de BE mueve el stop a mano y solo prueba la clasificación; nunca pasa por el interruptor de `repetir`. El del tope prueba la función pura. `entrada_al_precio_del_caso` solo se prueba por D2 c. El informe da el punto por «Hecho; 15 passed». Las salidas reales (BE movido 0 en sin_break_even; fuera 8) lo atenúan, pero no son el test. | test_puente.py:107-113, :208-232 (`b.mover_stop` a mano); puente.py:457, :491; PUENTE-TECHO.md:589 |
+> | b3 | importa | El encargo pide «los comandos literales ejecutados con su hora», y la lista no los trae todos. Hay plantillas («conocida ... > conocida.txt», «variante <nombre> ... > <nombre>.txt»). Faltan con su hora: pytest del test de humo, ruff y mypy, el guion de diagnóstico de D2 c, la tercera corrida de la base (LF), el guion que pasó las salidas a LF y el sed/diff de D2 b. | PUENTE-TECHO.md:603-616 |
+> | b4 | importa | El guion de diagnóstico de D2 c se declaró en HOLDOUT después de correrlo. La fila lo dice: «3 bis, escrito el mismo día DESPUÉS de correrlo». Cumple el «mismo día» de CLAUDE.md (era un día dev de julio dentro del 1 al 17), pero no el «ANTES de hacerla» del encargo. El informe no lo cuenta entre las desviaciones ni en la fila de ERRORES de §6. | HOLDOUT-EXPOSICIONES.md:190 («(3 bis, escrito el mismo día DESPUÉS de correrlo»); encargo:141; PUENTE-TECHO.md:556-564, :625-626 |
+> | b5 | importa | La respuesta del consultor a la PARADA de apertura (el sha del borrador) va parafraseada en el informe («era una versión anterior; Aleks dejó la buena»), no copiada tal cual. Tampoco está al final del encargo, que acaba en «Rama lista para revisión, NO cerrada.». | PUENTE-TECHO.md:35-36; docs/encargos/trabajo-puente-techo.md:144 |
+>
+> **Los ocho alcances del encargo:**
+> 1. **Orden del pre-registro:** se cumple. 613aa40c (2026-11-23 23:32:13) es anterior a f042fa10 (00:46:14), y la primera corrida es de las 00:49:07 según el informe. puente.py entra por primera vez en da15d984. El diff del ADR solo cambia 3c3 y 294c294, las dos marcas. El yaml es idéntico (`cmp` 0, sha 31e70e0a…).
+> 2. **Los dos controles de D2:** pasan.
+>    - El diff del bloque M1, de base.txt:9-29 contra meta.txt:8-28, sale vacío (exit 0). El control da 235 de 235 en los dos.
+>    - `repetir` de puente.py (:363-554) frente al de techo_parejas.py (:437-592), con todo apagado:
+>      - Firma: añade `piezas` y `dias`; con `None` recorre `ent.dias`, igual que antes (:401 / :472).
+>      - RN-002: `predicado_rn002(reg, False)` evalúa los dos predicados y los une con OR, como `_rn002`. Solo cambia el orden de evaluación, y los predicados son puros (tp:763) (:352-358 / :762-766).
+>      - Recuentos: van por mes en un Counter y se suman al imprimir, con las mismas claves («al colocar:», «al llenar:») (:304-325 / :363-373).
+>      - Mercado: sin pieza de spread es `md.mercado()`, que es `Mercado(self.ticks, self.m1)` (simulacion.py:78-79) (:415-419 / :487).
+>      - Contadores nuevos: `horas_con_ticks`, `por_fuente` y los dos de las no colocables son solo de lectura; `ticks_del_minuto` es un `dict.get` (llenado.py:93-94) (:427, :477-480, :551).
+>      - Break even: el bloque queda bajo `if not piezas.sin_break_even`, así que con la pieza apagada corre igual (:457).
+>      - Colocación: la condición es `not p.conocida and …`, y `conocida` es False en el techo (:473).
+>      - Lote: el tope vale None, `lote_forzado` None e `instante_lote` = `hasta_ms`, así que `_lote_final` recibe los mismos argumentos (:485-497 / :546-550).
+>      - Objetivo: `base_del_objetivo` con la pieza apagada da `caja` si `caja_completa` y si no `|entrada - stop|`, igual que tp:554 (:504-507).
+>      - El resto del día es idéntico.
+>      - `pedidos_del_techo` (:720-763) frente a `techo` (:783-815): con `Piezas()` da la misma entrada, el mismo stop, la misma `caja_derivada` y el mismo minuto `int(timestamp)//60`.
+>      - `filas()`, sin conocidas, devuelve `tp.filas_de` (:617-618), y el filtro `riesgo > 0` es el mismo (:770 / :816).
+>    - Conclusión: con todo apagado el bucle es equivalente, y el diff vacío de D2 b lo confirma.
+> 3. **Las piezas de D3:** cada una cambia solo lo que dice.
+>    - objetivo: :189-193.
+>    - BE: :457.
+>    - entrada: :473, :494, :508-516; sin no colocables ni no llenadas.
+>    - tope antes de limitar: :488-493.
+>    - desfase en los dos lados, con la distancia intacta: :180.
+>    - spread solo en `Tick.ask`, nunca por debajo del bid; la M1 del respaldo intacta: :196-212 y llenado.py:115-118.
+>    - sin_cierre_h4: :355-356; el fin de día sigue en :532-536.
+>    - stop al 0,8 con el redondeo de `niveles()`, el lote sobre esa distancia y el objetivo sobre la caja original: :183-186.
+>    - Salvedades: a1 (cuándo se calcula el lote de `abrir_conocida`) y b1.
+> 4. **Lo prohibido:** las salidas no imprimen ninguna operación con su R, ningún R por setup, sesión o dirección, ningún precio, vela ni nivel. Lo único por operación es conocida-antes-del-arreglo.txt:12-13 (día dev de julio dentro del 1 al 17, id y el campo «cerrada»), sin R. El bloque de julio solo sale en base, como permite el encargo.
+> 5. **Las tablas de §2:** coinciden con las salidas en las cinco variantes que comprobé (base, sin_spread, todo_junto, de_vuelta_sin_break_even y v2_de_hoy), en las dos tablas y columna a columna. Además, los bloques de `todo.txt` son iguales a base.txt, todo_junto.txt, sin_spread.txt y v2_de_hoy.txt (diff 0).
+> 6. **Rutas intocables:** ni src/, ni knowledge/, ni scripts/, ni .claude/, ni el Makefile. En tests/ solo entra tests/unit/test_puente_techo.py.
+> 7. **Fechas:** en las líneas añadidas (lo commiteado y lo estadiado, auditorías incluidas) no hay ninguna fecha con día de 2025, febrero, marzo, mayo o junio de 2026, ni de julio del 18 en adelante. De 2025 solo aparecen meses sin día. Las fechas de septiembre, octubre y diciembre de 2026 son todas de sucesos del repo: sesiones, ADR, ramas, commits, nombres de fichero o ids, y la fecha prevista de los ingenieros. La media de un subconjunto retirada de la auditoría no queda en el texto (grep de su valor: 0). Lo que no pude es cruzarlas con `casos_reservados` (ver abajo).
+> 8. **Recomendaciones:** el informe no recomienda ningún cambio de spec ni de motor. Las tres «Recomiendo (a)» de §0.6 son de procedimiento.
+>
+> ### Lo que no pude comprobar
+> - `uv run python scripts/contrato_rama.py` y las demás comprobaciones del contrato: son Python y corría un `make check`. El make-check.log está a medias (sin SELLO ni PICO DE MEMORIA), así que no hay sello del árbol estadiado de la fase 5.
+> - Los 15 passed del test de humo, los 6 de test_puente_techo.py, ruff y mypy: no los ejecuté.
+> - La hora de la primera corrida (00:49:07): solo la da el informe; git no la guarda.
+> - La tercera corrida de la base con el guion en LF, y la comparación de los 16 bloques de `todo.txt` con un guion de la carpeta de trabajo: no están en el repo. Comparé cuatro bloques a mano.
+> - El cruce de las fechas de septiembre y octubre de 2026 con los días de `casos_reservados(repo)`: es Python y toca la lista reservada. Las juzgué por su contexto.
+> - El efecto real del hallazgo a1 sobre las cifras: haría falta correr puente.py.
+>
+> [Comandos: 22 entradas, todas de lectura (git log, show, diff y diff --cached; diff, cmp y sha256sum contra el Escritorio; sed, grep y cat -A sobre las salidas y el código; Read de los ficheros citados). Un `for` lo negó la guardia; no lo reescribió para esquivarla y usó `git log --stat`. La cuenta de CR con `$'\r'` también la negó; no la repitió.]
 
 ## Estado
 
-EN CURSO: fases 2, 3 y 4 hechas; siguen la fase 5 y el revisor.
+Entregado el 2026-11-24: la lectura del puente es «solo_juntas» (las ocho sueltas dan no_gana y
+todo_junto no_concluyente); el cierre cierra con V1 y V2. Rama lista para revisión, NO cerrada.
