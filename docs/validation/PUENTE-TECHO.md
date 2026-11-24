@@ -346,6 +346,274 @@ de construcción por la ingesta (los recuentos de e y la precisión del instante
 código y los documentos de la fase 0. Más, por el auditor, la línea 9 de
 `knowledge/cases/kit/config.yaml` (configuración del kit, sin datos; no es holdout).
 
+### §0.9 La fase 1 (el README y el guion, antes de correr)
+
+- `anexos/PUENTE-TECHO/README.md`, en su propio commit, **`f042fa10` (2026-11-24 00:46:14)**,
+  antes de la primera corrida; con él, la fila de HOLDOUT-EXPOSICIONES del 2026-11-24, escrita y
+  estadiada antes del primer `make check` del día (su log: «G2: fila … del 2026-11-24 …, estadiada»).
+- `puente.py` (cuatro modos: `control`, `conocida`, `variante <nombre>`, `todo`) y `test_puente.py`.
+  Lee los tres yaml y no lleva ninguna de sus cifras dentro: los nombres de las piezas con cifra
+  (`sin_las_de_mas_de_100_lotes`, `desfase_menos_2`, `spread_menos_1` y `_2`) los compone con
+  `propios` y comprueba que son los del yaml, en su orden. Dos ajustes de forma que pidió la guardia,
+  sin rodearla: (1) `import techo_parejas` tras un `sys.path.insert` a la carpeta vecina lo negó
+  («no se pudo resolver el modulo»); se carga con `importlib` por su ruta literal, que es lo que la
+  propia guardia indica; (2) `ruff.exe` por su ruta lo negó («no sabe con que se ejecuta»): ruff y
+  mypy se corrieron con `uv run` dentro del repo, con el guion ya copiado y sin ningún `make check`
+  en marcha.
+- ruff format, ruff check y mypy en verde sobre los dos. El test de humo, **15 passed**:
+
+  ```
+  $ uv run pytest docs/validation/anexos/PUENTE-TECHO/test_puente.py -p no:cacheprovider -v
+  collected 15 items
+  docs\validation\anexos\PUENTE-TECHO\test_puente.py ...............       [100%]
+  ============================= 15 passed in 1.16s ==============================
+  ```
+
+  La primera vez fallaron cuatro, los cuatro por errores del test o del guion y no de una pieza:
+  `Piezas()` traía `spread=None` y `piezas_de` daba 0 (el valor por defecto pasó a 0); las reglas
+  sintéticas del bróker no traían `stops_level_puntos` (una stop no se coloca sin él, ADR-0057); y el
+  break even del test cerraba en un minuto sin mercado.
+
+## §1 · Los controles (D2), D8 y D9
+
+Primera corrida del guion: **2026-11-24 00:49:07** (`date` justo antes), **1 h 17 min después del
+pre-registro** (`613aa40c`, 2026-11-23 23:32:13). Todas desde la raíz, una a la vez y sin ningún
+`make check` en marcha.
+
+**D2 a, el control de ADR-0098 §1 con el bucle nuevo** (`control.txt`):
+
+```
+## El control (ADR-0098 §1), con el bucle de puente.py (D2 a)
+posiciones del bot en la salida: 235; entran en el control: 235; fuera (manual de una regla solo del bot): 0
+reproducidas al centimo (lote, motivo, instante del cierre, PnL neto): 235 de 235
+control: PASA
+```
+
+**D2 b, la base contra `meta.txt`.** El bloque M1 de `base.txt` (de «## M1 · El techo» al final del
+bloque de julio, 21 líneas) contra el de `anexos/RECORRIDA-CONSTRUCCION-3/meta.txt` (de «## M1 · El
+techo» a la línea anterior a «## M2 · Las parejas», 21 líneas), extraídos con `sed` a la carpeta de
+trabajo: **`diff` vacío, exit 0**. Con todos los interruptores apagados, el bucle nuevo da el techo.
+
+**D2 c, `abrir_conocida` frente a la orden stop, sobre los días dev** (`conocida.txt`): de las 191
+posiciones del techo, las 124 llenadas al precio de su orden, abiertas otra vez con `abrir_conocida`
+en el instante y al precio del llenado, con el mismo lote, stop y objetivo: **124 de 124** con el mismo
+riesgo, lote, motivo e instante del cierre y el mismo R bruto y neto; ninguna rechazada. Y en el test
+de humo, sobre datos sintéticos, una compra por orden stop y por `abrir_conocida` da el mismo riesgo,
+bruto, neto y cierre, y con otro stop el riesgo ya no es el mismo. **Un arreglo del control,
+declarado (D12):** la primera corrida dio 122 de 124 (`conocida-antes-del-arreglo.txt`): dos
+posiciones de un día dev de julio, llenadas por el respaldo M1, cerraban en otro instante. Medido con
+un guion de diagnóstico de la carpeta de trabajo (motivos e instantes de ese día, sin precios): el
+respaldo sella el llenado en el último milisegundo de la vela y `minuto_de_apertura` solo le suma el
+minuto a esa fuente (ADR-0091 §2); reabiertas en ese milisegundo con la fuente «caso», RN-014 miraba
+una vela antes. D2 c compara ahora con la misma fuente de apertura que la posición del techo (el
+campo `fuente` del pedido). Las fórmulas del riesgo y del R no cambiaron; en la variante
+`entrada_al_precio_del_caso` la fuente sigue siendo «caso», en el segundo del caso.
+
+**D8, sobre la base (sin R):** eventos del techo por fuente: `ticks` 368, `respaldo_m1` 16 y
+`cierre_m1` 77 (los `stop_movido` con ticks en su minuto); de las 7 no colocables, **0** caen en una
+hora UTC sin ticks y 0 en un minuto sin ticks (el de la colocación).
+
+**D9, determinismo:** `base.txt` y `base-repetida.txt`, iguales byte a byte (`cmp` exit 0; sha256
+`af0129808e8192dcb39221357c11e640835a2113f419fed793a115909faad986` los dos, tal como salieron, con
+CRLF). La primera comparación dio una diferencia: `base.txt` y `control.txt` llevaban al final la
+línea «PICO DE MEMORIA» de `scripts/pico_memoria.py`, que escribe en la salida estándar de la orden
+que mide; se quitó de los dos ficheros (no la imprime el guion) y su cifra va abajo.
+
+**Los finales de línea (un ajuste declarado, D12).** El primer `make check` de este commit cayó en
+`test_no_crlf_in_tracked_text_files`: en Windows, `print` escribe CRLF al redirigir la salida. Las 21
+salidas se pasaron a LF con un guion de la carpeta de trabajo que solo cambia `\r\n` por `\n`, y
+`puente.py` escribe ya LF (`sys.stdout.reconfigure(..., newline="\n")`). Para ver que no cambia nada
+más, la base se corrió otra vez con el guion cambiado: **igual byte a byte a `base.txt` convertida**
+(`cmp` exit 0); `base.txt` y `base-repetida.txt` dan ahora los dos
+`6bd49ae0b19c3f1f0e69fda45565e7d81b8fd9c55a9ad9d3f6bc8649e46c69ef`.
+
+**D10, tiempo y memoria:** la base, 82 s (00:50:34 a 00:51:56, control incluido) y un pico de **592
+MiB** (`pico_memoria.py ejecutar`; el control, 591 MiB). Las dieciséis, una a una: de 75 a 90 s cada
+una, unos 21 minutos en total (la hora de escritura de cada salida). Ni 3 horas ni 1,5 GiB.
+
+## §2 · Las variantes (D4, D5, D6)
+
+Una fila por variante, copiada de su salida (`anexos/PUENTE-TECHO/<nombre>.txt`). E bruta: antes de
+comisión y swaps (media de `bruto / riesgo`); E neta, p5 y p95: la media del R neto y sus percentiles
+5 y 95 por `remuestreo_por_dias` (10000 réplicas, semilla 20261107, del bloque `rentabilidad`). Las de
+vuelta llevan el nombre de la pieza del techo que reponen sobre `todo_junto`. Ninguna corrida tuvo
+rechazos del bróker ni cerradas con riesgo no positivo; ninguna cerró al fin del día.
+
+**Los cuatro meses** (76 días dev):
+
+| variante | N | no coloc. | no llen. | fuera tope | rechazadas | BE movido | cierran en BE | RN-002 | fin de día | E bruta | E neta | p5 | p95 | d) | e) | f) suspendida | lectura por el R | lectura de ADR-0098 §2 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| base | 191 | 7 | 0 | 0 | ninguna | 79 | 46 | 7 | 0 | 0.127 | -0.239 | -0.450 | -0.026 | 4.88 % | 92.05 % | no | no_gana | no_gana |
+| objetivo_sobre_el_stop | 191 | 7 | 0 | 0 | ninguna | 75 | 37 | 3 | 0 | 0.192 | -0.173 | -0.374 | 0.034 | 3.46 % | 92.77 % | no | no_gana | no_gana |
+| sin_break_even | 191 | 7 | 0 | 0 | ninguna | 0 | 0 | 15 | 0 | 0.153 | -0.213 | -0.451 | 0.033 | 4.62 % | 90.65 % | no | no_gana | no_gana |
+| entrada_al_precio_del_caso | 198 | 0 | 0 | 0 | ninguna | 82 | 46 | 8 | 0 | 0.174 | -0.190 | -0.385 | 0.012 | 4.91 % | 94.24 % | no | no_gana | no_gana |
+| sin_las_de_mas_de_100_lotes | 183 | 7 | 0 | 8 | ninguna | 79 | 46 | 7 | 0 | 0.197 | -0.132 | -0.329 | 0.074 | 4.88 % | 92.05 % | no | no_gana | no_gana |
+| desfase_menos_2 | 181 | 17 | 0 | 0 | ninguna | 78 | 46 | 7 | 0 | 0.176 | -0.190 | -0.444 | 0.073 | 4.55 % | 95.49 % | no | no_gana | no_gana |
+| spread_menos_1 | 196 | 2 | 0 | 0 | ninguna | 85 | 50 | 7 | 0 | 0.168 | -0.196 | -0.419 | 0.034 | 4.95 % | 93.54 % | no | no_gana | no_gana |
+| spread_menos_2 | 196 | 2 | 0 | 0 | ninguna | 87 | 51 | 8 | 0 | 0.188 | -0.176 | -0.398 | 0.059 | 4.59 % | 94.37 % | no | no_gana | no_gana |
+| sin_spread | 197 | 1 | 0 | 0 | ninguna | 90 | 52 | 7 | 0 | 0.312 | -0.052 | -0.274 | 0.179 | 4.51 % | 94.32 % | no | no_gana | no_gana |
+| todo_junto | 190 | 0 | 0 | 8 | ninguna | 0 | 0 | 9 | 0 | 0.350 | 0.022 | -0.190 | 0.246 | 4.06 % | 95.61 % | no | no_concluyente | no_gana |
+| de_vuelta_objetivo_sobre_el_stop | 190 | 0 | 0 | 8 | ninguna | 0 | 0 | 16 | 0 | 0.240 | -0.088 | -0.309 | 0.138 | 4.65 % | 92.59 % | no | no_gana | no_gana |
+| de_vuelta_sin_break_even | 189 | 0 | 0 | 9 | ninguna | 78 | 36 | 3 | 0 | 0.323 | -0.001 | -0.190 | 0.200 | 3.51 % | 96.40 % | no | no_gana | no_gana |
+| de_vuelta_entrada_al_precio_del_caso | 183 | 7 | 0 | 8 | ninguna | 0 | 0 | 9 | 0 | 0.310 | -0.019 | -0.224 | 0.205 | 3.98 % | 91.95 % | no | no_gana | no_gana |
+| de_vuelta_sin_las_de_mas_de_100_lotes | 198 | 0 | 0 | 0 | ninguna | 0 | 0 | 9 | 0 | 0.288 | -0.076 | -0.292 | 0.156 | 4.06 % | 95.61 % | no | no_gana | no_gana |
+
+**Abril y agosto juntos** (42 días dev; sin lectura, D5):
+
+| variante | N | no coloc. | no llen. | fuera tope | rechazadas | BE movido | cierran en BE | RN-002 | fin de día | E bruta | E neta | p5 | p95 | d) | e) | f) suspendida |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| base | 74 | 3 | 0 | 0 | ninguna | 30 | 16 | 4 | 0 | 0.113 | -0.318 | -0.679 | 0.031 | 1.26 % | 96.26 % | no |
+| objetivo_sobre_el_stop | 74 | 3 | 0 | 0 | ninguna | 28 | 10 | 1 | 0 | 0.381 | -0.051 | -0.443 | 0.325 | 1.32 % | 97.86 % | no |
+| sin_break_even | 74 | 3 | 0 | 0 | ninguna | 0 | 0 | 6 | 0 | 0.167 | -0.264 | -0.660 | 0.139 | 2.30 % | 96.39 % | no |
+| entrada_al_precio_del_caso | 77 | 0 | 0 | 0 | ninguna | 30 | 15 | 4 | 0 | 0.233 | -0.196 | -0.531 | 0.138 | 1.29 % | 97.80 % | no |
+| sin_las_de_mas_de_100_lotes | 68 | 3 | 0 | 6 | ninguna | 30 | 16 | 4 | 0 | 0.267 | -0.097 | -0.401 | 0.202 | 1.26 % | 96.99 % | no |
+| desfase_menos_2 | 71 | 6 | 0 | 0 | ninguna | 29 | 16 | 4 | 0 | 0.153 | -0.279 | -0.725 | 0.189 | 1.95 % | 95.49 % | no |
+| spread_menos_1 | 77 | 0 | 0 | 0 | ninguna | 31 | 17 | 4 | 0 | 0.088 | -0.340 | -0.704 | 0.010 | 2.29 % | 95.93 % | no |
+| spread_menos_2 | 77 | 0 | 0 | 0 | ninguna | 32 | 18 | 4 | 0 | 0.111 | -0.317 | -0.685 | 0.040 | 2.32 % | 96.05 % | no |
+| sin_spread | 77 | 0 | 0 | 0 | ninguna | 33 | 17 | 4 | 0 | 0.319 | -0.110 | -0.486 | 0.246 | 1.40 % | 97.10 % | no |
+| todo_junto | 71 | 0 | 0 | 6 | ninguna | 0 | 0 | 2 | 0 | 0.649 | 0.285 | -0.095 | 0.660 | 2.20 % | 99.05 % | no |
+| de_vuelta_objetivo_sobre_el_stop | 71 | 0 | 0 | 6 | ninguna | 0 | 0 | 6 | 0 | 0.367 | 0.004 | -0.355 | 0.375 | 1.99 % | 96.43 % | no |
+| de_vuelta_sin_break_even | 70 | 0 | 0 | 7 | ninguna | 28 | 9 | 1 | 0 | 0.636 | 0.281 | -0.056 | 0.624 | 1.30 % | 99.32 % | no |
+| de_vuelta_entrada_al_precio_del_caso | 68 | 3 | 0 | 6 | ninguna | 0 | 0 | 2 | 0 | 0.631 | 0.267 | -0.097 | 0.641 | 2.27 % | 98.44 % | no |
+| de_vuelta_sin_las_de_mas_de_100_lotes | 77 | 0 | 0 | 0 | ninguna | 0 | 0 | 2 | 0 | 0.507 | 0.079 | -0.328 | 0.484 | 2.45 % | 98.86 % | no |
+| v1_de_hoy | 70 | 0 | 0 | 7 | ninguna | 0 | 0 | 1 | 0 | 0.729 | 0.375 | -0.024 | 0.772 | 2.77 % | 98.70 % | no |
+| v2_de_hoy | 67 | 0 | 0 | 10 | ninguna | 0 | 0 | 0 | 0 | 0.920 | 0.503 | 0.052 | 0.955 | 3.00 % | 99.21 % | no |
+
+## §3 · El cierre del puente (D7)
+
+`v1_de_hoy` y `v2_de_hoy`, leídas solo sobre abril y agosto, frente a las publicadas del yaml
+(`VIABILIDAD-COMISION.md` §3, 5 USD), con las tolerancias del yaml (3 operaciones; 0,10 R de neta):
+
+```
+CIERRE DEL PUENTE (ADR-0099 §2) frente a la publicada: cierra; N 70 frente a 70 (+0); esperanza neta 0.375 frente a 0.34 (+0.035); antes de comision 0.729 frente a 0.70 (+0.029)
+CIERRE DEL PUENTE (ADR-0099 §2) frente a la publicada: cierra; N 67 frente a 67 (+0); esperanza neta 0.503 frente a 0.47 (+0.033); antes de comision 0.920 frente a 0.88 (+0.040)
+```
+
+**Las dos cierran.** Fuera por el tope de 100 lotes: 7 en `v1_de_hoy` y 10 en `v2_de_hoy`, los mismos
+recuentos que publicó `VIABILIDAD-COMISION.md` (§2, fila de 5 USD: 7 y 10). Las diferencias de método
+que siguen ahí, sin medirlas (D7): la cuenta arrastrada de entonces frente a una por mes; el
+movimiento documentado de una operación en V1, que no se reproduce; los cambios del bróker en los
+minutos sin ticks; el tope de volumen, que era 100 y excluía y hoy es 50 con el margen y limita; el R,
+nominal menos la comisión entonces y hoy el PnL neto entre el riesgo, con swaps; y el cierre, al final
+de la ventana del kit entonces y hoy por `alcanza_hora` y el fin del día.
+
+## §4 · La lectura del puente (D6), literal
+
+```
+## La lectura del puente (ADR-0099 §3)
+sueltas: objetivo_sobre_el_stop no_gana, sin_break_even no_gana, entrada_al_precio_del_caso no_gana, sin_las_de_mas_de_100_lotes no_gana, desfase_menos_2 no_gana, spread_menos_1 no_gana, spread_menos_2 no_gana, sin_spread no_gana; todo_junto: no_concluyente
+LECTURA DEL PUENTE: solo_juntas
+```
+
+Las dieciséis salen también en `todo.txt` (una sola corrida de `puente.py todo`, con el entorno
+construido una vez): sus 16 bloques son iguales a los de las corridas sueltas y su control al de
+`control.txt` (comparados con un guion de la carpeta de trabajo); como `todo` corrió con el guion
+final, eso también dice que el arreglo de D2 c no tocó la base. `lectura.txt` es su extracto literal.
+En la línea del cierre, «antes de comision» es la E bruta de las tablas (antes de comisión y swaps;
+los swaps son 0: ninguna posición cruza la noche).
+
+## §5 · Las líneas del cierre, preparadas y medidas sobre una copia (no aplicadas)
+
+`anexos/PUENTE-TECHO/simular_cierre.py` (con la forma del de F39l) las aplica en memoria sobre copias
+de `PROJECT_STATE.md`, `docs/plan/HOJA-DE-RUTA.md` y `docs/state/HISTORIA.md`, corre
+`test_hoja_de_ruta` (a, b y c) y `test_project_state` y no escribe nada en el repo
+(`simular-cierre.txt`):
+
+```
+letras vivas en la copia: A C D F G I J M N Q; F viva? True
+R4.8: HECHA? True; alguna letra (NA:) en el bloque? False
+R4.7 cita ADR-0099? True; ABIERTA? True
+A.5 cita ADR-0099 §5? True; «que también mide» sigue? False
+R6.0 lleva la razón retirada? True
+a: []
+b: []
+c: []
+PROJECT_STATE del cierre: 24740 bytes (cabe en 25000); la rama hoy, con la F nueva: 24899 bytes
+bytes de la F: antes 992, despues 1163
+```
+
+PROJECT_STATE del cierre, en la forma que escribirá el ritual: **24.740 bytes**, por debajo de 24.900.
+Las líneas, tal como las aplicaría la orden de cierre (el texto exacto, en `simular_cierre.py`):
+
+- **Next Action, la F**: detrás de «y la siguiente (R4.6) se prepara.», la frase «ADR-0099: se mide
+  primero; el puente del techo, hecho (PUENTE-TECHO.md, lectura «solo_juntas»); F17 rediseñado
+  (ADR-0099 §5) y el contraste con el trader, pendientes.» No sale nada; ninguna letra sale ni entra.
+- **Hoja de ruta:** en la línea de Metas, detrás de «para marzo de 2027», «que no cabe con ninguna vía
+  (ADR-0098 §6)»; R4.7 con ADR-0099 en Refs, su «Qué es» con la auditoría profunda
+  (AUDITORIA-PROFUNDA-2026-11.md, que partió de la del 2026-11-21) y las tres medidas de ADR-0099, y su
+  «Hecho cuando» en «el ADR de Aleks que acota ADR-0099 §7»; **R4.8** nueva tras R4.7, «El puente del
+  techo pieza a pieza (ADR-0099)», con Refs ADR-0099 y ADR-0098, HECHA con su lectura y sin ninguna
+  letra en su bloque; A.5 con F17 rediseñado (heredado 10; ADR-0099 §5: el historial de ticks del
+  servidor de la demo, el grabador y la medida de las órdenes stop) en lugar de «que también mide el
+  deslizamiento», y ADR-0099 en Refs; R6.0, «por el tope de peticiones (razón retirada por el recuadro
+  del 2026-11-22 de ADR-0082; la decisión sigue)». Sin fila en el Marcador.
+- **Lo que llama «grabador» a todo F17** (dicho, no cambiado): el heredado 10 de PROJECT_STATE
+  (:57), A.1 (:692), el «Hecho cuando» de A.5 («el grabador hecho», :758), la fila F:F17 (:892) y
+  MASTER_PLAN.md:127 («Grabar ticks y spread»).
+
+## §6 · La fila de ERRORES-RECURRENTES, preparada (no aplicada)
+
+Las columnas del revisor, cuando pase (abajo). **Del consultor, que llegaron a Claude Code: 5.** (importa)
+El sha256 del borrador del ADR no casaba: el Escritorio tenía una versión anterior (PARADA antes de
+abrir). (menor) D2 c decía «las nueve variantes»: son siete. (menor) La línea de la fila de HOLDOUT
+decía que las dos auditorías leyeron «solo ficheros commiteados»: la profunda corrió `kb find`, que
+recorre la transcripción filtrada. (menor) «La esperanza antes de comisión» es antes de comisión y de
+swaps. (menor) «Hoy 24.680 bytes» era el PROJECT_STATE de `main`, no el de la rama. **De la sesión,
+3:** el `ScheduleWakeup` de respaldo dejó `.claude/scheduled_tasks.lock` en el repo y tumbó un `make
+check` entero; la línea de `pico_memoria.py ejecutar` fue a la salida medida (D9 la cazó); y la
+primera versión de D2 c reabría con la fuente «caso» las posiciones llenadas por el respaldo M1.
+
+## El encargo, punto por punto
+
+| # | Lo que pide | Hecho | Evidencia |
+|---|---|---|---|
+| 1 | Base comprobada; tag F39m libre; REAP | Hecho | apertura |
+| 2 | Fila de HOLDOUT del día antes de todo, y la del día nuevo | Hecho (23 y 24) | §0.4 i; §0.9 |
+| 3 | Los cuatro ficheros, sha256 y leídos enteros | Hecho; PARADA por el del ADR, resuelta | apertura |
+| 4 | abrir-rama con el contrato pedido | Hecho (`0f021d68`) | `contrato.yaml` |
+| 5 | Fase A, commit propio, primero | Hecho (`5974d36d`) | §0.2 |
+| 6 | Fase P, commit propio, antes de la fase 0 y de toda corrida | Hecho (`613aa40c`, 23:32:13) | §0.3; §1 |
+| 7 | Fase 0, a a j, con su auditor y CUADRA | Hecho (`6ba82dee`) | §0.4-§0.8 |
+| 8 | README en su commit antes de correr | Hecho (`f042fa10`, 00:46:14) | §0.9 |
+| 9 | `puente.py` con sus modos y su test de humo, los dos sentidos | Hecho; 15 passed | §0.9 |
+| 10 | D2 a, D2 b, D2 c, D8, D9, D10 | Hecho; D2 c con un arreglo declarado | §1 |
+| 11 | Las ocho sueltas, todo_junto y las cuatro de vuelta, a su fichero | Hecho; exit 0 las dieciséis | §2 |
+| 12 | El cierre y la lectura, en `lectura.txt` y literal | Hecho | §3, §4 |
+| 13 | Fase 5, las dos notas | en su commit | §7 |
+| 14 | Las líneas del cierre, medidas sobre una copia | Hecho | §5 |
+| 15 | Revisor (opus) con los ocho alcances | al final | «Informe del revisor» |
+| 16 | Nada de `src/`, `knowledge/`, `scripts/`, Makefile ni `.claude/` | Hecho | `git diff main --stat` |
+| 17 | Ninguna recomendación de spec ni de motor | Hecho | todo el informe |
+
+**Propuestas de otras variantes (D4), sin correrlas:** ninguna.
+
+## Los comandos ejecutados, con su hora (2026-11-24)
+
+```
+00:49:07  uv run python scripts/pico_memoria.py ejecutar -- uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py control docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/control.txt
+00:50:34  uv run python scripts/pico_memoria.py ejecutar -- uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py variante base docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/base.txt
+          (D2 b: sed de los dos bloques M1 a la carpeta de trabajo y diff, exit 0)
+~00:52    uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py variante base docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt > docs/validation/anexos/PUENTE-TECHO/base-repetida.txt
+          (D9: cmp base.txt base-repetida.txt, tras quitar la línea del medidor)
+~00:56    uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py conocida ... > conocida.txt   (exit 5: 122 de 124; copia en conocida-antes-del-arreglo.txt)
+~00:58    el mismo, con la fuente de apertura (exit 0: 124 de 124)
+00:59-01:20  uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py variante <nombre> ... > <nombre>.txt, las quince restantes en el orden del yaml (exit 0 todas)
+01:20-01:23  uv run python -B docs/validation/anexos/PUENTE-TECHO/puente.py todo ... > todo.txt
+          uv run python -B docs/validation/anexos/PUENTE-TECHO/simular_cierre.py > docs/validation/anexos/PUENTE-TECHO/simular-cierre.txt
+```
+
+Las horas con «~» salen de la hora de escritura de cada salida (`ls -l`); las demás, de `date`.
+
+## Exposiciones de cada día
+
+- **2026-11-23:** la fila de la apertura de `HOLDOUT-EXPOSICIONES.md` (con la línea del auditor del
+  encargo en la configuración del kit) y §0.8.
+- **2026-11-24:** la fila de ese día: los `make check` (marzo y junio para calentar, como todos),
+  `puente.py` y su test sobre los días dev de construcción sin calentamiento y los casos dev por la
+  ingesta, y el revisor. Nada más: ningún libro, imagen, fotograma, transcripción ni cruda, nada de
+  mayo y ningún mensaje del trader. El guion de diagnóstico de D2 c leyó un día dev de julio (el 16,
+  dentro del 1 al 17) e imprimió motivos e instantes de ese día, sin precios.
+
 ## Estado
 
-EN CURSO: fase 0 hecha (CUADRA); sigue la fase 1.
+EN CURSO: fases 2, 3 y 4 hechas; siguen la fase 5 y el revisor.

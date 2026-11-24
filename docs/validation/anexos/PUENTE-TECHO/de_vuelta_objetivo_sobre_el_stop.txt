@@ -1,0 +1,29 @@
+# puente.py variante de_vuelta_objetivo_sobre_el_stop, sobre cuenta-por-mes.txt (ADR-0099; PUENTE-TECHO)
+
+## El control (ADR-0098 §1), con el bucle de puente.py (D2 a)
+posiciones del bot en la salida: 235; entran en el control: 235; fuera (manual de una regla solo del bot): 0
+reproducidas al centimo (lote, motivo, instante del cierre, PnL neto): 235 de 235
+control: PASA
+
+## Variante de_vuelta_objetivo_sobre_el_stop (de_vuelta): [sin_break_even, entrada_al_precio_del_caso, sin_las_de_mas_de_100_lotes]
+### Los cuatro meses
+N (llenadas y cerradas): 190; no colocables: 0; no llenadas: 0; fuera por el tope de lotes: 8; fuera por el lote minimo: 0; fuera de la ventana: 0
+cerradas con riesgo no positivo (no entran): 0
+rechazadas por el broker, por motivo: ninguna
+break even movido: 0; cerradas en el break even: 0; cierres por RN-002: 16; al fin del dia: 0
+esperanza antes de comision y swaps (media del R bruto): 0.240; neta (media del R neto): -0.088
+percentil 5 y percentil 95 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, 76 dias): -0.309 y 0.138; replicas descartadas: 0
+d) perdida diaria maxima, por cuenta: 4.65 % del capital inicial; la peor, la cuenta de 2026-07
+e) equity minima, por cuenta: 92.59 % del capital inicial; la peor, la cuenta de 2026-07
+f) alguna cuenta entro en SUSPENDIDA: no
+LECTURA POR EL R (ADR-0099 §3): no_gana
+lectura de ADR-0098 §2 (lectura_techo): no_gana
+### Abril y agosto juntos (sin lectura)
+N (llenadas y cerradas): 71; no colocables: 0; no llenadas: 0; fuera por el tope de lotes: 6; fuera por el lote minimo: 0; fuera de la ventana: 0
+rechazadas por el broker, por motivo: ninguna
+break even movido: 0; cerradas en el break even: 0; cierres por RN-002: 6; al fin del dia: 0
+esperanza antes de comision y swaps (media del R bruto): 0.367; neta (media del R neto): 0.004
+percentil 5 y percentil 95 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, 42 dias): -0.355 y 0.375; replicas descartadas: 0
+d) perdida diaria maxima, por cuenta: 1.99 % del capital inicial; la peor, la cuenta de 2026-08
+e) equity minima, por cuenta: 96.43 % del capital inicial; la peor, la cuenta de 2026-08
+f) alguna cuenta entro en SUSPENDIDA: no

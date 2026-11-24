@@ -22,7 +22,14 @@ corrida (encargo, fase 1).
 - `conocida.txt`: la salida de `puente.py conocida` (D2 c).
 - `base.txt` y `base-repetida.txt`: la variante `base` dos veces (D2 b y D9).
 - `<nombre>.txt`: la salida de cada variante, con el nombre que le da el guion.
-- `lectura.txt`: la lectura del puente (D6) y el cierre (D7).
+- `lectura.txt`: la lectura del puente (D6) y el cierre (D7), extracto literal de `todo.txt`.
+- `todo.txt`: la salida de `puente.py todo` (las dieciséis en una corrida y la lectura del puente).
+- `conocida-antes-del-arreglo.txt`: el primer D2 c (122 de 124), antes de reabrir con la fuente de
+  apertura de la posición del techo (PUENTE-TECHO.md §1).
+- `simular_cierre.py` y `simular-cierre.txt`: las líneas del cierre aplicadas en memoria sobre copias y
+  medidas contra `test_hoja_de_ruta` y `test_project_state` (PUENTE-TECHO.md §5); no escribe en el repo.
+
+(Esta lista se amplió tras las corridas con los cuatro ficheros de arriba, que no estaban previstos.)
 
 ## Comandos (desde la raíz; una corrida a la vez, nunca a la par de un `make check`)
 

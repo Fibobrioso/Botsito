@@ -1,0 +1,12 @@
+# puente.py conocida, sobre cuenta-por-mes.txt (ADR-0099; PUENTE-TECHO)
+
+## El control (ADR-0098 §1), con el bucle de puente.py (D2 a)
+posiciones del bot en la salida: 235; entran en el control: 235; fuera (manual de una regla solo del bot): 0
+reproducidas al centimo (lote, motivo, instante del cierre, PnL neto): 235 de 235
+control: PASA
+
+## D2 c · abrir_conocida frente a la orden stop, sobre los dias dev
+posiciones del techo: 191; llenadas al precio de su orden (entran): 124; abiertas otra vez con abrir_conocida y cerradas: 124
+rechazadas al abrir, por motivo: ninguna
+con el mismo riesgo, lote, motivo e instante del cierre y el mismo R bruto y neto: 124 de 124
+D2 c: PASA
