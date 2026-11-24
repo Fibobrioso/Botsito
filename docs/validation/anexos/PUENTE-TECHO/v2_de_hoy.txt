@@ -1,0 +1,18 @@
+# puente.py variante v2_de_hoy, sobre cuenta-por-mes.txt (ADR-0099; PUENTE-TECHO)
+
+## El control (ADR-0098 §1), con el bucle de puente.py (D2 a)
+posiciones del bot en la salida: 235; entran en el control: 235; fuera (manual de una regla solo del bot): 0
+reproducidas al centimo (lote, motivo, instante del cierre, PnL neto): 235 de 235
+control: PASA
+
+## Variante v2_de_hoy (cierre): [objetivo_sobre_el_stop, sin_break_even, entrada_al_precio_del_caso, sin_las_de_mas_de_100_lotes, sin_cierre_h4, desfase_menos_2, stop_en_el_08]
+### Abril y agosto juntos (sin lectura)
+N (llenadas y cerradas): 67; no colocables: 0; no llenadas: 0; fuera por el tope de lotes: 10; fuera por el lote minimo: 0; fuera de la ventana: 0
+rechazadas por el broker, por motivo: ninguna
+break even movido: 0; cerradas en el break even: 0; cierres por RN-002: 0; al fin del dia: 0
+esperanza antes de comision y swaps (media del R bruto): 0.920; neta (media del R neto): 0.503
+percentil 5 y percentil 95 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, 42 dias): 0.052 y 0.955; replicas descartadas: 0
+d) perdida diaria maxima, por cuenta: 3.00 % del capital inicial; la peor, la cuenta de 2026-08
+e) equity minima, por cuenta: 99.21 % del capital inicial; la peor, la cuenta de 2026-08
+f) alguna cuenta entro en SUSPENDIDA: no
+CIERRE DEL PUENTE (ADR-0099 §2) frente a la publicada: cierra; N 67 frente a 67 (+0); esperanza neta 0.503 frente a 0.47 (+0.033); antes de comision 0.920 frente a 0.88 (+0.040)

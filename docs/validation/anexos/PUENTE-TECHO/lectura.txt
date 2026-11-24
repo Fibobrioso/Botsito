@@ -1,0 +1,11 @@
+# puente.py todo, sobre cuenta-por-mes.txt (ADR-0099; PUENTE-TECHO) -- extracto literal de todo.txt: el cierre (D7) y la lectura del puente (D6)
+
+## El cierre del puente (ADR-0099 §2), sobre abril y agosto
+## Variante v1_de_hoy (cierre): [objetivo_sobre_el_stop, sin_break_even, entrada_al_precio_del_caso, sin_las_de_mas_de_100_lotes, sin_cierre_h4, desfase_menos_2]
+CIERRE DEL PUENTE (ADR-0099 §2) frente a la publicada: cierra; N 70 frente a 70 (+0); esperanza neta 0.375 frente a 0.34 (+0.035); antes de comision 0.729 frente a 0.70 (+0.029)
+## Variante v2_de_hoy (cierre): [objetivo_sobre_el_stop, sin_break_even, entrada_al_precio_del_caso, sin_las_de_mas_de_100_lotes, sin_cierre_h4, desfase_menos_2, stop_en_el_08]
+CIERRE DEL PUENTE (ADR-0099 §2) frente a la publicada: cierra; N 67 frente a 67 (+0); esperanza neta 0.503 frente a 0.47 (+0.033); antes de comision 0.920 frente a 0.88 (+0.040)
+
+## La lectura del puente (ADR-0099 §3)
+sueltas: objetivo_sobre_el_stop no_gana, sin_break_even no_gana, entrada_al_precio_del_caso no_gana, sin_las_de_mas_de_100_lotes no_gana, desfase_menos_2 no_gana, spread_menos_1 no_gana, spread_menos_2 no_gana, sin_spread no_gana; todo_junto: no_concluyente
+LECTURA DEL PUENTE: solo_juntas

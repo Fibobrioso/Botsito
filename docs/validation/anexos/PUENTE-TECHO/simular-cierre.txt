@@ -1,0 +1,10 @@
+letras vivas en la copia: A C D F G I J M N Q; F viva? True
+R4.8: HECHA? True; alguna letra (NA:) en el bloque? False
+R4.7 cita ADR-0099? True; ABIERTA? True
+A.5 cita ADR-0099 §5? True; «que también mide» sigue? False
+R6.0 lleva la razón retirada? True
+a: []
+b: []
+c: []
+PROJECT_STATE del cierre: 24740 bytes (cabe en 25000); la rama hoy, con la F nueva: 24899 bytes
+bytes de la F: antes 992, despues 1163

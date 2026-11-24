@@ -1,0 +1,82 @@
+# El puente del techo, PRE-REGISTRADO antes de correr ninguna variante (ADR-0099). Decisión de Aleks
+# del 2026-11-23; números del consultor aprobados por Aleks el 2026-11-23. El modelo de partida es el
+# de ADR-0098 §1 (M1, el techo), sin cambiar una pieza salvo la que nombra cada variante. Las cifras
+# de ADR-0092 §3 se leen de knowledge/cases/criterio_fidelidad.yaml (bloque rentabilidad) y el
+# percentil alto con su umbral, de docs/plan/META-TECHO-PAREJAS.yaml: aquí no se copian.
+# NO SE EDITA: tests/unit/test_puente_techo.py fija su sha256, así que cambiar una cifra exige
+# cambiar ese test a la vista en el mismo commit.
+decidido_el: "2026-11-23"
+decision: ADR-0099
+modelo_de_partida: ADR-0098 §1, el techo (M1), sobre los días dev de construccion de criterio_fidelidad.yaml
+propios:
+  lotes_fuera_si_el_lote_por_riesgo_pasa_de: 100
+  desfase_puntos: 2
+  spread_menos_puntos: [1, 2]
+  cierre_tolerancia_operaciones: 3
+  cierre_tolerancia_esperanza_neta_r: "0.10"
+piezas:
+  objetivo_sobre_el_stop: el objetivo a objetivo_rr veces la distancia de la entrada al stop del caso, en lugar de sobre la caja derivada
+  sin_break_even: RN-014 no mueve el stop
+  entrada_al_precio_del_caso: la posición se abre en el precio y el instante del caso, sin orden stop ni modelo de llenado
+  sin_las_de_mas_de_100_lotes: fuera, contadas, las operaciones cuyo lote por riesgo antes de limitarlo pasa de lotes_fuera_si_el_lote_por_riesgo_pasa_de
+  desfase_menos_2: la entrada, el stop y el objetivo, desfase_puntos por debajo
+  spread_menos_1: el ask de cada tick, 1 punto más cerca del bid, sin cruzarlo
+  spread_menos_2: el ask de cada tick, 2 puntos más cerca del bid, sin cruzarlo
+  sin_spread: el ask de cada tick, igual al bid
+  sin_cierre_h4: sin el cierre de RN-002 al final de la vela de H4; queda el del final de la ventana
+  stop_en_el_08: el stop y el lote (también el que decide sin_las_de_mas_de_100_lotes), en stop_fraccion_caja veces la distancia de la entrada al stop del caso; el objetivo no cambia
+variantes:
+  base: []
+  sueltas:
+    - [objetivo_sobre_el_stop]
+    - [sin_break_even]
+    - [entrada_al_precio_del_caso]
+    - [sin_las_de_mas_de_100_lotes]
+    - [desfase_menos_2]
+    - [spread_menos_1]
+    - [spread_menos_2]
+    - [sin_spread]
+  todo_junto: [objetivo_sobre_el_stop, sin_break_even, entrada_al_precio_del_caso, sin_las_de_mas_de_100_lotes]
+  de_vuelta:
+    - [sin_break_even, entrada_al_precio_del_caso, sin_las_de_mas_de_100_lotes]
+    - [objetivo_sobre_el_stop, entrada_al_precio_del_caso, sin_las_de_mas_de_100_lotes]
+    - [objetivo_sobre_el_stop, sin_break_even, sin_las_de_mas_de_100_lotes]
+    - [objetivo_sobre_el_stop, sin_break_even, entrada_al_precio_del_caso]
+  cierre:
+    v1_de_hoy: [objetivo_sobre_el_stop, sin_break_even, entrada_al_precio_del_caso, sin_las_de_mas_de_100_lotes, sin_cierre_h4, desfase_menos_2]
+    v2_de_hoy: [objetivo_sobre_el_stop, sin_break_even, entrada_al_precio_del_caso, sin_las_de_mas_de_100_lotes, sin_cierre_h4, desfase_menos_2, stop_en_el_08]
+control:
+  base_repite: el bloque M1 de docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/meta.txt, línea a línea
+  si_no_lo_repite: no se lee nada
+cierre:
+  meses: ["2026-04", "2026-08"]
+  se_lee: solo sobre esos dos meses; v1_de_hoy y v2_de_hoy no llevan lectura sobre los cuatro
+  publicadas_con_5_usd:
+    fuente: docs/validation/VIABILIDAD-COMISION.md, §3
+    v1: {operaciones: 70, esperanza_bruta_r: "0.70", esperanza_neta_r: "0.34"}
+    v2: {operaciones: 67, esperanza_bruta_r: "0.88", esperanza_neta_r: "0.47"}
+  cierra_si: las operaciones quedan a cierre_tolerancia_operaciones o menos y la esperanza neta a cierre_tolerancia_esperanza_neta_r o menos de la publicada
+  si_no_cierra: se dice, se da el residuo y las lecturas del puente valen igual
+lectura_por_el_r:
+  sobre: los días dev de los cuatro meses de construccion
+  orden: [gana, no_gana, no_concluyente]
+  gana: N al menos n_minimo, esperanza al menos esperanza_minima_r y percentil 5 mayor que 0
+  no_gana: la esperanza es menor que 0, o el percentil alto es menor que techo_no_gana_si_percentil_alto_por_debajo_de_r
+  no_concluyente: el resto
+  d_e_f: se imprimen al lado, como dato, y no entran en esta lectura
+lecturas_del_puente:
+  orden: [una_pieza_basta, solo_juntas, ni_juntas]
+  una_pieza_basta: alguna variante suelta no da no_gana
+  solo_juntas: ninguna suelta, pero todo_junto no da no_gana
+  ni_juntas: todo_junto da no_gana
+que_imprime: >-
+  por variante, sobre los cuatro meses y aparte sobre abril y agosto juntos: N, no colocables, break
+  even movido, cierres en el break even, cierres forzosos, esperanza antes y después de comisión,
+  percentiles 5 y 95 por remuestreo por días, d), e) y f) por cuenta, la lectura por el R y la de
+  ADR-0098 §2
+que_no_imprime: >-
+  ninguna operación con su R, ningún R por clase de setup, por sesión ni por dirección, ningún
+  precio y nada anterior al día dev al que pertenece
+adr_0092_6: >-
+  diagnóstico de construcción: ninguna lectura cambia un parámetro, una regla ni una decisión del
+  motor, ni sustituye al techo ni a la salida C; decide dónde se comprueba primero la premisa

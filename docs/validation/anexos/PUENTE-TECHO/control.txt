@@ -1,0 +1,6 @@
+# puente.py control, sobre cuenta-por-mes.txt (ADR-0099; PUENTE-TECHO)
+
+## El control (ADR-0098 §1), con el bucle de puente.py (D2 a)
+posiciones del bot en la salida: 235; entran en el control: 235; fuera (manual de una regla solo del bot): 0
+reproducidas al centimo (lote, motivo, instante del cierre, PnL neto): 235 de 235
+control: PASA

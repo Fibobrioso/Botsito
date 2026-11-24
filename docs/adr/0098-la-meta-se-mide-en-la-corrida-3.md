@@ -168,6 +168,8 @@ A abre una segunda vía al subconjunto, escrita sabiendo que el pivote dará cas
 más» (§5). Es la decisión de Aleks del 2026-11-22: el pivote mide si las sesiones acercan al bot al
 trader; esta medida, si merece la pena acercarlo.
 
+> **RECUADRO de ADR-0099 (2026-11-23, `trabajo/puente-techo`; el cuerpo no se toca).** A lo que la salida C manda revisar (F17, S-14, A-16 y el contraste con el trader), ADR-0099 añade una medida que C no pedía: el puente del techo pieza a pieza, pre-registrado en `docs/plan/PUENTE-TECHO.yaml`. No cambia el modelo de §1 ni la salida, que sigue siendo C; releer la meta con otro modelo sigue pidiendo un ADR que declare lo visto (§5). El ADR de Aleks que C pide es el que ADR-0099 §7 acota.
+
 ### 4. Tres ajustes
 
 a) **El techo positivo es necesario, no suficiente.** Las operaciones son de un backtest manual en
