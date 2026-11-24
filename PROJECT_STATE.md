@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/puente-techo
 
 ## Current Feature
-Ninguna abierta: trabajo/recorrida-construccion-3 cerrada en main (stable/F39l-recorrida-construccion-3). Lo siguiente, en la Next Action (F).
+trabajo/puente-techo EN CURSO (R4.7, F): el puente del techo, pre-registrado y medido. Encargo docs/encargos/trabajo-puente-techo.md; informe docs/validation/PUENTE-TECHO.md.
 
 ## Stable Main State
 88f678f7 · merge de `trabajo/recorrida-construccion-3` (tag `stable/F39l-recorrida-construccion-3`), sobre `stable/F39k-activar-sesion-08` (f04868cc). Informe docs/validation/RECORRIDA-CONSTRUCCION-3.md; el registro del cierre, al final de HISTORIA.
@@ -171,8 +171,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 80 (2026-11-22).
+— ninguna desde el Archivo 81 (2026-11-23).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 80 (2026-11-22).
+— ninguna desde el Archivo 81 (2026-11-23).

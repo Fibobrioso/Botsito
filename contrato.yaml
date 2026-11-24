@@ -1,0 +1,62 @@
+rama: trabajo/puente-techo
+riesgo: medio  # rama de medida: no toca src/ ni knowledge/; crea el ADR del puente, un yaml de plan con su test, dos recuadros en ADR (0092 y 0098), dos notas en docs/plan (RUMBO y MASTER_PLAN), las dos auditorias copiadas y el guion del puente con sus salidas en anexos
+artefacto: docs/validation/PUENTE-TECHO.md
+tramo: R4
+rutas_permitidas:
+  - docs/validation/PUENTE-TECHO.md
+  - docs/validation/anexos/PUENTE-TECHO/
+  - docs/validation/AUDITORIA-PROFUNDA-2026-11.md
+  - docs/validation/AUDITORIA-CAZADOR-2026-11-23.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/adr/0099-*.md
+  - docs/adr/README.md
+  - docs/adr/0092-*.md
+  - docs/adr/0098-*.md
+  - docs/plan/PUENTE-TECHO.yaml
+  - docs/plan/RUMBO-2026-11.md
+  - docs/plan/MASTER_PLAN.md
+  - tests/unit/test_puente_techo.py
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - src/
+  - knowledge/
+  - scripts/
+  - Makefile
+  - .claude/
+  - tools/mql5/
+  - mql5/
+  - config/
+  - corpus/
+  - data/manifests/
+  - tests/contract/
+  - tests/differential/
+  - tests/fixtures/
+  - tests/golden/
+  - tests/integration/
+  - tests/regression/
+  - tests/conftest.py
+  - tests/guarda_holdout.py
+  - docs/plan/HOJA-DE-RUTA.md
+  - docs/plan/PIVOTES-SESION-7.yaml
+  - docs/plan/META-TECHO-PAREJAS.yaml
+  - docs/validation/PREREGISTRO.md
+  - docs/validation/VIABILIDAD-COMISION.md
+  - docs/validation/VIABILIDAD-TRADER.md
+  - docs/validation/RECORRIDA-CONSTRUCCION-3.md
+  - docs/validation/AUDITORIA-2026-11-21.md
+  - docs/validation/anexos/RECORRIDA-CONSTRUCCION-3/
+  - docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/
+  - docs/validation/anexos/RECORRIDA-CONSTRUCCION/
+  - docs/validation/anexos/RESPALDO-M1/
+  - docs/validation/anexos/ACTIVAR-SESION-07/
+  - docs/validation/anexos/ACTIVAR-SESION-08/
+  - docs/validation/anexos/PREPARACION-SESION-7/
+  - docs/validation/anexos/VISOR-CONSTRUCCION/
+  - docs/adr/0000-template.md
+comprobaciones:
+  - uv run botsito state check
+  - uv run botsito knowledge validate (con su log en la carpeta de trabajo de la sesion, fuera del repo)
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1
