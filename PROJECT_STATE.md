@@ -16,7 +16,7 @@ trabajo/puente-techo EN CURSO (R4.7, F): el puente del techo, pre-registrado y m
 88f678f7 · merge trabajo/recorrida-construccion-3: la corrida (3) de ADR-0070 §3 («no»), el pivote por su contingencia («una sesión más») y la meta de ADR-0098 (salida C) · tag stable/F39l-recorrida-construccion-3
 
 ## Tests Currently Passing
-2137 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2143 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

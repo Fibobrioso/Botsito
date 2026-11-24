@@ -1,13 +1,10 @@
 # Encargo · trabajo/puente-techo
 
 Dado por Aleks (consultor) el 2026-11-23, en un solo mensaje. Copiado tal cual. El ADR que el
-encargo manda escribir en la fase P va declarado aquí en un bloque `ids-inexistentes`, como exige
-`knowledge validate`; sale del bloque, y el bloque con él, en el commit del pre-registro, que lo
-crea. El 0087 y el 0095 no existen y no se rellenan:
-
-```ids-inexistentes
-ADR-0099 — el encargo lo manda escribir en la fase P (el pre-registro del puente del techo); aún no existe
-```
+encargo manda escribir en la fase P iba declarado aquí en un bloque `ids-inexistentes`, como exige
+`knowledge validate`; salió del bloque, y el bloque con él, en el commit del pre-registro, que lo
+crea (`docs/adr/0099-la-salida-c-se-resuelve-midiendo-primero.md`). El 0087 y el 0095 no existen y
+no se rellenan.
 
 > Modelo: Opus 5.5 · Esfuerzo: alto
 >
