@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/diagnostico-premisa
+main
 
 ## Current Feature
-trabajo/diagnostico-premisa EN CURSO (R4.7, F): la premisa con costes pre-registrada y dos diagnósticos. Encargo docs/encargos/trabajo-diagnostico-premisa.md; informe docs/validation/DIAGNOSTICO-PREMISA.md.
+Ninguna abierta: trabajo/diagnostico-premisa cerrada en main (stable/F39n-diagnostico-premisa). Lo siguiente, en la Next Action (F).
 
 ## Stable Main State
-7a3087e9 · merge de `trabajo/puente-techo` (tag `stable/F39m-puente-techo`), sobre `stable/F39l-recorrida-construccion-3` (88f678f7). Informe docs/validation/PUENTE-TECHO.md; el registro del cierre, al final de HISTORIA.
+42fdb0b5 · merge de `trabajo/diagnostico-premisa` (tag `stable/F39n-diagnostico-premisa`), sobre `stable/F39m-puente-techo` (7a3087e9). Informe docs/validation/DIAGNOSTICO-PREMISA.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-7a3087e9 · merge trabajo/puente-techo: las dos auditorías de noviembre, ADR-0099 y el puente del techo pieza a pieza (solo_juntas) · tag stable/F39m-puente-techo
+42fdb0b5 · merge trabajo/diagnostico-premisa: ADR-0100, la premisa con costes pre-registrada, y sus dos diagnósticos · tag stable/F39n-diagnostico-premisa
 
 ## Tests Currently Passing
 2149 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
