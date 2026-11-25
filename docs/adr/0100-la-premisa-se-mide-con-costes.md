@@ -197,6 +197,8 @@ Las piezas nuevas son el «R con lote fijo», los tramos de R del registro (±0,
 de §5, los tramos de retroceso, la regla de los meses de §2 y las condiciones del backtest (el spread
 de 0,2 pips lo propuso Aleks). Se eligieron con lo de arriba a la vista, y se declara.
 
+> **RECUADRO de corrección (2026-11-24, `trabajo/diagnostico-premisa`; el cuerpo no se toca).** Este §7 dice que «el consultor y Aleks» vieron los totales de la conversación del trader con otro asistente: los vio solo el consultor; Aleks pasó el enlace sin leerla (fila de `HOLDOUT-EXPOSICIONES.md` del 2026-11-24). Ese mismo día, después de escribir este ADR, Aleks y el consultor vieron además, detrás de una captura de configuración de FX Replay que mandó el trader, su panel de cuenta con agregados que incluyen meses reservados; está declarado en la misma fila y ninguna cifra se usa (ADR-0021 §2). Ninguna de las dos cosas cambia una cifra ni una lectura de este ADR ni de `docs/plan/PREMISA-COSTES.yaml`.
+
 ### 8. Dónde viven las cifras
 
 En `docs/plan/PREMISA-COSTES.yaml`, que fija `tests/unit/test_premisa_costes.py` por su sha256, con
