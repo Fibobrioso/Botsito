@@ -1,0 +1,46 @@
+## Variante base (base): []
+## M1 · El techo (ADR-0098 §1)
+operaciones del trader en los dias dev: 198; sin stop: 0; no colocables: 7; no llenadas: 0; fuera por el lote minimo: 0; fuera de la ventana: 0
+rechazadas por el broker, por motivo: ninguna
+llenadas y cerradas: 191; cierres de M1 con mas de una posicion viva: 0; cierres por RN-002: 7; al fin del dia: 0; break even movido: 79
+a) N (llenadas y cerradas): 191
+b) esperanza (media del R neto): -0.239
+c) percentil 5 y percentil 95 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, todos los dias dev corridos): -0.450 y -0.026; replicas descartadas: 0
+d) perdida diaria maxima, por cuenta: 4.88 % del capital inicial; la peor, la cuenta de 2026-07
+e) equity minima, por cuenta: 92.05 % del capital inicial; la peor, la cuenta de 2026-07
+f) alguna cuenta entro en SUSPENDIDA: no
+deslizamiento por llenado afectado que lleva la esperanza a 0.10 R (ADR-0092 §4, sin decidir nada): -2.52 puntos
+LECTURA DEL TECHO: no_gana
+
+### Julio de 2026, como diagnostico (sin umbral; el unico mes con video, provisional)
+a) N (llenadas y cerradas): 64
+b) esperanza (media del R neto): -0.245
+c) percentil 5 y percentil 95 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, los dias dev de julio): -0.546 y 0.085; replicas descartadas: 0
+d) perdida diaria maxima, por cuenta: 4.88 % del capital inicial; la peor, la cuenta de 2026-07
+e) equity minima, por cuenta: 92.05 % del capital inicial; la peor, la cuenta de 2026-07
+f) alguna cuenta entro en SUSPENDIDA: no
+
+### D8 (sin R): eventos del techo por fuente: cierre_m1 77, respaldo_m1 16, ticks 368
+no colocables en una hora UTC sin ticks: 0 de 7; en un minuto sin ticks (el de la colocacion): 0
+
+### Los cuatro meses
+N (llenadas y cerradas): 191; no colocables: 7; no llenadas: 0; fuera por el tope de lotes: 0; fuera por el lote minimo: 0; fuera de la ventana: 0
+cerradas con riesgo no positivo (no entran): 0
+rechazadas por el broker, por motivo: ninguna
+break even movido: 79; cerradas en el break even: 46; cierres por RN-002: 7; al fin del dia: 0
+esperanza antes de comision y swaps (media del R bruto): 0.127; neta (media del R neto): -0.239
+percentil 5 y percentil 95 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, 76 dias): -0.450 y -0.026; replicas descartadas: 0
+d) perdida diaria maxima, por cuenta: 4.88 % del capital inicial; la peor, la cuenta de 2026-07
+e) equity minima, por cuenta: 92.05 % del capital inicial; la peor, la cuenta de 2026-07
+f) alguna cuenta entro en SUSPENDIDA: no
+LECTURA POR EL R (ADR-0099 §3): no_gana
+lectura de ADR-0098 §2 (lectura_techo): no_gana
+### Abril y agosto juntos (sin lectura)
+N (llenadas y cerradas): 74; no colocables: 3; no llenadas: 0; fuera por el tope de lotes: 0; fuera por el lote minimo: 0; fuera de la ventana: 0
+rechazadas por el broker, por motivo: ninguna
+break even movido: 30; cerradas en el break even: 16; cierres por RN-002: 4; al fin del dia: 0
+esperanza antes de comision y swaps (media del R bruto): 0.113; neta (media del R neto): -0.318
+percentil 5 y percentil 95 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, 42 dias): -0.679 y 0.031; replicas descartadas: 0
+d) perdida diaria maxima, por cuenta: 1.26 % del capital inicial; la peor, la cuenta de 2026-04
+e) equity minima, por cuenta: 96.26 % del capital inicial; la peor, la cuenta de 2026-04
+f) alguna cuenta entro en SUSPENDIDA: no

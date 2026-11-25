@@ -1,0 +1,3 @@
+# Las lecturas de ADR-0100, literales (premisa.py todo)
+LECTURA DE §5 (ADR-0100): enero_y_julio_peores_tambien_para_el
+LECTURA DE §4 CON LOTE FIJO, todo_junto sobre los cuatro meses (ADR-0100 §6): no_concluyente

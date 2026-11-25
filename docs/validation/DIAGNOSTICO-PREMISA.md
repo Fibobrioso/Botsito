@@ -324,6 +324,109 @@ controles de D2 tienen sus cifras verificadas (f). Se sigue a la fase 1 sin espe
 **No cuadra en una cosa, que no toca ninguna medida: las líneas del cierre** (decisión 0). Se para
 solo en eso: las dos versiones de la F se preparan y se miden en §6, y la rama sigue.
 
+## §1 · Los controles (D2) y D8
+
+- Test de humo (`test_premisa.py`): 10 passed; contra cuatro mutantes del guion en la carpeta de
+  trabajo (`>` por `>=` en el tramo de R y en la lectura de §5, la mediana invertida en el lote fijo,
+  la referencia con `+ desfase`), cada uno cae en su test (1 failed, 9 passed); con D iguales el de
+  lote fijo pasa (D2 c).
+- **Primera corrida del guion: 20:48:24** (`premisa.py control`), 1 h 22 min después del commit del
+  pre-registro (19:26:05). 90 s, pico 592 MiB. **D2 a PASA** (los dos `diff` vacíos: `tail -n +8
+  …/PUENTE-TECHO/base.txt | diff - …/base-repetida.txt` y lo mismo con `todo_junto`); **D2 b PASA**
+  (77 operaciones, media del R bruto +0.984 frente a +0,98). La guardia dejó leer los cuatro libros.
+- `premisa.py todo` (20:50:14, 90 s, pico 616 MiB): D2 a y b otra vez sobre sus corridas, PASA.
+- Arreglo declarado (D11, de forma): la mediana salía «18» o «15.0» según N fuera impar o par
+  (`statistics.median`); pasa a `mediana_de` en Decimal, con su test. Repetidas las dos corridas
+  (20:52:57 y 20:54:31): `control.txt` igual byte a byte; `premisa.txt` solo cambia en dos líneas, el
+  formato de la mediana («15.0» → «15», «18.0» → «18»); ninguna cifra.
+- **D8 PASA**: `todo` otra vez a una carpeta fuera del repo (20:56:22) y `cmp` de `premisa.txt` y
+  `lectura.txt`: iguales.
+
+## §2-§4 · Las medidas
+
+En `anexos/DIAGNOSTICO-PREMISA/premisa.txt`, tal cual (por mes y por bloque, el registro y la réplica
+con N, ganadoras, perdedoras, break even y media; la brecha; los recuentos del retroceso; el techo con
+lote fijo de base y todo_junto). Fuera: las filas sin `initialSL` (4, 3, 5 y 5); ninguna operación
+sin fila; las 8 que todo_junto deja fuera por el tope (2, 2, 0 y 4), sin rechazos.
+
+## §5 · Las lecturas, literales (`lectura.txt`)
+
+- LECTURA DE §5 (ADR-0100): enero_y_julio_peores_tambien_para_el
+- LECTURA DE §4 CON LOTE FIJO, todo_junto sobre los cuatro meses (ADR-0100 §6): no_concluyente
+
+## §6 · Las líneas del cierre (preparadas, no aplicadas)
+
+En `anexos/DIAGNOSTICO-PREMISA/simular_cierre.py` y su salida `simular-cierre.txt`, sobre el
+PROJECT_STATE de `main` (24.740 bytes): `test_hoja_de_ruta` a, b y c vacíos con las dos F; ninguna
+letra sale ni entra; R4.9 HECHA sin `NA:`, R4.10 ABIERTA con `NA:F`, R4.7 con ADR-0100 en Refs y en
+su «Qué es». **Bytes:** con la F del encargo, 24.807; con la de la decisión 0, 24.850; **con la línea
+del b2 (257 bytes), 25.064 y 25.107: pasa de 24.970 (y del tope). PARADA con la cifra; no se recorta
+nada.**
+
+## §7 · La fila de ERRORES-RECURRENTES, preparada (cuatro columnas)
+
+| `trabajo/diagnostico-premisa` | <la pasada del revisor, con sus alcances: se rellena tras su informe> | <del consultor, tras la PARADA final> | (1) El encargo dictaba en la fila de HOLDOUT «la salida y su instante»; la unión lee además `dateStart`, `side`, `entryPrice` e `initialSL` (el auditor, fila 8): la fila nombra las seis. (2) La frase del encargo declaraba «el consultor y Aleks vieron»; Aleks no leyó nada: gana lo preguntado. (3) Las líneas del cierre de un encargo no contaban con el b2 que la orden de cierre anterior dejó condicionado a reutilizar `puente.py`, ni con su tamaño: no cabe. (4) De la sesión: `statistics.median` imprimía «18» o «15.0» según la paridad de N; un guion nuevo que componga una ruta con un valor leído que nombre `corpus` lo niega la guardia, y se comparó por trozos. |
+
+## El encargo frente a lo hecho
+
+- **Rama y base:** comprobadas antes de tocar nada (apertura). Tag `stable/F39n-diagnostico-premisa`,
+  libre. REAP=1 puesta.
+- **La fila del día, lo primero:** escrita y estadiada a las 18:12, antes del primer `make check`;
+  la pregunta a Aleks, con su respuesta tal cual; los recuentos, 0 en los cuatro meses (§0.3 h).
+- **Los dos ficheros:** sha256 de los dos, iguales; leídos enteros; sin fechas reservadas.
+- **Abrir:** contrato con tramo R4, riesgo medio, lista blanca del encargo; ADR-0100 en
+  `ids-inexistentes` hasta el pre-registro; hasta él, «el ADR de la premisa» en el artefacto, la fila
+  y PROJECT_STATE.
+- **Fase P:** commit propio (7b97ca49), el primero tras la apertura, antes de la fase 0 y del auditor
+  (§0.2).
+- **Fase 0:** a-i con `fichero:línea`, auditor después de la fase P; cuadra (§0.3-§0.7).
+- **Fase 1:** README en su commit (3877edf5) antes de correr; guion con `control` y `todo`; test de
+  humo en los dos sentidos (§1); ruff y mypy limpios.
+- **Fases 2 y 3:** `control.txt` con D2 a y b; D8; `premisa.txt` y `lectura.txt` (§1-§5).
+- **Líneas del cierre:** preparadas y medidas (§6); la F del encargo cabe (24.807); PARADA en el b2.
+- **No se tocó** `src/`, `knowledge/`, `scripts/`, el Makefile ni `.claude/`; ningún yaml del plan
+  salvo el nuevo; ninguna ambigüedad.
+
+## Desviaciones
+
+- La fila de HOLDOUT nombra seis columnas leídas, no dos (auditor, fila 8).
+- El arreglo de formato de la mediana tras la primera corrida de `todo` (D11), con las dos corridas
+  repetidas.
+- `simular_cierre.py` y `simular-cierre.txt`, no previstos, añadidos al README tras las corridas.
+- Las dos decisiones del cierre (abajo).
+
+## Comandos ejecutados (2026-11-24)
+
+```
+18:12  git add (los seis ficheros de la apertura); state check; contrato_rama.py; knowledge validate
+~18:15 make check > make-check.log 2>&1   (27:29, 3618 passed; SELLO cfae88a2)
+18:46  git commit -F ...msg-apertura.txt   (f7b4285e)
+~18:57 make check > make-check.log 2>&1   (28:31, 3624 passed; SELLO 80a09d47)
+19:26  git commit -F ...msg-faseP.txt      (7b97ca49)
+~19:47 make check > make-check.log 2>&1   (28:26; SELLO 561e37c2)
+20:15  git commit -F ...msg-fase0.txt      (7671148a)
+~20:19 make check > make-check.log 2>&1   (26:53; SELLO 8b30c0be)
+20:47  git commit -F ...msg-readme.txt     (3877edf5)
+20:47  uv run pytest docs/validation/anexos/DIAGNOSTICO-PREMISA/test_premisa.py -p no:cacheprovider -v   (10 passed)
+20:48  uv run pytest <carpeta de trabajo>/mut_{tramo,lectura5,lote_fijo,retroceso}/test_premisa.py -p no:cacheprovider -q   (1 failed cada uno)
+20:48:24  uv run python scripts/pico_memoria.py ejecutar -- uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/premisa.py control docs/validation/anexos/DIAGNOSTICO-PREMISA   (592 MiB)
+20:50  tail -n +8 docs/validation/anexos/PUENTE-TECHO/base.txt | diff - docs/validation/anexos/DIAGNOSTICO-PREMISA/base-repetida.txt   (vacío)
+20:50  tail -n +8 docs/validation/anexos/PUENTE-TECHO/todo_junto.txt | diff - docs/validation/anexos/DIAGNOSTICO-PREMISA/todo_junto-repetida.txt   (vacío)
+20:50:14  uv run python scripts/pico_memoria.py ejecutar -- uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/premisa.py todo docs/validation/anexos/DIAGNOSTICO-PREMISA   (616 MiB)
+20:52:57  (tras el arreglo de la mediana) premisa.py control, igual   (592 MiB; control.txt igual con cmp; los dos diff, vacíos)
+20:54:31  premisa.py todo, igual   (617 MiB; diff con la anterior: solo las dos medianas)
+20:56:22  uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/premisa.py todo <carpeta de trabajo>/d8   (cmp de premisa.txt y lectura.txt: iguales)
+~21:10 git show main:PROJECT_STATE.md > <carpeta de trabajo>/ps-main.md
+~21:12 uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/simular_cierre.py <carpeta de trabajo>/ps-main.md > docs/validation/anexos/DIAGNOSTICO-PREMISA/simular-cierre.txt
+```
+
+## Exposiciones de cada día
+
+2026-11-24: la fila de ese día en `HOLDOUT-EXPOSICIONES.md`, entera (puntos 1 a 9, con el añadido
+del consultor de las 18:26). Lo que la rama leyó cabe en ella: los casos dev, las seis columnas de las
+filas de los días dev de los cuatro libros por el lector, los ticks y el M1 de los días dev, y los
+documentos. Ningún libro de otro mes, imagen, fotograma, transcripción ni cruda.
+
 ## Lo que necesito que decidas
 
 0. La frase nueva de la F. Opciones: (a) la del encargo con el contraste dentro: «F17 (ADR-0099 §5),
@@ -332,12 +435,17 @@ solo en eso: las dos versiones de la F se preparan y se miden en §6, y la rama 
    contraste solo en el «Qué es» de R4.7. Recomiendo (a): ADR-0099 §6 manda que sus respuestas
    entren por su propia rama con su `fb-` y ninguna lo ha hecho; la Next Action es donde se ve lo
    pendiente. Coste de (b): un pendiente sin rama que deja de verse en PROJECT_STATE.
-1. La línea de Technical Debt del b2 de `puente.py` (herencia 3). Opciones: (a) entra con el cierre,
-   preparada y medida en §6, como dijo la orden de cierre de F39m; (b) no entra. Recomiendo (a): es lo
-   que dejó escrito esa orden para el caso de que una rama reutilizara `puente.py`, y esta lo
-   reutiliza. Coste de (b): contradecir esa respuesta sin decirlo en su sitio.
+1. **PARADA con la cifra:** la línea de Technical Debt del b2 de `puente.py` (herencia 3), que la
+   orden de cierre de F39m manda si una rama reutiliza `puente.py`, NO CABE: con ella PROJECT_STATE
+   queda en 25.064 bytes (F del encargo) o 25.107 (F de la decisión 0), por encima de 24.970 y del
+   tope de 25.000 (§6; `simular-cierre.txt`). Opciones: (a) el b2 queda en el registro del cierre de
+   HISTORIA y en este informe, sin línea en PROJECT_STATE; (b) entra en PROJECT_STATE con el recorte
+   que el consultor diga (otra línea acortada a HISTORIA, como las «Technical Debt ACORTADA»);
+   (c) no entra. Recomiendo (a): deja escrito el pendiente donde lo dejó F39m sin tocar el tope. Coste
+   de (b): un recorte que esta rama no puede elegir (encargo: no se recorta nada por cuenta propia).
 
 ## Estado
 
-EN CURSO: fase 0 escrita; se sigue a la fase 1 (cuadra para las tres medidas). Las dos decisiones de
-arriba, solo de las líneas del cierre, esperan al consultor en la PARADA final.
+EN CURSO: medidas hechas (§1-§5) y líneas del cierre preparadas (§6). Falta el revisor, el push como
+`fix/diagnostico-premisa` y la CI. Las dos decisiones de arriba, solo de las líneas del cierre,
+esperan al consultor en la PARADA final.

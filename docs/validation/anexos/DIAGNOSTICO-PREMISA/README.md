@@ -28,6 +28,14 @@ README entra en su propio commit antes de la primera corrida (encargo, fase 1).
   su línea «## Variante» (D2 a).
 - `premisa.txt`: lo que escribe `premisa.py todo` (D2 a y b otra vez, §5, el retroceso y §6).
 - `lectura.txt`: las dos lecturas de ADR-0100, literales, que escribe `premisa.py todo`.
+- `simular_cierre.py` y `simular-cierre.txt`: las líneas del cierre aplicadas en memoria sobre copias
+  y medidas contra `test_hoja_de_ruta` y `test_project_state` (DIAGNOSTICO-PREMISA.md §6), y su
+  salida; no escribe en el repo (la salida va a fichero por la redirección del comando). Lee el
+  PROJECT_STATE de `main` de un fichero fuera del repo que se le da como argumento:
+  `git show main:PROJECT_STATE.md > <carpeta>/ps-main.md` y
+  `uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/simular_cierre.py <carpeta>/ps-main.md > docs/validation/anexos/DIAGNOSTICO-PREMISA/simular-cierre.txt`.
+
+(Esta lista se amplió tras las corridas con estos dos ficheros, que no estaban previstos.)
 
 ## Comandos (desde la raíz; una corrida a la vez, nunca a la par de un `make check`)
 

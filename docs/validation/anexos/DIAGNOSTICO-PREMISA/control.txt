@@ -1,0 +1,9 @@
+# premisa.py control (ADR-0100; DIAGNOSTICO-PREMISA)
+
+D2 a · base: 46 lineas regeneradas frente a 46 de docs/validation/anexos/PUENTE-TECHO/base.txt (desde «## Variante»): iguales
+D2 a · todo_junto: 22 lineas regeneradas frente a 22 de docs/validation/anexos/PUENTE-TECHO/todo_junto.txt (desde «## Variante»): iguales
+D2 a: PASA
+
+## D2 b · El registro de abril y agosto frente a la serie anotada (VIABILIDAD-COMISION.md §3)
+operaciones con stop unidas a su fila: 77 (publicadas: 77); media del R bruto: +0.984 (publicada: +0.98; tolerancia 0.02)
+D2 b: PASA

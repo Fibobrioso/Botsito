@@ -1,0 +1,22 @@
+## Variante todo_junto (todo_junto): [objetivo_sobre_el_stop, sin_break_even, entrada_al_precio_del_caso, sin_las_de_mas_de_100_lotes]
+### Los cuatro meses
+N (llenadas y cerradas): 190; no colocables: 0; no llenadas: 0; fuera por el tope de lotes: 8; fuera por el lote minimo: 0; fuera de la ventana: 0
+cerradas con riesgo no positivo (no entran): 0
+rechazadas por el broker, por motivo: ninguna
+break even movido: 0; cerradas en el break even: 0; cierres por RN-002: 9; al fin del dia: 0
+esperanza antes de comision y swaps (media del R bruto): 0.350; neta (media del R neto): 0.022
+percentil 5 y percentil 95 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, 76 dias): -0.190 y 0.246; replicas descartadas: 0
+d) perdida diaria maxima, por cuenta: 4.06 % del capital inicial; la peor, la cuenta de 2026-07
+e) equity minima, por cuenta: 95.61 % del capital inicial; la peor, la cuenta de 2026-07
+f) alguna cuenta entro en SUSPENDIDA: no
+LECTURA POR EL R (ADR-0099 §3): no_concluyente
+lectura de ADR-0098 §2 (lectura_techo): no_gana
+### Abril y agosto juntos (sin lectura)
+N (llenadas y cerradas): 71; no colocables: 0; no llenadas: 0; fuera por el tope de lotes: 6; fuera por el lote minimo: 0; fuera de la ventana: 0
+rechazadas por el broker, por motivo: ninguna
+break even movido: 0; cerradas en el break even: 0; cierres por RN-002: 2; al fin del dia: 0
+esperanza antes de comision y swaps (media del R bruto): 0.649; neta (media del R neto): 0.285
+percentil 5 y percentil 95 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, 42 dias): -0.095 y 0.660; replicas descartadas: 0
+d) perdida diaria maxima, por cuenta: 2.20 % del capital inicial; la peor, la cuenta de 2026-08
+e) equity minima, por cuenta: 99.05 % del capital inicial; la peor, la cuenta de 2026-04
+f) alguna cuenta entro en SUSPENDIDA: no
