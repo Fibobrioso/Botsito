@@ -94,6 +94,8 @@ El R del trader sale del simulador, no de la columna de resultado de su libro: a
 llevan los mismos costes y la misma gestión, y el libro no se abre. Esta medida sustituye a las dos
 fases de R5.7.
 
+> **RECUADRO de ADR-0100 (2026-11-24, `trabajo/diagnostico-premisa`; el cuerpo no se toca).** ADR-0100 §5 lee la salida del libro del trader (avgClosePrice y dateEnd) de las filas de los días dev, como la serie anotada de VIABILIDAD-TRADER.md, para un diagnóstico: su registro frente a la réplica, mes por mes. No relee la meta, que sigue midiéndose como dice este §1 y sigue en la salida C.
+
 ### 2. Cómo se lee cada medida
 
 Las cifras propias de este ADR viven en `docs/plan/META-TECHO-PAREJAS.yaml` (§7).

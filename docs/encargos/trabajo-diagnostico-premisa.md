@@ -1,13 +1,9 @@
 # Encargo · trabajo/diagnostico-premisa
 
 Dado por Aleks (consultor) el 2026-11-24, en un solo mensaje. Copiado tal cual. El ADR que el
-encargo manda escribir en la fase P va declarado aquí en un bloque `ids-inexistentes`, como exige
-`knowledge validate`; sale del bloque, y el bloque con él, en el commit del pre-registro, que lo
-crea:
-
-```ids-inexistentes
-ADR-0100 — el encargo lo manda escribir en la fase P (el pre-registro de la premisa con costes); aún no existe
-```
+encargo manda escribir en la fase P iba declarado aquí en un bloque `ids-inexistentes`, como exige
+`knowledge validate`; salió del bloque, y el bloque con él, en el commit del pre-registro, que lo
+crea (`docs/adr/0100-la-premisa-se-mide-con-costes.md`).
 
 > Modelo: Opus 5.5 · Esfuerzo: alto
 >

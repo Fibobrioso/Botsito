@@ -198,6 +198,8 @@ con lo que haya, diciendo qué falta. Ese ADR elige entre: seguir con las sesion
 (la sombra en diferido de R7.3, con su condición de entrada reescrita); o cambiar de objetivo o
 parar. Y declara lo visto. Hasta entonces R4.7 sigue ABIERTA.
 
+> **RECUADRO de ADR-0100 (2026-11-24, `trabajo/diagnostico-premisa`; el cuerpo no se toca).** El ADR de Aleks que resuelve la salida C lee también los dos diagnósticos de ADR-0100 §5-§6 y la lectura del backtest del trader con costes (ADR-0100 §4), si ha llegado; si no, dice que falta, como dice este §7 de lo demás.
+
 ### 8. Lo visto, declarado (ADR-0070 punto 4, al estilo de ADR-0098 §5)
 
 Antes de fijar las variantes y las lecturas, el consultor y Aleks han visto:

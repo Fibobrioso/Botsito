@@ -40,6 +40,25 @@ reservado; son las de la decisión y del contraste con el trader. Ningún result
 cifras de su §1 y §7 están en `PUENTE-TECHO.md` y `VIABILIDAD-COMISION.md`, y los totales de los
 libros vistos el 2026-11-24 no se copian (el §7 los nombra sin cifras).
 
+## Desviaciones de la apertura
+
+- **Lo que vio Aleks de la conversación del trader.** El encargo manda declarar que «el consultor y
+  Aleks vieron» los totales mensuales de enero, abril y agosto en la conversación del trader con otro
+  asistente, y preguntarle a Aleks antes de escribir la fila qué vio él. Su respuesta, con sus
+  palabras: «no lei nada la verdad, solo pasé el enlace». Gana lo medido: la fila del 2026-11-24
+  copia la frase del encargo tal cual y añade la respuesta, y dice que quien vio los totales es el
+  consultor. ADR-0100 §7, que entra byte a byte, conserva «el consultor y Aleks han visto»: la
+  declaración es más amplia que lo ocurrido, no más estrecha, y no se toca. No nombraba ningún mes
+  reservado, así que no hay PARADA.
+- **Un añadido del consultor a la fila del día (2026-11-24, 18:26), llegado con el `make check` de
+  la apertura en marcha**: una captura de la ventana de creación de sesión de FX Replay, con el panel
+  de cuenta detrás (Backtesting, Lifetime), un agregado que incluye meses reservados. No se escribió
+  mientras corría el `make check` (nada escribe en el repo mientras corre; cambiar la fila
+  estadiada, además, rompía su sello): la apertura se commiteó con la fila que se había sellado, y el
+  añadido entra, el mismo día, en el punto (9) de la fila del 2026-11-24 con el commit del
+  pre-registro, tal cual, con las columnas de particiones, quién y quema ajustadas. La sesión no ha
+  visto la captura.
+
 ## Estado
 
-EN CURSO: apertura.
+EN CURSO: fase P (el pre-registro).

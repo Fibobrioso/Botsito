@@ -16,7 +16,7 @@ trabajo/diagnostico-premisa EN CURSO (R4.7, F): la premisa con costes pre-regist
 7a3087e9 · merge trabajo/puente-techo: las dos auditorías de noviembre, ADR-0099 y el puente del techo pieza a pieza (solo_juntas) · tag stable/F39m-puente-techo
 
 ## Tests Currently Passing
-2143 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2149 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

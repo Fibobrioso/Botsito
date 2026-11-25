@@ -160,6 +160,9 @@ el TIPO DE FICHERO: es la GRANULARIDAD DEL DATO** (ADR-0037):
 2026 (`HOLDOUT-EXPOSICIONES.md`; julio desde `trabajo/entrada-julio`, decision del consultor del
 2026-10-12). Que no tienen ni un dia en ninguna particion se COMPRUEBA antes de abrir con
 `casos_reservados(repo)`, no se supone, y se declara igual el mismo dia. Sus imagenes no se abren.
+Además, por ADR-0100, los meses de 2024 del backtest con costes del trader son de construcción para
+la premisa: no van a meses_reservados.yaml ni son `construccion` de criterio_fidelidad.yaml, y se
+leen solo desde su rama de entrada.
 
 **Lo minimo para fijar el universo SI se lee, y no es abrir.** De un backtest del trader se puede
 leer QUE DIAS CUBRE EL MATERIAL -la columna de fechas- porque eso no es leer una etiqueta ni medir

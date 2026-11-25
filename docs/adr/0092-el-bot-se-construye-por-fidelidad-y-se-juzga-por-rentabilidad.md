@@ -190,6 +190,8 @@ tenía ADR: sale de `MASTER_PLAN.md` §0):
 
 > **RECUADRO de ADR-0099 (2026-11-23, `trabajo/puente-techo`; el cuerpo no se toca).** El puente del techo de ADR-0099 (el techo de ADR-0098 con una pieza cambiada cada vez, sobre construcción) es diagnóstico de construcción, como la ablación por regla de la NOTA del 2026-11-09: ninguna rama de spec o de motor se justifica con sus cifras, y sus lecturas, escritas antes de medir, deciden dónde se comprueba primero la premisa (a quién se pregunta y qué se mide), nunca un parámetro. ADR-0099 §5 precisa además contra qué precio se mide el deslizamiento de §4 (el del tick que dispara la orden en FTMO), sin cambiar su regla.
 
+> **RECUADRO de ADR-0100 (2026-11-24, `trabajo/diagnostico-premisa`; el cuerpo no se toca).** Los dos diagnósticos de ADR-0100 (el registro del trader frente a la réplica, mes por mes, y el techo con lote fijo, sobre construcción) son diagnóstico de construcción, como el puente: ninguna rama de spec o de motor se justifica con sus cifras. La lectura del backtest del trader con costes (ADR-0100 §2-§4), en meses de 2024 que nadie del proyecto ha visto y que ADR-0100 declara de construcción para la premisa, decide qué propone el consultor al ADR de la salida C, nunca un parámetro: una gestión del dinero distinta del 0,5 % solo entra por un ADR propio que cite la respuesta del trader, y se juzga en la puerta de §5.
+
 ### 7. El papel de la fidelidad, de F26, F27 y F35
 
 (La respuesta, punto 5.)
