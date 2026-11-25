@@ -341,13 +341,86 @@ solo en eso: las dos versiones de la F se preparan y se miden en §6, y la rama 
   formato de la mediana («15.0» → «15», «18.0» → «18»); ninguna cifra.
 - **D8 PASA**: `todo` otra vez a una carpeta fuera del repo (20:56:22) y `cmp` de `premisa.txt` y
   `lectura.txt`: iguales.
+- **Segundo arreglo, tras el revisor (a1; D11):** en un minuto sin ticks, `extremo_en_contra` tomaba
+  la vela del respaldo de todo minuto del tramo; el bróker solo la toma si su sello (su último
+  milisegundo, `_sello_ms`) cae en (desde, hasta] (`src/botsito/engine/llenado.py:335`, `:124-129`).
+  Ahora igual, con dos asserts nuevos en el test de humo (la salida antes del sello: la vela no entra;
+  justo en el sello: sí). Repetidas `control` (22:12:17, 592 MiB) y `todo` (22:13:58, 617 MiB):
+  `control.txt` igual byte a byte, los dos `diff` de D2 a vacíos, y **`premisa.txt` sin ningún cambio**
+  (`diff` vacío con la de antes del arreglo): ninguna ganadora tenía un minuto del respaldo pasada su
+  salida. D8 otra vez (22:15:38): `cmp` de `premisa.txt` y `lectura.txt`, iguales.
+- La salida del test de humo, tal cual (la última, tras el segundo arreglo):
 
-## §2-§4 · Las medidas
+```
+$ uv run pytest docs/validation/anexos/DIAGNOSTICO-PREMISA/test_premisa.py -p no:cacheprovider -v
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\USER\Desktop\Bot v3
+configfile: pyproject.toml
+plugins: anyio-4.15.0, hypothesis-6.167.1
+collected 10 items
 
-En `anexos/DIAGNOSTICO-PREMISA/premisa.txt`, tal cual (por mes y por bloque, el registro y la réplica
-con N, ganadoras, perdedoras, break even y media; la brecha; los recuentos del retroceso; el techo con
-lote fijo de base y todo_junto). Fuera: las filas sin `initialSL` (4, 3, 5 y 5); ninguna operación
-sin fila; las 8 que todo_junto deja fuera por el tope (2, 2, 0 y 4), sin rechazos.
+docs\validation\anexos\DIAGNOSTICO-PREMISA\test_premisa.py ..........    [100%]
+
+============================= 10 passed in 0.44s ==============================
+```
+
+## §2 · El registro frente a la réplica (`premisa.txt`, §5)
+
+Sobre las mismas operaciones: las que `todo_junto` abre (190 de 198). Fuera, contadas: las filas del
+libro sin `initialSL` (enero 4, abril 3, julio 5, agosto 5; no se unen a ningún caso); las 8 que
+`todo_junto` deja fuera por el tope de lotes (enero 2, abril 2, julio 0, agosto 4), que tienen fila
+en el registro y no posición en la réplica; ninguna rechazada por el bróker; ninguna operación del
+caso sin fila, ni sin stop, ni con el stop distinto del `initialSL`. Tramos: ganadora R > +0,2,
+perdedora R < −0,2, el resto break even; el R de la réplica es el de antes de comisión.
+
+| Mes | Serie | N | Ganadoras | Perdedoras | Break even | Media del R |
+|---|---|---|---|---|---|---|
+| 2026-01 | registro | 52 | 16 | 33 | 3 | +0.531 |
+| 2026-01 | réplica | 52 | 16 | 36 | 0 | +0.152 |
+| 2026-04 | registro | 33 | 15 | 16 | 2 | +1.178 |
+| 2026-04 | réplica | 33 | 13 | 20 | 0 | +0.541 |
+| 2026-07 | registro | 67 | 18 | 31 | 18 | +0.375 |
+| 2026-07 | réplica | 67 | 21 | 45 | 1 | +0.187 |
+| 2026-08 | registro | 38 | 18 | 17 | 3 | +1.128 |
+| 2026-08 | réplica | 38 | 18 | 20 | 0 | +0.743 |
+
+| Bloque | Serie | N | Ganadoras | Perdedoras | Break even | Media del R | Brecha |
+|---|---|---|---|---|---|---|---|
+| abril_y_agosto | registro | 71 | 33 | 33 | 5 | +1.151 | +0.502 |
+| abril_y_agosto | réplica | 71 | 31 | 40 | 0 | +0.649 | |
+| enero_y_julio | registro | 119 | 34 | 64 | 21 | +0.443 | +0.271 |
+| enero_y_julio | réplica | 119 | 37 | 81 | 1 | +0.172 | |
+
+Brecha de enero_y_julio menos brecha de abril_y_agosto: −0.231; `margen_r`: 0.20. Lectura (la del
+guion): **enero_y_julio_peores_tambien_para_el**.
+
+## §3 · El retroceso de las ganadoras del registro (`premisa.txt`, sin lectura)
+
+De las ganadoras del registro sobre las mismas operaciones de §2 (b4: ver «Desviaciones»), entre el
+llenado del caso y `dateEnd`, contra la entrada menos `desfase_puntos` (2), en fracciones de D.
+
+| Bloque | Ganadoras | por debajo de 0 | [0; 0,5) | [0,5; 0,8) | [0,8; 1,0) | 1,0 o más | Con algún minuto del respaldo | Extremo en el respaldo | Algún minuto sin ticks ni M1 |
+|---|---|---|---|---|---|---|---|---|---|
+| abril_y_agosto | 33 | 0 | 23 | 7 | 1 | 2 | 1 | 0 | 1 |
+| enero_y_julio | 34 | 1 | 23 | 7 | 2 | 1 | 1 | 1 | 0 |
+
+Ninguna sin ningún precio en el tramo, ninguna con `dateEnd` antes del llenado.
+
+## §4 · El techo con lote fijo (`premisa.txt`, §6)
+
+R neto × D / mediana de D, por posición, con D la del riesgo de su fila; percentiles 5 y 95 por
+remuestreo por días (10000 réplicas, semilla 20261107).
+
+| Variante | Conjunto | N | Mediana de D (puntos) | Esperanza con lote fijo | Media del R neto (por riesgo) | Percentil 5 | Percentil 95 | Días | Lectura |
+|---|---|---|---|---|---|---|---|---|---|
+| base | los cuatro meses | 191 | 18 | −0.017 | −0.239 | −0.230 | +0.212 | 76 | sin lectura (dato) |
+| base | abril y agosto | 74 | 15 | −0.058 | −0.318 | −0.377 | +0.280 | 42 | sin lectura (dato) |
+| todo_junto | los cuatro meses | 190 | 18 | +0.196 | +0.022 | −0.069 | +0.483 | 76 | **no_concluyente** |
+| todo_junto | abril y agosto | 71 | 16 | +0.510 | +0.285 | −0.050 | +1.069 | 42 | sin lectura (dato) |
+
+Ninguna réplica descartada. La «media del R neto (por riesgo)» repite la de `base.txt` y
+`todo_junto.txt` (−0.239, −0.318, +0.022, +0.285).
 
 ## §5 · Las lecturas, literales (`lectura.txt`)
 
@@ -361,63 +434,162 @@ PROJECT_STATE de `main` (24.740 bytes): `test_hoja_de_ruta` a, b y c vacíos con
 letra sale ni entra; R4.9 HECHA sin `NA:`, R4.10 ABIERTA con `NA:F`, R4.7 con ADR-0100 en Refs y en
 su «Qué es». **Bytes:** con la F del encargo, 24.807; con la de la decisión 0, 24.850; **con la línea
 del b2 (257 bytes), 25.064 y 25.107: pasa de 24.970 (y del tope). PARADA con la cifra; no se recorta
-nada.**
+nada.** Las líneas, tal cual (las de `simular_cierre.py`):
+
+- **Next Action, en la F** (sustituye «F17 rediseñado (ADR-0099 §5) y el contraste con el trader,
+  pendientes.»):
+  - la del encargo: «F17 (ADR-0099 §5) y el backtest del trader con costes (ADR-0100, R4.10),
+    pendientes; el diagnóstico de la premisa, hecho.»
+  - la de la decisión 0: «F17 (ADR-0099 §5), el contraste con el trader (ADR-0099 §6) y el backtest
+    del trader con costes (ADR-0100, R4.10), pendientes; el diagnóstico de la premisa, hecho.»
+- **Technical Debt, al final** (decisión 1; no cabe): «- El test de humo de
+  `anexos/PUENTE-TECHO/puente.py` no pasa el break even ni el tope por el bucle de `repetir` (b2 del
+  revisor de F39m, PUENTE-TECHO.md); lo reutiliza `anexos/DIAGNOSTICO-PREMISA/premisa.py`. Dueño: la
+  rama que vuelva a tocar `puente.py`.»
+- **Hoja de ruta, R4.7:** sus Refs pasan a «NA:F · ID:ADR-0098 · ID:ADR-0099 · ID:ADR-0100 · ID:A-16
+  · F:F17»; en su «Qué es», tras «…y el contraste de la premisa con el trader (ADR-0099 §6).», entra
+  «ADR-0100: la premisa se mide con el backtest del trader con costes y dos diagnósticos, con la
+  lectura escrita antes (R4.9, HECHA; R4.10).»
+- **Hoja de ruta, detrás de R4.8:**
+
+```
+### R4.9 · El diagnóstico de la premisa (ADR-0100 §5-§6)
+- **Refs:** ID:ADR-0100 · ID:ADR-0099
+- **Qué es:** sobre los días dev de construcción, el registro del trader frente a la réplica (la variante todo_junto del puente), mes por mes, con el retroceso de sus ganadoras, y el techo con lote fijo (base y todo_junto), con las lecturas pre-registradas en docs/plan/PREMISA-COSTES.yaml. Diagnóstico de construcción: ninguna cifra cambia un valor (ADR-0092 §6, recuadro de ADR-0100).
+- **Depende de:** nada (el pre-registro de ADR-0100).
+- **Quién:** la sesión, con el encargo del consultor; lee el consultor.
+- **Hecho cuando:** las dos medidas, con sus lecturas.
+- **Estado:** HECHA (trabajo/diagnostico-premisa, DIAGNOSTICO-PREMISA.md): la lectura de §5, «enero_y_julio_peores_tambien_para_el»; todo_junto con lote fijo sobre los cuatro meses, «no_concluyente».
+
+### R4.10 · El backtest del trader con costes (ADR-0100 §2-§4)
+- **Refs:** ID:ADR-0100 · NA:F
+- **Qué es:** dos meses de 2024 que el trader no haya operado nunca en backtest, en su plataforma con spread de 0,2 pips y comisión de 5 USD por lote de ida y vuelta, grabados y con el libro completo; medido por riesgo y con lote fijo, con la lectura de ADR-0100 §4 escrita antes (docs/plan/PREMISA-COSTES.yaml). Material de construcción para la premisa (ADR-0100 §2); entra SIN ABRIR y fuera del repo hasta su rama.
+- **Depende de:** que el trader lo haga y Aleks lo traiga.
+- **Quién:** el trader lo hace, Aleks lo trae SIN ABRIR y la sesión lo mide en su propia rama, con el encargo del consultor.
+- **Hecho cuando:** su lectura de ADR-0100 §4, escrita.
+- **Estado:** ABIERTA.
+```
+
+  Sin fila en el Marcador.
 
 ## §7 · La fila de ERRORES-RECURRENTES, preparada (cuatro columnas)
 
-| `trabajo/diagnostico-premisa` | <la pasada del revisor, con sus alcances: se rellena tras su informe> | <del consultor, tras la PARADA final> | (1) El encargo dictaba en la fila de HOLDOUT «la salida y su instante»; la unión lee además `dateStart`, `side`, `entryPrice` e `initialSL` (el auditor, fila 8): la fila nombra las seis. (2) La frase del encargo declaraba «el consultor y Aleks vieron»; Aleks no leyó nada: gana lo preguntado. (3) Las líneas del cierre de un encargo no contaban con el b2 que la orden de cierre anterior dejó condicionado a reutilizar `puente.py`, ni con su tamaño: no cabe. (4) De la sesión: `statistics.median` imprimía «18» o «15.0» según la paridad de N; un guion nuevo que componga una ruta con un valor leído que nombre `corpus` lo niega la guardia, y se comparó por trozos. |
+| `trabajo/diagnostico-premisa` | Una pasada, opus, con los seis alcances del encargo (DIAGNOSTICO-PREMISA.md, «Informe del revisor»; lo hecho, en «Lo que se hizo con los hallazgos del revisor»): eje (a) 0 bloquea, 1 importa, 0 menor; eje (b) 1 bloquea, 4 importa, 2 menor. a1 (el respaldo M1 sin el sello del bróker en el retroceso), b1 (§2-§4 sin sus tablas), b2 (§6 sin el texto de las líneas), b3 (sin la tabla del encargo punto por punto), b4 (el retroceso sobre las mismas operaciones, sin declarar), b5 (el número del ADR en el artefacto antes del pre-registro, sin declarar), b6 (comandos incompletos) y b7 (la salida del test de humo), arreglados o declarados. | <del consultor, tras la PARADA final> | (1) El encargo dictaba en la fila de HOLDOUT «la salida y su instante»; la unión lee además `dateStart`, `side`, `entryPrice` e `initialSL` (el auditor, fila 8): la fila nombra las seis. (2) La frase del encargo declaraba «el consultor y Aleks vieron»; Aleks no leyó nada: gana lo preguntado. (3) Las líneas del cierre de un encargo no contaban con el b2 que la orden de cierre anterior dejó condicionado a reutilizar `puente.py`, ni con su tamaño: no cabe. (4) De la sesión: `statistics.median` imprimía «18» o «15.0» según la paridad de N; un guion nuevo que componga una ruta con un valor leído que nombre `corpus` lo niega la guardia, y se comparó por trozos. |
 
-## El encargo frente a lo hecho
+## El encargo, punto por punto
 
-- **Rama y base:** comprobadas antes de tocar nada (apertura). Tag `stable/F39n-diagnostico-premisa`,
-  libre. REAP=1 puesta.
-- **La fila del día, lo primero:** escrita y estadiada a las 18:12, antes del primer `make check`;
-  la pregunta a Aleks, con su respuesta tal cual; los recuentos, 0 en los cuatro meses (§0.3 h).
-- **Los dos ficheros:** sha256 de los dos, iguales; leídos enteros; sin fechas reservadas.
-- **Abrir:** contrato con tramo R4, riesgo medio, lista blanca del encargo; ADR-0100 en
-  `ids-inexistentes` hasta el pre-registro; hasta él, «el ADR de la premisa» en el artefacto, la fila
-  y PROJECT_STATE.
-- **Fase P:** commit propio (7b97ca49), el primero tras la apertura, antes de la fase 0 y del auditor
-  (§0.2).
-- **Fase 0:** a-i con `fichero:línea`, auditor después de la fase P; cuadra (§0.3-§0.7).
-- **Fase 1:** README en su commit (3877edf5) antes de correr; guion con `control` y `todo`; test de
-  humo en los dos sentidos (§1); ruff y mypy limpios.
-- **Fases 2 y 3:** `control.txt` con D2 a y b; D8; `premisa.txt` y `lectura.txt` (§1-§5).
-- **Líneas del cierre:** preparadas y medidas (§6); la F del encargo cabe (24.807); PARADA en el b2.
-- **No se tocó** `src/`, `knowledge/`, `scripts/`, el Makefile ni `.claude/`; ningún yaml del plan
-  salvo el nuevo; ninguna ambigüedad.
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Base: main 76ca9996, tag sobre su merge, CI de main en verde, ninguna otra rama | Hecho | «Base comprobada»; run 45490418025 `success` sobre 76ca9996 |
+| 2 | Tag `stable/F39n-diagnostico-premisa` libre | Hecho | `git tag -l` y `git ls-remote --tags`, vacíos |
+| 3 | Opus 5.5, esfuerzo alto; REAP=1 | Hecho | «Base comprobada» (`echo`) |
+| 4 | La fila del día, lo primero, por recuento, antes del primer `make check` | Hecho | §0.3 h: estadiada a las 18:12; SELLO cfae88a2 = árbol de f7b4285e |
+| 5 | Preguntar a Aleks qué vio y escribirlo con sus palabras | Hecho | Fila del 2026-11-24, punto (9); «Desviaciones de la apertura» |
+| 6 | La exposición del 2026-11-24, literal, comprobada por recuento | Hecho | Punto (9); 0 reservados en enero, abril y agosto |
+| 7 | Los dos ficheros del Escritorio, con su sha, leídos enteros | Hecho | «Los dos ficheros del Escritorio» |
+| 8 | Contrato: R4, riesgo medio, lista blanca y protegidos | Hecho | `contrato.yaml`; `contrato_rama.py` en verde en cada commit |
+| 9 | El encargo tal cual, con ADR-0100 en `ids-inexistentes` | Hecho | f7b4285e; sale en 7b97ca49 |
+| 10 | Hasta el pre-registro, el id solo en el encargo | Parcial | b5: el nombre del fichero del Escritorio («ADR-0100-borrador.md») en la tabla del artefacto de la apertura; «Desviaciones» |
+| 11 | Fase P 1-2: ADR y yaml byte a byte, LF | Hecho | §0.2 (sha y `git ls-files --eol`) |
+| 12 | Fase P 3: el test del yaml, con un test que rompe | Hecho | §0.2; 6 passed; dos tests de rotura |
+| 13 | Fase P 4: fila del índice, tres recuadros, dos frases con sus diffs | Hecho | §0.2 |
+| 14 | Fase P 5: state check, ruff, mypy, `make check`; sha y hora frente a la primera corrida | Hecho | 7b97ca49 a las 19:26:05; primera corrida a las 20:48:24 (§1) |
+| 15 | La fase P antes de la fase-cero y de su auditor | Hecho | El auditor se lanzó tras 7b97ca49 |
+| 16 | Fase 0 a-i, con `fichero:línea`, en su commit | Hecho | §0.3; 7671148a |
+| 17 | PARADA condicional: seguir si cuadra, parar solo en lo que no | Hecho | §0.7; decisiones 0 y 1 |
+| 18 | README en su commit antes de correr | Hecho | 3877edf5 (20:47:04), solo el README |
+| 19 | `premisa.py` con `control` y `todo`, el entorno una vez | Hecho | `premisa.py`, `modo_control` y `modo_todo` |
+| 20 | Test de humo en los dos sentidos, con su salida pegada | Hecho | §1 (salida pegada; cuatro mutantes) |
+| 21 | ruff format, ruff check y mypy sobre los guiones | Hecho | «Comandos ejecutados» |
+| 22 | `make check` en verde antes de cada commit | Hecho | Las líneas `SELLO` de cada commit |
+| 23 | D1 | Hecho | `premisa.py` carga `puente.py` por su ruta; ninguna pieza cambiada (revisor, b22) |
+| 24 | D2 a, b y c | Hecho | §1 |
+| 25 | D3 | Hecho | §0.3 b-c; `verificar_libros` y `cargar_registro_del_trader` |
+| 26 | D4 | Hecho | §2 |
+| 27 | D5 | Hecho | §4 (abril y agosto con su propia mediana, como ADR-0100 §6) |
+| 28 | D6 | Hecho de otra forma | Sobre las ganadoras de las mismas operaciones de §2 (b4); el respaldo, con el sello del bróker tras a1 |
+| 29 | D7 | Hecho | `premisa.txt`: solo recuentos y medias |
+| 30 | D8 | Hecho | §1 (dos veces, tras cada arreglo) |
+| 31 | D9 | Hecho | §1: unos 90 s por corrida; picos de 592 y 617 MiB |
+| 32 | D10 y D11 | Hecho | Nada de `src/`, `tests/` (salvo el test del yaml) ni `knowledge/`; dos arreglos de programación declarados |
+| 33 | Fase 2: `control.txt` y los diffs | Hecho | §1 |
+| 34 | Fase 3: `premisa.txt`, `lectura.txt`, las lecturas literales | Hecho | §5 |
+| 35 | Informe: apertura, §0 a §7 con sus tablas | Hecho | §0 a §7 |
+| 36 | Ninguna recomendación de spec, motor ni gestión del dinero | Hecho | Solo «Recomiendo» en las decisiones del cierre |
+| 37 | Las líneas del cierre, preparadas en §6 y medidas sobre una copia | Hecho | §6; `simular-cierre.txt` |
+| 38 | PROJECT_STATE ≤ 24.970 con las líneas | Hecho, con PARADA | 24.807 con la F del encargo; la línea del b2 no cabe (decisión 1) |
+| 39 | Qué no cambia | Hecho | `git diff --name-status main...HEAD`: nada fuera del contrato |
+| 40 | Revisor opus con los seis alcances, pegado al final | Hecho | «Informe del revisor» |
+| 41 | Push como `fix/`, CI de Linux, runs en el informe | Hecho | «La CI de Linux» |
+| 42 | «Rama lista para revisión, NO cerrada.» | Hecho | Al final |
 
 ## Desviaciones
 
-- La fila de HOLDOUT nombra seis columnas leídas, no dos (auditor, fila 8).
-- El arreglo de formato de la mediana tras la primera corrida de `todo` (D11), con las dos corridas
-  repetidas.
-- `simular_cierre.py` y `simular-cierre.txt`, no previstos, añadidos al README tras las corridas.
+- **La fila de HOLDOUT nombra seis columnas leídas, no dos** (auditor, fila 8): las de la unión y la
+  salida.
+- **b5 (revisor): el número del ADR antes del pre-registro.** En el commit de apertura, la tabla del
+  artefacto nombraba el fichero del Escritorio, `ADR-0100-borrador.md`, con su número; el encargo
+  pedía que hasta el pre-registro el id solo estuviera en el encargo. `knowledge validate` pasó (el
+  bloque `ids-inexistentes` lo declaraba). Se dice aquí; el commit de apertura no se reescribe.
+- **b4 (revisor): el retroceso sobre las mismas operaciones.** D6 dice «las ganadoras del registro»;
+  el guion las toma de las mismas operaciones de §2 (las que `todo_junto` abre), porque ADR-0100 §5
+  pone toda la sección «sobre las mismas operaciones en las dos series». Las 8 que deja fuera el tope
+  no entran en el retroceso.
+- **Dos arreglos de programación (D11):** la mediana en Decimal (formato; ninguna cifra cambió) y el
+  sello del respaldo M1 como el bróker (a1; ninguna cifra cambió). Con las corridas repetidas y D8
+  después de cada uno.
+- **`simular_cierre.py` y `simular-cierre.txt`**, no previstos, añadidos al README tras las corridas;
+  `simular_cierre.py` lee el PROJECT_STATE de `main` de un fichero volcado fuera del repo (un guion
+  nuevo que llamara a `git` podía negarlo la guardia).
+- **El retroceso cuenta aparte lo que cae por debajo de 0** («por_debajo», el precio no llegó a la
+  entrada menos el desfase): queda fuera de los cuatro tramos del yaml, que empiezan en 0.
 - Las dos decisiones del cierre (abajo).
 
 ## Comandos ejecutados (2026-11-24)
 
+La carpeta de trabajo de la sesión es
+`C:/Users/USER/AppData/Local/Temp/claude/d82effbe86c6c5d6/9410a1ab-0b58-43e2-af47-8ff37567416b/scratchpad`
+(fuera del repo). Las horas de los `make check` son las de su commit, que va justo después, con su
+duración; el log no guarda la de arranque.
+
 ```
-18:12  git add (los seis ficheros de la apertura); state check; contrato_rama.py; knowledge validate
-~18:15 make check > make-check.log 2>&1   (27:29, 3618 passed; SELLO cfae88a2)
-18:46  git commit -F ...msg-apertura.txt   (f7b4285e)
-~18:57 make check > make-check.log 2>&1   (28:31, 3624 passed; SELLO 80a09d47)
-19:26  git commit -F ...msg-faseP.txt      (7b97ca49)
-~19:47 make check > make-check.log 2>&1   (28:26; SELLO 561e37c2)
-20:15  git commit -F ...msg-fase0.txt      (7671148a)
-~20:19 make check > make-check.log 2>&1   (26:53; SELLO 8b30c0be)
-20:47  git commit -F ...msg-readme.txt     (3877edf5)
-20:47  uv run pytest docs/validation/anexos/DIAGNOSTICO-PREMISA/test_premisa.py -p no:cacheprovider -v   (10 passed)
-20:48  uv run pytest <carpeta de trabajo>/mut_{tramo,lectura5,lote_fijo,retroceso}/test_premisa.py -p no:cacheprovider -q   (1 failed cada uno)
-20:48:24  uv run python scripts/pico_memoria.py ejecutar -- uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/premisa.py control docs/validation/anexos/DIAGNOSTICO-PREMISA   (592 MiB)
-20:50  tail -n +8 docs/validation/anexos/PUENTE-TECHO/base.txt | diff - docs/validation/anexos/DIAGNOSTICO-PREMISA/base-repetida.txt   (vacío)
-20:50  tail -n +8 docs/validation/anexos/PUENTE-TECHO/todo_junto.txt | diff - docs/validation/anexos/DIAGNOSTICO-PREMISA/todo_junto-repetida.txt   (vacío)
-20:50:14  uv run python scripts/pico_memoria.py ejecutar -- uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/premisa.py todo docs/validation/anexos/DIAGNOSTICO-PREMISA   (616 MiB)
-20:52:57  (tras el arreglo de la mediana) premisa.py control, igual   (592 MiB; control.txt igual con cmp; los dos diff, vacíos)
-20:54:31  premisa.py todo, igual   (617 MiB; diff con la anterior: solo las dos medianas)
-20:56:22  uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/premisa.py todo <carpeta de trabajo>/d8   (cmp de premisa.txt y lectura.txt: iguales)
-~21:10 git show main:PROJECT_STATE.md > <carpeta de trabajo>/ps-main.md
-~21:12 uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/simular_cierre.py <carpeta de trabajo>/ps-main.md > docs/validation/anexos/DIAGNOSTICO-PREMISA/simular-cierre.txt
+18:12     git add docs/encargos/trabajo-diagnostico-premisa.md contrato.yaml PROJECT_STATE.md docs/state/HISTORIA.md docs/validation/DIAGNOSTICO-PREMISA.md docs/validation/HOLDOUT-EXPOSICIONES.md
+18:13     uv run botsito state check ; uv run python scripts/contrato_rama.py ; uv run botsito knowledge validate > <carpeta de trabajo>/validate-apertura.log 2>&1
+          make check > make-check.log 2>&1   (27:29, 3618 passed; SELLO cfae88a2)
+18:46:54  git commit -F <carpeta de trabajo>/msg-apertura.txt   (f7b4285e)
+~19:00    cp de los dos ficheros del Escritorio a docs/adr/0100-la-premisa-se-mide-con-costes.md y docs/plan/PREMISA-COSTES.yaml ; sha256sum de los dos
+          uv run pytest tests/unit/test_premisa_costes.py -p no:cacheprovider -q   (6 passed)
+          uv run ruff format / ruff check / mypy tests/unit/test_premisa_costes.py   (limpios)
+          git show :docs/plan/PREMISA-COSTES.yaml | sha256sum ; git ls-files --eol (los dos)
+          uv run botsito state check ; uv run python scripts/contrato_rama.py ; uv run botsito knowledge validate > <carpeta de trabajo>/validate-faseP.log 2>&1
+          make check > make-check.log 2>&1   (28:31, 3624 passed; SELLO 80a09d47)
+19:26:05  git commit -F <carpeta de trabajo>/msg-faseP.txt   (7b97ca49)
+          uv run python <carpeta de trabajo>/recuento_dev.py "C:/Users/USER/Desktop/Bot v3"   (76 días, 198 operaciones)
+          uv run python scripts/contrato_rama.py ; uv run botsito knowledge validate > <carpeta de trabajo>/validate-fase0.log 2>&1
+          make check > make-check.log 2>&1   (28:26, 3624 passed; SELLO 561e37c2)
+20:15:59  git commit -F <carpeta de trabajo>/msg-fase0.txt   (7671148a)
+          make check > make-check.log 2>&1   (26:53, 3624 passed; SELLO 8b30c0be)
+20:47:04  git commit -F <carpeta de trabajo>/msg-readme.txt   (3877edf5)
+20:47     uv run ruff format / ruff check / mypy docs/validation/anexos/DIAGNOSTICO-PREMISA/premisa.py docs/validation/anexos/DIAGNOSTICO-PREMISA/test_premisa.py   (limpios)
+20:47     uv run pytest docs/validation/anexos/DIAGNOSTICO-PREMISA/test_premisa.py -p no:cacheprovider -v   (10 passed)
+20:48     uv run python -B <carpeta de trabajo>/hacer_mutantes.py ; uv run pytest <carpeta de trabajo>/mut_tramo/test_premisa.py -p no:cacheprovider -q (y mut_lectura5, mut_lote_fijo, mut_retroceso, uno a uno)   (1 failed, 9 passed, cada uno)
+20:48:24  uv run python scripts/pico_memoria.py ejecutar -- uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/premisa.py control docs/validation/anexos/DIAGNOSTICO-PREMISA   (592 MiB; exit 0)
+20:50     tail -n +8 docs/validation/anexos/PUENTE-TECHO/base.txt | diff - docs/validation/anexos/DIAGNOSTICO-PREMISA/base-repetida.txt   (vacío)
+20:50     tail -n +8 docs/validation/anexos/PUENTE-TECHO/todo_junto.txt | diff - docs/validation/anexos/DIAGNOSTICO-PREMISA/todo_junto-repetida.txt   (vacío)
+20:50:14  uv run python scripts/pico_memoria.py ejecutar -- uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/premisa.py todo docs/validation/anexos/DIAGNOSTICO-PREMISA   (616 MiB; exit 0)
+20:52:57  (tras la mediana en Decimal) el mismo control   (592 MiB; cmp de control.txt con la anterior: igual; los dos diff, vacíos)
+20:54:31  el mismo todo   (617 MiB; diff con la anterior: solo las dos líneas de la mediana)
+20:56:22  uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/premisa.py todo <carpeta de trabajo>/d8 ; cmp de premisa.txt y lectura.txt   (iguales)
+~21:10    git show main:PROJECT_STATE.md > <carpeta de trabajo>/ps-main.md
+~21:12    uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/simular_cierre.py <carpeta de trabajo>/ps-main.md > docs/validation/anexos/DIAGNOSTICO-PREMISA/simular-cierre.txt
+          uv run python scripts/contrato_rama.py ; uv run botsito knowledge validate > <carpeta de trabajo>/validate-guion.log 2>&1
+          make check > make-check.log 2>&1   (30:13, 3624 passed; SELLO c4d1f453)
+22:00:07  git commit -F <carpeta de trabajo>/msg-guion.txt   (71ddfa7f)
+22:00     git push origin trabajo/diagnostico-premisa:refs/heads/fix/diagnostico-premisa ; gh run list --branch fix/diagnostico-premisa --limit 3   (run 45536934319)
+~22:11    gh run view 45536934319 --json ... ; gh run view 45536934319 --log-failed   (solo state check por el nombre fix/)
+22:12:17  (tras el sello del respaldo, a1) el mismo control   (592 MiB; control.txt igual; los dos diff, vacíos)
+22:13:58  el mismo todo   (617 MiB; diff con la anterior: vacío)
+22:15:38  uv run python -B docs/validation/anexos/DIAGNOSTICO-PREMISA/premisa.py todo <carpeta de trabajo>/d8b ; cmp de premisa.txt y lectura.txt   (iguales)
 ```
 
 ## Exposiciones de cada día
@@ -444,8 +616,193 @@ documentos. Ningún libro de otro mes, imagen, fotograma, transcripción ni crud
    (c) no entra. Recomiendo (a): deja escrito el pendiente donde lo dejó F39m sin tocar el tope. Coste
    de (b): un recorte que esta rama no puede elegir (encargo: no se recorta nada por cuenta propia).
 
+## La CI de Linux
+
+- `fix/diagnostico-premisa` sobre 71ddfa7f (el commit del guion y las medidas): **run 45536934319**,
+  `failure` en «Run make check» por un solo test, `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`
+  («PROJECT_STATE declara la rama 'trabajo/diagnostico-premisa'; la rama actual es
+  'fix/diagnostico-premisa'»): 1 failed, 3527 passed, 102 skipped. Es el único fallo aceptado.
+- El run del último commit (el de este informe con el revisor) va en el mensaje de entrega: escribirlo
+  aquí exigiría otro commit y otro run.
+
+## Informe del revisor
+
+Pegado tal cual (subagente `revisor`, opus, sobre HEAD 71ddfa7f; no cita ningún tramo no citable):
+
+> ## Informe del revisor · trabajo/diagnostico-premisa · 2026-11-24
+>
+> He revisado HEAD 71ddfa7f contra la base 76ca9996. La rama no está lista: hay un hallazgo que bloquea en el eje (b). Los seis alcances del encargo se sostienen. El bloqueo y los avisos son de cómo está escrito el informe, no de las medidas.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 0 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | El informe dice que el retroceso de D6 lee el respaldo M1 «como el bróker», y en el último minuto del tramo no es así. El bróker descarta la vela M1 de un minuto sin ticks si su sello (el último milisegundo de la vela) cae después de `hasta`. `extremo_en_contra` usa la vela de todo minuto entre `desde//MS` y `hasta//MS` sin mirar el sello. Así, en el minuto de `dateEnd`, si no tiene ticks, entra la vela entera, hasta 59 s después de la salida. Afecta como mucho a las ganadoras con algún minuto por el respaldo, que son 1 por bloque. No está declarado. | `src/botsito/engine/llenado.py:335` (`if vela is None or _sello_ms(vela) <= desde_ms or _sello_ms(vela) > hasta_ms: continue`) y `:126-131` (`_sello_ms`) frente a `premisa.py:243-262`. `DIAGNOSTICO-PREMISA.md:207-212` («es lo que hace el guion»). `premisa.txt:56` y `:60` («con algun minuto por el respaldo M1: 1») |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `uv run python scripts/contrato_rama.py` dio, tal cual:
+>   - `CONTRATO: 25 ficheros dentro del contrato de trabajo/diagnostico-premisa (riesgo medio, artefacto docs/validation/DIAGNOSTICO-PREMISA.md, tramo 'R4', 4 comprobaciones para el revisor)`
+>   - `G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-24 para trabajo/diagnostico-premisa, estadiada` (exit 0).
+> - **Comprobaciones del contrato.**
+>   - `uv run botsito state check`: `OK: rama 'trabajo/diagnostico-premisa' ...` (exit 0).
+>   - `make check`: no lo ejecuté. `make-check.log:104` da `3624 passed, 6 xfailed ... (0:30:13)`, `:128` da `SELLO ... c4d1f4536a543b9f3556d55b4b23a4a5688a7535` y `:130` da `PICO DE MEMORIA ... 319 MiB`. Ese árbol es `git rev-parse HEAD^{tree}` (c4d1f453).
+>   - Los sellos de los commits anteriores también casan con su árbol: f7b4285e con cfae88a2, 7b97ca49 con 80a09d47, 7671148a con 561e37c2 y 3877edf5 con 8b30c0be.
+>   - `knowledge validate`: no lo ejecuté (escribe su log).
+> - **Trailers `Fuente:`.** Ningún commit toca `knowledge/spec` ni `knowledge/cases`: el `git log ... -- knowledge/spec knowledge/cases` sale vacío.
+> - **Holdout y material.**
+>   - Nada toca `knowledge/`.
+>   - Hay fila del 2026-11-24 en HOLDOUT-EXPOSICIONES con los cuatro libros, las seis columnas y los ticks y el M1 de los días dev.
+>   - No se abrió ningún fotograma ni imagen.
+>   - La captura del panel de cuenta es un agregado. Está declarada el mismo día con sus cifras, y ninguna se usa (ADR-0021 §2).
+> - **Regímenes de cambio.**
+>   - Evidencia, feedback, manifests, transcripciones, fotogramas y `libros.yaml`: sin cambios.
+>   - HISTORIA y HOLDOUT: solo líneas añadidas (`grep -c "^-[^-]"` = 0).
+>   - HISTORIA: `# Archivo 82` añadido al final.
+> - **Ambigüedades.** Ninguna tocada.
+> - **ADR.** El `## Estado` de 0100 empieza por `ACTIVE`. Los recuadros de 0092, 0098 y 0099 son solo líneas `+`, en el sitio pedido y con el texto literal del encargo.
+> - **Informes cerrados.** La rama no modifica ningún `docs/validation/*.md` que ya estuviera en main, salvo la fila añadida a HOLDOUT.
+> - **Guardias de `cita`.** No hay sitios nuevos con `cita`.
+> - **Cifras.** Nada en `src/`. El guion no lleva cifras de los cuatro yaml. Las constantes `CONTROL_ANOTADA_*` (`premisa.py:109-112`) son del control D2 b, sacadas de VIABILIDAD-COMISION, y están comentadas.
+> - **Citas del informe** que contrasté con su fuente:
+>   - `puente.py:72-80`: carga techo_parejas por su ruta.
+>   - `puente.py:738-751`: el id `t{k}` en la línea 750.
+>   - `llenado.py:340-342`: BID en una larga y BID + spread en una corta; el sello de la 335 no lo cita (a1).
+>   - `libro.py:193-195` frente a `:203-204`.
+>   - `VIABILIDAD-TRADER.md:35`: 3 y 5 filas sin `initialSL`.
+>   - `VIABILIDAD-COMISION.md:110`: anotada, 77, +0,98.
+>   - `VIABILIDAD-COMISION.md:115` y `:120`.
+> - **Evidencia nueva.** Ninguna.
+> - **Una precisión sobre el lector, sin gravedad (es código de main).** `libro.py:180` (`_fila_como_dict`) parsea en memoria todas las celdas de cada fila antes del filtro por día de `:193-195`. Al guion solo le llegan las filas de los días pedidos. La frase del informe («antes de copiar ninguna columna») es exacta.
+>
+> ### Eje (b) · Encargo
+> Resumen: 1 bloquea, 4 importa, 2 menor. Requisitos: 34 hechos, 5 parciales, 1 no hecho; además 1 hecho de otra forma y 1 en curso (este revisor).
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Base: main = 76ca9996, tag sobre su merge, CI de main, ninguna otra rama | Hecho | `git merge-base main HEAD` = 76ca9996. `stable/F39m-puente-techo^{commit}` = `main^1` = 7a3087e9. La CI la declara el informe en `DIAGNOSTICO-PREMISA.md:20-23` (no la verifiqué). |
+> | 2 | Tag F39n libre | Hecho | `git tag -l "stable/F39n*"` vacío |
+> | 3 | Modelo y REAP=1 | Hecho | `DIAGNOSTICO-PREMISA.md:26-28`, declarado |
+> | 4 | Fila HOLDOUT, lo primero, por recuento, antes del primer make check | Hecho | Fila del 2026-11-24 de la rama. El SELLO cfae88a2 = árbol de f7b4285e (la fila iba dentro) |
+> | 5 | Preguntar a Aleks y escribir su respuesta con sus palabras | Hecho | Punto (9) de la fila («no lei nada la verdad, solo pasé el enlace»). Desviación declarada en `DIAGNOSTICO-PREMISA.md:45-52` |
+> | 6 | La frase de la exposición, literal | Hecho | Punto (9) de la fila, igual a `encargo:15` |
+> | 7 | Ficheros del Escritorio con sus sha | Hecho | sha256 medidos: d598776b… (ADR) y 1294bdb1… (yaml), en el Escritorio, en el repo y en los blobs de 7b97ca49 y de HEAD |
+> | 8 | Contrato: R4, medio, lista blanca | Hecho | `contrato.yaml:2-20` |
+> | 9 | ADR-0100 en `ids-inexistentes` y fuera en el pre-registro | Hecho | `git diff f7b4285e 7b97ca49 -- docs/encargos/...`: el bloque sale |
+> | 10 | Hasta el pre-registro, «el ADR de la premisa», sin el número | Parcial | b5 |
+> | 11 | Fase P 1-2: ADR y yaml byte a byte, con LF | Hecho | sha arriba. `git ls-files --eol`: `i/lf w/lf` |
+> | 12 | Fase P 3: test del yaml con todo lo pedido y uno que rompe | Hecho | `tests/unit/test_premisa_costes.py:151-204`. `uv run pytest ... -q`: 6 pasan. El de `margen_r` a 0.25 (`:182-190`) y el de las comas (`:193-204`) rompen a propósito |
+> | 13 | Fase P 4: fila del índice y tres recuadros | Hecho | Diffs de `docs/adr/README.md`, 0092, 0098 y 0099 |
+> | 14 | Fase P 4: las dos frases, con sus diffs en el informe | Hecho | Diff de `CLAUDE.md` y de `MIRAR-EL-MATERIAL.md`. `DIAGNOSTICO-PREMISA.md:117-138` |
+> | 15 | Fase P 5: sha y hora del pre-registro frente a la primera corrida | Hecho | `:82-87` y `:333`. 7b97ca49 a las 19:26:05; `premisa.py` no está en los árboles de 7b97ca49 ni de 3877edf5 (`git ls-tree`) |
+> | 16 | Fase 0 a-i con fichero:línea, en su commit | Hecho | 7671148a; `§0.3` |
+> | 17 | PARADA condicional | Hecho | `§0.7`; decisiones 0 y 1 (`:430-445`) |
+> | 18 | README en su commit antes de correr | Hecho | 3877edf5 a las 20:47:04, con el README solo |
+> | 19 | `premisa.py` con modos `control` y `todo` | Hecho | `premisa.py:721-820` |
+> | 20 | Test de humo en los dos sentidos, sobre la lista del encargo | Hecho | `test_premisa.py:49-201`: fronteras +0,2, −0,2, 0,20 y 1,0 a los dos lados. `uv run pytest ... -q`: 10 pasan |
+> | 21 | ruff y mypy | Hecho | `ruff check --no-cache` («All checks passed!») y `ruff format --check --no-cache` («5 files already formatted»). mypy, sin comprobar |
+> | 22 | D1: puente.py por su ruta, sin cambiar piezas, los cuatro yaml | Hecho | `premisa.py:64-72`, `:428-431` y `:462-472`. Ninguna asignación ni `setattr` sobre `pt.`/`tp.` (Grep). `git diff --stat stable/F39m-puente-techo HEAD` sobre los anexos de PUENTE-TECHO y RC-3: vacío |
+> | 23 | D2 a, b y c | Hecho | Mis dos `tail -n +8 … \| diff - …`: exit 0, vacíos. `control.txt:3-9` (77; +0.984). D2 c en `test_premisa.py:98-100` |
+> | 24 | D3: rutas literales verificadas por sha, sin componer rutas | Hecho | `premisa.py:80-98` y `:338-356` |
+> | 25 | D4 | Hecho | `premisa.txt:11-49`. Cuadra: 52+33+67+38 = 190; fuera por el tope 2+2+0+4 = 8; brechas +0.502 y +0.271, diferencia −0.231 |
+> | 26 | D5 | Hecho | `premisa.txt:62-83`. `remuestreo_por_dias`, la misma función que `techo_parejas.py:236-246`. Lectura no_concluyente: el percentil 5 es −0.069 |
+> | 27 | D6 | Hecho de otra forma | b4 y a1 |
+> | 28 | D7: nada por operación | Hecho | `premisa.txt` entero: solo recuentos y medias por mes, por bloque y por variante |
+> | 29 | D8 | Hecho | Declarado en `:342-343` (no verificable) |
+> | 30 | D9 | Hecho | `:333` y `:337`: 90 s, 592 y 616 MiB |
+> | 31 | Fase 2: `control.txt` y los diffs en el informe | Hecho | `:334-336` y `:413-414` |
+> | 32 | Fase 3: `premisa.txt`, `lectura.txt` y las lecturas literales en el informe | Hecho | `:354-355`, iguales a `lectura.txt:2-3`. Las escribe el guion: `premisa.py:589-596`, `:699-701` y `:794-802` |
+> | 33 | Informe §2, §3 y §4 con sus tablas | No hecho | b1 |
+> | 34 | Informe §6: las líneas del cierre preparadas y medidas sobre una copia | Parcial | b2 |
+> | 35 | Informe §7: la fila de ERRORES con cuatro columnas | Hecho | `:368` |
+> | 36 | El encargo frente a lo hecho, punto por punto, con evidencia | Parcial | b3 |
+> | 37 | Comandos literales con su hora | Parcial | b6 |
+> | 38 | Exposiciones de cada día | Hecho | `:423-428` |
+> | 39 | Ninguna recomendación de spec, motor ni gestión del dinero | Hecho | Grep: solo «Recomiendo» en `:435` y `:444`, sobre las líneas del cierre |
+> | 40 | Qué no cambia | Hecho | `git diff --name-status main...HEAD`: nada en `src/`, `knowledge/`, `scripts/`, Makefile, `.claude/`, HOJA-DE-RUTA ni los yaml del plan. La Next Action, intacta |
+> | 41 | Revisor | En curso | Este informe |
+> | 42 | Push como `fix/`, CI, números de run en el informe y la frase final | Parcial | La ref local `origin/fix/diagnostico-premisa` = 71ddfa7f = HEAD. El informe (`:449`) aún dice que falta el push y no trae ningún run |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | bloquea | Faltan en el informe el §2, el §3 y el §4 que pide el encargo: tabla por mes y por bloque con la brecha y su lectura, recuentos del retroceso por tramo y por bloque, y el techo con lote fijo de las dos variantes en los dos conjuntos. El informe solo remite a `premisa.txt` («tal cual») y no dice por qué lo hace de otra forma. | `encargo:102` frente a `DIAGNOSTICO-PREMISA.md:345-350` |
+> | b2 | importa | El §6 no trae el texto de las líneas del cierre: la F, R4.7, R4.9, R4.10 y la línea del b2. Da sus bytes y remite al guion; el texto solo está en `simular_cierre.py`. | `encargo:105` («prepáralas en §6»). `DIAGNOSTICO-PREMISA.md:357-364`. El texto, en `simular_cierre.py:65-72` y `:105-130` |
+> | b3 | importa | No hay tabla «El encargo, punto por punto» (la de la skill `entregar-rama`): ni requisitos numerados, ni estados Hecho/Parcial, ni evidencia por punto. Hay una lista de viñetas que remite a secciones. | `DIAGNOSTICO-PREMISA.md:370-388`. `.claude/skills/entregar-rama/SKILL.md:46-50` y `:107` |
+> | b4 | importa | El retroceso de D6 se mide solo sobre las ganadoras de las operaciones que `todo_junto` abre (190), no sobre todas las ganadoras del registro (198 operaciones con fila). La lectura es defendible por el marco de ADR-0100 §5 («sobre las mismas operaciones»), pero D6 dice «las ganadoras del registro» y el informe no declara la elección. | `premisa.py:622` (`ganadoras = [o for o, _ in parejas ...]`). `encargo:49`. `premisa.txt:54` (33 = las ganadoras del registro emparejado de `:40`) |
+> | b5 | importa | En el commit de apertura, el artefacto ya llevaba el número del ADR (el nombre del fichero del Escritorio), y el encargo decía que hasta el pre-registro el id solo podía estar en el encargo. `knowledge validate` pasó por el bloque `ids-inexistentes`, pero el informe no lo declara. | `git grep -n "0100" f7b4285e -- docs/validation/DIAGNOSTICO-PREMISA.md` da `:34`: `` `ADR-0100-borrador.md` ``. `encargo:24` |
+> | b6 | menor | «Comandos ejecutados» está incompleto y lleva marcadores en vez de literales. Falta el `make check` del último commit (SELLO c4d1f453, 3624 passed, 30:13), y faltan ruff, mypy, `pytest` de `test_premisa_costes.py`, `state check` y `contrato_rama.py` de cada commit. Las rutas de los mutantes van como `<carpeta de trabajo>` y las horas como `~`. | `DIAGNOSTICO-PREMISA.md:400-421`. `make-check.log:104` y `:128` |
+> | b7 | menor | El encargo pide pegar la salida del test de humo; el informe da solo «10 passed». | `encargo:93`. `DIAGNOSTICO-PREMISA.md:329` |
+>
+> Alcances del encargo, uno a uno:
+> 1. **El pre-registro va antes de la primera corrida.** Confirmado: los sha son los de Aleks; 7b97ca49 (19:26:05) es el primer commit tras la apertura; `premisa.py` no existe en los árboles de 7b97ca49 ni de 3877edf5.
+> 2. **Los controles de D2 pasaron de verdad.** Confirmado: los dos diffs, vacíos, y `premisa.py` usa las funciones de `puente.py` sin cambiar ninguna pieza.
+> 3. **El guion no lee nada que no sea de un día dev.** Confirmado:
+>    - Los días salen de `arnes.dias_de_construccion`, con ocultos vetados (`arnes.py:149-161`).
+>    - El lector solo devuelve filas de esos días.
+>    - El retroceso solo mira el `MercadoDia` del día dev (`simulacion.py:56-79`, la ventana del día).
+>    - No hay ningún agregado del libro: los recuentos de fuera son de filas de días dev.
+>    - No imprime nada por operación.
+> 4. **Las lecturas las escribe el guion desde el yaml.** Confirmado: `orden` y `margen_r` salen del yaml, y los umbrales, de criterio y META. El informe no las matiza.
+> 5. **Los dos tests rompen donde deben.** Confirmado: 6 y 10 pasan; los dos de rotura del yaml están, y el de humo prueba los dos lados de cada frontera.
+> 6. **La fila de HOLDOUT lleva lo leído y la exposición.** Confirmado: lleva lo leído, la frase literal, la respuesta de Aleks y el añadido de las 18:26.
+>
+> ### Lo que no pude comprobar
+> - La hora de la primera corrida (20:48:24) y las de D8: no hay huella en el repo, solo lo que dice el informe.
+> - Los cuatro mutantes del test de humo: viven en la carpeta de trabajo, fuera del repo. Por lectura, cada mutación descrita la cazaría su test.
+> - El recuento de `casos_reservados` y `casos_ocultos` (34; 0 en los cuatro meses): exige ejecutar código sobre `knowledge/cases/`.
+> - Que el añadido de las 18:26 sea «tal cual» y que la respuesta de Aleks sea literal: los mensajes no están en el repo.
+> - El run de CI 45490418025 de main y la CI de `fix/diagnostico-premisa`: no consulté la red.
+> - Que la guardia dejó leer los cuatro libros, y la hora del estadiado de la fila (18:12): solo los declara el informe.
+> - mypy (escribe su caché), `knowledge validate` (escribe su log) y `make check` (escribe): no los ejecuté. Para `make check` vale `make-check.log`.
+> - Tras mis dos `pytest` aparecen `__pycache__/` ignorados en `docs/validation/anexos/DIAGNOSTICO-PREMISA/` y en `tests/unit/`. No sé si ya existían por las corridas de la sesión. `git status --short` no ve nada sin seguir.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %ad %s' --date=iso main..HEAD && git diff --stat main...HEAD && git status --short`
+> 2. `uv run python scripts/contrato_rama.py`
+> 3. `sha256sum` de los dos ficheros del repo y de los dos del Escritorio; `git show 7b97ca49:<ruta> | sha256sum` y `git show HEAD:<ruta> | sha256sum` para los dos
+> 4. `git show --stat --format='%h %ad%n%B' --date=iso f7b4285e 7b97ca49 7671148a 3877edf5 71ddfa7f` (antes, un intento con `for` lo negó la guardia; no lo reescribí para esquivarla, lo cambié por un solo `git show`)
+> 5. `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md CLAUDE.md docs/runbooks/MIRAR-EL-MATERIAL.md docs/adr/README.md docs/adr/0092-* docs/adr/0098-* docs/adr/0099-* PROJECT_STATE.md`
+> 6. `grep -n "^## Variante"` sobre los cuatro ficheros de los bloques; `wc -l` de las salidas
+> 7. `tail -n +8 docs/validation/anexos/PUENTE-TECHO/base.txt | diff - docs/validation/anexos/DIAGNOSTICO-PREMISA/base-repetida.txt` (exit 0)
+> 8. `tail -n +8 docs/validation/anexos/PUENTE-TECHO/todo_junto.txt | diff - docs/validation/anexos/DIAGNOSTICO-PREMISA/todo_junto-repetida.txt` (exit 0)
+> 9. `git diff --stat stable/F39m-puente-techo HEAD -- <anexos PUENTE-TECHO y RC-3, yamls del plan, knowledge, src, scripts, Makefile, .claude, tests>`; `git diff --name-status main...HEAD`
+> 10. `uv run pytest tests/unit/test_premisa_costes.py -p no:cacheprovider -q` (6 pasan)
+> 11. `uv run pytest docs/validation/anexos/DIAGNOSTICO-PREMISA/test_premisa.py -p no:cacheprovider -q` (10 pasan)
+> 12. `git status --short --ignored docs/validation/anexos/DIAGNOSTICO-PREMISA tests/unit`
+> 13. `git grep -n "0100" f7b4285e -- <artefacto, HOLDOUT, PROJECT_STATE, contrato, HISTORIA>`; `git show f7b4285e:docs/encargos/... | head -12`; `git diff --stat 8a10590b main -- tests/`
+> 14. `git log --format='%h%n%B' main..HEAD -- knowledge/spec knowledge/cases`; `git diff ... 0100 | grep "^+## Estado"`; `grep` de SELLO, PICO, passed y failed en `make-check.log`
+> 15. `git rev-parse` del árbol de HEAD y de los otros cuatro commits; `ls -la make-check.log`
+> 16. `git log --format='%h a=%ad c=%cd'`; `git ls-tree -r --name-only` en 7b97ca49 y 3877edf5 sobre el anexo; `git ls-files --eol` del ADR y del yaml
+> 17. `git diff main...HEAD -- HISTORIA HOLDOUT | grep -c "^-[^-]"`; `grep "^+# Archivo"`; `git show main:PROJECT_STATE.md | wc -c`; `wc -c PROJECT_STATE.md`
+> 18. `uv run ruff check --no-cache …`; `uv run ruff format --check --no-cache …`
+> 19. `git tag -l "stable/F39n*"`; `git rev-parse "stable/F39m-puente-techo^{commit}" main main^1`; `git branch -a`; `git rev-parse origin/fix/diagnostico-premisa HEAD`
+> 20. `uv run botsito state check`
+> 21. `git diff f7b4285e 7b97ca49 -- docs/encargos/trabajo-diagnostico-premisa.md`
+> 22. Lecturas con Read y Grep:
+>     - de la rama: el encargo, `contrato.yaml`, `DIAGNOSTICO-PREMISA.md`, `premisa.py`, `premisa.txt`, `control.txt`, `lectura.txt`, `README.md` del anexo, `simular_cierre.py` y `simular-cierre.txt`, los dos tests, `PREMISA-COSTES.yaml` y ADR-0100;
+>     - de main: `libro.py:1-207`, `arnes.py:139-173`, `simulacion.py:40-99`, `cableado.py:720-759`, `llenado.py:93-131` y `:330-345`, `puente.py:68-83`, `:735-774` y `:905-975`, `techo_parejas.py:380-449` (más un Grep de `remuestreo_por_dias`), `VIABILIDAD-COMISION.md:104-121`, `VIABILIDAD-TRADER.md` (Grep de `initialSL`) y la skill `entregar-rama`.
+>
+> No abrí ningún libro, ni `corpus/`, `data/`, `knowledge/cases/` (salvo lo que lee `test_premisa_costes.py`, `criterio_fidelidad.yaml`), imágenes, fotogramas, transcripciones ni crudas. No ejecuté `premisa.py`, `puente.py`, el arnés ni `make check`.
+
+## Lo que se hizo con los hallazgos del revisor
+
+- **a1 (importa), el respaldo M1 sin el sello:** arreglado en `extremo_en_contra` (la vela entra solo
+  si su sello cae en (desde, hasta], como `llenado.py:335`), con dos asserts nuevos en el test de humo
+  (10 passed). Corridas repetidas: `premisa.txt` sin ningún cambio; D8 otra vez, igual (§1).
+- **b1 (bloquea), §2-§4 sin tablas:** escritas, con las cifras de `premisa.txt` (§2, §3 y §4).
+- **b2 (importa), §6 sin el texto de las líneas:** escrito (§6).
+- **b3 (importa), sin la tabla punto por punto:** «El encargo, punto por punto», 42 requisitos.
+- **b4 (importa), el retroceso sobre las mismas operaciones:** declarado («Desviaciones»), con su
+  porqué en ADR-0100 §5; no se cambia la medida (D11: la definición de una medida no se cambia).
+- **b5 (importa), el número del ADR en el artefacto de la apertura:** declarado («Desviaciones»); el
+  commit no se reescribe.
+- **b6 (menor), los comandos:** completados, con la carpeta de trabajo nombrada literal una vez, los
+  `make check` de cada commit con su sello y los del revisor aparte (su informe).
+- **b7 (menor), la salida del test de humo:** pegada (§1).
+
 ## Estado
 
-EN CURSO: medidas hechas (§1-§5) y líneas del cierre preparadas (§6). Falta el revisor, el push como
-`fix/diagnostico-premisa` y la CI. Las dos decisiones de arriba, solo de las líneas del cierre,
-esperan al consultor en la PARADA final.
+**Rama lista para revisión, NO cerrada.** Medidas hechas (§1-§5), líneas del cierre preparadas (§6),
+revisor pasado y sus hallazgos arreglados o declarados, CI de Linux con el único fallo aceptado. Las
+dos decisiones de arriba, solo de las líneas del cierre, esperan al consultor: la 1, PARADA con su
+cifra.

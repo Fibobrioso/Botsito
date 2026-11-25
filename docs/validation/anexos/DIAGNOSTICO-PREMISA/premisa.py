@@ -233,8 +233,10 @@ def extremo_en_contra(
 ) -> Extremo:
     """En una compra, el BID minimo; en una venta, el ASK maximo, de los ticks de [desde, hasta];
     en un minuto sin ticks, la M1 de bid del respaldo (compra: su minima; venta: su maxima mas el
-    spread supuesto de ese minuto), como el broker simulado. Puro: el mercado entra por
-    funciones."""
+    spread supuesto de ese minuto), como el broker simulado. Como el broker
+    (`engine/llenado.py:335`), la vela del respaldo entra solo si su sello -su ULTIMO milisegundo,
+    `_sello_ms`, ADR-0091 §1- cae en (desde, hasta]: la del minuto de `desde` si el llenado no es
+    el ultimo milisegundo, y la del minuto de `hasta`, no. Puro: el mercado entra por funciones."""
     compra = direccion == "compra"
     mejor: int | None = None
     de_respaldo = False
@@ -252,6 +254,9 @@ def extremo_en_contra(
                 )
         else:
             vela = m1_del_minuto(minuto)
+            sello = (minuto + 1) * MS - 1  # una M1: su fin menos un milisegundo
+            if vela is not None and (sello <= desde_ms or sello > hasta_ms):
+                continue  # fuera del tramo por su sello, como en el broker
             if vela is None:
                 sin_datos += 1
             else:

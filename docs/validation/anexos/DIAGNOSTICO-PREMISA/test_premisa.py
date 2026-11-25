@@ -199,3 +199,10 @@ def test_el_extremo_con_ticks_y_con_el_respaldo_m1() -> None:
     assert (compra2.precio, compra2.del_respaldo, compra2.minutos_sin_datos) == (97, False, 1)
     venta2 = pm.extremo_en_contra("venta", desde, hasta, tk2, m1_vacio, spread)
     assert venta2.precio == 101  # el ASK de 120 cae fuera del tramo
+    # el sello de la vela (su ultimo milisegundo), como el broker: si la salida cae dentro del
+    # minuto sin ticks, antes de su sello, la vela no entra; si cae justo en el sello, si
+    sello = (m0 + 2) * MS - 1
+    antes = pm.extremo_en_contra("compra", desde, sello - 1, tk, m1, spread)
+    assert (antes.precio, antes.del_respaldo, antes.minutos_con_respaldo) == (97, False, 0)
+    justo = pm.extremo_en_contra("compra", desde, sello, tk, m1, spread)
+    assert (justo.precio, justo.del_respaldo, justo.minutos_con_respaldo) == (95, True, 1)
