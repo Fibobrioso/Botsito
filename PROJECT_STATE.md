@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/contraste-trader
 
 ## Current Feature
-Ninguna abierta: trabajo/diagnostico-premisa cerrada en main (stable/F39n-diagnostico-premisa). Lo siguiente, en la Next Action (F).
+trabajo/contraste-trader EN CURSO (R4.7, F): el contraste con el trader de ADR-0099 §6. Encargo docs/encargos/trabajo-contraste-trader.md; informe docs/validation/CONTRASTE-TRADER.md.
 
 ## Stable Main State
 42fdb0b5 · merge de `trabajo/diagnostico-premisa` (tag `stable/F39n-diagnostico-premisa`), sobre `stable/F39m-puente-techo` (7a3087e9). Informe docs/validation/DIAGNOSTICO-PREMISA.md; el registro del cierre, al final de HISTORIA.
@@ -171,8 +171,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 82 (2026-11-24).
+— ninguna desde el Archivo 83 (2026-11-25).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 82 (2026-11-24).
+— ninguna desde el Archivo 83 (2026-11-25).
