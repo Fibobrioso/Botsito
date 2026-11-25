@@ -1,0 +1,34 @@
+R4.9: HECHA? True; alguna letra (NA:) en el bloque? False
+R4.10: ABIERTA? True; NA:F? True
+R4.7 cita ADR-0100 en Refs y en Qué es? True; ABIERTA? True
+
+## F la del encargo, sin la linea del b2
+letras vivas: A C D F G I J M N Q; F viva? True
+a: []
+b: []
+c: []
+PROJECT_STATE del cierre: 24807 bytes (cabe en 25000)
+
+## F la del encargo, con la linea del b2
+letras vivas: A C D F G I J M N Q; F viva? True
+a: []
+b: []
+c: []
+PROJECT_STATE del cierre: 25064 bytes (NO CABE en 25000)
+
+## F la de la decision 0, sin la linea del b2
+letras vivas: A C D F G I J M N Q; F viva? True
+a: []
+b: []
+c: []
+PROJECT_STATE del cierre: 24850 bytes (cabe en 25000)
+
+## F la de la decision 0, con la linea del b2
+letras vivas: A C D F G I J M N Q; F viva? True
+a: []
+b: []
+c: []
+PROJECT_STATE del cierre: 25107 bytes (NO CABE en 25000)
+
+PROJECT_STATE de main: 24740 bytes
+bytes de la frase de la F: antes 72, la del encargo 123, la de la decision 0 166; la linea del b2, 257

@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/diagnostico-premisa
 
 ## Current Feature
-Ninguna abierta: trabajo/puente-techo cerrada en main (stable/F39m-puente-techo). Lo siguiente, en la Next Action (F).
+trabajo/diagnostico-premisa EN CURSO (R4.7, F): la premisa con costes pre-registrada y dos diagnósticos. Encargo docs/encargos/trabajo-diagnostico-premisa.md; informe docs/validation/DIAGNOSTICO-PREMISA.md.
 
 ## Stable Main State
 7a3087e9 · merge de `trabajo/puente-techo` (tag `stable/F39m-puente-techo`), sobre `stable/F39l-recorrida-construccion-3` (88f678f7). Informe docs/validation/PUENTE-TECHO.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ Ninguna abierta: trabajo/puente-techo cerrada en main (stable/F39m-puente-techo)
 7a3087e9 · merge trabajo/puente-techo: las dos auditorías de noviembre, ADR-0099 y el puente del techo pieza a pieza (solo_juntas) · tag stable/F39m-puente-techo
 
 ## Tests Currently Passing
-2143 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2149 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -25,7 +25,7 @@ Ninguna abierta: trabajo/puente-techo cerrada en main (stable/F39m-puente-techo)
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. La sesión 7, en dos días con el método de ADR-0093 (R4.3), ingerida y ACTIVADA: la 7a (F39e: ADR-0094, A-58 abierta; break even al cierre, A-13 abierta por el margen) y la 7b (F39k: la stop cuyo 0 queda del lado malo espera, ADR-0097, A-59 abierta); A-48 y A-58, a la sesión siguiente. La corrida (3) de ADR-0070 §3 dio «no» (cobertura 15.2 %, precisión 14.4 %; RECORRIDA-CONSTRUCCION-3.md). La línea base vigente es anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt. El pivote de ADR-0093 §6, por su contingencia sobre la diaria (19 parejas de julio y 40 de más): «una sesión más». La meta de ADR-0098: salida C (el techo no gana), que manda sobre el pivote; lo que pide antes de seguir, en R4.7: hasta el ADR de Aleks que la resuelva no se graba ninguna sesión de fidelidad, y la siguiente (R4.6) se prepara. ADR-0099: se mide primero; el puente del techo, hecho (PUENTE-TECHO.md, lectura «solo_juntas»); F17 rediseñado (ADR-0099 §5) y el contraste con el trader, pendientes. El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. La letra C y R6a, en los huecos.
+F. La sesión 7, en dos días con el método de ADR-0093 (R4.3), ingerida y ACTIVADA: la 7a (F39e: ADR-0094, A-58 abierta; break even al cierre, A-13 abierta por el margen) y la 7b (F39k: la stop cuyo 0 queda del lado malo espera, ADR-0097, A-59 abierta); A-48 y A-58, a la sesión siguiente. La corrida (3) de ADR-0070 §3 dio «no» (cobertura 15.2 %, precisión 14.4 %; RECORRIDA-CONSTRUCCION-3.md). La línea base vigente es anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt. El pivote de ADR-0093 §6, por su contingencia sobre la diaria (19 parejas de julio y 40 de más): «una sesión más». La meta de ADR-0098: salida C (el techo no gana), que manda sobre el pivote; lo que pide antes de seguir, en R4.7: hasta el ADR de Aleks que la resuelva no se graba ninguna sesión de fidelidad, y la siguiente (R4.6) se prepara. ADR-0099: se mide primero; el puente del techo, hecho (PUENTE-TECHO.md, lectura «solo_juntas»); F17 (ADR-0099 §5), el contraste con el trader (ADR-0099 §6) y el backtest del trader con costes (ADR-0100, R4.10), pendientes; el diagnóstico de la premisa, hecho. El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. La letra C y R6a, en los huecos.
 
 
 
@@ -171,8 +171,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 81 (2026-11-23).
+— ninguna desde el Archivo 82 (2026-11-24).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 81 (2026-11-23).
+— ninguna desde el Archivo 82 (2026-11-24).

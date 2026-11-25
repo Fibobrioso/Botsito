@@ -1,0 +1,83 @@
+# premisa.py todo (ADR-0100; DIAGNOSTICO-PREMISA)
+
+D2 a · base: sus bloques de los cuatro meses y de abril y agosto (21 lineas), tal cual en docs/validation/anexos/PUENTE-TECHO/base.txt: si
+D2 a · todo_junto: sus bloques de los cuatro meses y de abril y agosto (21 lineas), tal cual en docs/validation/anexos/PUENTE-TECHO/todo_junto.txt: si
+D2 a: PASA
+
+## D2 b · El registro de abril y agosto frente a la serie anotada (VIABILIDAD-COMISION.md §3)
+operaciones con stop unidas a su fila: 77 (publicadas: 77); media del R bruto: +0.984 (publicada: +0.98; tolerancia 0.02)
+D2 b: PASA
+
+## §5 · El registro del trader frente a la replica (todo_junto), sobre las mismas operaciones
+
+### Lo que queda fuera, por mes
+del registro (operaciones del caso o filas del libro que no entran):
+  2026-01: filas_sin_initialSL 4
+  2026-04: filas_sin_initialSL 3
+  2026-07: filas_sin_initialSL 5
+  2026-08: filas_sin_initialSL 5
+  2026-01: la replica las deja fuera por el tope de lotes: 2; por el lote minimo: 0; rechazadas por el broker: ninguna; abiertas por la replica sin fila en el registro: 0; con fila en el registro y sin posicion de la replica: 2
+  2026-04: la replica las deja fuera por el tope de lotes: 2; por el lote minimo: 0; rechazadas por el broker: ninguna; abiertas por la replica sin fila en el registro: 0; con fila en el registro y sin posicion de la replica: 2
+  2026-07: la replica las deja fuera por el tope de lotes: 0; por el lote minimo: 0; rechazadas por el broker: ninguna; abiertas por la replica sin fila en el registro: 0; con fila en el registro y sin posicion de la replica: 0
+  2026-08: la replica las deja fuera por el tope de lotes: 4; por el lote minimo: 0; rechazadas por el broker: ninguna; abiertas por la replica sin fila en el registro: 0; con fila en el registro y sin posicion de la replica: 4
+
+### Por mes
+#### 2026-01
+registro: N 52; ganadoras 16; perdedoras 33; break even 3; media del R +0.531
+replica: N 52; ganadoras 16; perdedoras 36; break even 0; media del R +0.152
+#### 2026-04
+registro: N 33; ganadoras 15; perdedoras 16; break even 2; media del R +1.178
+replica: N 33; ganadoras 13; perdedoras 20; break even 0; media del R +0.541
+#### 2026-07
+registro: N 67; ganadoras 18; perdedoras 31; break even 18; media del R +0.375
+replica: N 67; ganadoras 21; perdedoras 45; break even 1; media del R +0.187
+#### 2026-08
+registro: N 38; ganadoras 18; perdedoras 17; break even 3; media del R +1.128
+replica: N 38; ganadoras 18; perdedoras 20; break even 0; media del R +0.743
+
+### Por bloque
+#### abril_y_agosto (2026-04, 2026-08)
+registro: N 71; ganadoras 33; perdedoras 33; break even 5; media del R +1.151
+replica: N 71; ganadoras 31; perdedoras 40; break even 0; media del R +0.649
+brecha (media del registro menos media de la replica): +0.502
+#### enero_y_julio (2026-01, 2026-07)
+registro: N 119; ganadoras 34; perdedoras 64; break even 21; media del R +0.443
+replica: N 119; ganadoras 37; perdedoras 81; break even 1; media del R +0.172
+brecha (media del registro menos media de la replica): +0.271
+
+brecha de enero_y_julio menos brecha de abril_y_agosto: -0.231; margen_r: 0.20
+LECTURA DE §5 (ADR-0100): enero_y_julio_peores_tambien_para_el
+
+## §5 · El retroceso de las ganadoras del registro (sin lectura; solo recuentos)
+entre el llenado del caso y dateEnd; ticks de Dukascopy (compra: BID minimo; venta: ASK maximo) y, en los minutos sin ticks, la M1 de bid del respaldo; contra la entrada menos desfase_puntos (2); en fracciones de D. «por_debajo»: no llego a la entrada.
+### abril_y_agosto (2026-04, 2026-08)
+ganadoras del registro (R > 0.2): 33
+por tramo de retroceso: por_debajo 0; [0,0; 0,5) 23; [0,5; 0,8) 7; [0,8; 1,0) 1; 1,0 o mas 2
+con algun minuto por el respaldo M1: 1; con el extremo en una M1 del respaldo: 0; con algun minuto sin ticks ni M1: 1; sin ningun precio en el tramo: 0; con dateEnd antes del llenado: 0
+### enero_y_julio (2026-01, 2026-07)
+ganadoras del registro (R > 0.2): 34
+por tramo de retroceso: por_debajo 1; [0,0; 0,5) 23; [0,5; 0,8) 7; [0,8; 1,0) 2; 1,0 o mas 1
+con algun minuto por el respaldo M1: 1; con el extremo en una M1 del respaldo: 1; con algun minuto sin ticks ni M1: 0; sin ningun precio en el tramo: 0; con dateEnd antes del llenado: 0
+
+## §6 · El techo con lote fijo (R neto x D / mediana de D, por posicion)
+percentiles 5 y 95 por remuestreo por dias (10000 replicas, semilla 20261107), con remuestreo_por_dias sobre posiciones de riesgo 1
+
+### base
+#### los cuatro meses
+N 191; mediana de D: 18 puntos; esperanza con lote fijo: -0.017; media del R neto (por riesgo): -0.239
+percentil 5 y percentil 95 de la media, por remuestreo por dias (76 dias): -0.230 y +0.212; replicas descartadas: 0
+sin lectura (dato)
+#### abril y agosto
+N 74; mediana de D: 15 puntos; esperanza con lote fijo: -0.058; media del R neto (por riesgo): -0.318
+percentil 5 y percentil 95 de la media, por remuestreo por dias (42 dias): -0.377 y +0.280; replicas descartadas: 0
+sin lectura (dato)
+
+### todo_junto
+#### los cuatro meses
+N 190; mediana de D: 18 puntos; esperanza con lote fijo: +0.196; media del R neto (por riesgo): +0.022
+percentil 5 y percentil 95 de la media, por remuestreo por dias (76 dias): -0.069 y +0.483; replicas descartadas: 0
+LECTURA DE §4 CON LOTE FIJO (ADR-0100 §6): no_concluyente
+#### abril y agosto
+N 71; mediana de D: 16 puntos; esperanza con lote fijo: +0.510; media del R neto (por riesgo): +0.285
+percentil 5 y percentil 95 de la media, por remuestreo por dias (42 dias): -0.050 y +1.069; replicas descartadas: 0
+sin lectura (dato)

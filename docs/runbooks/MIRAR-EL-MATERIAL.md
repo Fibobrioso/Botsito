@@ -121,7 +121,7 @@ Regla del consultor del 2026-10-28 (respuesta a la PARADA de la fase 0 de
 `trabajo/cuarentena-por-condicion-2`, punto 2; `docs/validation/CUARENTENA-POR-CONDICION-2.md`):
 
 Todo mes del que se reciba material del trader y que no sea ya de construcción por su ADR (hoy
-enero, abril, julio y agosto) entra en meses_reservados.yaml el mismo día que se recibe, antes de
+enero, abril, julio y agosto de 2026, y los meses de 2024 del backtest con costes de ADR-0100) entra en meses_reservados.yaml el mismo día que se recibe, antes de
 que el consultor decida si es construcción o reservado. Hoy un mes no puede salir de este fichero
 (holdout.py lo niega sin excepción), y ADR-0078 y ADR-0079 exigen que un mes de construcción no
 esté en él: la rama que decida llevar a construcción un mes de aquí construye antes la salida, con
@@ -134,4 +134,5 @@ tiene casos en ningún reparto (condición (a)) ni entrada en `knowledge/cases/m
 Action de `PROJECT_STATE.md`; SESION-05-EXTRACCION.md §3.5), y el hueco, medido en
 SESION-05-EXTRACCION.md §11, a4. La regla nombra la condición -material recibido y sin ADR de construcción- en vez de añadir
 un mes a mano cada vez que alguien se da cuenta. Los meses de construcción, por sus ADR: abril y
-agosto (ADR-0043), julio (ADR-0078) y enero (ADR-0079).
+agosto (ADR-0043), julio (ADR-0078) y enero (ADR-0079); para la premisa, los meses de 2024 del
+backtest con costes (ADR-0100).

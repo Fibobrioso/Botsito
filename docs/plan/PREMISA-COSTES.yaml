@@ -1,0 +1,88 @@
+# La premisa con costes, PRE-REGISTRADA antes de correr nada y antes de que el backtest del trader
+# llegue a nadie del proyecto (ADR-0100). Decisión de Aleks del 2026-11-24; números del consultor
+# aprobados por Aleks el 2026-11-24. Las cifras de ADR-0092 §3 se leen de
+# knowledge/cases/criterio_fidelidad.yaml (bloque rentabilidad), el percentil alto con su umbral de
+# docs/plan/META-TECHO-PAREJAS.yaml y las piezas y el desfase de docs/plan/PUENTE-TECHO.yaml: aquí
+# no se copian. Las condiciones del backtest son instrucciones para la plataforma del trader, no
+# parámetros del bot.
+# NO SE EDITA: tests/unit/test_premisa_costes.py fija su sha256, así que cambiar una cifra exige
+# cambiar ese test a la vista en el mismo commit.
+decidido_el: "2026-11-24"
+decision: ADR-0100
+backtest_del_trader:
+  meses:
+    propuestos: ["2024-01", "2024-07"]
+    regla: dos meses de 2024 que el trader no haya operado nunca en backtest, uno de cada mitad del año, los que Aleks le pidió por escrito o los que él declare por escrito antes de empezar; ninguno de 2025 ni de 2026
+    regimen: material de construcción por ADR-0100, para la premisa, desde el commit del pre-registro; no entran en meses_reservados.yaml ni son construccion de criterio_fidelidad.yaml
+    extension: si N es menor que n_minimo al acabar, un mes más de 2024 con número de mes 4 u 8, declarado antes de empezar, de uno en uno; la decisión mira solo N
+    maximo_de_meses: 4
+  condiciones:
+    datos: OANDA
+    spread_pips: "0.2"
+    comision_usd_por_lote_ida_y_vuelta: 5
+    riesgo_por_operacion_pct: "0.5"
+    graba: video y voz de las sesiones enteras
+    exporta: el libro completo de cada mes
+  valida_si: el libro trae todas las operaciones de los días grabados y las condiciones se ven en el vídeo o en la configuración exportada
+  entra: SIN ABRIR y fuera del repo hasta su propia rama, que por este orden amplía a esos meses la lista de meses legibles de la guardia con sus tests, mide el huso con velas M1 de esos meses y lo declara en libros.yaml, vistos.yaml y HOLDOUT-EXPOSICIONES.md
+  medidas:
+    d: distancia de la entrada al stop inicial, en pips; sin stop inicial, fuera y contada
+    p: (salida - entrada) por la dirección, en pips; si los precios no llevan el spread, se resta spread_pips
+    c_pips: "0.5"
+    r_por_riesgo: (p - c_pips) / d, sin swaps
+    r_con_lote_fijo: (p - c_pips) / mediana de d sobre todas las operaciones medidas
+    control: el signo de p - c_pips casa con el del resultado en USD del libro; las que no casan se cuentan
+    remuestreo: por días de mercado de los meses medidos, con o sin operaciones, con percentil_remuestreo, replicas_remuestreo y semilla_remuestreo del bloque rentabilidad y percentil_alto de META-TECHO-PAREJAS.yaml
+  lectura:
+    antes: [no_valida, insuficiente]
+    no_valida: falta algo de valida_si; se dice qué faltó y no se lee ninguna cifra
+    insuficiente: con maximo_de_meses y N menor que n_minimo
+    con_no_valida_o_insuficiente: el backtest se lee como si no hubiera llegado
+    orden: [gana, no_gana, no_concluyente]
+    gana: N al menos n_minimo, esperanza al menos esperanza_minima_r y percentil percentil_remuestreo mayor que 0
+    no_gana: la esperanza es menor que 0, o el percentil alto es menor que techo_no_gana_si_percentil_alto_por_debajo_de_r
+    no_concluyente: el resto
+  combinaciones:
+    - por_riesgo: gana
+      con_lote_fijo: cualquiera
+      propone: "se comprueban d), e) y f) con la serie del backtest; si se cumplen, se retoma la fidelidad (R4.6) y F17 sigue; si no, como la fila de no_concluyente"
+    - por_riesgo: [no_gana, no_concluyente]
+      con_lote_fijo: gana
+      propone: "se pregunta al trader cómo dimensiona en una cuenta real; otra gestión entra solo por un ADR propio que cite su respuesta, comprueba d), e) y f) y se juzga en la puerta de ADR-0092 §5"
+    - por_riesgo: no_concluyente
+      con_lote_fijo: [no_concluyente, no_gana]
+      propone: "decide con F17 y el resto, sin más meses salvo por N"
+    - por_riesgo: no_gana
+      con_lote_fijo: no_concluyente
+      propone: "como la fila anterior"
+    - por_riesgo: no_gana
+      con_lote_fijo: no_gana
+      propone: "replantear la estrategia con el trader (todo cambio sale de su palabra) o parar"
+registro_frente_a_replica:
+  sobre: los días dev de los cuatro meses de construccion de criterio_fidelidad.yaml, y en las dos series las mismas operaciones, las que abre todo_junto
+  bloques: {abril_y_agosto: ["2026-04", "2026-08"], enero_y_julio: ["2026-01", "2026-07"]}
+  registro: las filas del libro del trader de esos días, por corpus/libro.py; R = (salida - entrada) por la dirección / d, sin costes
+  replica: la variante todo_junto de PUENTE-TECHO.yaml, su R antes de comisión
+  tramos_r: {gana_si_mas_de: "0.2", pierde_si_menos_de: "-0.2"}
+  brecha: media del R del registro menos media del R de la réplica, por bloque, sobre las mismas operaciones
+  margen_r: "0.20"
+  lectura:
+    orden: [la_replica_pierde_mas_en_enero_y_julio, enero_y_julio_peores_tambien_para_el]
+    la_replica_pierde_mas_en_enero_y_julio: la brecha de enero_y_julio supera a la de abril_y_agosto en más de margen_r
+    enero_y_julio_peores_tambien_para_el: el resto
+  retroceso_de_las_ganadoras:
+    se_mide: entre la entrada y la salida del registro, con los ticks de Dukascopy en el lado que cerraría la posición y con desfase_puntos de PUENTE-TECHO.yaml, en fracciones de d
+    tramos: ["0", "0.5", "0.8", "1.0"]
+    lectura: ninguna; solo recuentos por tramo y por bloque
+techo_con_lote_fijo:
+  variantes: [base, todo_junto]
+  medida: el R neto de cada posición por su d, entre la mediana de d de las posiciones del mismo conjunto
+  con_lectura: todo_junto sobre los cuatro meses, con gana, no_gana y no_concluyente de backtest_del_trader (sin no_valida ni insuficiente)
+  sin_lectura: [base, abril y agosto con su propia mediana]
+  consecuencia: ninguna propia; un dato más para el ADR de la salida C
+que_no_imprime: >-
+  ninguna operación con su R, sus precios ni su fecha; ningún R por clase de setup, por sesión ni
+  por dirección; nada de un día que no sea dev
+adr_0092_6: >-
+  la medida de la premisa decide qué propone el consultor al ADR de la salida C; los dos
+  diagnósticos de construcción no cambian un parámetro, una regla ni una decisión del motor
