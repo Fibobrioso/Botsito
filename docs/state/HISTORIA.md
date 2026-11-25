@@ -21197,3 +21197,76 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 81 (2026-11-23).
+
+# Registro de cierre · `trabajo/diagnostico-premisa` (2026-11-25)
+
+- Orden de cierre del consultor del 2026-11-24, tras revisar la rama entregada (`203c6ee5`) y la CI
+  de `fix/diagnostico-premisa`, pegada por Aleks en la conversación de la sesión; antes de
+  `/cerrar-rama`, la sesión hizo en la rama los dos commits que la orden pide: el recuadro de
+  corrección en ADR-0100 §7 (paso 2) y, pasada la medianoche, la fila de HOLDOUT del 2026-11-25
+  (paso 0). Después, Aleks lanzó `/cerrar-rama trabajo/diagnostico-premisa`. La rama tenía 8 commits y
+  con el `chore(cierre)` son 9 (RITUAL.md no prevé el del recuadro, que añade la orden).
+- Tag: `stable/F39n-diagnostico-premisa`. El merge es
+  `git rev-parse "stable/F39n-diagnostico-premisa^{commit}"` (su sha queda en `Last Stable Commit`).
+- **Lo hecho** (tramo R4, R4.7; DIAGNOSTICO-PREMISA.md):
+  - **Fase P** (`7b97ca49`, 2026-11-24 19:26:05, antes de ninguna corrida): ADR-0100 (la premisa se
+    mide con un backtest del trader con costes y dos diagnósticos de construcción) y
+    `docs/plan/PREMISA-COSTES.yaml`, byte a byte con el sha del consultor, fijado por
+    `tests/unit/test_premisa_costes.py`; la fila del índice, los recuadros en ADR-0092 §6, ADR-0098 §1
+    y ADR-0099 §7, y las frases de CLAUDE.md y MIRAR-EL-MATERIAL.md (los meses de 2024 del backtest,
+    de construcción para la premisa).
+  - **Fase 0**: CUADRA para las tres medidas; no cuadraba solo en las líneas del cierre (las dos
+    decisiones de abajo).
+  - **El guion** (`anexos/DIAGNOSTICO-PREMISA/premisa.py`, que carga `puente.py` de `main` sin cambiar
+    ninguna pieza y lee por el lector solo las filas de los días dev de los libros de enero, abril,
+    julio y agosto de 2026). Primera corrida, 2026-11-24 20:48:24. Los controles: **D2 a**, los dos
+    `diff` contra `anexos/PUENTE-TECHO/base.txt` y `todo_junto.txt`, vacíos; **D2 b**, 77 operaciones y
+    media del R bruto +0.984 frente a +0,98; **el test de humo**, 10 passed, y cada uno de cuatro
+    mutantes cae en su test; **D8**, igual byte a byte (repetido tras cada uno de los dos arreglos
+    declarados: la mediana en Decimal y el sello del respaldo M1 como el bróker; ninguna cifra
+    cambió).
+  - **Las dos lecturas, literales (`lectura.txt`):**
+    - `LECTURA DE §5 (ADR-0100): enero_y_julio_peores_tambien_para_el`
+    - `LECTURA DE §4 CON LOTE FIJO, todo_junto sobre los cuatro meses (ADR-0100 §6): no_concluyente`
+  - **El recuadro de corrección en ADR-0100 §7** (`47d2540d`, paso 2 de la orden): los totales de la
+    conversación del trader los vio solo el consultor; el panel de cuenta de FX Replay lo vieron Aleks
+    y el consultor; ninguna cifra ni lectura cambia.
+- **Las dos decisiones del consultor (orden de cierre, punto 1):**
+  0. La F, con el contraste dentro (la opción (a)): «F17 (ADR-0099 §5), el contraste con el trader
+     (ADR-0099 §6) y el backtest del trader con costes (ADR-0100, R4.10), pendientes; el diagnóstico de
+     la premisa, hecho.», sustituyendo «F17 rediseñado (ADR-0099 §5) y el contraste con el trader,
+     pendientes.». Ninguna letra sale ni entra.
+  1. La PARADA por tamaño, la opción (a): el b2 de `puente.py` NO entra en PROJECT_STATE; queda aquí y
+     en el informe. No se recorta nada de PROJECT_STATE (24.946 bytes con este commit).
+
+- **Hoja de ruta:** R4.7 con ADR-0100 en sus Refs y una frase en su «Qué es» (sigue ABIERTA); R4.9
+  nueva, el diagnóstico de la premisa, HECHA con sus lecturas y solo Refs `ID:`; R4.10 nueva, el
+  backtest del trader con costes, ABIERTA con `NA:F`. Sin fila en el Marcador.
+- **Commits de la rama** (9):
+  - `f7b4285e` la apertura (encargo, contrato y Archivo 82 de PROJECT_STATE);
+  - `7b97ca49` ADR-0100, la premisa con costes pre-registrada antes de que llegue (fase P);
+  - `7671148a` la fase 0, con el auditor (CUADRA para las tres medidas);
+  - `3877edf5` el README del anexo, antes de la primera corrida;
+  - `71ddfa7f` el guion, sus controles, las dos medidas y sus lecturas;
+  - `203c6ee5` el revisor y la entrega;
+  - `47d2540d` el recuadro de corrección en ADR-0100 §7 (orden de cierre, paso 2);
+  - `1c3772dc` la fila de HOLDOUT del 2026-11-25, antes de los `make check` del cierre (orden de
+    cierre, paso 0; su mensaje no sigue la forma de RITUAL.md, «docs(<rama>): la fila de HOLDOUT del
+    <día>, antes de los make check del cierre», y se dice aquí);
+  - y este, `chore(cierre)`: sale el contrato; entran este registro, la fila de ERRORES-RECURRENTES, la
+    F y la hoja de ruta.
+- **CI:** `fix/diagnostico-premisa` sobre `71ddfa7f`, run 45536934319, y sobre `203c6ee5`, run
+  45543215639: los dos, solo `test_state_check_ok_on_real_repo` por el nombre `fix/` (1 failed, 3527
+  passed), el fallo aceptado. `47d2540d` y `1c3772dc` no se empujaron (un recuadro y una fila; no
+  tocan la plataforma). CI de `main` sobre `76ca9996`, al abrir: run 45490418025, success.
+- **Filas de HOLDOUT-EXPOSICIONES de la rama** (dos): la del 2026-11-24 (la apertura, el pre-registro,
+  la fase 0, el guion y sus corridas, con las seis columnas leídas de las filas de los días dev de los
+  cuatro libros y, en su punto 9, la conversación del trader, vista por el consultor, y la captura del
+  panel de cuenta de FX Replay, vista por Aleks y el consultor) y la del 2026-11-25 (el cierre).
+- **Revisor** (opus): una pasada con los seis alcances del encargo, pegada en DIAGNOSTICO-PREMISA.md,
+  «Informe del revisor»; eje (a) 0 bloquea, 1 importa, 0 menor; eje (b) 1 bloquea, 4 importa, 2
+  menor; todo arreglado o declarado (lo hecho, en «Lo que se hizo con los hallazgos del revisor»).
+
+## Pendiente que no cabe en PROJECT_STATE (decisión del consultor del 2026-11-24)
+
+- El test de humo de `anexos/PUENTE-TECHO/puente.py` no pasa el break even ni el tope por el bucle de `repetir` (b2 del revisor de F39m, PUENTE-TECHO.md); lo reutiliza `anexos/DIAGNOSTICO-PREMISA/premisa.py`. Dueño: la rama que vuelva a tocar `puente.py`.

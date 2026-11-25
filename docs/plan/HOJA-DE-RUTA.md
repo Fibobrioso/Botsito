@@ -435,8 +435,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Estado:** método acordado, sin rama; la sesión siguiente a la 7b se prepara y no se graba hasta que cierre R4.7 (salida C de ADR-0098 §3). La lista para clasificar, sin R, la hace la rama que la prepare.
 
 ### R4.7 · La salida C de ADR-0098: los costes y la premisa, antes de seguir
-- **Refs:** NA:F · ID:ADR-0098 · ID:ADR-0099 · ID:A-16 · F:F17
-- **Qué es:** lo que ADR-0098 §3 C pide antes de seguir, porque el techo del trader no gana con nuestros costes (RECORRIDA-CONSTRUCCION-3.md §4): F17 en una prueba gratuita nueva de FTMO (deslizamiento y spread reales; A.5); revisar el sesgo del material sin vídeo (S-14) y la otra serie de precios (A-16); y que Aleks contraste la premisa con el trader, con sus resultados reales, sin enseñarle ninguna cifra de la medida. La auditoría profunda (solo lectura, sin rama; AUDITORIA-PROFUNDA-2026-11.md, que partió de AUDITORIA-2026-11-21.md) se centró en la premisa: de dónde sale la diferencia entre el techo y lo que el trader dice ganar. ADR-0099 decide medir primero tres cosas: el puente del techo pieza a pieza (R4.8, HECHA), F17 rediseñado (ADR-0099 §5; A.5) y el contraste de la premisa con el trader (ADR-0099 §6). Hasta el ADR no se graba ninguna sesión de fidelidad.
+- **Refs:** NA:F · ID:ADR-0098 · ID:ADR-0099 · ID:ADR-0100 · ID:A-16 · F:F17
+- **Qué es:** lo que ADR-0098 §3 C pide antes de seguir, porque el techo del trader no gana con nuestros costes (RECORRIDA-CONSTRUCCION-3.md §4): F17 en una prueba gratuita nueva de FTMO (deslizamiento y spread reales; A.5); revisar el sesgo del material sin vídeo (S-14) y la otra serie de precios (A-16); y que Aleks contraste la premisa con el trader, con sus resultados reales, sin enseñarle ninguna cifra de la medida. La auditoría profunda (solo lectura, sin rama; AUDITORIA-PROFUNDA-2026-11.md, que partió de AUDITORIA-2026-11-21.md) se centró en la premisa: de dónde sale la diferencia entre el techo y lo que el trader dice ganar. ADR-0099 decide medir primero tres cosas: el puente del techo pieza a pieza (R4.8, HECHA), F17 rediseñado (ADR-0099 §5; A.5) y el contraste de la premisa con el trader (ADR-0099 §6). ADR-0100: la premisa se mide con el backtest del trader con costes y dos diagnósticos, con la lectura escrita antes (R4.9, HECHA; R4.10). Hasta el ADR no se graba ninguna sesión de fidelidad.
 - **Depende de:** una prueba gratuita de FTMO viva para F17 (A.5).
 - **Quién:** Aleks (la prueba, el contraste con el trader y el ADR); el consultor (la auditoría y la propuesta del ADR); la sesión (F17, con el encargo del consultor).
 - **Hecho cuando:** el ADR de Aleks que acota ADR-0099 §7 decide, con lo que salga, si se sigue y cómo (ADR-0098 §3 C).
@@ -449,6 +449,22 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Quién:** la sesión, con el encargo del consultor; lee el consultor.
 - **Hecho cuando:** las dieciséis variantes medidas, con su lectura y el cierre del puente.
 - **Estado:** HECHA (trabajo/puente-techo, PUENTE-TECHO.md): lectura del puente «solo_juntas» (ninguna suelta deja de dar no_gana; todo_junto, no_concluyente); el cierre cierra con V1 y V2.
+
+### R4.9 · El diagnóstico de la premisa (ADR-0100 §5-§6)
+- **Refs:** ID:ADR-0100 · ID:ADR-0099
+- **Qué es:** sobre los días dev de construcción, el registro del trader frente a la réplica (la variante todo_junto del puente), mes por mes, con el retroceso de sus ganadoras, y el techo con lote fijo (base y todo_junto), con las lecturas pre-registradas en docs/plan/PREMISA-COSTES.yaml. Diagnóstico de construcción: ninguna cifra cambia un valor (ADR-0092 §6, recuadro de ADR-0100).
+- **Depende de:** nada (el pre-registro de ADR-0100).
+- **Quién:** la sesión, con el encargo del consultor; lee el consultor.
+- **Hecho cuando:** las dos medidas, con sus lecturas.
+- **Estado:** HECHA (trabajo/diagnostico-premisa, DIAGNOSTICO-PREMISA.md): la lectura de §5, «enero_y_julio_peores_tambien_para_el»; todo_junto con lote fijo sobre los cuatro meses, «no_concluyente».
+
+### R4.10 · El backtest del trader con costes (ADR-0100 §2-§4)
+- **Refs:** ID:ADR-0100 · NA:F
+- **Qué es:** dos meses de 2024 que el trader no haya operado nunca en backtest, en su plataforma con spread de 0,2 pips y comisión de 5 USD por lote de ida y vuelta, grabados y con el libro completo; medido por riesgo y con lote fijo, con la lectura de ADR-0100 §4 escrita antes (docs/plan/PREMISA-COSTES.yaml). Material de construcción para la premisa (ADR-0100 §2); entra SIN ABRIR y fuera del repo hasta su rama.
+- **Depende de:** que el trader lo haga y Aleks lo traiga.
+- **Quién:** el trader lo hace, Aleks lo trae SIN ABRIR y la sesión lo mide en su propia rama, con el encargo del consultor.
+- **Hecho cuando:** su lectura de ADR-0100 §4, escrita.
+- **Estado:** ABIERTA.
 
 ## R5 · Fidelidad
 
