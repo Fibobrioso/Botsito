@@ -348,6 +348,45 @@ validador del manifiesto y D5 con la decisión 5 en (a).
 
 **Espero tu respuesta a la PARADA.**
 
+## Respuesta del consultor a la PARADA (2026-11-26), tal cual
+
+Copiada también al final del encargo. Llegó con el reloj de la máquina en las 23:50 del
+2026-11-25; la respuesta lleva las 00:15 del 26.
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> RESPUESTA DEL CONSULTOR A LA PARADA de `trabajo/f17-historial` (2026-11-26, 00:15, hora de Lima). Cópiala tal cual al informe, en su sección de la PARADA. Lo que cuadre con lo medido, adelante sin esperar; si algo de lo medido contradice esta respuesta, PARA solo en eso.
+>
+> Veredicto: la fase 0 cumple y corrige al encargo en tres puntos que acepto. Errores del consultor, para la fila de ERRORES: (1) D3 (c) decía que detectaba ticks fabricados, y no puede, porque cuadran con la M1 por construcción; (2) D7 atribuía a ADR-0090 §7 el spread, y lo que atribuye al grabador es el deslizamiento; (3) D1 pedía «el primer tick disponible», que obliga a preguntar por meses fuera de construcción; (4) D3 tomó `arnes.dias_de_mercado` de una auditoría sin comprobar qué devuelve.
+>
+> D1, el exportador: no exige trading algorítmico ni mercado abierto (no opera), y aplicas el test más estricto de la capa (ninguna función de trading). De acuerdo.
+>
+> 0. Los días de D3: de acuerdo. Son los laborables (lunes a viernes) de cada mes de construcción menos los días con algún cierre del calendario de cierres de FTMO (ADR-0068) que toque la ventana. Si el calendario del repo no cubre algún día de enero, abril, julio o agosto de 2026, PARA y dilo; no lo completes de fuera. Nada lee la M1 de marzo ni de junio.
+>
+> 1. La profundidad: de acuerdo. El primer tick de cada mes pedido, buscado dentro de ese mismo mes, y la primera M1 del servidor por `SeriesInfoInteger`, como metadato. Ningún tick fuera de construcción. D1 se corrige así en el informe.
+>
+> 2. El discriminador (d), fijado ahora y antes de ver un tick de FTMO. Un mes CUBRE solo si además, en la ventana de sus días (punto 0): (d1) en al menos el 95 % de las horas día-hora, el spread (ASK − BID) toma al menos 3 valores distintos; y (d2) la mediana de ticks por minuto es al menos la mitad de la de los ticks de Dukascopy del mismo mes en la misma ventana. El yaml lo dice tal cual: es una heurística pre-registrada, no una prueba de que los ticks sean guardados (ADR-0082 D7). Control en esta rama: corres (d1) sobre los ticks de Dukascopy de los meses de construcción que ya están en `data/` (los que lee `ticks_spread.py`), y tienen que pasarlo todos (el (d2) de Dukascopy contra sí mismo es trivial y no se corre). Declara esa lectura en HOLDOUT el mismo día, solo con recuentos. Si algún mes de Dukascopy no pasa (d1), PARA: no cambies la cifra.
+>
+> 3. La diferencia de spreads: la del texto de ADR-0099 §5, «la diferencia mediana»: por cada par día-hora de la ventana con ticks de las dos fuentes, la mediana del spread de FTMO menos la mediana del de Dukascopy, y la mediana de esas diferencias. Es la que se compara con las filas `spread_menos_1` y `spread_menos_2` del puente. La diferencia de las dos medianas globales sale al lado, como dato y sin uso. Va al yaml.
+>
+> 4. El recuadro de D7: de acuerdo con tu texto. Por ADR-0099 §5, el deslizamiento lo mide la medida de las órdenes stop (segunda rama de F17), y el spread sale del historial, si cubre, o del grabador.
+>
+> 5. D5: de acuerdo con no tocar `CuentaDelTramo` ni `cableado.py`, con una condición: `curva_con_deslizamiento` y `veredicto_con_f17` agrupan por la etiqueta de cuenta que reciben y nunca la derivan de la fecha. Tests: dos cuentas con etiquetas distintas (el ajuste de una no baja el saldo al corte de la otra) y una sola etiqueta que abarca días de varios meses (el ajuste sí se arrastra dentro de ella), aunque la cuenta arrastrada de ADR-0092 §5 todavía no la construya el motor. Que rompe en `main` por la firma, dicho así. El informe dice que el constructor de la cuenta arrastrada falta y es de la rama que mida §5.
+>
+> 6. V02, las aperturas H4 del servidor: fuera de esta rama, de acuerdo. Una línea para R6a.8 en las propuestas del cierre.
+>
+> 7. El contrato gana `docs/runbooks/README.md`, `docs/adr/README.md` y `.gitignore`, este solo con una línea concreta para el `.ex5` de `tools/mql5` (nada más amplio), y comprueba que `test_no_unexpected_ignored_paths` sigue verde.
+>
+> D6, la compilación: cuando `compilar.py` y `ExportarTicksFTMO.mq5` estén escritos y sellados, pon en el informe su diff (el `--stat` y las funciones nuevas de `compilar.py` enteras) y PARA. El consultor lo revisa y entonces Aleks lanza la compilación con «!» con el comando exacto que le des. Los logs, a los anexos.
+>
+> Lo demás de D3 queda como en el encargo: (a) 99 % de los minutos con ticks; (b) como mucho 3 huecos de más de 5 minutos al mes y ninguno de más de 30; (c) 99 % de M1 cuadran a ≤ 2 puntos, ahora descrito como coherencia y no como detector. Escribe el yaml con 0 a 3 y fíjalo por su sha256 antes de cualquier otra cosa que lea ticks.
+
+**Lo medido frente a la respuesta, antes de aplicarla:** el calendario de cierres del repo
+(`knowledge/cuentas/cierres/ftmo-2step-swing-100k.yaml`) cubre del 2025-12-04 al 2026-10-07
+(`cubre`, :21-22): los cuatro meses enteros. Sus cierres que tocan una ventana de un laborable de
+esos meses: el del 1 de enero de 2026 (:44-48); el diario (16:55-17:05 de Nueva York, :31-33) cae
+fuera de la ventana, y el del 8 de marzo es domingo. Punto 0, sin PARADA.
+
 ## Informe del auditor (subagente `auditor-encargo`, 2026-11-25), tal cual
 
 Copiado tal cual, con sus títulos bajados dos niveles. No cita ninguna fecha de un mes reservado

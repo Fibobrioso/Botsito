@@ -1,0 +1,50 @@
+# El criterio del historial de ticks del servidor de la demo de FTMO, PRE-REGISTRADO antes de ver
+# un solo tick de FTMO (ADR-0099 §5: «con el criterio escrito antes»). Rama trabajo/f17-historial,
+# propuesta del consultor en su encargo (D3) y su respuesta a la PARADA del 2026-11-26 (puntos 0 a
+# 3), aprobada por Aleks al pegarlos. Lo lee scripts/leer_historial_f17.py.
+# NO SE EDITA: tests/unit/test_f17_historial_criterio.py fija su sha256, así que cambiar una cifra
+# exige cambiar ese test a la vista en el mismo commit.
+decidido_el: "2026-11-26"
+decision: ADR-0099 §5
+meses: los de construccion de knowledge/cases/criterio_fidelidad.yaml, y ninguno más; el exportador y el lector se niegan a cualquier otro sin pedir ni leer nada
+dias:
+  regla: los laborables, de lunes a viernes, de cada mes, menos los días con algún cierre del calendario de cierres de FTMO que toque la ventana de ese día
+  calendario: knowledge/cuentas/cierres/ftmo-2step-swing-100k.yaml (ADR-0068)
+  sin_calendario: si el calendario no cubre un día del mes, el lector se para y lo dice; no se completa de fuera
+  no_lee: la M1 de Dukascopy de ningún mes que no sea el medido (ni la de marzo ni la de junio)
+ventana: los minutos de cada día cuya hora nominal por reloj_de_las_sesiones (la rejilla H4, ADR-0069) cae en [ventana_inicio, ventana_fin) del registro
+reloj: el instante del servidor pasa a UTC con broker_offset_base y broker_dst del registro, por zoneinfo y sin ninguna cifra en el código; el control del exportador (TimeTradeServer menos TimeGMT) se compara con lo que da el registro en ese instante
+cubre_si:
+  a_minutos_con_tick:
+    regla: de los minutos de la ventana de los días del mes, la fracción con al menos un tick
+    minimo: "0.99"
+  b_huecos:
+    regla: un hueco es una racha de minutos seguidos de la ventana de un mismo día sin ningún tick
+    umbral_minutos: 5
+    maximo_huecos_por_mes: 3
+    hueco_maximo_minutos: 30
+    lectura: como mucho 3 huecos de más de 5 minutos en el mes, y ninguno de más de 30
+  c_m1_propia:
+    regla: de los minutos de la ventana con al menos un tick, la fracción cuya M1 del propio servidor existe y cuadra con la M1 BID rehecha de sus ticks (primer, máximo, mínimo y último BID) con |ΔO|, |ΔH|, |ΔL| y |ΔC| todos de 2 puntos o menos
+    tolerancia_puntos: 2
+    minimo: "0.99"
+    lectura: es COHERENCIA, no un detector; unos ticks fabricados a partir de la M1 cuadran con ella por construcción. La tolerancia es la que scripts/ticks_integridad.py fijó para Dukascopy contra otro proveedor; contra la M1 del mismo servidor es holgada
+  d1_spread_variable:
+    regla: de las horas día-hora de la ventana (cada par día y hora nominal) con al menos un tick, la fracción en que el spread (ASK − BID, en puntos) toma al menos 3 valores distintos
+    valores_distintos_minimo: 3
+    minimo: "0.95"
+  d2_ticks_por_minuto:
+    regla: la mediana de ticks por minuto de FTMO, sobre todos los minutos de la ventana de los días del mes (un minuto sin ticks cuenta 0), es al menos la mitad de la de los ticks de Dukascopy del mismo mes en los mismos minutos
+    fraccion_de_dukascopy_minima: "0.5"
+  d_lectura: d1 y d2 son una HEURÍSTICA pre-registrada, no una prueba de que los ticks sean los guardados y no generados (ADR-0082 D7)
+  veredicto: un mes CUBRE solo si cumple a, b, c, d1 y d2; si no, NO CUBRE y queda para el grabador
+control_dukascopy: d1 se corre en esta rama sobre los ticks de Dukascopy de los meses de construcción que ya están en data/ (los de scripts/ticks_spread.py), y tienen que pasarlo todos; si alguno no pasa, se para y no se cambia la cifra. El d2 de Dukascopy contra sí mismo es trivial y no se corre
+mediana: por rango más cercano, el percentil 0.5 de scripts/ticks_spread.py, sobre valores enteros en puntos
+solo_si_cubre:
+  spread_por_hora: el de FTMO por hora nominal de la ventana, con los percentiles de scripts/ticks_spread.py
+  diferencia_mediana:
+    regla: por cada par día-hora de la ventana con ticks de las dos fuentes, la mediana del spread de FTMO menos la mediana del de Dukascopy; la diferencia es la mediana de esas diferencias
+    lectura: la de ADR-0099 §5, como diagnóstico; el lector la da y no elige; FTMO es más barato si es negativa, y vale la fila spread_menos_1 o spread_menos_2 de docs/plan/PUENTE-TECHO.yaml cuyo número sea el mayor que no pase de su valor absoluto; si no es negativa, ninguna
+  diferencia_global: la mediana de todos los spreads de FTMO de la ventana menos la de todos los de Dukascopy, al lado, como dato y sin uso
+no_imprime: ningún precio; solo recuentos, fracciones, puntos de spread y percentiles
+no_autoriza: que un mes cubra no autoriza a usar esos ticks como fuente de una medida; eso pide un ADR que enmiende ADR-0005 y ADR-0024 §4 (ADR-0099 §5)
