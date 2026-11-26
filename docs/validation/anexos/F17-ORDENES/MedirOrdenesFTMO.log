@@ -1,10 +1,10 @@
-# fuente: tools/mql5/MedirOrdenesFTMO.mq5 (copia del indice de git; sha256 91fdda7702b6da97f6ebb7afa78fa2e744bc234fed51ac2818b7e20362e66898)
-# log original: UTF-16LE con BOM y CRLF, sha256 eba9431d09912055b070f2a5121fba7c20a7d40d260c3c35fe1b73cf5df09cf5
+# fuente: tools/mql5/MedirOrdenesFTMO.mq5 (copia del indice de git; sha256 69551d4ef759bbaf6ef478b2def3a1cf975425a377cc4b0d435c8f5286b58af5)
+# log original: UTF-16LE con BOM y CRLF, sha256 00943e931b7915d4d1b9f46b48a339aff5cce9f9a3a71dcc7665edae186ec9bc
 # codigo de salida de MetaEditor: 1 (1 con exito, 0 con error: no es la puerta)
 # puerta: PASA (0 errores, 0 avisos, .ex5 si)
 
 
-C:\Users\USER\AppData\Local\Temp\botsito-herramienta-pjj8h0tq\tools\mql5\MedirOrdenesFTMO.mq5 : information: compiling C:\Users\USER\AppData\Local\Temp\botsito-herramienta-pjj8h0tq\tools\mql5\MedirOrdenesFTMO.mq5
+C:\Users\USER\AppData\Local\Temp\botsito-herramienta-bfvkqoxj\tools\mql5\MedirOrdenesFTMO.mq5 : information: compiling C:\Users\USER\AppData\Local\Temp\botsito-herramienta-bfvkqoxj\tools\mql5\MedirOrdenesFTMO.mq5
  : information: generating code
  : information: generating code 3%
  : information: generating code 6%
@@ -40,4 +40,4 @@ C:\Users\USER\AppData\Local\Temp\botsito-herramienta-pjj8h0tq\tools\mql5\MedirOr
  : information: generating code 95%
  : information: generating code 100%
  : information: code generated
-Result: 0 errors, 0 warnings, 1078 ms elapsed, cpu='X64 Regular'
+Result: 0 errors, 0 warnings, 952 ms elapsed, cpu='X64 Regular'

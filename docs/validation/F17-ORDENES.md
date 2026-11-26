@@ -1,6 +1,6 @@
 # F17-ORDENES · La medida de las órdenes stop y el grabador de ticks de la demo de FTMO, con sus herramientas y sin correr (R4.7, entrada F)
 
-> PLANTILLA: informe de la rama `trabajo/f17-ordenes`. Estado: EN CURSO (arreglos del revisor hechos; falta recompilar y la CI del último commit). La fase 0 y su
+> PLANTILLA: informe de la rama `trabajo/f17-ordenes`. Estado: lista para revisión, NO cerrada. La fase 0 y su
 > PARADA, lo hecho tras la respuesta, el encargo punto por punto, las desviaciones, las líneas del
 > cierre, la fila de ERRORES y el informe del revisor se escriben aquí según avanza la rama.
 
@@ -796,7 +796,13 @@ con el comando de D8 tal cual, sin `--instalar`:
 Los logs, en `docs/validation/anexos/F17-ORDENES/MedirOrdenesFTMO.log` y `GrabarTicksFTMO.log`
 («Result: 0 errors, 0 warnings»). El sha256 de la fuente que cada log dice haber compilado es el
 del fichero commiteado (`sha256sum`: `91fdda77…` y `46b229dc…`). El camino `herramienta` de
-`compilar.py` no cambió (D8). El `.ex5` no se versiona; la instalación en el terminal
+`compilar.py` no cambió (D8).
+
+**La recompilación, tras los arreglos del revisor (§4):** lanzada por Aleks con «!» el 2026-11-26,
+con el mismo comando, sobre `52238a1d`: los dos, **PASA (0 errores, 0 avisos)** («Result: 0 errors,
+0 warnings»). Los logs de los anexos son ya los de esta compilación: la fuente de
+`MedirOrdenesFTMO.log` es `69551d4e…` y la de `GrabarTicksFTMO.log`, `46b229dc…` (el grabador no
+cambió), los mismos que da `sha256sum` de los ficheros commiteados. El `.ex5` no se versiona; la instalación en el terminal
 (`--instalar`) va con el runbook, en la rama de la prueba.
 
 ## 4. Lo hecho con los hallazgos del revisor
@@ -822,9 +828,8 @@ Lo que el revisor no pudo medir de MT5 (las esperas por `TimeCurrent`, si `CopyT
 que muevan el saldo) sigue sin medir y lo dice el runbook en «Lo que no se sabe de MetaTrader»; dos de
 ellos ya no importan (las esperas van por `TimeLocal`, y sin caducidad el guion se niega).
 
-**Los `.mq5` cambiaron tras la compilación de `24987139`** (b4 a b7): los logs de §3.2 son de la
-versión anterior. Hace falta que el consultor revise el diff (`git diff 8178c600 -- tools/mql5/`) y
-dé otra vez el comando de compilar, y que la CI corra sobre el último commit.
+**Los `.mq5` cambiaron tras la compilación de `24987139`** (b4 a b7): se recompilaron sobre
+`52238a1d` (§3.2), y la CI corre sobre el último commit (§9).
 
 ## 5. El encargo, punto por punto
 
@@ -842,8 +847,8 @@ dé otra vez el comando de compilar, y que la CI corra sobre el último commit.
 | D5 | los lectores y sus tests | sí (uno, con dos formas; junta carpetas) | §2.2, §4 |
 | D6 | holdout: no filtran por mes, no imprimen precios | sí | el lector; el runbook |
 | D7 | los manifiestos fuera de `f17/`, el runbook, la línea en F17-HISTORIAL y el índice | sí | §2.2 |
-| D8 | la compilación por `herramienta`, sin cambiar `compilar.py` | sí sobre `8178c600`; **pendiente la recompilación** tras §4 | §3.2 |
-| D9 | la CI de `fix/f17-ordenes` | sí sobre `24987139` (run 45904547776); **pendiente sobre el último commit** | §9 |
+| D8 | la compilación por `herramienta`, sin cambiar `compilar.py` | sí: sobre `8178c600` y, tras §4, sobre `52238a1d`; PASA las dos veces | §3.2 |
+| D9 | la CI de `fix/f17-ordenes` | sí sobre `24987139` (run 45904547776); sobre el último commit, el run que da la entrega | §9 |
 | §6 | las líneas del cierre con sus bytes | sí | §7 |
 | §7 | el informe, el revisor, «Rama lista para revisión, NO cerrada.» | el informe y el revisor sí; la frase, tras la recompilación y la CI | §10, `## Estado` |
 
@@ -859,7 +864,9 @@ dé otra vez el comando de compilar, y que la CI corra sobre el último commit.
    va en la columna `motivo`.
 3. **§2.2 decía más de lo que probaba el contrato** («cada tope con un test que rompe»): las
    comparaciones no tenían test (revisor, b1). Corregido en §4; queda dicho aquí.
-4. **La compilación se repite**: los arreglos de §4 cambian los dos `.mq5` después de compilarlos.
+4. **La compilación se repitió**: los arreglos de §4 cambiaron `MedirOrdenesFTMO.mq5` después de
+   compilarlo; Aleks relanzó el mismo comando sobre `52238a1d` sin un mensaje aparte del consultor
+   con él (el comando era el de D8, sin cambios).
 5. **`git worktree remove --force`** en la prueba contra `main` (§2.3), por los tests copiados sin
    seguir; dicho allí.
 6. **El informe del revisor** va pegado entero, con las rutas de «Ficheros» relativas a la raíz (las
@@ -914,7 +921,9 @@ Que se le escapo`):
   esperado**, `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` (PROJECT_STATE declara
   `trabajo/f17-ordenes` y la rama es `fix/f17-ordenes`, RITUAL.md); «1 failed, 3701 passed, 102
   skipped».
-- **Pendiente:** la CI sobre el último commit, tras la recompilación de §4.
+- **Sobre el último commit** (el que trae este informe y los logs de la recompilación), empujado
+  igual: su número y su resultado van en el mensaje de entrega al consultor y en la orden de cierre,
+  porque escribirlos aquí cambiaría el commit que mide.
 
 ## 10. Informe del revisor (subagente `revisor`, sobre `24987139`)
 
@@ -1090,7 +1099,8 @@ Ficheros:
 
 ## Estado
 
-EN CURSO: el código, los tests, la compilación de `8178c600`, la CI de `24987139` y el revisor,
-hechos; los arreglos del revisor (§4) cambian los `.mq5`, así que faltan la revisión del diff por
-el consultor, la recompilación con su comando y la CI sobre el último commit. La rama NO está
-lista todavía.
+Lista para revisión: las dos partes de F17 que faltaban, hechas, probadas y compiladas, SIN CORRER
+(nada se ha conectado a FTMO ni se ha enviado ninguna orden). La medida no se lanza hasta que FTMO
+conteste el correo del 2026-11-26. La CI de este último commit, en el mensaje de entrega.
+
+Rama lista para revisión, NO cerrada.

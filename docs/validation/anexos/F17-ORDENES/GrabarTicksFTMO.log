@@ -1,10 +1,10 @@
 # fuente: tools/mql5/GrabarTicksFTMO.mq5 (copia del indice de git; sha256 46b229dc8e4e20f69fe2bdb8ea94ea15def6dde088e3acddb8667b48eb1548a9)
-# log original: UTF-16LE con BOM y CRLF, sha256 75231ff38fd80df3978a3519ff6b74b22de5d62129f93cdcea0439ff9a819a3d
+# log original: UTF-16LE con BOM y CRLF, sha256 2232456251591d665fcfdda40992cf768d087f3496aac382e8d6cab8671ea25b
 # codigo de salida de MetaEditor: 1 (1 con exito, 0 con error: no es la puerta)
 # puerta: PASA (0 errores, 0 avisos, .ex5 si)
 
 
-C:\Users\USER\AppData\Local\Temp\botsito-herramienta-i0rg4009\tools\mql5\GrabarTicksFTMO.mq5 : information: compiling C:\Users\USER\AppData\Local\Temp\botsito-herramienta-i0rg4009\tools\mql5\GrabarTicksFTMO.mq5
+C:\Users\USER\AppData\Local\Temp\botsito-herramienta-dk04ih6d\tools\mql5\GrabarTicksFTMO.mq5 : information: compiling C:\Users\USER\AppData\Local\Temp\botsito-herramienta-dk04ih6d\tools\mql5\GrabarTicksFTMO.mq5
  : information: generating code
  : information: generating code 3%
  : information: generating code 6%
@@ -40,4 +40,4 @@ C:\Users\USER\AppData\Local\Temp\botsito-herramienta-i0rg4009\tools\mql5\GrabarT
  : information: generating code 95%
  : information: generating code 100%
  : information: code generated
-Result: 0 errors, 0 warnings, 664 ms elapsed, cpu='X64 Regular'
+Result: 0 errors, 0 warnings, 660 ms elapsed, cpu='X64 Regular'
