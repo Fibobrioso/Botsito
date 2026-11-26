@@ -149,7 +149,7 @@ los nombres de A5 y una entrada más. El clon se quitó tras el `diff` (`git wor
 ### 0.4 Lo que nombra cada audio
 
 `scripts/barrido_dias.py` **no admite el formato** de las transcripciones: pide líneas
-`[mm:ss] texto` (`barrido_dias.py`:34) y las ocho son `mm:ss · texto` (`grep -cE '^\[[0-9]+:[0-9][0-9]\] '`
+`[mm:ss] texto` (`barrido_dias.py`:35) y las ocho son `mm:ss · texto` (`grep -cE '^\[[0-9]+:[0-9][0-9]\] '`
 da 0 en las ocho). Además solo vería enteros de 18 a 31, no meses ni resultados (auditor, 25). Un
 guion de recuento ciego de la carpeta de trabajo (meses, años, enteros y términos de resultado, solo
 cifras) **lo negó la guardia** («el codigo recorre directorios que construye al ejecutarse y nombra
@@ -162,7 +162,7 @@ las ocho transcripciones enteras (Read, por su ruta literal):
 | 0959-protegido-en-0-80 | 1 | 0 | 0 | 0 | 0 | niveles de la caja, la relación de objetivo |
 | 1001-break-even-y-comision | 5 | 0 | 0 | 0 | 0 | ninguna |
 | 1002-calculo-del-break-even | 1 | 0 | 0 | 0 | 0 | ninguna |
-| 1007-recalculo-y-reunion | 15 | 0 | 0 | 0 | 0 | la hora de una reunión; «los tres» trades comparados |
+| 1007-recalculo-y-reunion | 15 | 0 | 0 | 0 | 0 | la hora de una reunión; un número de operaciones suyas comparadas |
 | 1010-objetivo-y-191-operaciones | 22 | 0 | 0 | 0 | 0 | niveles de la caja, relaciones de objetivo; **un recuento de operaciones de una medida nuestra** (§0.5, f) |
 | 1013-fundednext-y-esquemas | 15 | 0 | 0 | 0 | 0 | ninguna (dice que tuvo ganadoras y perdedoras, sin cifra) |
 | (duplicado, 9.59.43 AM (1)) | 1 | 0 | 0 | 0 | 0 | igual que su original |
@@ -176,17 +176,17 @@ Aleks lo escuche (§5).
 
 Las letras (a)-(f) son las expectativas del consultor del encargo, 0.5; «F#», las frases de §0.7.
 Objetivos de `fb-` posibles: los de `TIPOS_OBJETIVO` (`feedback/modelo.py`:53-61; `evidence`,
-`regla`, `parametro`, `ambiguedad`, `caso`, `contradiccion`). D1: ninguno se registra.
+`regla`, `parametro`, `ambiguedad`, `caso`, `contradiccion`, `paquete`). D1: ninguno se registra.
 
 | Fuente | Tema | Expectativa | ¿Objetivo de `fb-`? | ¿Responde a algo pendiente? |
 |---|---|---|---|---|
-| 0959-caja-en-una-vela | que el bot traza la caja en una sola vela y no desde el esquema 1 o 2 (F1); que el objetivo se ha calculado desde el 0,8, cuando la referencia es la distancia 1-0 (F2) | (a) sí; (b) sí | (a) `ambiguedad` A-48; (b) `parametro` `base_calculo_objetivo` / `objetivo_rr` | (a): material para A-48 y S-3 (`ACTIVAR-SESION-08.md`:55) y la sesión siguiente (R4.6); no la cierra. (b): ver §0.6 |
-| 0959-protegido-en-0-80 | la referencia del objetivo es la distancia 0-1 con el 1:3, y se protege en el 0,80 (F3) | (b) sí: la voz, según el ASR, dice la distancia 0-1, no «el stop» (por comprobar, §5 pregunta 3) | `parametro` `base_calculo_objetivo`, `objetivo_rr`, `stop_fraccion_caja` | nada pendiente: los tres CONFIRMED (`parametros.yaml`:671, 1116 y 1782, sus `valor`) |
-| 1001-break-even-y-comision | un trade neutral no afecta; lo que conlleva es la comisión, que según él pesa poco (F4) | (c) sí, opinión | `regla` RN-014 (break even) | V18 de la auditoría «cazador» («Break even neto de costes… Pregunta al trader»; auditor, H5) y A-13 (break even, ABIERTA): lo toca, no responde a la pregunta de A-13 |
-| 1002-calculo-del-break-even | el coste del break even se calcula con el número de break even y la comisión (F5) | (c) sí, opinión | `regla` RN-014 | como la fila anterior |
-| 1007-recalculo-y-reunion | que va a recalcular sus trades con comisión y lotaje (F6); que el bot marca mal las cajas y que comparó tres operaciones suyas con las del bot (F7); una reunión esa noche (F8) | (a) sí; (e) sí; F6, premisa | ninguno (premisa y logística); (a) A-48 | (a) como arriba; F6, nada del repo |
-| 1010-objetivo-y-191-operaciones | el objetivo, calculado sobre la distancia 0-1 (F9); una gestión que podría venir después (proteger o bajar al 0,50; F14); el recuento de operaciones de un análisis que acababa de leer (F10) y unos Excel recalculados (F11) | (b) sí; (f) sí | (b) `parametro`; F14, ninguno (gestión futura, no regla); (f), ninguno | (f): lo que se le enseñó, §5 preguntas 1 y 2 |
-| 1013-fundednext-y-esquemas | que ha operado algunas operaciones en FundedNext, ganadoras y perdedoras, y las compartió en el grupo (F12); qué es el esquema 1 y el 2 (F13); que se manden los audios a un asistente para analizarlos | (d) sí; (a) sí | (d) ninguno (premisa; `firma` es la del bot, ADR-0026, auditor 33); (a) A-48 | (d): lo que ya trae el corpus de FundedNext, `ev-v4-012524-0ef85a89` (v4 1:25:24; auditor, H7), sin leerlo contra nada (D5); F13: tema de A-20 (una sola zona de control, cerrada) y de A-48 |
+| 0959-caja-en-una-vela | cómo traza el bot la caja frente a los esquemas de entrada (F1); desde dónde se calcula el objetivo (F2) | (a) sí; (b) sí | (a) `ambiguedad` A-48; (b) `parametro` `base_calculo_objetivo` / `objetivo_rr` | (a): material para A-48 y S-3 (`ACTIVAR-SESION-08.md`:55) y la sesión siguiente (R4.6); no la cierra. (b): ver §0.6 |
+| 0959-protegido-en-0-80 | la referencia del objetivo y la protección (F3) | (b) sí; si la voz dice la distancia 0-1 o «el stop» queda sin literal (§6.5) | `parametro` `base_calculo_objetivo`, `objetivo_rr`, `stop_fraccion_caja` | nada pendiente: los tres CONFIRMED (`parametros.yaml`:671, 1116 y 1782, sus `valor`) |
+| 1001-break-even-y-comision | el break even y la comisión (F4) | (c) sí, opinión | `regla` RN-014 (break even) | V18 de la auditoría «cazador» («Break even neto de costes… Pregunta al trader»; auditor, H5) y A-13 (break even, ABIERTA): lo toca, no responde a la pregunta de A-13 |
+| 1002-calculo-del-break-even | cómo se calcula el coste del break even (F5) | (c) sí, opinión | `regla` RN-014 | como la fila anterior |
+| 1007-recalculo-y-reunion | recalcular sus operaciones con costes (F6); cómo traza el bot la caja, comparado con operaciones suyas (F7); una reunión (F8) | (a) sí; (e) sí; F6, premisa | ninguno (premisa y logística); (a) A-48 | (a) como arriba; F6, nada del repo |
+| 1010-objetivo-y-191-operaciones | el objetivo (F9); una gestión posible (F14); lo que dice haber leído (F10, F11; §6.6) | (b) sí; (f) sí | (b) `parametro`; F14, ninguno (gestión futura, no regla); (f), ninguno | (f): lo que se le enseñó, §5 preguntas 1 y 2 |
+| 1013-fundednext-y-esquemas | operaciones en FundedNext (F12); qué es cada esquema de entrada (F13); qué hacer con los audios | (d) sí; (a) sí | (d) ninguno (premisa; `firma` es la del bot, ADR-0026, auditor 33); (a) A-48 | (d): lo que ya trae el corpus de FundedNext, `ev-v4-012524-0ef85a89` (v4 1:25:24; auditor, H7), sin leerlo contra nada (D5); F13: tema de A-20 (una sola zona de control, cerrada) y de A-48 |
 | captura 1 (01:26, Aleks) | las cinco preguntas; «las de M15 y las del PDF pueden esperar» | — | ninguno (es de Aleks) | A-35, A-43 y S-3 (WhatsApp del 2026-11-21, `ACTIVAR-SESION-08.md`:368) **siguen pendientes**: la captura lo dice (A4); la línea de A-35 de Technical Debt sigue |
 | captura 2 (09:56, trader) | «1-c» (solo backtest), «2-foundnext», «3-si, todo igual», «4-no se trabajo con spreads o comisión», 5: las sesiones de FX Replay ya no están abiertas, «están en el grupo los excels» | premisa | ninguno (premisa y coste de FX Replay: sin objetivo) | 4: lo que ADR-0100 §1 cita; 5: toca la Q de la Next Action (la exportación de agosto; `PROJECT_STATE.md`:42; auditor, H4), no la cierra |
 | captura 3 (2026-11-24 17:18, Aleks) | propone junio y noviembre de 2024, con costes y las condiciones | petición (D4) | ninguno | ADR-0100 §2 (los meses «por escrito»): el informe no lo juzga (D4) |
@@ -197,8 +197,9 @@ Sin leer nada contra la premisa ni contra ninguna cifra (D5): la captura 2 dice 
 solo en backtest) y el audio 1013, según el ASR, que ha operado algunas operaciones en FundedNext;
 las dos cosas se recogen tal cual, sin conciliarlas.
 
-Los temas de los audios son paráfrasis del ASR del 2026-11-23, sin comprobar todavía: ninguna frase
-de audio entra como literal hasta que Aleks la compruebe (D2, §5 pregunta 3).
+Los temas de los audios, neutros: nadie ha comprobado escuchándola ninguna frase (la respuesta 3
+de Aleks llegó vacía), así que no entra ni un literal ni una paráfrasis de lo que dicen (punto 7 de
+la respuesta del consultor; reescrito tras el revisor, a2).
 
 ### 0.6 El encargo frente al repo (subagente `auditor-encargo`)
 
@@ -225,7 +226,7 @@ afirmaciones, 28 correctas, 3 incorrectas y 15 con matiz; 7 herencias. Lo que ca
   (cuenta para D7).
 - **Matiz, (b):** ADR-0100 §1 (:25) describe con «objetivo a 3 veces el stop» la variante
   `todo_junto`, la del registro, frente a la regla dicha, «objetivo a 3 veces la caja»
-  (ADR-0099:28): esa diferencia es A-56. Lo que dice la voz: §0.5, F3 y F9 (la distancia 0-1).
+  (ADR-0099:28): esa diferencia es A-56. Lo que dice la voz queda sin literal (§6.5).
 - **Matiz, A5:** la guardia mira el origen de `mv` como lectura y niega las imágenes del material
   adicional: medido, §0.2.
 - **Matiz, §7:** PROJECT_STATE en la rama ya está en 24.922 bytes; la línea de Technical Debt de D2
@@ -248,20 +249,20 @@ respuesta (D2). El minuto es el del inicio del segmento del ASR.
 
 | F | Audio | Minuto | Tema |
 |---|---|---|---|
-| F1 | 0959-caja-en-una-vela | 00:00-00:36 | la caja trazada en una sola vela frente al esquema 1 o 2 |
-| F2 | 0959-caja-en-una-vela | 02:03-02:42 | desde dónde se ha calculado el objetivo (el 0,8) y la referencia 1-0 |
-| F3 | 0959-protegido-en-0-80 | 00:01 | la referencia del objetivo (0-1 con el 1:3) y la protección en el 0,80 |
+| F1 | 0959-caja-en-una-vela | 00:00-00:36 | cómo traza el bot la caja frente a los esquemas de entrada |
+| F2 | 0959-caja-en-una-vela | 02:03-02:42 | desde dónde se calcula el objetivo |
+| F3 | 0959-protegido-en-0-80 | 00:01 | la referencia del objetivo y la protección |
 | F4 | 1001-break-even-y-comision | 00:23-00:36 | el break even y la comisión |
 | F5 | 1002-calculo-del-break-even | 00:00 | cómo se calcula el coste del break even |
 | F6 | 1007-recalculo-y-reunion | 00:00-00:07 | recalcular sus trades con comisión y lotaje |
-| F7 | 1007-recalculo-y-reunion | 01:27-01:36 | objetivo y stop en una sola vela, y el margen para el spread |
+| F7 | 1007-recalculo-y-reunion | 01:27-01:36 | cómo se trazan objetivo y stop, y el margen para el spread |
 | F8 | 1007-recalculo-y-reunion | 01:54-02:09 | la reunión de esa noche |
-| F9 | 1010-objetivo-y-191-operaciones | 00:28-00:34 | el objetivo sobre la distancia 0-1 |
+| F9 | 1010-objetivo-y-191-operaciones | 00:28-00:34 | el objetivo |
 | F10 | 1010-objetivo-y-191-operaciones | 01:52-01:59 | el recuento de operaciones de lo que acababa de leer |
-| F11 | 1010-objetivo-y-191-operaciones | 02:07 | el sesgo y los Excel recalculados |
+| F11 | 1010-objetivo-y-191-operaciones | 02:07 | la fidelidad del bot y unos ficheros que dice haber visto |
 | F12 | 1013-fundednext-y-esquemas | 00:17-00:32 | las operaciones en FundedNext, compartidas en el grupo |
 | F13 | 1013-fundednext-y-esquemas | 01:15-01:40 | qué es el esquema 1 y el 2 |
-| F14 | 1010-objetivo-y-191-operaciones | 00:55-01:10 | una gestión posible (proteger o bajar al 0,50) |
+| F14 | 1010-objetivo-y-191-operaciones | 00:55-01:10 | una gestión posible |
 | A2 | audio-whatsapp-2026-11-24-1801-valida-meses | — | sin transcribir: la frase que lo resume, la de Aleks al escucharlo |
 
 ### 0.8 Lo que no pude medir
@@ -270,7 +271,7 @@ respuesta (D2). El minuto es el del inicio del segmento del ASR.
 - El recuento ciego de las transcripciones: negado el guion (§0.4); va el recuento a mano.
 - El audio de A2: no está en disco.
 - Qué era la foto de «las 191 operaciones», ni las capturas de las operaciones del bot que el
-  trader dice haber recibido con los últimos vídeos (0959, 00:43), ni los Excel recalculados (F11): no
+  trader dice haber recibido con los últimos vídeos (0959, 00:43), ni los ficheros de F11: no
   los tengo y no los busco (encargo, (c)).
 - Que la nota de voz de 0:14 esté en la captura 4 y que la captura 3 sea del 2026-11-24 a las 17:18:
   las capturas no se abren (A1; Aleks lo confirma).
@@ -296,10 +297,10 @@ pocos segundos; ese `make check` salió en verde y sellado (3624 passed, `SELLO`
    operaciones"? Qué documento, qué se veía (cifras de R, número de operaciones, porcentajes, meses)
    y cuándo se la mandaste.»
 2. El trader habla además, según el ASR, de capturas de las operaciones del bot que se le mandaron
-   con los últimos vídeos (0959-caja-en-una-vela, 00:43) y de unos Excel recalculados (F11). ¿Qué eran, y
+   con los últimos vídeos (0959-caja-en-una-vela, 00:43) y de unos ficheros (F11). ¿Qué eran, y
    llevaban alguna cifra de una medida nuestra?
 3. Escuchando los audios: ¿cada frase F1 a F14 de §0.7 dice lo que transcribe el ASR? Corrige lo que
-   no (en F5, si dice «sin multiplicarlo» o «y multiplicarlo»). Del audio de A2, la frase que lo
+   no (en F5, una palabra dudosa del ASR). Del audio de A2, la frase que lo
    resume, y si nombra algo más que los meses (un día, otro mes o un resultado).
 4. El 2026-11-23, ¿leísteis tú o el consultor algo más que las respuestas escritas y el resumen de
    los audios (las transcripciones, los audios enteros)?
@@ -546,13 +547,13 @@ y eso no entra (punto 7).
 
 ### 6.6 Lo que se le enseñó al trader (D7; punto 8 de la respuesta)
 
-**SIN DETERMINAR.** En el audio de las 10:10, según el ASR, el trader dice haber leído «las 191
-operaciones» y habla de la fidelidad del bot y de unos «Excel recalculados». Según Aleks (respuesta
+**SIN DETERMINAR.** En el audio de las 10:10 (F10 y F11; sin literal, §6.5) el trader habla de algo
+que acababa de leer, con un número de operaciones, 191, y de la fidelidad del bot. Según Aleks (respuesta
 1), la foto «es parte del chat de Gemini donde él metió varias cosas», y Aleks no leyó nada de esa
 parte para no tocar meses reservados. 191 coincide con el número de operaciones llenadas de la
 corrida (3) (ADR-0099 §8), y ADR-0098 §3 C pedía el contraste sin enseñarle ninguna cifra de esa
 medida: **es una posible desviación de ADR-0098 §3 C que no se puede confirmar ni descartar.** Lo
-mismo con las capturas de operaciones del bot y los «Excel recalculados» (la respuesta 2 de Aleks
+mismo con las capturas de operaciones del bot y los ficheros de F11 (la respuesta 2 de Aleks
 llegó vacía). Ninguna otra cifra se repite aquí. La consecuencia la decide el ADR de ADR-0099 §7, no
 esta rama, y ningún ADR se toca por esto. Declarado en la fila 2 del 2026-11-25 de
 `HOLDOUT-EXPOSICIONES.md`.
@@ -600,7 +601,7 @@ respuesta entra con su `fb-` por su propia rama, ADR-0099 §6»): esa respuesta 
 Sin leerlo contra la premisa ni contra ninguna cifra (D5); los temas de audio, sin literal (§6.5).
 
 **Para preparar la sesión siguiente (R4.6):**
-- El tema de la caja trazada sobre una sola vela frente al esquema 1 o 2, y qué es cada esquema
+- Cómo traza el bot la caja frente a los esquemas de entrada, y qué es cada esquema
   (audios de las 09:59, 10:07 y 10:13): material para A-48 y para S-3 (`ACTIVAR-SESION-08.md`:55),
   que no se cierran. Si se le pregunta, con su forma de pregunta y sin ninguna medida (ADR-0073 §3).
 - Siguen pendientes, como dice la captura 1, «las de M15 y las del PDF»: A-35, A-43 y S-3 (WhatsApp
@@ -609,14 +610,14 @@ Sin leerlo contra la premisa ni contra ninguna cifra (D5); los temas de audio, s
 
 **Para el ADR de Aleks de ADR-0099 §7 (la salida C):**
 - Las respuestas escritas de la captura 2 (§6.3), tal cual.
-- Que, según el ASR sin comprobar, el trader dice haber operado algunas operaciones en FundedNext
+- Que el audio de las 10:13 trata de operaciones suyas en FundedNext (sin literal)
   (audio de las 10:13); lo que ya trae el corpus sobre FundedNext es `ev-v4-012524-0ef85a89`. La
   captura 2 dice «1-c» (ahora mismo solo en backtest); las dos cosas, sin conciliar.
 - La respuesta 4 de la captura 2, que cita ADR-0100 §1.
 - La respuesta 5 de la captura 2 toca la Q de la Next Action; no la cierra.
 - Lo que dice del break even y la comisión (audios de las 10:01 y 10:02): V18 de
   `AUDITORIA-CAZADOR-2026-11-23.md` y A-13, sin tocar ninguna.
-- Lo que dice del objetivo y la protección en el 0,8 (audios de las 09:59 y 10:10), sin literal:
+- Lo que dice del objetivo y la protección (audios de las 09:59 y 10:10), sin literal:
   A-56, que es una medición.
 - Que dice que recalculará sus operaciones con comisión y lotaje (audio de las 10:07).
 - Lo que se le enseñó, SIN DETERMINAR (§6.6), y su posible desviación de ADR-0098 §3 C.
@@ -631,7 +632,7 @@ carpeta de trabajo sobre `git show main:PROJECT_STATE.md`.
   el backtest del trader con costes (ADR-0100, R4.10), pendientes; el diagnóstico de la premisa,
   hecho.» pasa a «F17 (ADR-0099 §5) y el backtest del trader con costes (ADR-0100, R4.10),
   pendientes; el diagnóstico de la premisa y el contraste con el trader, hechos.» Con eso, y
-  `Current Branch` y `Current Feature` de vuelta a `main`, PROJECT_STATE queda en **24.837 bytes**
+  `Current Branch` y `Current Feature` de vuelta a `main`, PROJECT_STATE queda como mucho en **24.837 bytes**
   (24.850 en `main`, −13; el tope, 25.000).
 - **La hoja de ruta, R4.7**, sin entrada nueva (punto 5): en su «Qué es», tras «el contraste de la
   premisa con el trader (ADR-0099 §6)», añadir «(hecho, CONTRASTE-TRADER.md: lo dicho y lo pedido
@@ -650,9 +651,89 @@ carpeta de trabajo sobre `git show main:PROJECT_STATE.md`.
 - **Technical Debt de PROJECT_STATE:** nada (punto 6: va a G.9).
 - **La fila de ERRORES-RECURRENTES**, con sus cuatro columnas, en §9 tras el revisor.
 
+## 9. El encargo, punto por punto
+
+Del encargo, su añadido (A1-A5) y la respuesta del consultor a la PARADA (R0-R10). Evidencia: la
+sección del informe, el commit o el comando.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | §0 Base: `main` en `6c113d16`, tag F39n en origin, CI de main en verde, sin otras ramas | Hecho | «Base comprobada» |
+| 2 | §0 Abrir con `abrir-rama`: encargo tal cual, contrato, Archivo en HISTORIA | Hecho | `459b4514` (Archivo 83) |
+| 3 | §0 Contrato: tramo R4, la lista blanca, lo protegido mandando, ningún ADR nuevo | Hecho de otra forma | `contrato.yaml`: añade `PROJECT_STATE.md` y `docs/state/HISTORIA.md`, que la apertura exige (skill `abrir-rama`, paso 4); los demás ADR, protegidos por patrón (`00*`, `0101-*`, `0102-*`, `README.md`) |
+| 4 | §0 La fila de HOLDOUT antes del primer `make check` del día | Hecho | §0.1; filas 1 y 2 del 2026-11-25 |
+| 5 | §0 «La herramienta X da Y», medido antes de escribirlo | Hecho | §0.2-§0.4, §6.9 (cada afirmación con su comando y salida) |
+| 6 | §0 Lo que escriba, ensayado antes en un clon desechable | Hecho de otra forma | El inventario, en un `git worktree` (§0.3). Los cinco guiones de la carpeta de trabajo que insertaron texto en documentos (filas de HOLDOUT, la respuesta en el encargo, las secciones del informe y la tabla de §0.7) se ejecutaron sobre el repo real, con `assert` del punto exacto y `git diff` después, sin ensayo en un clon: desviación declarada (§10) |
+| 7 | §0 El recuadro del ADR en un commit propio | Hecho | `e81e13e6` (2 líneas añadidas, 0 borradas) |
+| 8 | §1 El contraste y la petición escrita de los meses, para el ADR de ADR-0099 §7, antes del 2026-12-01 | Hecho | §6, §7; lista el 2026-11-25 |
+| 9 | §2 Qué NO cambia (spec, casos, evidencia, feedback, libros, tramos, transcripciones, motor, `src/`, `scripts/`, `.claude/`, demás ADR, `docs/plan/`, PROJECT_STATE salvo la apertura; ninguna corrida del arnés) | Hecho | `git diff --stat main...HEAD` sobre esas rutas, vacío; PROJECT_STATE, solo `Current Branch`, `Current Feature` y las dos líneas del Archivo; ninguna corrida |
+| 10 | §3 (a) Las capturas de las cinco preguntas y de las respuestas, sin abrirlas | Hecho | §0.2, §6.2, §6.3 |
+| 11 | §3 (b) Los audios del 2026-11-23 con su nombre; el duplicado, fuera, por su sha256 | Hecho | §0.2, §6.1 (copiados por la sesión; la guardia no lo negó) |
+| 12 | §3 (c) Lo que se le enseñó, descrito por Aleks | Hecho, SIN DETERMINAR | §6.6 (respuestas 1 y 2 de Aleks; R8) |
+| 13 | §3 (d) La petición escrita de los meses | Hecho (corregido por A3 y R0) | §6.4 |
+| 14 | 0.1 La fila tardía del 2026-11-23, como desviación de ADR-0021 §4, comprobada antes | Hecho | §0.1; fila 1 del 2026-11-25, punto (1); la parte del consultor, fila 2, punto (2) |
+| 15 | 0.2 El material por fichero (nombre, tamaño, sha256; formato y duración de los audios); el vídeo de mapeo y diciembre de 2025, fuera | Hecho, con dos límites | §0.2: `ffprobe` negado sobre `.ogg` (la duración es la del ASR); el `find` por nombre, desviación de la skill fase-cero declarada |
+| 16 | 0.3 El inventario en un clon: lo acepta, y el diff son solo entradas nuevas | Hecho | §0.3 (más el `resumen`, que cambia siempre: auditor, 23) |
+| 17 | 0.4 Lo que nombra cada audio, por recuento | Hecho (a mano) | §0.4: `barrido_dias.py` no admite el formato; el guion ciego, negado |
+| 18 | 0.5 El mapa de lo dicho, con (a)-(f), A-35, A-43, A-48, A-58 y el WhatsApp del 2026-11-21 | Hecho, con (b) sin literal | §0.5, §7; lo que pedía (b) —si la voz dice la distancia 0-1 o «el stop»— queda sin literal por R7 (§6.5) |
+| 19 | 0.6 El auditor | Hecho | §0.6 e «Informe del auditor» |
+| 20 | §5 La PARADA única, con la pregunta a Aleks copiada tal cual | Hecho | §5; `b2fd52cb` |
+| 21 | D1 Ningún `fb-` | Hecho | `git diff` vacío en `knowledge/feedback/`; §6.8 (con el apartamiento de R3) |
+| 22 | D2 Literales: capturas del consultor con sha256; audios solo los comprobados por Aleks; la transcripción, fuera, por su sha256 | Hecho | §6.2-§6.4; §6.5: ningún literal de audio (respuesta 3 vacía, R7); §0.2, sha256 de las ocho transcripciones |
+| 23 | D3 `fuentes.yaml`, con lo que entra y sus cautelas | Hecho de otra forma (R2) | el párrafo de «Mensajes del trader», ampliado; §6.7 |
+| 24 | D4 Las capturas de (d), sin juzgar ADR-0100 §2 | Hecho | §6.4, con los dos hechos de A3 y R0 |
+| 25 | D5 Neutral | Hecho | §0.5, §6, §7: nada leído contra la premisa ni contra ninguna cifra |
+| 26 | D6 El recuadro de ADR-0100 §1, cuerpo intacto | Hecho | `e81e13e6`; §6.10 |
+| 27 | D7 HOLDOUT: la fila tardía, lo enseñado como posible desviación de ADR-0098 §3 C, lo de cada paso el mismo día | Hecho | filas 1 y 2 del 2026-11-25 |
+| 28 | §7 El informe: qué entra, las cinco preguntas, la tabla, los literales, lo enseñado, las cautelas, lo de R4.6 y del ADR de C | Hecho | §6.1-§6.7, §7 |
+| 29 | §7 Las líneas del cierre: la F sin que PROJECT_STATE crezca (con su tamaño), la hoja de ruta, Technical Debt, la fila de ERRORES-RECURRENTES | Hecho (Technical Debt sustituido por G.9, R6) | §8: 24.837 bytes; la fila de ERRORES, §11 |
+| 30 | §7 Sin `fix/` ni CI de Linux | Hecho | no toca la plataforma: solo documentos y el registro del corpus |
+| 31 | §7 El revisor con sus seis alcances, su informe pegado | Hecho | «Informe del revisor» y «Lo que se hizo con los hallazgos del revisor» |
+| 32 | §7 La frase final | Hecho | «Estado», tras el último `make check` sellado |
+| 33 | A1 Los sha256 de las cuatro capturas iguales a los dados | Hecho | §0.2 (y otra vez con los nombres de A5, §6.1) |
+| 34 | A2 El audio del 2026-11-24 | No entra (R0) | §6.1: según Aleks, una risa |
+| 35 | A3 La petición corregida, sin 1:30 ni el deslizamiento; la configuración, la pedida | Hecho | §6.4 |
+| 36 | A4 La captura 1 nombra las de M15 y las del PDF como pendientes | Hecho | §0.5, §7 |
+| 37 | A5 El cambio de nombre tras comprobar el sha256 | Hecho por Aleks | la guardia lo negó a la sesión (§0.2); Aleks con `!`; sha256 recalculados (§6.1) |
+| 38 | R1 El inventario en la rama, el diff del ensayo con la raíz sin cambiar, y `corpus check --hashes` | Hecho | §6.9 |
+| 39 | R4 Q, V18, A-13 y `ev-v4-012524-0ef85a89` solo por su id | Hecho | §7 |
+| 40 | R5 Ninguna entrada nueva en la hoja de ruta | Hecho | §8 |
+| 41 | R9 La parte del consultor y su exposición de hoy, antes del siguiente `make check` | Hecho | fila 2 del 2026-11-25, escrita antes del `make check` de `abf23d00` |
+| 42 | R10 La fila de ERRORES-RECURRENTES con los dos errores | Hecho | §11 |
+
+## 10. Desviaciones declaradas
+
+- **Los guiones que insertan texto, sin ensayo en un clon** (punto 6 de §9): los ejecutó la sesión
+  sobre el repo real. Cada uno comprueba con `assert` el punto exacto de inserción y que el fichero
+  no tiene CRLF, y el resultado se comprobó con `git diff --stat` / `--numstat` antes de estadiar.
+  No son instaladores ni toman su raíz de fuera, y no corrían con un `make check` en marcha.
+- **El `find` por nombre sobre `corpus/`** (§0.2): desviación de la skill fase-cero, declarada en la
+  fila 1 del día. No imprimió nada de dentro de una carpeta `Backtest`.
+- **El recuento a mano de las transcripciones** (§0.4): lo prevé el encargo, pero solo tras negar la
+  guardia un guion ciego, que era la forma menos expuesta.
+- **El `ScheduleWakeup`** con un `make check` corriendo (§0.10): sin consecuencia, a la fila de
+  ERRORES.
+- **La duración de los audios** es la del ASR del 2026-11-23 y no una medida de hoy (§0.2).
+- **Las copias «tal cual» del auditor y del revisor llevan retiradas** (revisor, a1 y a2): las cifras
+  de una medida nuestra distintas del 191 (punto 8 de la respuesta) y las paráfrasis y fragmentos
+  del ASR que citaban (punto 7), cada retirada marcada y contada en la cabecera de cada copia. El
+  encargo, con la cifra del techo en su §3 (c), queda copia literal (§12, decisión 1).
+
+## 11. La fila de ERRORES-RECURRENTES, preparada para el cierre
+
+Cuatro columnas (`ERRORES-RECURRENTES.md`, «La tabla»). La columna del revisor se completa con su
+informe (abajo); la del consultor, con lo que encuentre en su revisión.
+
+| Rama | Hallazgos del revisor | Hallazgos del consultor despues | Que se le escapo |
+|---|---|---|---|
+| `trabajo/contraste-trader` | Una pasada, opus, con los seis alcances del encargo (CONTRASTE-TRADER.md, «Informe del revisor»; lo hecho, en «Lo que se hizo con los hallazgos del revisor»): eje (a) 0 bloquea, 4 importa, 4 menor; eje (b) 0 bloquea, 0 importa, 1 menor. a1 (cifras de una medida en textos copiados tal cual), a2 (paráfrasis del ASR sin escuchar en el informe y en `fuentes.yaml`, que §6.5 negaba), a3 (los guiones de inserción sin clon), a4 (la fila 1 de HOLDOUT sin el auditor ni varias lecturas) | (lo que encuentre el consultor) | (1) **La sesión**: con un `make check` corriendo puso un `ScheduleWakeup` de respaldo, que crea `.claude/scheduled_tasks.lock` y tumba `test_no_unexpected_ignored_paths`; lo borró a los pocos segundos y el `make check` selló. Lección: con un `make check` corriendo no se programa nada que escriba en `.claude/`; para esperar basta el aviso de la tarea de fondo. (2) **El consultor**: A2 y A3 del añadido daban por buena una «validación» de los meses en una nota de voz sin preguntar qué decía; según Aleks era una risa (respuesta del consultor, punto 0). Lección: lo que dice un audio no se escribe en un encargo antes de que alguien lo escuche. (3) La guardia negó tres medidas legítimas (`ffprobe` sobre `.ogg`, un guion de recuento ciego y el `mv` de una captura), a G.9 |
+
 ## Informe del auditor (subagente `auditor-encargo`, 2026-11-25), tal cual
 
-Copiado tal cual, con sus títulos bajados dos niveles para que no partan este informe. Sus números
+Copiado tal cual, con sus títulos bajados dos niveles para que no partan este informe, y con dos
+cifras de una medida nuestra retiradas en su afirmación 14 («[cifra retirada]»), por el punto 8
+de la respuesta del consultor (ninguna cifra salvo el 191; revisor, a1). Las dos están publicadas
+en `main` (ADR-0099 §8 y `AUDITORIA-CAZADOR-2026-11-23.md`:41). Sus números
 de línea de HOLDOUT, PROJECT_STATE y HISTORIA son los del árbol de la apertura.
 
 #### Auditoría del encargo · trabajo/contraste-trader · 2026-11-25
@@ -678,7 +759,7 @@ He trabajado solo leyendo. No he ejecutado `make`, tests, `gh` ni ningún comand
 | 11 | ADR-0100 §2: «los que Aleks le pidió por escrito, o los que él declare por escrito antes de empezar» | CORRECTA | 0100:55-56 |
 | 12 | «Las capturas no las abres (ADR-0038; la guardia lo impide)» | MATIZ | ADR-0038 §3 prohíbe en bloque las capturas de Analytics y da el motivo (0038:26-28). Que no se abra ninguna imagen del material adicional lo extiende la guardia (guardia.py:19) y la práctica de fuentes.yaml:357-358. Es coherente con ese motivo y no lo contradice. |
 | 13 | (a) «las cinco preguntas … no están en el repo» | CORRECTA | `git grep "ajustando el bot a las condiciones" main` da 0 resultados. |
-| 14 | (c) «191 es el número de operaciones llenadas de la corrida (3), las del techo de −0,239 R (ADR-0099 §8; RECORRIDA-CONSTRUCCION-3.md §4)» | CORRECTA, con un matiz | 0099:207-208 y RECORRIDA-CONSTRUCCION-3.md:685-686 y :720. Ningún informe posterior cambia la cifra. Pero 191 se publica también en PUENTE-TECHO.md:464 (`base`), DIAGNOSTICO-PREMISA.md:223 y :417, y AUDITORIA-CAZADOR-2026-11-23.md:41, :50, :90 y :103 («79 de 191»). La foto pudo salir de cualquiera de ellos, y eso cuenta para D7. |
+| 14 | (c) «191 es el número de operaciones llenadas de la corrida (3), las del techo de [cifra retirada] (ADR-0099 §8; RECORRIDA-CONSTRUCCION-3.md §4)» | CORRECTA, con un matiz | 0099:207-208 y RECORRIDA-CONSTRUCCION-3.md:685-686 y :720. Ningún informe posterior cambia la cifra. Pero 191 se publica también en PUENTE-TECHO.md:464 (`base`), DIAGNOSTICO-PREMISA.md:223 y :417, y AUDITORIA-CAZADOR-2026-11-23.md:41, :50, :90 y :103 ([cifra retirada]). La foto pudo salir de cualquiera de ellos, y eso cuenta para D7. |
 | 15 | ADR-0098 §3 C pedía el contraste «sin enseñarle ninguna cifra de esta medida» | CORRECTA | 0098:148-149 |
 | 16 | (d) la configuración incluía «apalancamiento 1:30 y deslizamiento apagado» | INCORRECTA (A3 ya lo corrige) | ADR-0100 §2 (0100:69-74) no los nombra. |
 | 17 | 0.1: las filas del 2026-11-23 y del 2026-11-24 «dicen que no leyeron esos mensajes ni audios» | CORRECTA | HOLDOUT:189 y :190 («ningún mensaje ni audio del trader»), :191 («ni sus mensajes o audios del 2026-11-23») y :192. |
@@ -753,6 +834,199 @@ Hay dos cosas que harían trabajar a la sesión sobre algo falso o imposible.
 
 A esto se suma H3: el encargo deja entrar «una captura de la configuración sin ningún resultado» sin decir que la única conocida trae agregados de meses reservados y que, por su propio punto (d), no entra.
 
+## Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | En la copia del informe del auditor, las dos cifras de la afirmación 14 se retiran («[cifra retirada]»), dicho en su cabecera; igual en la copia del informe del revisor (abajo, dos retiradas en su a1). **El encargo no se toca**: es copia tal cual del prompt (`docs/encargos/trabajo-contraste-trader.md`:34 lleva la cifra del techo, publicada en ADR-0099 §8). Si el consultor quiere también ahí la cifra fuera, lo decide él (§12, decisión 1) |
+| a2 | importa | Reescrito: los temas de §0.5, §0.6, §0.7, §0.8, §5, §6.6 y §7 quedan neutros, sin paráfrasis ni fragmentos del ASR (solo el 191, que permite el punto 8); y `fuentes.yaml` dice «segun su ASR sin comprobar» en lo de FundedNext y en la foto. Quedan citas del ASR solo dentro de la respuesta del consultor, copiada tal cual |
+| a3 | importa | No se puede deshacer: la desviación está declarada (§10) y el diff lo muestra (solo añaden líneas y cada `make check` selló). Pide que el consultor la acepte de forma explícita (§12, decisión 0) |
+| a4 | importa | La fila 1 de HOLDOUT del 2026-11-25 nombra ahora al subagente `auditor-encargo` (qué leyó y qué no) y las lecturas que faltaban (`parametros.yaml`, `strategy_spec.yaml`, `feedback/modelo.py`, `knowledge/feedback/README.md`, `ERRORES-RECURRENTES.md`), en la misma fila y el mismo día |
+| a5 | menor | La fila 1 dice ahora «113 líneas: 81 de texto y 32 de cabecera, cuatro por fichero» |
+| a6 | menor | §0.5 nombra los siete objetivos, con `paquete` (§6.8 ya decía «ninguno de los objetivos») |
+| a7 | menor | `barrido_dias.py`:35 |
+| a8 | menor | §8: «queda como mucho en 24.837 bytes» |
+| b1 | menor | §9: la fila 18 dice que (b) queda sin literal; las filas 31 y 32, hechas con este informe pegado y el Estado; §11, el resumen del revisor |
+
+## 12. Lo que pide decidir al consultor
+
+0. **Los guiones de inserción sin clon (revisor, a3).** Opciones: (a) aceptarlo como desviación
+   declarada, porque solo añadieron texto a documentos, con `assert` del punto exacto, y todo quedó
+   sellado; (b) no aceptarlo, y que la rama repita esas escrituras ensayándolas antes en un clon.
+   Recomiendo (a): (b) produciría los mismos bytes. Coste de (a): una excepción a la regla 1 de
+   «Ensayos aislados», que va a la fila de ERRORES.
+1. **La cifra del techo en la copia del encargo (revisor, a1).** Opciones: (a) se queda, porque el
+   encargo es copia tal cual y la cifra es de construcción y está publicada; (b) un recuadro en la
+   copia del encargo que la retire. Recomiendo (a). Coste de (b): el encargo deja de ser copia
+   literal.
+
+## Informe del revisor (subagente `revisor`, 2026-11-25), tal cual
+
+Copiado tal cual, con sus títulos bajados dos niveles y con estas retiradas: en su a1, las cifras
+de una medida nuestra que citaba (tres «[cifra retirada]»), por la misma razón que en el del
+auditor; en su a2, las cuatro paráfrasis del ASR y el segundo fragmento que citaba como ejemplo
+(dos retiradas, entre corchetes), por el punto 7 de la respuesta; y los patrones de búsqueda de
+sus comandos 11, 12 y 35, que repetían esas cifras («…»). Sus números de línea son los del árbol
+que revisó.
+
+#### Informe del revisor · trabajo/contraste-trader · 2026-11-25
+
+Base `6c113d16` (merge-base). Cuatro commits (`459b4514`, `b2fd52cb`, `abf23d00`, `e81e13e6`). En el árbol, sin commitear, solo `docs/validation/CONTRASTE-TRADER.md` (+74 −1: §9-§11 y el Estado).
+
+**Lo principal:** no hay nada que bloquee. Hay cuatro hallazgos que importan en el eje (a) y ninguno en el eje (b). Por lo que se ve en el diff, la rama está a falta de pegar este informe, dos correcciones de texto y una decisión del consultor (a1 y a3).
+
+##### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 4 importa, 4 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | **Hay cifras de una medida nuestra que no son el 191** en lo commiteado (alcance 1; R8: «No repites ninguna cifra que no sea el 191 que ya dijo él»). Las dos cifras son de construcción y ya están publicadas en `main` (ADR-0099 §8 y AUDITORIA-CAZADOR-2026-11-23.md:41), así que no exponen el holdout. Las dos llegan en textos copiados tal cual: el encargo y el informe del auditor. El consultor decide si se quedan o si la copia del auditor las elide declarándolo. | `CONTRASTE-TRADER.md:754` (informe del auditor, afirmación 14): «las del techo de [cifra retirada]» y «AUDITORIA-CAZADOR-2026-11-23.md:41, :50, :90 y :103 ([cifra retirada])». `docs/encargos/trabajo-contraste-trader.md:34`: «191 es el número de operaciones llenadas de la corrida (3), las del techo de [cifra retirada]». Comprobado con Grep: solo esas dos líneas. |
+| a2 | importa | **Contenido del ASR que nadie ha escuchado sigue en el informe y en `fuentes.yaml`, aunque §6.5 dice que no.** §6.5 afirma «no entra ningún literal de audio. Ni el texto del ASR ni las lecturas de la sesión sobre él». Pero quedan tres cosas. (i) Paráfrasis con las lecturas de la sesión que R7 mandaba como nota al pie: [cuatro paráfrasis del ASR, retiradas aquí con el arreglo]. (ii) Dos fragmentos entre comillas atribuidos al ASR: «las 191 operaciones» y [un segundo fragmento, retirado aquí con el arreglo]. Siguen la redacción de R8, pero son literales de audio. (iii) `fuentes.yaml`, que es permanente, afirma lo que «el trader dice» sobre FundedNext sin «según el ASR, sin comprobar». Ese mismo párrafo dice que ninguna frase entra «porque nadie la ha comprobado escuchandola». D3 da esa redacción, pero es anterior a R7. | `CONTRASTE-TRADER.md:529-531` frente a `:183-189`, `:226-228`, `:251-264` y `:549-550`; `knowledge/corpus/fuentes.yaml:401-402` frente a `:409-410`; R7 en `docs/encargos/trabajo-contraste-trader.md:158`: «Ninguna frase que Aleks no haya escuchado entra al informe». |
+| a3 | importa | **Cinco guiones escribieron en el repo real sin ensayo en un clon.** Se apartan de CLAUDE.md, «Ensayos aislados», regla 1 («Un script que escribe archivos se ensaya en un clon desechable»), y del §0 del encargo («lo que escriba se ensaya antes en un clon desechable»). La desviación está declarada y el resultado se ve en el diff: solo añaden líneas y `make check` selló. Aun así, rompe una regla escrita: si el consultor lee la regla al pie de la letra, esto bloquea. Le toca aceptarlo de forma explícita. | `CONTRASTE-TRADER.md:705-708` (§10) y `:665` (§9, fila 6: «se ejecutaron sobre el repo real ... sin ensayo en un clon»). |
+| a4 | importa | **La fila 1 de HOLDOUT del 2026-11-25 está incompleta** (alcance 1: «completas»). No declara al subagente `auditor-encargo`, que leyó el repo en la fase 0; la fila 2 sí declara al revisor, y la de `diagnostico-premisa` del 2026-11-24, punto (8), declara a los dos. Además, su punto (5) cierra con «**Nada más**», pero no nombra lecturas que el informe cita como propias: `parametros.yaml:671, 1116 y 1782` (el auditor citaba :1105, así que :1116 es lectura de la sesión), `feedback/modelo.py` y `knowledge/feedback/README.md`. No es una exposición del holdout: es una afirmación que el informe contradice. | `HOLDOUT-EXPOSICIONES.md`, fila 1 del 2026-11-25 (`git diff main...HEAD`): columna «Quién»: «(1) la sesión ... del 2026-11-23, fuera de rama, Aleks y el consultor; (2)-(5) la sesión». `CONTRASTE-TRADER.md:184` y `:178`. |
+| a5 | menor | La fila 1 de HOLDOUT dice «113 líneas»; §0.4 dice «81 líneas de texto» (21+1+5+1+15+22+15+1). Probablemente 113 = 81 + 32 líneas de cabecera (4 por fichero), pero ninguna de las dos lo dice. | Fila 1: «hecho hoy a mano sobre los ocho `.txt` (113 líneas)»; `CONTRASTE-TRADER.md:170`. |
+| a6 | menor | `TIPOS_OBJETIVO` tiene siete objetivos y el informe nombra seis: le falta `paquete`. La conclusión no cambia. | `src/botsito/feedback/modelo.py:53-61`; `CONTRASTE-TRADER.md:178-179` y `:574-575`. |
+| a7 | menor | La cita `barrido_dias.py:34` es la línea en blanco: `LINEA = re.compile(r"^\[(\d+:\d\d)\] (.*)$")` está en la :35 (y el formato, también en la :4). | `sed -n '34p'` vacío; `CONTRASTE-TRADER.md:152`. |
+| a8 | menor | Los «24.837 bytes» de §8 son `main` con solo el cambio de la F (166 → 153 bytes, −13: lo medí). El cierre reescribe además `Current Feature` (−6 por el nombre de la rama, dos veces) y `Stable Main State` (unos −2), así que «PROJECT_STATE queda en 24.837» es aproximado, aunque por debajo. | `CONTRASTE-TRADER.md:633-635`; `git show main:PROJECT_STATE.md \| wc -c` → 24850. |
+
+Lo propuesto para el cierre (§8 y §11) está bien:
+- **La F:** el literal que se quita está en `PROJECT_STATE.md:28` y, con el cambio, el fichero no crece.
+- **R4.7:** el ancla de su «Qué es» existe (`HOJA-DE-RUTA.md:439`).
+- **G.9:** es el número que toca (la última es G.8, :888) y su forma (Refs / Qué es / Depende de / Quién / Hecho cuando) es la de G.1-G.8. Recoge las tres guardias, la transcripción de audios sueltos y el README, como pide R6.
+- **La fila de ERRORES (§11):** tiene las cuatro columnas de `ERRORES-RECURRENTES.md:50`, con los dos errores de R10 (el ScheduleWakeup y la «validación» del consultor). `REVISOR_RESUMEN` está por rellenar.
+
+Comprobado sin hallazgos:
+- **Contrato:** `contrato_rama.py` → «CONTRATO: 9 ficheros dentro del contrato ... G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-25 para trabajo/contraste-trader, estadiada», exit 0. `state check` → OK, exit 0. `knowledge validate` → todo OK, exit 0, sin errores: «1248 documentos: todo id citado existe», «203 registros de feedback, historial intacto», «753 items de evidencia ... historial intacto»; solo los AVISO de siempre.
+- **`make-check.log`:** `SELLO: make check en verde sobre el arbol 3f2bfb2d…` = `git rev-parse e81e13e6^{tree}`; «3624 passed, 6 xfailed»; `PICO DE MEMORIA ... 321 MiB`. El árbol de hoy, con los cambios de §9-§11 sin commitear, NO tiene sello: hace falta otro `make check` antes de commitearlo.
+- **Trailers `Fuente:`:** no hace falta ninguno, porque ningún commit toca `knowledge/spec` ni `knowledge/cases`.
+- **Holdout:** ninguna fecha reservada en lo añadido. Las únicas fechas son las del calendario del proyecto, de 2026-10-04 a 2026-12-03 (grep de fechas sobre el diff). Los únicos meses son los del 2024 pedido, «diciembre de 2025 sigue fuera» y los nombres de las carpetas `Backtest`. Ningún resultado salvo lo de a1. Nada en `knowledge/cases/holdout`. Ningún nombre ni número del trader (grep de números de teléfono: solo ids de CI).
+- **Las dos filas de HOLDOUT del 2026-11-25:** son del día y cubren:
+  - la tardía del 2026-11-23 como «desviación de ADR-0021 §4»;
+  - la parte del consultor (R9);
+  - lo enseñado como «posible desviación de ADR-0098 §3 C», SIN DETERMINAR;
+  - la respuesta 4 vacía, declarada.
+- **Regímenes de cambio:** `--name-status` sin nada en evidence, feedback, `data/manifests`, transcripciones, fotogramas ni `libros.yaml`. HISTORIA solo añade (0 líneas borradas; Archivo 83).
+- **`fuentes.yaml`:** 27 líneas añadidas y 0 borradas, dentro del párrafo de «Mensajes del trader» (:389-415), sin entrada propia.
+- **`manifest.yaml`:** 46 líneas añadidas y 2 borradas.
+  - Exactamente 11 entradas nuevas (4 capturas y 7 audios) con los sha256 de A1 y de §6.1.
+  - `resumen.material_adicional` pasa de 73 a 84 ficheros y de 6.850.662 a 9.436.152 bytes. Lo recalculé: las capturas suman 954.386, los audios 1.631.104 y la diferencia es 2.585.490.
+  - La línea `raiz:` no cambia.
+- **Diff vacío** (`git diff --stat main...HEAD`) en spec, cases, evidence, feedback, transcripciones, `libros.yaml`, `tramos_no_citables.yaml`, fotogramas, `data/manifests`, `src`, `scripts`, `.claude`, `docs/plan`, `docs/spec`, `docs/runbooks`, `tests`, Makefile, `config`, `tools` y `mql5`.
+- **ADR:** solo ADR-0100, en el commit `e81e13e6`, que solo toca ese fichero: +2 −0, un recuadro con fecha y rama junto a :31-32. La frase que cita («su respuesta entra con su `fb-` por su propia rama, ADR-0099 §6») coincide con :32. El cuerpo queda intacto y `status: ACTIVE`.
+- **Neutralidad (D5):** §6 y §7 no leen nada contra la premisa ni contra una cifra. FundedNext y «1-c» quedan «sin conciliar».
+- **Ningún informe cerrado tocado** y ninguna `cita` nueva en la spec.
+- **Citas comprobadas contra su fuente:**
+  - `HOLDOUT:172` y `:189-192`;
+  - `feedback/README.md:79-82`;
+  - `parametros.yaml:671/1116/1782` (los `valor` 0.8, 3 y `caja_completa`);
+  - `ACTIVAR-SESION-08.md:55` y `:368`;
+  - `PROJECT_STATE.md:42` (Q), `:64` (A-13) y `:67/68/73`;
+  - `inventario.py:199-201`, `:242-245`, `:248-291` y `:306-314`;
+  - ADR-0099 §8 («191 llenadas», :207; «Las respuestas del trader del 2026-11-23», :221);
+  - ADR-0098:149 («sin enseñarle ninguna cifra de esta medida»);
+  - V18 en `AUDITORIA-CAZADOR:194`;
+  - `ev-v4-012524-0ef85a89`, que existe;
+  - HISTORIA (main):21209, el último `- Tag:`.
+
+##### Eje (b) · Encargo
+Resumen: 0 bloquea, 0 importa, 1 menor. Requisitos: 30 hechos (5 de ellos de otra forma, declarados), 1 parcial (declarado), 2 no hechos todavía (dependen de este informe y de la frase final).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | §0 Base, tag F39n, CI, sin otras ramas | Hecho | informe «Base comprobada» (:12-27) |
+| 2 | §0 Apertura: encargo, contrato, Archivo | Hecho | `459b4514`; HISTORIA +181 −0 |
+| 3 | §0 Contrato R4, lista blanca, ningún ADR nuevo | Hecho de otra forma (declarado) | `contrato.yaml:5-43`; §9 fila 3 (añade PROJECT_STATE y HISTORIA para la apertura) |
+| 4 | §0 Fila de HOLDOUT antes del primer `make check` | Hecho | fila 1 en `459b4514`; §0.10: el sello de la apertura es sobre `af5b2398` = árbol de `459b4514` |
+| 5 | §0 Ensayo en un clon de lo que escribe | Hecho de otra forma (declarado) | inventario en worktree (§0.3); los guiones de texto, sin clon (§10; ver a3) |
+| 6 | §0 El recuadro del ADR en un commit propio | Hecho | `e81e13e6` (un solo fichero, +2 −0) |
+| 7 | §2 No cambia nada de lo que el encargo enumera | Hecho | diff vacío; PROJECT_STATE: solo Current Branch, Current Feature y las dos líneas del Archivo |
+| 8 | §3 (a) Las capturas 1 y 2, sin abrir | Hecho | §0.2, §6.2, §6.3 |
+| 9 | §3 (b) Siete audios con su nombre; el duplicado fuera, por su sha256 | Hecho | manifest +7; §6.1:441-443 |
+| 10 | §3 (c) Lo que se le enseñó, por Aleks | Hecho (SIN DETERMINAR, según R8) | §6.6; fila 2, punto (3) |
+| 11 | §3 (d) + A3 La petición de los meses, sin 1:30 ni el deslizamiento | Hecho | §6.4:517-522 |
+| 12 | 0.1 La fila tardía del 2026-11-23, comprobada antes | Hecho | fila 1, punto (1); §0.1 |
+| 13 | 0.2 Nombre, tamaño, sha256, formato y duración; mapeo y diciembre fuera | Hecho, con límites declarados | §0.2 (ffprobe negado; la duración, del ASR) |
+| 14 | 0.3 El inventario en un clon | Hecho | §0.3 |
+| 15 | 0.4 El recuento por audio | Hecho (a mano, declarado) | §0.4 |
+| 16 | 0.5 El mapa (a)-(f), A-35/43/48/58 y el WhatsApp del 21 | Hecho | §0.5 |
+| 17 | 0.5 (b) Decir literal si la voz dice 0-1 o «el stop» | Parcial (declarado: imposible por R7) | §6.5:543-545 |
+| 18 | 0.6 El auditor | Hecho | §0.6 y su informe copiado |
+| 19 | §5 PARADA única, con la pregunta copiada tal cual | Hecho | §5:295-297 = encargo:48 |
+| 20 | D1 Ningún `fb-`, y el apartamiento del README (R3) | Hecho | diff vacío en feedback; §6.8 |
+| 21 | D2 Literales de capturas con sha256; ninguno de audio; transcripción por sha256 | Hecho | `diff` de encargo :78-84/:87-91/:94-100 con informe :458-464/:472-476/:487-493 → IGUALES; captura 4 (:497-506) palabra por palabra igual que A1 :103-107; §0.2 (sha de las ocho transcripciones) |
+| 22 | D3 / R2 `fuentes.yaml`, ampliando el párrafo, con las cautelas | Hecho de otra forma (R2) | `fuentes.yaml:389-415` |
+| 23 | D4 + A3 + R0 La secuencia, sin juzgar, con los dos hechos | Hecho | §6.4:512-515 |
+| 24 | D5 Neutral | Hecho | §6, §7 |
+| 25 | D6 El recuadro, cuerpo intacto | Hecho | ADR-0100:39 |
+| 26 | D7 HOLDOUT de lo enseñado y de cada paso | Hecho | filas 1 y 2 (con la salvedad de a4) |
+| 27 | §7 Las líneas del cierre: F con su tamaño, R4.7, deuda, ERRORES | Hecho de otra forma (R6: G.9 en vez de Technical Debt) | §8, §11 |
+| 28 | A1/A5/R0 sha256 iguales y nombres de A5 | Hecho (renombró Aleks) | rutas y sha256 del manifiesto |
+| 29 | A2/R0 El audio del 2026-11-24 no entra | Hecho | §6.1:444-445; no está en el manifiesto |
+| 30 | A4 «Las de M15 y las del PDF», pendientes | Hecho | §0.5:190; §7:606-608 |
+| 31 | R1 Inventario en la rama y `corpus check --hashes` | Hecho (según el informe) | §6.9; el diff del manifiesto coincide; no ejecuté `--hashes` |
+| 32 | R4/R5/R9/R10 | Hecho | §7 (ids); §8; fila 2; §11 |
+| 33 | §7 El informe del revisor pegado, y la frase final «Rama lista para revisión, NO cerrada.» | No hecho todavía | `CONTRASTE-TRADER.md:831`: «EN CURSO: falta el revisor.» |
+
+Las respuestas del consultor coinciden letra a letra en el encargo (:138-171) y en el informe (:368-401): `diff` → IGUAL. «El encargo, punto por punto» existe (§9). La rama no hace nada fuera del encargo que no esté declarado: el `find` por nombre sobre `corpus/` va en §0.2 y §10.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | menor | §9 da como «Hecho» cosas que aún no lo están o que son parciales: la fila 18 (0.5, sin decir que (b) queda sin literal, §6.5), la fila 31 («Informe del revisor», que no existe todavía), la fila 32 (la frase final; el Estado dice «EN CURSO») y `REVISOR_RESUMEN` en §11. Hay que actualizarlas al pegar este informe. | `CONTRASTE-TRADER.md:677`, `:690-691`, `:724`, `:831` |
+
+##### Lo que no pude comprobar
+- **El contenido de las transcripciones y los audios.** No abrí la carpeta del Escritorio, porque me lo prohibiste. Por eso no puedo confirmar los recuentos (0 meses, 0 días, 0 resultados; 81 o 113 líneas), los 1.015 y 1.019 bytes de las dos transcripciones del duplicado, ni si alguna paráfrasis de §0.5 se ajusta a lo que dice la voz.
+- **Que los literales de A1 sean los de las imágenes.** No se abren (ADR-0038). Comprobé solo que el informe es igual a A1 y que los sha256 del manifiesto son los de A1.
+- **`corpus check --hashes` y los sha256 en disco.** No lo ejecuté porque recorre el corpus y no estaba en la lista de comandos permitidos. Me quedo con lo que afirma §6.9 y con el diff del manifiesto.
+- **Que los guiones de inserción no corrieran con un `make check` en marcha** (§10). No hay registro.
+- **Que el encargo sea copia tal cual del mensaje original.** No tengo el original. Sí comprobé que la respuesta del consultor es igual en sus dos copias.
+- **La CI y el tag en origin** (`gh`, `ls-remote`): no los consulté.
+- **El sello del árbol de hoy.** Con §9-§11 sin commitear no hay sello, y no ejecuté `make check`.
+- **Las salidas a fichero.** El hook de solo lectura negó redirigir las salidas de `contrato_rama.py` y `state check` a la carpeta de trabajo. Las ejecuté sin redirección, y `knowledge validate` también.
+
+##### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. Read: `docs/encargos/trabajo-contraste-trader.md`, `contrato.yaml`, `docs/validation/CONTRASTE-TRADER.md` (1-427 y 427-832)
+3. `uv run python scripts/contrato_rama.py > <scratchpad>/contrato.log 2>&1` (NEGADO por `solo_lectura.py`, redirección) y `uv run botsito state check > <scratchpad>/state.log 2>&1` (NEGADO, ídem)
+4. `uv run python scripts/contrato_rama.py 2>&1` y `uv run botsito state check 2>&1`
+5. `uv run botsito knowledge validate 2>&1 | tail -20`
+6. `ls -la make-check.log && grep -nE "SELLO|PICO DE MEMORIA|passed|failed|Error" make-check.log | tail -20`
+7. Un bucle `for` con `git rev-parse` (NEGADO por la guardia); repetido como `git rev-parse e81e13e6^{tree} abf23d00^{tree} b2fd52cb^{tree} 459b4514^{tree}`
+8. `git diff --name-status main...HEAD && git log --format='%h %ad %s' --date=iso main..HEAD`
+9. `git log --format='--- %h%n%B' --name-status main..HEAD`
+10. `git diff main...HEAD -- docs/adr/0100-… PROJECT_STATE.md docs/validation/HOLDOUT-EXPOSICIONES.md`
+11. `git diff main -- . | grep -E '^\+' | grep -noE '…'` y Grep de las dos cifras de a1 sobre los ficheros de la rama
+12. `git show HEAD:…CONTRASTE-TRADER.md | grep -c "…"`; ídem en `b2fd52cb`; `git diff --stat HEAD -- …CONTRASTE-TRADER.md`
+13. `git diff HEAD -- docs/validation/CONTRASTE-TRADER.md | grep -E '^[-+]' | …`
+14. `git diff main...HEAD -- knowledge/corpus/fuentes.yaml knowledge/corpus/manifest.yaml`
+15. `diff <(sed -n '78,84p' encargo) <(sed -n '458,464p' informe)`; ídem :87-91/:472-476 y :94-100/:487-493
+16. Read `docs/adr/0100-…md` (1-45)
+17. `git diff --stat main...HEAD -- knowledge/spec knowledge/cases … tests docs/spec Makefile config tools mql5 docs/runbooks docs/adr/README.md`; `git diff --stat`; `git diff --cached --stat`; `git status --short --untracked-files=all`
+18. `git show main:PROJECT_STATE.md | wc -c`; `git show HEAD:PROJECT_STATE.md | wc -c`; grep de la F
+19. `python -c` con la longitud en bytes de la F vieja y la nueva (166, 153, −13)
+20. `git show main:PROJECT_STATE.md | grep -n -i "contraste\|ADR-0099 §6\|Mensajes del trader"`
+21. `grep -n` de R4.7 y de `### G.` en `docs/plan/HOJA-DE-RUTA.md`; Read de HOJA-DE-RUTA (772-895)
+22. Grep `^\| Rama \|` en ERRORES-RECURRENTES; `grep -n` de las filas de puente-techo y diagnostico-premisa
+23. `sed` de HOLDOUT :172 y :189-192, `feedback/modelo.py` :37-61 y `knowledge/feedback/README.md` :79-82
+24. `sed` de `parametros.yaml` :660-672, :1100-1117, :1757-1760 y :1778-1784
+25. `sed` de `ACTIVAR-SESION-08.md` :55 y :368, `PROJECT_STATE.md` :42, `barrido_dias.py` :34 e `inventario.py` :199-201, :242-245 y :306-314
+26. `grep` sobre `barrido_dias.py` (regex inválido) y `sed -n '30,40p'`; `sed -n '1,8p'` e `inventario.py` :246-291
+27. `diff <(sed -n '138,171p' encargo) <(sed -n '368,401p' informe)`
+28. grep de fechas `20xx-xx-xx` en las líneas añadidas; grep de día y mes en las líneas añadidas
+29. Read `knowledge/corpus/fuentes.yaml` (340-419)
+30. `ls knowledge/evidence/v4/ | grep -c ev-v4-012524-0ef85a89`; `sed` de AUDITORIA-CAZADOR :194 y PROJECT_STATE :64/:67/:68/:73; `ls` de dos informes
+31. grep de ADR-0099 (191, §6-§8) y ADR-0098 («sin enseñarle»)
+32. `git show main:docs/state/HISTORIA.md | grep -n "^- Tag: "`; borrados del diff de HISTORIA (0); cabecera del Archivo 83
+33. grep de números de teléfono en las líneas añadidas
+34. `git diff --numstat main...HEAD`; `grep -c "" CONTRASTE-TRADER.md`
+35. `grep -n` de la segunda cifra de a1 en `docs/validation/AUDITORIA-CAZADOR-2026-11-23.md`
+
+Ficheros: `C:\Users\USER\Desktop\Bot v3\docs\validation\CONTRASTE-TRADER.md`, `C:\Users\USER\Desktop\Bot v3\docs\encargos\trabajo-contraste-trader.md`, `C:\Users\USER\Desktop\Bot v3\docs\validation\HOLDOUT-EXPOSICIONES.md`, `C:\Users\USER\Desktop\Bot v3\knowledge\corpus\fuentes.yaml`, `C:\Users\USER\Desktop\Bot v3\knowledge\corpus\manifest.yaml`, `C:\Users\USER\Desktop\Bot v3\docs\adr\0100-la-premisa-se-mide-con-costes.md`, `C:\Users\USER\Desktop\Bot v3\make-check.log`.
+
 ## Estado
 
-EN CURSO: aplicada la respuesta a la PARADA; faltan el recuadro de ADR-0100 §1 y el revisor.
+HECHO. La fase 0, la PARADA y su respuesta, aplicada punto por punto; lo que entra, en el
+corpus y en `manifest.yaml` (11 ficheros) y en `fuentes.yaml`; ningún `fb-` ni literal de audio; lo
+enseñado al trader, SIN DETERMINAR; el recuadro de ADR-0100 §1 en su commit; el revisor y sus
+hallazgos, atendidos; dos decisiones para el consultor (§12).
+
+Rama lista para revisión, NO cerrada.
