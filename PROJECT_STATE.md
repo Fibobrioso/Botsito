@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/f17-ordenes
 
 ## Current Feature
-Ninguna abierta: trabajo/f17-historial cerrada en main (stable/F39p-f17-historial). Lo siguiente, en la Next Action (F).
+trabajo/f17-ordenes, EN CURSO (F17, segunda parte: la medida de las ordenes stop y el grabador, sin correr; encargo docs/encargos/trabajo-f17-ordenes.md, informe docs/validation/F17-ORDENES.md).
 
 ## Stable Main State
 8066b377 · merge de `trabajo/f17-historial` (tag `stable/F39p-f17-historial`), sobre `stable/F39o-contraste-trader` (96b250fd). Informe docs/validation/F17-HISTORIAL.md; el registro del cierre, al final de HISTORIA.
@@ -169,8 +169,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 84 (2026-11-25).
+— ninguna desde el Archivo 85 (2026-11-26).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 84 (2026-11-25).
+— ninguna desde el Archivo 85 (2026-11-26).

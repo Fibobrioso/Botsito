@@ -1,0 +1,59 @@
+rama: trabajo/f17-ordenes
+riesgo: medio  # codigo nuevo (un guion MQL5 que coloca ordenes en la DEMO, un grabador de solo lectura, sus lectores y tests), sin tocar la spec, el motor, el simulador, la capa de MT5 ni src/; nada se conecta a FTMO ni se envia ninguna orden en esta rama
+artefacto: docs/validation/F17-ORDENES.md
+tramo: R4  # R4.7 de docs/plan/HOJA-DE-RUTA.md; la A.5 se cita en el informe
+rutas_permitidas:
+  - docs/encargos/trabajo-f17-ordenes.md
+  - docs/validation/F17-ORDENES.md
+  - docs/validation/anexos/F17-ORDENES/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md  # la fila del dia (G2)
+  - tools/mql5/MedirOrdenesFTMO.mq5
+  - tools/mql5/GrabarTicksFTMO.mq5
+  - tools/mql5/README.md
+  - scripts/leer_ordenes_f17.py
+  - scripts/README.md
+  - tests/contract/test_medir_ordenes_ftmo.py
+  - tests/contract/test_grabar_ticks_ftmo.py
+  - tests/unit/test_leer_ordenes_f17.py
+  - tests/unit/test_f17_ordenes_criterio.py
+  - tests/unit/test_manifiestos_f17_ordenes.py
+  - docs/plan/F17-ORDENES.yaml
+  - data/manifests/README.md
+  - docs/runbooks/F17-ORDENES.md
+  - docs/runbooks/F17-HISTORIAL.md  # solo una linea que remita a F17-ORDENES.md
+  - docs/runbooks/README.md  # el indice
+  - docs/state/HISTORIA.md  # el Archivo 85 de la apertura
+  - PROJECT_STATE.md  # Current Branch, Current Feature, el Archivo y el recuento de tests
+rutas_protegidas:
+  - mql5/
+  - tools/mql5/MedirDemoFTMO.mq5
+  - tools/mql5/ExportarTicksFTMO.mq5
+  - scripts/leer_historial_f17.py
+  - docs/plan/F17-HISTORIAL.yaml
+  - data/manifests/f17/
+  - data/manifests/demo_ftmo/
+  - tests/unit/test_manifiestos_demo_ftmo.py
+  - tests/unit/test_manifiestos_f17.py
+  - tests/unit/test_leer_historial_f17.py
+  - tests/unit/test_f17_historial_criterio.py
+  - tests/contract/test_capa_mt5.py
+  - tests/contract/test_medir_demo_ftmo.py
+  - tests/contract/test_exportar_ticks_ftmo.py
+  - knowledge/
+  - src/
+  - corpus/
+  - config/
+  - Makefile
+  - .claude/
+  - .gitignore
+  - docs/plan/PREMISA-COSTES.yaml
+  - docs/plan/PUENTE-TECHO.yaml
+  - docs/plan/META-TECHO-PAREJAS.yaml
+  - docs/plan/HOJA-DE-RUTA.md  # va en el cierre
+  - docs/plan/MASTER_PLAN.md
+  - docs/adr/  # ningun ADR nuevo ni cambiado
+comprobaciones:
+  - uv run botsito state check
+  - uv run botsito knowledge validate (con su log en la carpeta de trabajo de la sesion, fuera del repo)
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1
