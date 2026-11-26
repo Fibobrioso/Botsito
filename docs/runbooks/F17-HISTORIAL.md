@@ -9,6 +9,8 @@ ni de los parámetros**, y que un mes cubra no autoriza a usar esos ticks como f
 eso pide un ADR que enmiende ADR-0005 y ADR-0024 §4.
 
 El script es `tools/mql5/ExportarTicksFTMO.mq5` (versión 1.01, rama `trabajo/f17-historial`).
+La medida de las órdenes stop y el grabador, las otras dos partes de F17, en
+`docs/runbooks/F17-ORDENES.md`.
 Cuánto tarda no está medido: depende de cuántos ticks tenga que bajar el terminal del servidor.
 
 ## Lo que hace, y lo que no hace nunca

@@ -89,6 +89,13 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   (d1) sobre los ticks de Dukascopy. Valida tambien el manifiesto de `data/manifests/f17/`. Se niega
   a cualquier mes que no sea de construccion; imprime recuentos, sin precios. Runbook:
   `docs/runbooks/F17-HISTORIAL.md`.
-- Futuro: el grabador de ticks de la demo y la medida de las ordenes stop (F17, segunda parte,
-  ADR-0099 §5), exportacion de FXReplay (F26). La transcripcion de un video es un comando del
+- `leer_ordenes_f17.py`: F17, segunda parte (ADR-0099 §5; rama `trabajo/f17-ordenes`): con
+  `medida`, lee lo que graba `tools/mql5/MedirOrdenesFTMO.mq5`, busca el tick que dispara cada
+  llenado por el lado que ejecuta y da el deslizamiento por clase y estrato con el criterio
+  pre-registrado de `docs/plan/F17-ORDENES.yaml`; con `grabador`, el spread de FTMO por hora de la
+  ventana de lo que graba `tools/mql5/GrabarTicksFTMO.mq5`. Valida los manifiestos de
+  `data/manifests/f17-ordenes/` y `data/manifests/f17-grabador/`. Importa `RelojServidor` de
+  `leer_historial_f17.py` sin editarlo; imprime puntos y recuentos, sin precios. Runbook:
+  `docs/runbooks/F17-ORDENES.md`.
+- Futuro: exportacion de FXReplay (F26). La transcripcion de un video es un comando del
   paquete (`botsito corpus transcribe`, F04), no un script.

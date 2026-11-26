@@ -14,3 +14,15 @@ compilan alli (el `.ex5` no se versiona).
   con `compilar.py herramienta` (un camino aparte del de la capa) y se instala en
   `MQL5/Scripts/Botsito`. Como se ejecuta: `docs/runbooks/F17-HISTORIAL.md`; como se lee:
   `scripts/leer_historial_f17.py`.
+- `MedirOrdenesFTMO.mq5` · F17, la medida de las ordenes stop (ADR-0099 §5; rama
+  `trabajo/f17-ordenes`): coloca en la DEMO una orden stop cada vez, alternando compra y venta, en
+  dos estratos (1,00 lote y el lote de ADR-0081 D2), y registra cada entrada stop, cada cierre por
+  stop y cada cierre a mercado con los ticks del servidor, en `MQL5/Files` con el prefijo `F17M_`.
+  Se niega fuera de una cuenta DEMO, solo opera su numero magico y EURUSD, no deja nada abierto y
+  para en cada tope de D4, leido de la cuenta y de su historial
+  (`tests/contract/test_medir_ordenes_ftmo.py`). No calcula el deslizamiento.
+- `GrabarTicksFTMO.mq5` · F17, el grabador (ADR-0099 §5; rama `trabajo/f17-ordenes`): graba los
+  ticks de EURUSD de la DEMO, un CSV por hora del servidor con el prefijo `F17G_`, de forma
+  atomica (`.part` y renombrado). SOLO LEE (`tests/contract/test_grabar_ticks_ftmo.py`).
+  Los dos se compilan con `compilar.py herramienta`. Como se ejecutan:
+  `docs/runbooks/F17-ORDENES.md`; como se leen: `scripts/leer_ordenes_f17.py`.

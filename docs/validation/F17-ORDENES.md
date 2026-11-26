@@ -664,6 +664,87 @@ respuesta: «lo visto antes» con los nueve valores de ADR-0090 §7, con su refe
 5 % de `sin_tick` (punto 8); la búsqueda en `(puesta, llenado]` (punto 9); y la precisión de «Qué
 estrato vale» con el R de 18 puntos, con la frase de la respuesta.
 
+### 2.2 El código y los tests de D1 a D9
+
+| pieza | fichero | tests |
+|---|---|---|
+| D1 y D4, el guion que coloca órdenes | `tools/mql5/MedirOrdenesFTMO.mq5` (1.0) | `tests/contract/test_medir_ordenes_ftmo.py` |
+| D2, el grabador | `tools/mql5/GrabarTicksFTMO.mq5` (1.0) | `tests/contract/test_grabar_ticks_ftmo.py` |
+| D5, los lectores (uno, con `medida` y `grabador`) | `scripts/leer_ordenes_f17.py` | `tests/unit/test_leer_ordenes_f17.py` |
+| D7, los manifiestos | `data/manifests/README.md` (los dos esquemas) y `validar_manifiesto` del lector | `tests/unit/test_manifiestos_f17_ordenes.py` |
+| D7, el runbook | `docs/runbooks/F17-ORDENES.md`; una línea en `F17-HISTORIAL.md`; el índice | (las constantes de la tabla, en el contrato del guion) |
+| los README | `scripts/README.md`, `tools/mql5/README.md` | — |
+
+Cómo entra cada punto de la respuesta:
+
+- **0.** `STOP_PUNTOS` 18 y `SALIDA_A_MERCADO_S` 300, del bloque `guion` del yaml, comparadas por el
+  contrato; el runbook da las dos estimaciones como SUPUESTOS y dice que el plan se rehace con la
+  primera prueba.
+- **1.** Las constantes del lote (`RIESGO_FRACCION` 0,005, `MARGEN_LIBRE_FRACCION` 0,95) y las del
+  criterio son `#define`, comparadas con `riesgo_por_operacion` (porcentaje) y
+  `lote_margen_libre_fraccion` del registro y con el yaml; las únicas entradas son `InpEstrato` e
+  `InpCiclos` (el contrato rompe con cualquier otra).
+- **2.** `Ciclo` baja el lote, de paso en paso, hasta que el peor caso cabe en 1.000 USD, y la fila
+  lleva `lotes` (el usado) y `lote_d2` (el de ADR-0081 D2 de ese momento); el lector cuenta
+  `bot_reducido` por debajo del 90 %. El margen de 1 lote, con `OrderCalcMargin(ORDER_TYPE_BUY` o
+  `ORDER_TYPE_SELL)` a mercado (el contrato rompe con un tipo pendiente).
+- **3.** `EnHoraMuerta`: de `HORA_MUERTA_DESDE` (22) a `HORA_MUERTA_HASTA` (3) del servidor, con
+  `TimeCurrent`. `PuedeEmpezarCiclo` no coloca si el ciclo, en su duración máxima
+  (`DURACION_MAXIMA_CICLO_S`, 120 + 300 + 60 s), puede llegar a ella, y `HayQueCortar` cierra en las
+  dos esperas al entrar: así a las 22:00 no hay nada abierto ni pendiente (lo comprueba el contrato en
+  el texto, con tres mutaciones). El test de zoneinfo, de 2026 a 2030 y con `RelojServidor` del
+  registro: la medianoche de `huso_operativa` cae siempre en `[00:00, 03:00)` del mismo día del
+  servidor, la ventana del bot nunca toca la ventana muerta, los dos lados de cada cambio de hora
+  aparecen (la 01:00 y las 02:00), y una ventana más corta rompe.
+- **4.** `PeticionesDelDia`: las órdenes del número mágico con `ORDER_REASON_EXPERT` desde las 00:00
+  del servidor (la que crea el servidor al saltar un stop no es una petición), una más por cada
+  borrada, las vivas, las rechazadas de los CSV de hoy de ejecuciones anteriores (`RechazadasDeHoy`,
+  al arrancar) y las de esta; `Pedir` escribe cada petición antes de la siguiente, como `peticion` o
+  `peticion_rechazada`, y duerme `PAUSA_MS`.
+- **5.** `SaldoAlEmpezarElDia` rehace el saldo de las 00:00 del servidor con los deals de TODA la
+  cuenta; `CapitalDelHistorial`, la suma de los `DEAL_TYPE_BALANCE` (si no es 100.000, el guion se
+  niega); el runbook dice que mientras corre la medida no opera nada más en la cuenta.
+- **6.** El grabador es un script; el runbook dice cómo se relanza y que el control escribe HUECO si
+  el servidor ya no da una hora.
+- **7.** Los dos estratos en la misma cuenta, alternados; el runbook abre con «Antes de nada: la
+  pregunta a FTMO»: la medida no se lanza hasta que FTMO conteste, y lo que pasa con cada respuesta.
+- **8.** `DISTANCIA_ENTRADA_PUNTOS` 5; el guion guarda la cotización leída antes de colocar y los
+  ticks desde ella, y el lector cuenta `al_colocar` aparte.
+- **9.** `tick_que_dispara` busca en `(puesta, llenado]`; la puesta de un cierre por stop es el deal de
+  entrada (`DEAL_TIME_MSC`), que el guion escribe en `puesta_msc`.
+
+**Dos añadidos de la sesión, que el consultor revisa en el diff:** (i) toda pendiente lleva, además
+del stop, un **objetivo de respaldo** a `3 × STOP_PUNTOS` (54 puntos), para que una posición no
+quede abierta sin fin si el script muere; con 300 s de salida a mercado casi nunca salta, y si salta
+sale `otro_TP` y el lector no la usa; (ii) el grabador **no reabre una hora ya cerrada** con un tick
+tardío (la truncaría): lo cuenta en el control como `tick_tarde`.
+
+Lo que se ensayó y cómo (CLAUDE.md, «Ensayos aislados»): el lector solo escribe su `--salida`, y sus
+tests la escriben en el temporal de pytest; los `.mq5` no se pueden ejecutar fuera de MetaTrader:
+los prueban sus contratos en el texto, y la compilación (D8) la lanza Aleks tras la revisión.
+
+### 2.3 Los tests de la rama con el código de `main` (skill `comparar-con-main`)
+
+Antes: `git status --short` con 13 líneas (lo de esta parte, sin commitear), `git branch --list`
+con `main` y la rama, 176 tags, `git worktree list` solo con el repo. Un clon desacoplado,
+`git worktree add --detach C:/cm/main main` (e8c20a80), con los cinco ficheros de test de la rama
+copiados dentro, y en él:
+
+- `uv run pytest tests/unit/test_leer_ordenes_f17.py tests/unit/test_manifiestos_f17_ordenes.py`:
+  **no recogen** (`FileNotFoundError: ... scripts\leer_ordenes_f17.py`);
+- `uv run pytest tests/contract/test_medir_ordenes_ftmo.py tests/contract/test_grabar_ticks_ftmo.py
+  tests/unit/test_f17_ordenes_criterio.py`: **57 FAILED y 3 PASSED**. Los tres que pasan solo miran
+  lo que `main` ya tiene: `test_la_condicion_demo_es_la_de_medir_demo_ftmo` (la :759 de
+  `MedirDemoFTMO.mq5`) y los dos de zoneinfo que no leen el `.mq5`
+  (`test_la_medida_tiene_los_dos_lados_de_cada_cambio_de_hora` y
+  `test_una_ventana_muerta_mas_corta_rompe`, sobre `RelojServidor` y el registro).
+
+En la rama, los mismos y sus vecinos (`test_leer_historial_f17.py`, `test_exportar_ticks_ftmo.py`,
+`test_medir_demo_ftmo.py`, `test_f17_ordenes_criterio.py`): 148 PASSED, 0 FAILED. Después:
+`git worktree remove --force C:/cm/main` (con `--force` por los tests copiados, sin seguir) y
+`git worktree prune`; `git worktree list` solo con el repo, las mismas ramas, 176 tags, y en origin
+solo `refs/heads/main`.
+
 ## Estado
 
 EN CURSO: la respuesta a la PARADA aplicada en el criterio de D3 (2.1); viene el código de D1 a D9.

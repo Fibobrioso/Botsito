@@ -27,6 +27,11 @@ Operacion en demo y real (F33): arranque, pre-vuelo, incidentes, kill-switch. Va
   ticks que el servidor de la demo de FTMO ya guarda, un mes de construccion cada vez, y a donde van
   sus CSV (`data/f17/<AAAA-MM>/`, con su manifiesto en `data/manifests/f17/`). Se lee con
   `scripts/leer_historial_f17.py` y el criterio de `docs/plan/F17-HISTORIAL.yaml` (ADR-0099 §5).
+- `F17-ORDENES.md` · para Aleks: la medida de las ordenes stop con
+  `tools/mql5/MedirOrdenesFTMO.mq5` y el grabador `tools/mql5/GrabarTicksFTMO.mq5` en las pruebas
+  gratuitas de FTMO (la medida, solo cuando FTMO conteste el correo del 2026-11-26), sus topes, y a
+  donde van sus CSV (`data/f17-ordenes/` y `data/f17-grabador/`, con sus manifiestos). Se leen con
+  `scripts/leer_ordenes_f17.py` y el criterio de `docs/plan/F17-ORDENES.yaml` (ADR-0099 §5).
 - `CONTRATO-DE-RAMA.md` · el `contrato.yaml` de una rama de trabajo: rutas permitidas y
   protegidas, comprobaciones, riesgo y el informe esperado; lo comprueba `make check`. Con la
   plantilla y tres ejemplos.
