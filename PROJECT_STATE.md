@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/contraste-trader
+main
 
 ## Current Feature
-trabajo/contraste-trader EN CURSO (R4.7, F): el contraste con el trader de ADR-0099 §6. Encargo docs/encargos/trabajo-contraste-trader.md; informe docs/validation/CONTRASTE-TRADER.md.
+Ninguna abierta: trabajo/contraste-trader cerrada en main (stable/F39o-contraste-trader). Lo siguiente, en la Next Action (F).
 
 ## Stable Main State
-42fdb0b5 · merge de `trabajo/diagnostico-premisa` (tag `stable/F39n-diagnostico-premisa`), sobre `stable/F39m-puente-techo` (7a3087e9). Informe docs/validation/DIAGNOSTICO-PREMISA.md; el registro del cierre, al final de HISTORIA.
+96b250fd · merge de `trabajo/contraste-trader` (tag `stable/F39o-contraste-trader`), sobre `stable/F39n-diagnostico-premisa` (42fdb0b5). Informe docs/validation/CONTRASTE-TRADER.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-42fdb0b5 · merge trabajo/diagnostico-premisa: ADR-0100, la premisa con costes pre-registrada, y sus dos diagnósticos · tag stable/F39n-diagnostico-premisa
+96b250fd · merge trabajo/contraste-trader: el contraste con el trader de ADR-0099 §6 y la petición escrita de los meses del backtest con costes · tag stable/F39o-contraste-trader
 
 ## Tests Currently Passing
 2149 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
