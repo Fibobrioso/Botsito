@@ -26,7 +26,9 @@ RAIZ = Path(__file__).resolve().parents[2]
 RUTA = RAIZ / "docs" / "plan" / "F17-HISTORIAL.yaml"
 PUENTE = RAIZ / "docs" / "plan" / "PUENTE-TECHO.yaml"
 INTEGRIDAD = RAIZ / "scripts" / "ticks_integridad.py"
-SHA256 = "51a8ada2b01d2cb9bcd89b9ab384fd1a1188fdf11b9c5ee3ff4beeae2bed0c3c"
+# El sha cambio una vez, a la vista: la frase `minutos` del bloque d2 (respuesta del consultor a la
+# PARADA 2 del 2026-11-26), antes de ver un tick de FTMO; el primero era 51a8ada2...
+SHA256 = "46af1341ded522e945b89eb1bbc099660c72c677d1799d98bb683ed5d69fc552"
 
 CIFRAS = {
     ("a_minutos_con_tick", "minimo"): "0.99",
@@ -62,6 +64,8 @@ def problemas(doc: dict[str, Any]) -> list[str]:
             salida.append(f"falta {clave}")
     if not str(cubre.get("d_lectura") or "").strip() or not str(cubre.get("veredicto") or ""):
         salida.append("falta la lectura de d o el veredicto")
+    if "descargadas" not in str((cubre.get("d2_ticks_por_minuto") or {}).get("minutos") or ""):
+        salida.append("d2 no acota sus minutos a las horas que Dukascopy tiene descargadas")
     return salida
 
 

@@ -87,3 +87,17 @@ Dado por Aleks (consultor) el 2026-11-25, en un solo mensaje. Copiado tal cual.
 > D6, la compilación: cuando `compilar.py` y `ExportarTicksFTMO.mq5` estén escritos y sellados, pon en el informe su diff (el `--stat` y las funciones nuevas de `compilar.py` enteras) y PARA. El consultor lo revisa y entonces Aleks lanza la compilación con «!» con el comando exacto que le des. Los logs, a los anexos.
 >
 > Lo demás de D3 queda como en el encargo: (a) 99 % de los minutos con ticks; (b) como mucho 3 huecos de más de 5 minutos al mes y ninguno de más de 30; (c) 99 % de M1 cuadran a ≤ 2 puntos, ahora descrito como coherencia y no como detector. Escribe el yaml con 0 a 3 y fíjalo por su sha256 antes de cualquier otra cosa que lea ticks.
+
+## Respuesta del consultor a la PARADA 2 (2026-11-26), copiada tal cual
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> RESPUESTA DEL CONSULTOR A LA PARADA 2 de `trabajo/f17-historial` (2026-11-26, 03:15, hora de Lima). Cópiala tal cual al informe, en su sección de la PARADA 2.
+>
+> 0. (d2) compara los minutos de las horas día-hora de la ventana que Dukascopy tiene descargadas en sus manifiestos de ticks de ese mes (opción a). Sobre ese mismo conjunto de minutos, un minuto sin ticks cuenta como 0 en cada fuente, y las dos medianas de ticks por minuto se calculan sobre él. Las horas que Dukascopy no tiene descargadas no entran en (d2): ni cuentan como 0 ni se comparan. El resto de D3 no cambia; (a), (b), (c) y (d1) siguen sobre todos los minutos de la ventana de los días del punto 0. La diferencia mediana de los spreads, como estaba.
+>
+> 1. El yaml cambia, a la vista: en un commit propio, una frase en el bloque `d2_ticks_por_minuto` con la definición del punto 0 y su sha256 nuevo en el test. El informe lo declara como desviación con su motivo: el cambio sale de los recuentos de horas de los manifiestos de Dukascopy y del control (d1), no de ningún dato de FTMO, que nadie ha visto, y la cifra (la mitad) no se mueve. Ensaya (d2) con la definición nueva sobre un caso sintético que rompa a propósito: unas horas con ticks densos en Dukascopy y escasos en FTMO, que tienen que dar «no cubre».
+>
+> 2. La compilación de D6 se lanzó antes de que el consultor revisara el diff, que era lo que pedía la respuesta a la PARADA 1. Declárala como desviación (solo compiló y el exportador es de solo lectura) y deja en el informe el diff de `compilar.py` (`--stat` y las funciones nuevas enteras) y el del `.mq5`, para la revisión final.
+>
+> Después, sigue con lo que tenías: el recuadro de ADR-0090 §7, las líneas del cierre, la CI por `fix/f17-historial` y el revisor, hasta «Rama lista para revisión, NO cerrada.»

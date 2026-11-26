@@ -36,6 +36,7 @@ cubre_si:
   d2_ticks_por_minuto:
     regla: la mediana de ticks por minuto de FTMO, sobre todos los minutos de la ventana de los días del mes (un minuto sin ticks cuenta 0), es al menos la mitad de la de los ticks de Dukascopy del mismo mes en los mismos minutos
     fraccion_de_dukascopy_minima: "0.5"
+    minutos: acota la regla (respuesta del consultor a la PARADA 2 del 2026-11-26, por los recuentos de horas de los manifiestos de Dukascopy y el control d1, sin ningún dato de FTMO) a los minutos de las horas día-hora de la ventana de los días del punto 0 que Dukascopy tiene descargadas en su manifiesto de ticks de ese mes (seleccion.dias por seleccion.horas_utc, menos horas.perdidas); sobre ese mismo conjunto un minuto sin ticks cuenta 0 en cada fuente y se calculan las dos medianas, y las horas que Dukascopy no tiene descargadas no entran en d2, ni como 0 ni comparadas; la cifra no cambia
   d_lectura: d1 y d2 son una HEURÍSTICA pre-registrada, no una prueba de que los ticks sean los guardados y no generados (ADR-0082 D7)
   veredicto: un mes CUBRE solo si cumple a, b, c, d1 y d2; si no, NO CUBRE y queda para el grabador
 control_dukascopy: d1 se corre en esta rama sobre los ticks de Dukascopy de los meses de construcción que ya están en data/ (los de scripts/ticks_spread.py), y tienen que pasarlo todos; si alguno no pasa, se para y no se cambia la cifra. El d2 de Dukascopy contra sí mismo es trivial y no se corre
