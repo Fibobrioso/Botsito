@@ -785,6 +785,20 @@ git y ese número no se copia al manifiesto ni a ningún informe, porque el repo
 (`DEMO-FTMO.md`, «La prueba de octubre de 2026»); lo dicen el runbook y el esquema de
 `data/manifests/README.md`. Tests de la rama: 108 PASSED, 0 FAILED.
 
+### 3.2 La compilación (D8)
+
+Lanzada por Aleks con «!» el 2026-11-26, desde la raíz del repo, sobre los ficheros de `8178c600`,
+con el comando de D8 tal cual, sin `--instalar`:
+
+    tools/mql5/MedirOrdenesFTMO.mq5: PASA (0 errores, 0 avisos)
+    tools/mql5/GrabarTicksFTMO.mq5: PASA (0 errores, 0 avisos)
+
+Los logs, en `docs/validation/anexos/F17-ORDENES/MedirOrdenesFTMO.log` y `GrabarTicksFTMO.log`
+(«Result: 0 errors, 0 warnings»). El sha256 de la fuente que cada log dice haber compilado es el
+del fichero commiteado (`sha256sum`: `91fdda77…` y `46b229dc…`). El camino `herramienta` de
+`compilar.py` no cambió (D8). El `.ex5` no se versiona; la instalación en el terminal
+(`--instalar`) va con el runbook, en la rama de la prueba.
+
 ## Estado
 
 EN CURSO: la respuesta a la PARADA aplicada en el criterio de D3 (2.1); viene el código de D1 a D9.
