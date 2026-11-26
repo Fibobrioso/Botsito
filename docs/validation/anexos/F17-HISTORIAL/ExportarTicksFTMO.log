@@ -1,10 +1,10 @@
-# fuente: tools/mql5/ExportarTicksFTMO.mq5 (copia del indice de git; sha256 5359f68664507b52030b99bb80d91a12db6e263d52c8209e5d8ce9993c1f378d)
-# log original: UTF-16LE con BOM y CRLF, sha256 e9f2b5aec8421cb68fb6bababde0cb389d24b4c842a8ffdb4063484105658c9c
+# fuente: tools/mql5/ExportarTicksFTMO.mq5 (copia del indice de git; sha256 eb9ccdb99043932c82362cd0fba8a880daf1f9f721348d8ec563a7151ad79b6c)
+# log original: UTF-16LE con BOM y CRLF, sha256 9de3797e71cb4e74dc98a01325abd4f1779bc70b41efa3f9ecf1a77f259244ca
 # codigo de salida de MetaEditor: 1 (1 con exito, 0 con error: no es la puerta)
 # puerta: PASA (0 errores, 0 avisos, .ex5 si)
 
 
-C:\Users\USER\AppData\Local\Temp\botsito-herramienta-lw0wr97x\tools\mql5\ExportarTicksFTMO.mq5 : information: compiling C:\Users\USER\AppData\Local\Temp\botsito-herramienta-lw0wr97x\tools\mql5\ExportarTicksFTMO.mq5
+C:\Users\USER\AppData\Local\Temp\botsito-herramienta-1fukm_q0\tools\mql5\ExportarTicksFTMO.mq5 : information: compiling C:\Users\USER\AppData\Local\Temp\botsito-herramienta-1fukm_q0\tools\mql5\ExportarTicksFTMO.mq5
  : information: generating code
  : information: generating code 3%
  : information: generating code 6%
@@ -40,4 +40,4 @@ C:\Users\USER\AppData\Local\Temp\botsito-herramienta-lw0wr97x\tools\mql5\Exporta
  : information: generating code 95%
  : information: generating code 100%
  : information: code generated
-Result: 0 errors, 0 warnings, 663 ms elapsed, cpu='X64 Regular'
+Result: 0 errors, 0 warnings, 924 ms elapsed, cpu='X64 Regular'

@@ -8,7 +8,7 @@ Si cubre, el spread de FTMO sale de ahí sin esperar al grabador. **No cambia na
 ni de los parámetros**, y que un mes cubra no autoriza a usar esos ticks como fuente de una medida:
 eso pide un ADR que enmiende ADR-0005 y ADR-0024 §4.
 
-El script es `tools/mql5/ExportarTicksFTMO.mq5` (versión 1.0, rama `trabajo/f17-historial`).
+El script es `tools/mql5/ExportarTicksFTMO.mq5` (versión 1.01, rama `trabajo/f17-historial`).
 Cuánto tarda no está medido: depende de cuántos ticks tenga que bajar el terminal del servidor.
 
 ## Lo que hace, y lo que no hace nunca
@@ -67,6 +67,9 @@ mes con su manifiesto en `data/manifests/f17/` (esquema `schema_f17_historial: 1
 
 El lector se niega a cualquier fichero que no sea de un día de construcción, pasa cada instante del
 reloj del servidor a UTC con `broker_offset_base` y `broker_dst` del registro, dice si el control
-cuadra con ellos, da por mes los puntos (a), (b), (c), (d1) y (d2) y su veredicto, CUBRE o NO
+cuadra con ellos, **descarta sin usarlas las filas que caen fuera del mes UTC pedido** (el día del
+servidor empieza dos o tres horas antes que el UTC, así que el fichero del día 1 trae las últimas
+horas del mes anterior; las cuenta por mes, y la fila de HOLDOUT de ese día las declara por
+recuento), da por mes los puntos (a), (b), (c), (d1) y (d2) y su veredicto, CUBRE o NO
 CUBRE, y, solo si cubre, el spread de FTMO por hora y la diferencia mediana con el de Dukascopy, como
 diagnóstico. Imprime recuentos, fracciones y puntos de spread; ningún precio.

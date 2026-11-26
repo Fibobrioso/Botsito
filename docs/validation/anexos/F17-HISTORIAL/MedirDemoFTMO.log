@@ -1,10 +1,10 @@
 # fuente: tools/mql5/MedirDemoFTMO.mq5 (copia del indice de git; sha256 f9903c6f3ef62e29c17d77d9306343af91612218c398a161c83936f977859151)
-# log original: UTF-16LE con BOM y CRLF, sha256 1f6d350e6205455fdeb10d7de235829efbd26382a4413ba9cc1d661b23c43814
+# log original: UTF-16LE con BOM y CRLF, sha256 e961e8b4273aaa496d89830bfacea6ee6cc009e848a169a1416e166d4200eecd
 # codigo de salida de MetaEditor: 1 (1 con exito, 0 con error: no es la puerta)
 # puerta: PASA (0 errores, 0 avisos, .ex5 si)
 
 
-C:\Users\USER\AppData\Local\Temp\botsito-herramienta-2ci2c2oz\tools\mql5\MedirDemoFTMO.mq5 : information: compiling C:\Users\USER\AppData\Local\Temp\botsito-herramienta-2ci2c2oz\tools\mql5\MedirDemoFTMO.mq5
+C:\Users\USER\AppData\Local\Temp\botsito-herramienta-k3pu_x2w\tools\mql5\MedirDemoFTMO.mq5 : information: compiling C:\Users\USER\AppData\Local\Temp\botsito-herramienta-k3pu_x2w\tools\mql5\MedirDemoFTMO.mq5
  : information: generating code
  : information: generating code 3%
  : information: generating code 6%
@@ -40,4 +40,4 @@ C:\Users\USER\AppData\Local\Temp\botsito-herramienta-2ci2c2oz\tools\mql5\MedirDe
  : information: generating code 95%
  : information: generating code 100%
  : information: code generated
-Result: 0 errors, 0 warnings, 1075 ms elapsed, cpu='X64 Regular'
+Result: 0 errors, 0 warnings, 1245 ms elapsed, cpu='X64 Regular'

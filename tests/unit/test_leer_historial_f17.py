@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+from collections import Counter
 from collections.abc import Set as AbstractSet
 from datetime import UTC, date, datetime
 from fractions import Fraction
@@ -158,6 +159,42 @@ def test_el_control_cuadra_o_no_con_el_registro() -> None:
     assert not L.control_cuadra_con_registro(con_120, _reloj("us"))
     assert L.control_cuadra_con_registro(con_120, _reloj("eu"))
     assert not L.control_cuadra_con_registro(con_180, _reloj("eu"))
+
+
+def test_las_filas_de_otro_mes_utc_se_descartan_sin_leer_su_precio(tmp_path: Path) -> None:
+    """Respuesta a la PARADA 3, punto 0. Rompe a proposito: en el fichero del 1 de abril, un tick y
+    una M1 de la ultima hora UTC del 31 de marzo (el dia del servidor empieza antes que el UTC) no
+    entran en ninguna cuenta y si en el recuento de descartes, por su mes. Su precio es ilegible a
+    proposito: si el lector lo leyera, fallaria. En 2027, un año sin meses reservados (revisor, a4):
+    el borde es el mismo, el servidor va tres horas por delante de UTC."""
+    r = _reloj("us")
+    borde = r.a_servidor(_ms("2027-03-31T23:30"))  # 02:30 del 1-abr en el servidor
+    dentro = r.a_servidor(_ms("2027-04-01T10:00"))
+    ticks = tmp_path / "F17_2027-04-01_ticks.csv"
+    ticks.write_bytes(
+        (
+            f"time_msc,bid,ask,flags\r\n{borde},ilegible,ilegible,6\r\n{dentro},1.17000,1.17002,6\r\n"
+        ).encode("cp1252")
+    )
+    m1 = tmp_path / "F17_2027-04-01_m1.csv"
+    m1.write_bytes(
+        (
+            "time,open,high,low,close,tick_volume,spread,real_volume\r\n"
+            f"{borde // 1000},x,x,x,x,1,1,0\r\n"
+            f"{dentro // 1000},1.17000,1.17001,1.16999,1.17000,4,2,0\r\n"
+        ).encode("cp1252")
+    )
+    destino = L.TicksDelMes()
+    descartes: Counter[str] = Counter()
+    assert L.leer_ticks(ticks, r, 5, destino, "2027-04", descartes) == 1
+    velas = L.leer_m1(m1, r, 5, "2027-04", descartes)
+    assert sum(destino.por_minuto.values()) == 1
+    assert list(destino.por_minuto) == [_ms("2027-04-01T10:00") // MS]
+    assert list(velas) == [_ms("2027-04-01T10:00") // MS]
+    assert descartes == Counter({"ticks del 2027-03": 1, "M1 del 2027-03": 1})
+    # sin `mes`, el lector leeria el precio ilegible y fallaria: el descarte va antes de leerlo
+    with pytest.raises(Exception):  # noqa: B017
+        L.leer_ticks(ticks, r, 5, L.TicksDelMes())
 
 
 def test_los_dias_sin_ticks_o_con_error_se_dicen() -> None:

@@ -101,3 +101,19 @@ Dado por Aleks (consultor) el 2026-11-25, en un solo mensaje. Copiado tal cual.
 > 2. La compilación de D6 se lanzó antes de que el consultor revisara el diff, que era lo que pedía la respuesta a la PARADA 1. Declárala como desviación (solo compiló y el exportador es de solo lectura) y deja en el informe el diff de `compilar.py` (`--stat` y las funciones nuevas enteras) y el del `.mq5`, para la revisión final.
 >
 > Después, sigue con lo que tenías: el recuadro de ADR-0090 §7, las líneas del cierre, la CI por `fix/f17-historial` y el revisor, hasta «Rama lista para revisión, NO cerrada.»
+
+## Respuesta del consultor a la PARADA 3 (2026-11-26), copiada tal cual
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> RESPUESTA DEL CONSULTOR A LA PARADA 3 de `trabajo/f17-historial` (2026-11-26, 07:40, hora de Lima). Cópiala tal cual al informe, en su sección de la PARADA 3.
+>
+> Revisión de la compilación: el consultor leyó en `fix/f17-historial` (958ffec3) el diff de `compilar.py` (el camino `herramienta`: solo un `.mq5` directamente bajo `tools/mql5/` y en el índice, compilado en una copia temporal del índice, sin cambiar `exportar` ni `instalar`) y `ExportarTicksFTMO.mq5` 1.01 (ninguna función de trading; DEMO y rango de construcción comprobados antes de pedir nada; solo escribe en `MQL5/Files`; b1 normaliza las dos fechas al inicio del día). Aprobado: Aleks recompiló con «!» después de esta revisión. Commitea los logs nuevos de los anexos con su `make check`.
+>
+> 0. Las horas de otro mes en los días de los bordes (a1): de acuerdo con tu recomendación. El exportador sigue pidiendo días del servidor. El lector pasa cada tick y cada M1 a UTC y descarta, sin usarlo para nada, todo lo que cae fuera del mes UTC pedido; lo cuenta en su salida, por mes vecino y en número de filas, y la fila de HOLDOUT del día de la corrida lo declara por recuento. Son precios fuera de la ventana: ADR-0021 §1 no los trata como holdout, y ningún día de febrero queda nunca en el borde de un mes de construcción. Test sintético que rompe a propósito: un tick de la última hora UTC del mes anterior en el fichero del día 1 no entra en ninguna cuenta y sí en el recuento de descartes. Corrige en el informe la frase de la respuesta a la PARADA 1 «Nada lee la M1 de marzo ni de junio» con lo que pasa de verdad: el exportador las baja en esas horas de borde y el lector las descarta sin leerlas para nada.
+>
+> 1. La regla de elección de fila del yaml (b2): se queda. Es copia literal de ADR-0099 §5, el yaml lo dice con su cita y el lector no elige nada. Declárala en el informe. El yaml no cambia más.
+>
+> Para el cierre: de acuerdo con que el heredado 10 salga por (b) y con una F corta, con el margen en 833 bytes. Doy por bueno no llegar a 1.000 porque a2 exige conservar las citas; deja los textos a la letra en §12.
+>
+> Después: la CI de `fix/f17-historial` sobre el último commit (el número del run, con el único fallo esperado de `state check`), el revisor solo sobre lo que cambie desde 958ffec3, y termina con «Rama lista para revisión, NO cerrada.»

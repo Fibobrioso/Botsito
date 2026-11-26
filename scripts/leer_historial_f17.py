@@ -33,7 +33,7 @@ import argparse
 import csv
 import re
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Iterable, Mapping, Sequence
 from collections.abc import Set as AbstractSet
 from dataclasses import dataclass, field
@@ -451,22 +451,49 @@ def leer_control(ruta: Path) -> dict[str, str]:
     return {f["clave"]: f["valor"] for f in _filas(ruta, COLUMNAS_CONTROL)}
 
 
-def leer_ticks(ruta: Path, reloj: RelojServidor, digitos: int, destino: TicksDelMes) -> int:
+def mes_utc(utc_ms: int) -> str:
+    """El AAAA-MM UTC de un instante en milisegundos."""
+    return datetime.fromtimestamp(utc_ms / 1000, tz=UTC).strftime("%Y-%m")
+
+
+def leer_ticks(
+    ruta: Path,
+    reloj: RelojServidor,
+    digitos: int,
+    destino: TicksDelMes,
+    mes: str | None = None,
+    descartes: Counter[str] | None = None,
+) -> int:
+    """Los ticks de `ruta`, en UTC. Con `mes`, los que caen fuera de ese mes UTC (las horas del
+    borde: el dia del servidor empieza antes que el UTC) se descartan ANTES de leer su precio y se
+    cuentan en `descartes` por su mes (respuesta del consultor a la PARADA 3, punto 0)."""
     n = 0
     for f in _filas(ruta, COLUMNAS_TICKS):
-        destino.anadir(
-            reloj.a_utc(int(f["time_msc"])),
-            a_puntos(f["bid"], digitos),
-            a_puntos(f["ask"], digitos),
-        )
+        utc = reloj.a_utc(int(f["time_msc"]))
+        if mes is not None and mes_utc(utc) != mes:
+            if descartes is not None:
+                descartes[f"ticks del {mes_utc(utc)}"] += 1
+            continue
+        destino.anadir(utc, a_puntos(f["bid"], digitos), a_puntos(f["ask"], digitos))
         n += 1
     return n
 
 
-def leer_m1(ruta: Path, reloj: RelojServidor, digitos: int) -> dict[int, Ohlc]:
+def leer_m1(
+    ruta: Path,
+    reloj: RelojServidor,
+    digitos: int,
+    mes: str | None = None,
+    descartes: Counter[str] | None = None,
+) -> dict[int, Ohlc]:
+    """La M1 de `ruta`, por minuto UTC; con `mes`, como `leer_ticks`."""
     salida = {}
     for f in _filas(ruta, COLUMNAS_M1):
         utc = reloj.a_utc(int(f["time"]) * 1000)
+        if mes is not None and mes_utc(utc) != mes:
+            if descartes is not None:
+                descartes[f"M1 del {mes_utc(utc)}"] += 1
+            continue
         salida[utc // MS_POR_MINUTO] = Ohlc(
             a_puntos(f["open"], digitos),
             a_puntos(f["high"], digitos),
@@ -724,13 +751,18 @@ def leer_historial(
         dias = dias_del_mes(mes, sesiones, inicio, fin, cierres, cubre)
         ftmo = TicksDelMes()
         m1: dict[int, Ohlc] = {}
+        descartes: Counter[str] = Counter()
         for p in sorted(carpeta.glob(f"F17_{mes}-*_ticks.csv")):
-            leer_ticks(p, reloj, digitos, ftmo)
+            leer_ticks(p, reloj, digitos, ftmo, mes, descartes)
         for p in sorted(carpeta.glob(f"F17_{mes}-*_m1.csv")):
-            m1.update(leer_m1(p, reloj, digitos))
+            m1.update(leer_m1(p, reloj, digitos, mes, descartes))
         duk, horas_duk = _dukascopy_del_mes(raiz, mes, dias)
         p_mes = puntos_del_mes(dias, ftmo, m1, sesiones, c, duk, horas_duk)
         salida += lineas_del_mes(mes, len(dias), p_mes, c)
+        salida.append(
+            "  DESCARTADAS sin usar (fuera del mes UTC pedido; para HOLDOUT, por recuento): "
+            + (", ".join(f"{n} filas de {k}" for k, n in sorted(descartes.items())) or "ninguna")
+        )
         if all(p_mes.cumple(c).values()):
             diferencia, global_ = diferencias_de_spread(dias, ftmo, duk, sesiones)
             salida.append(

@@ -686,7 +686,23 @@ Copiada también al final del encargo.
 
 ### 4.3 El `.mq5` entero, para la revisión final
 
-`tools/mql5/ExportarTicksFTMO.mq5`, 266 líneas, sha256 `5359f686…`, el compilado en §4.1 y el del
+> **Después del revisor (b1), la 1.01** (`958ffec3`, sha256 `eb9ccdb9…`, la que revisó el consultor
+> en la PARADA 3 y la que compilan los logs de los anexos): sobre la copia de abajo, que es la 1.0,
+> cambian la versión (`#property version` y `VERSION_SCRIPT`, «1.01»), la cabecera (añade «cuántos
+> devuelve CopyTicksRange en una llamada» a lo que queda por medir) y el rango, que lleva las dos
+> entradas a las 00:00 del día del servidor con una función nueva:
+>
+>     datetime InicioDelDia(const datetime t)
+>       {
+>        return t - t % 86400;
+>       }
+>     ...
+>        datetime desde = InicioDelDia(StringToTime(InpDesde));
+>        datetime hasta = InicioDelDia(StringToTime(InpHasta));
+>
+> El diff entero: `git diff 531e4318 958ffec3 -- tools/mql5/ExportarTicksFTMO.mq5`.
+
+`tools/mql5/ExportarTicksFTMO.mq5` 1.0, 266 líneas, sha256 `5359f686…`, el compilado en §4.1 y el del
 commit `81c89ea0`, que no ha cambiado desde entonces. Es un fichero nuevo: su diff es el fichero
 entero, que va al final de este apartado. Lo que hace, función a función:
 - `Comprobaciones`: la condición DEMO de la 759 y `SymbolSelect`;
@@ -1141,6 +1157,12 @@ del último commit va en «Estado».
 4. **El margen del cierre queda corto** (§5): 734 u 833 bytes, no 1.000.
 5. **D5 no tiene test de contenido que rompa en `main` con la firma de hoy**: rompe por la firma,
    como el encargo previó.
+6. **El yaml lleva la regla de elección de fila de ADR-0099 §5** (revisor, b2), copiada con su
+   cita; el lector no elige. Se queda por la respuesta a la PARADA 3, punto 1.
+7. **El día del servidor no es el día UTC** (revisor, a1): el fichero del día 1 trae horas del mes
+   anterior, que el lector descarta sin leerlas y cuenta (respuesta a la PARADA 3, punto 0). Corrige
+   lo que decía la respuesta a la PARADA 1 («Nada lee la M1 de marzo ni de junio»): ver «Cómo se
+   aplica» de la PARADA 3.
 
 ## 11. PARADA 3: dos hallazgos del revisor que chocan con lo fijado
 
@@ -1178,17 +1200,73 @@ veces, y los logs sustituyen a los de `0dabbeab` en los anexos:
 
     ! uv run python src/botsito/mql5bridge/compilar.py herramienta --repo . --metaeditor "C:/Program Files/MetaTrader 5/MetaEditor64.exe" --salida docs/validation/anexos/F17-HISTORIAL tools/mql5/ExportarTicksFTMO.mq5 tools/mql5/MedirDemoFTMO.mq5
 
-## 12. Lo que necesito que decidas en la orden de cierre
+## Respuesta del consultor a la PARADA 3 (2026-11-26), tal cual
 
-0. **El heredado 10.** Opciones: (a) corregirlo (+31 bytes); (b) que salga por (b) REPETIDA (−67).
-   Recomiendo (b): la F nueva dice entero lo que queda de F17. Coste de (b): ninguno.
-1. **Los bytes que faltan para el margen de 1.000.** Opciones: (a) la F corta, «F17 (ADR-0099 §5;
-   el historial: F17-HISTORIAL.md) y el backtest del trader con costes (ADR-0100, R4.10),
-   pendientes.», que saca de la Next Action lo hecho (el diagnóstico de la premisa y el contraste,
-   ya en HISTORIA; RITUAL.md, punto 3): margen de 833; (b) aceptar el margen de 734 con la F
-   propuesta. Ninguna llega a 1.000 con los criterios (a)-(e); faltan 167 bytes en el mejor caso, y
-   no hay en Technical Debt, en los heredados ni en las Reglas vivas otra línea que salga con
-   evidencia. Recomiendo (a). Coste de (b): un margen más corto.
+Copiada también al final del encargo.
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> RESPUESTA DEL CONSULTOR A LA PARADA 3 de `trabajo/f17-historial` (2026-11-26, 07:40, hora de Lima). Cópiala tal cual al informe, en su sección de la PARADA 3.
+>
+> Revisión de la compilación: el consultor leyó en `fix/f17-historial` (958ffec3) el diff de `compilar.py` (el camino `herramienta`: solo un `.mq5` directamente bajo `tools/mql5/` y en el índice, compilado en una copia temporal del índice, sin cambiar `exportar` ni `instalar`) y `ExportarTicksFTMO.mq5` 1.01 (ninguna función de trading; DEMO y rango de construcción comprobados antes de pedir nada; solo escribe en `MQL5/Files`; b1 normaliza las dos fechas al inicio del día). Aprobado: Aleks recompiló con «!» después de esta revisión. Commitea los logs nuevos de los anexos con su `make check`.
+>
+> 0. Las horas de otro mes en los días de los bordes (a1): de acuerdo con tu recomendación. El exportador sigue pidiendo días del servidor. El lector pasa cada tick y cada M1 a UTC y descarta, sin usarlo para nada, todo lo que cae fuera del mes UTC pedido; lo cuenta en su salida, por mes vecino y en número de filas, y la fila de HOLDOUT del día de la corrida lo declara por recuento. Son precios fuera de la ventana: ADR-0021 §1 no los trata como holdout, y ningún día de febrero queda nunca en el borde de un mes de construcción. Test sintético que rompe a propósito: un tick de la última hora UTC del mes anterior en el fichero del día 1 no entra en ninguna cuenta y sí en el recuento de descartes. Corrige en el informe la frase de la respuesta a la PARADA 1 «Nada lee la M1 de marzo ni de junio» con lo que pasa de verdad: el exportador las baja en esas horas de borde y el lector las descarta sin leerlas para nada.
+>
+> 1. La regla de elección de fila del yaml (b2): se queda. Es copia literal de ADR-0099 §5, el yaml lo dice con su cita y el lector no elige nada. Declárala en el informe. El yaml no cambia más.
+>
+> Para el cierre: de acuerdo con que el heredado 10 salga por (b) y con una F corta, con el margen en 833 bytes. Doy por bueno no llegar a 1.000 porque a2 exige conservar las citas; deja los textos a la letra en §12.
+>
+> Después: la CI de `fix/f17-historial` sobre el último commit (el número del run, con el único fallo esperado de `state check`), el revisor solo sobre lo que cambie desde 958ffec3, y termina con «Rama lista para revisión, NO cerrada.»
+
+### Cómo se aplica
+
+- **La compilación revisada y los logs nuevos**: los dos «PASA (0 errores, 0 avisos, .ex5 si)», ya
+  con el `.mq5` 1.01 (copia del índice con sha256 `eb9ccdb9…`, la del fuente; log original
+  `9de3797e…`), sustituyen en los anexos a los de la 1.0. Entran con este commit.
+- **Punto 0, el lector**: `leer_ticks` y `leer_m1` reciben el mes pedido, pasan cada fila a UTC y,
+  si cae fuera de ese mes, la descartan ANTES de leer su precio y la cuentan por su mes
+  («ticks del AAAA-MM», «M1 del AAAA-MM»). La salida da por mes «DESCARTADAS sin usar (fuera del mes
+  UTC pedido; para HOLDOUT, por recuento)». El test
+  `test_las_filas_de_otro_mes_utc_se_descartan_sin_leer_su_precio` rompe a propósito: un tick y una
+  M1 de la última hora UTC del mes anterior en el fichero del día 1, con su precio ilegible, no
+  entran en ninguna cuenta y sí en los descartes; sin el mes, el mismo fichero falla al leer ese
+  precio. Lo dicen también el runbook y la cabecera del lector.
+- **La corrección de «Nada lee la M1 de marzo ni de junio»** (respuesta a la PARADA 1, punto 0;
+  la copia de arriba es literal y no se toca): lo que pasa de verdad es que el exportador, al pedir
+  el día 1 de abril y el 1 de julio por el reloj del servidor, baja también las últimas dos o tres
+  horas UTC del 31 de marzo y del 30 de junio, fuera de la ventana; el lector las descarta sin
+  leerlas para nada y las cuenta; y la M1 de Dukascopy de marzo y de junio no la lee nada
+  (`dias_del_mes` no usa `arnes.dias_de_mercado`).
+- **Punto 1, la regla de elección del yaml, declarada**: `solo_si_cubre.diferencia_mediana.lectura`
+  lleva la regla de ADR-0099 §5 (qué fila del puente «vale»), copiada con su cita. El lector no
+  elige nada: imprime la diferencia. El yaml no cambia más (§10, desviación 6).
+
+## 12. Las líneas del cierre que decide la respuesta, a la letra
+
+Con el heredado 10 fuera por (b) y la F corta, PROJECT_STATE queda en **24.167 bytes (margen 833)**,
+medidos sobre el de `main` (24.854). Lo que no llega a 1.000 lo da por bueno la respuesta, porque
+a2 exige conservar las citas.
+
+- **La F** (`PROJECT_STATE.md`:28): se sustituye «F17 (ADR-0099 §5) y el backtest del trader con
+  costes (ADR-0100, R4.10), pendientes; el diagnóstico de la premisa y el contraste con el trader,
+  hechos.» por «F17 (ADR-0099 §5; el historial: F17-HISTORIAL.md) y el backtest del trader con
+  costes (ADR-0100, R4.10), pendientes.» (−36 bytes). El diagnóstico de la premisa y el contraste
+  están ya en HISTORIA (sus registros de cierre).
+- **Sale el heredado 10** (`PROJECT_STATE.md`:57), por (b) REPETIDA: lo que queda de F17 vive
+  entero en la F. Va literal a HISTORIA, bajo `# Pendiente heredado SALE · sale de PROJECT_STATE.md
+  en trabajo/f17-historial (<fecha>)`, con la condición (b) y la F como evidencia:
+
+      - 10. De la demo de FTMO queda el grabador de spread y ticks, F17.
+
+- **Sale de Technical Debt la línea :100**, por (a) PAGADA (`cuentas_con_deslizamiento` y
+  `veredicto_con_f17` por cuenta, `81c89ea0`, y sus tests), literal a HISTORIA bajo `# Technical Debt
+  PAGADA · …`:
+
+      - `curva_con_deslizamiento` y `veredicto_con_f17` (criterio_fidelidad.py) toman una sola curva y arrastran `previo` entre cuentas: cuando F17 los use, por cuenta (CUENTA-POR-MES.md, fase 0 e) 8).
+
+- **Tres líneas de Technical Debt, (e) ACORTADA**: en PROJECT_STATE quedan como en la tabla de
+  §5, a la letra; su texto entero va a HISTORIA bajo `# Technical Debt ACORTADA · …`.
+- **La hoja de ruta**: A.1, A.5, la fila F:F17 y R6a.8, como en §5.
 
 ## Informe del auditor (subagente `auditor-encargo`, 2026-11-25), tal cual
 
@@ -1458,7 +1536,7 @@ Resumen: 1 bloquea, 5 importa, 2 menor. Requisitos: 43 hechos (y 3 de otra forma
 
 ## Estado
 
-EN CURSO: PARADA 3 (§11). Hechos: la respuesta a la PARADA 2 (§4.4), el recuadro de ADR-0090 §7
-(`531e4318`), la CI sobre `531e4318` (run 45797145889, solo el fallo esperado, §8) y el revisor, con
-sus hallazgos atendidos (§9). Falta: la respuesta a las dos decisiones de §11, la compilación del
-`.mq5` 1.01 (que b1 cambió) con «!», y la CI del último commit.
+EN CURSO: aplicada la respuesta a la PARADA 3 (punto 0 en el lector, punto 1 declarado, los logs
+de la 1.01 en los anexos, §12 a la letra). CI sobre `958ffec3`: run 45805382618, solo el fallo
+esperado de `state check` (1 failed, 3592 passed). Falta: la CI del commit de la PARADA 3 y la
+segunda pasada del revisor, solo sobre lo cambiado desde `958ffec3`.
