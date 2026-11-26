@@ -36,6 +36,8 @@
 #define INTENTOS       3
 #define LOTE_TICKS     2000
 #define HORA_S         3600
+// al relanzarlo, cuanto atras rehace como mucho: un fin de semana y una noche (arreglo 2)
+#define MAX_HORAS_REHACER 72
 
 int      g_control  = INVALID_HANDLE;
 int      g_part     = INVALID_HANDLE;
@@ -180,7 +182,13 @@ void RehacerHora(const datetime hora)
       Sleep(PAUSA_MS);
      }
    string clave = "rehecha_" + StringSubstr(NombreDeLaHora(hora), StringLen(PREFIJO));
-   Control(clave + "_ticks", IntegerToString(n), n <= 0 ? "el servidor no devuelve ticks de esa hora: HUECO" : "");
+   // una hora sin ticks en sabado o domingo del servidor es el mercado cerrado, no un hueco
+   // (revision del consultor, arreglo 5)
+   MqlDateTime s;
+   TimeToStruct(hora, s);
+   bool fin_de_semana = (s.day_of_week == 0 || s.day_of_week == 6);
+   string vacia = fin_de_semana ? "mercado_cerrado" : "HUECO: el servidor no devuelve ticks de esa hora";
+   Control(clave + "_ticks", IntegerToString(n), n <= 0 ? vacia : "");
    Control(clave + "_error", IntegerToString(error));
    Control(clave + "_intentos", IntegerToString(MathMin(intento, INTENTOS)));
    if(n <= 0)
@@ -251,6 +259,9 @@ void OnStart()
    FileWriteString(g_control, "clave,valor,nota\r\n");
    Control("version_script", VERSION_SCRIPT);
    Control("cuenta_demo", "si");
+   // para saber de que prueba es cada grabacion (arreglo 2); el CSV vive fuera de git y el login no
+   // se copia a ningun manifiesto ni informe: el repositorio es publico
+   Control("login", IntegerToString(AccountInfoInteger(ACCOUNT_LOGIN)), "no se copia al repositorio");
    Control("servidor", AccountInfoString(ACCOUNT_SERVER));
    Control("empresa", AccountInfoString(ACCOUNT_COMPANY));
    Control("build", IntegerToString(TerminalInfoInteger(TERMINAL_BUILD)));
@@ -267,6 +278,15 @@ void OnStart()
      {
       desde = ahora; // la primera vez: el inicio de la hora en que se lanza
       Control("inicio", "primera_vez", "desde el inicio de la hora en que se lanza");
+     }
+   else if(desde < ahora - MAX_HORAS_REHACER * HORA_S)
+     {
+      // mas atras de MAX_HORAS_REHACER (seguramente los CSV de una prueba anterior): no se rehace
+      // nada y se empieza como la primera vez (revision del consultor, arreglo 2)
+      Control("hueco_largo", IntegerToString((long)((ahora - desde) / HORA_S)),
+              "horas entre la siguiente al ultimo CSV y ahora: mas de MAX_HORAS_REHACER, no se rehacen");
+      desde = ahora;
+      Control("inicio", "primera_vez", "desde el inicio de la hora en que se lanza (tras un hueco largo)");
      }
    else
       Control("inicio", "relanzado", "rehace del servidor desde la hora siguiente al ultimo CSV entero");

@@ -472,6 +472,33 @@ def lineas_grabador(
     return salida
 
 
+def controles_del_grabador(carpeta: Path) -> dict[str, int]:
+    """Lo que dicen los controles del grabador, por recuento (revision del consultor, arreglo 5):
+    las horas rehechas, cuantas sin ticks un dia laborable (`HUECO`) y cuantas en fin de semana
+    (`mercado_cerrado`), los arranques con `hueco_largo` y los `tick_tarde`."""
+    cuenta = {"rehechas": 0, "HUECO": 0, "mercado_cerrado": 0, "hueco_largo": 0, "tick_tarde": 0}
+    for p in sorted(q for q in carpeta.iterdir() if PATRON_CONTROL_GRABADOR.match(q.name)):
+        for f in _filas(p, H.COLUMNAS_CONTROL):
+            clave, nota = f["clave"], f["nota"]
+            if clave.startswith("rehecha_") and clave.endswith("_ticks"):
+                cuenta["rehechas"] += 1
+                if nota.startswith("HUECO"):
+                    cuenta["HUECO"] += 1
+                elif nota == "mercado_cerrado":
+                    cuenta["mercado_cerrado"] += 1
+            elif clave in ("hueco_largo", "tick_tarde"):
+                cuenta[clave] += 1
+    return cuenta
+
+
+def linea_controles(cuenta: Mapping[str, int]) -> str:
+    return (
+        f"CONTROL: {cuenta['rehechas']} horas rehechas; sin ticks un dia laborable (HUECO) "
+        f"{cuenta['HUECO']}; en fin de semana (mercado_cerrado) {cuenta['mercado_cerrado']}; "
+        f"arranques con hueco_largo {cuenta['hueco_largo']}; tick_tarde {cuenta['tick_tarde']}"
+    )
+
+
 # ----------------------------------------------------------------------- los manifiestos (D7)
 
 PATRON_DATASET = {
@@ -581,6 +608,7 @@ def main(argv: Sequence[str] | None = None, raiz: Path = RAIZ) -> int:
         salida += lineas_grabador(
             *spread_por_hora(a.carpeta, digitos, reloj, sesiones, inicio, fin)
         )
+        salida.append(linea_controles(controles_del_grabador(a.carpeta)))
     a.salida.write_text("\n".join(salida) + "\n", encoding="utf-8", newline="\n")
     print("\n".join(salida))
     return 0

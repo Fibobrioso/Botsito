@@ -28,9 +28,16 @@ ADR-0081 D2, unos 25); si la mediana «bot» pasa a la «uno» en 1 punto o más
 falta 100 «bot» por clase. Cada ciclo da una entrada y una salida (por stop, o a mercado a los 300
 s), así que los ciclos son las muestras de la clase más escasa entre las dos salidas.
 
+- **Antes de lanzar nada en una prueba nueva**: los `F17G_*` y `F17M_*` de la prueba anterior que
+  queden en **MQL5 → Files** se mueven a una carpeta propia (p. ej. `MQL5\Files\prueba-<fecha>\`),
+  para que el grabador no intente rehacer desde ellos ni la medida cuente sus rechazadas.
 - **La primera prueba**: el historial primero (`F17-HISTORIAL.md`), luego el grabador en marcha todo
   el tiempo, y la medida: «uno» entero (unos 250 ciclos, unos 3 días de ventana) y lo que quepa de
-  «bot».
+  «bot». **Los dos estratos, repartidos en los mismos días y horas**: el estrato va por ejecución
+  (`InpEstrato`), así que cada día de medida se alternan ejecuciones «uno» y «bot» a lo largo de la
+  ventana (p. ej. una «uno» de 07:00 a 09:00, una «bot» de 09:00 a 11:00, y al día siguiente al
+  revés), para que las dos medianas salgan de las mismas condiciones de mercado. No se hace «uno»
+  entero primero y «bot» después.
 - **Las siguientes**: «bot» hasta sus 30 por clase. **Cuántas, no está medido**, y el plan se rehace
   con lo que mida la primera (la fracción de ciclos que salen por stop y el coste por ciclo). Las dos
   estimaciones, las dos SUPUESTOS (F17-ORDENES.md, 0.4 y el auditor):
@@ -102,9 +109,16 @@ El log tiene que decir **0 errors, 0 warnings** para los dos. El `.ex5` no entra
    `.part`.
 3. **Si el terminal se cierra o se reinicia, el grabador no vuelve solo** (un script no se recarga;
    un servicio sí, pero `compilar.py` solo instala scripts): **relánzalo** igual. Al relanzarlo
-   borra el `.part` y rehace del servidor, hora a hora, desde la siguiente al último `.csv` entero;
-   lo que el servidor ya no guarde sale en el control como **HUECO** (`rehecha_<hora>_ticks` 0).
+   borra el `.part` y rehace del servidor, hora a hora, desde la siguiente al último `.csv` entero,
+   **como mucho 72 horas hacia atrás** (un fin de semana y una noche). Una hora sin ticks sale en el
+   control como **HUECO** si es de un día laborable (el servidor ya no la guarda) y como
+   **`mercado_cerrado`** si es de sábado o domingo del servidor; el lector las cuenta por separado.
+   Si el último `.csv` está más atrás de 72 horas (por ejemplo, de una prueba anterior que no se
+   movió), no rehace nada: escribe **`hueco_largo`** con las horas que faltan y empieza como la
+   primera vez.
 4. La primera vez empieza al inicio de la hora en que lo lanzas, nunca antes.
+5. El control apunta el número de la cuenta (`login`) para saber de qué prueba es cada grabación;
+   **ese número no se copia al repositorio** (ni al manifiesto ni a ningún informe): es público.
 
 ## Cada vez: la medida
 

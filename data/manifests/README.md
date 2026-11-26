@@ -133,5 +133,5 @@ que enmiende ADR-0005 y ADR-0024 §4 (ADR-0099 §5). Esquemas (`schema_f17_orden
 | `dias` | cuantos dias cubre, por recuento (para HOLDOUT-EXPOSICIONES, sin fechas: D6) |
 | `script` | `ruta`, `version` (la de su CSV), `sha256` del `.mq5` y el `commit` que lo trajo |
 | `control` | `time_trade_server_s`, `time_gmt_s`, `desfase_servidor_gmt_min` y `cuadra`: si ese desfase es el que da el registro (`broker_offset_base` y `broker_dst`) en ese instante |
-| `cuenta` | DEMO, con `servidor`, del CSV |
+| `cuenta` | DEMO, con `servidor`, del CSV; **nunca el `login`** que apunta el control del grabador (el repositorio es público) |
 | `declarado_por`, `congelado_el`, `rama`, `informe` | quien lo copio y como, cuando y donde se congelo |

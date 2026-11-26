@@ -214,6 +214,24 @@ def problemas(
             salida.append("OrderCalcMargin con un tipo pendiente: la tasa de la stop es 0;0")
         elif "ORDER_TYPE_BUY" not in m.group(1) or "ORDER_TYPE_SELL" not in m.group(1):
             salida.append("OrderCalcMargin sin ORDER_TYPE_BUY u ORDER_TYPE_SELL a mercado")
+    # revision del consultor, arreglo 1: el saldo del dia solo resta los deals de trading (el
+    # deposito del primer dia de la cuenta es un DEAL_TYPE_BALANCE de hoy)
+    saldo = re.sub(r"\s+", "", cuerpo_de(codigo, "SaldoAlEmpezarElDia"))
+    filtro = "if(tipo!=DEAL_TYPE_BUY&&tipo!=DEAL_TYPE_SELL)continue;"
+    if "longtipo=HistoryDealGetInteger(d,DEAL_TYPE);" not in saldo or filtro not in saldo:
+        salida.append("SaldoAlEmpezarElDia no filtra los deals de trading (DEAL_TYPE_BUY y SELL)")
+    elif saldo.index(filtro) > saldo.index("movido+="):
+        salida.append("SaldoAlEmpezarElDia suma antes de filtrar")
+    # arreglo 3: se niega si el stops level pasa de la distancia de la entrada
+    comprobaciones_s = re.sub(r"\s+", "", comprobaciones)
+    if (
+        "SymbolInfoInteger(SIMBOLO,SYMBOL_TRADE_STOPS_LEVEL)" not in comprobaciones_s
+        or "if(stops>DISTANCIA_ENTRADA_PUNTOS)" not in comprobaciones_s
+    ):
+        salida.append("Comprobaciones no se niega con un stops level mayor que la distancia")
+    # arreglo 4: una salida que falta porque se paro el guion lo dice
+    if not re.search(r'IsStopped\(\)\s*\?\s*"parado por el usuario', cuerpo_de(codigo, "Ciclo")):
+        salida.append("Ciclo no dice «parado por el usuario» cuando se paro el guion")
     return salida
 
 
@@ -366,6 +384,30 @@ def test_el_fuente_es_utf8_sin_bom_y_lf() -> None:
             "      if(d != 0 && HistoryDealGetInteger(d, DEAL_TYPE) == DEAL_TYPE_BALANCE)",
             "      if(d != 0)",
             "CapitalDelHistorial no lee DEAL_TYPE_BALANCE",
+        ),
+        # arreglo 1: el saldo del dia restando tambien el deposito (el primer dia, el tope no salta)
+        (
+            "      if(tipo != DEAL_TYPE_BUY && tipo != DEAL_TYPE_SELL)\n         continue;\n",
+            "",
+            "SaldoAlEmpezarElDia no filtra los deals de trading",
+        ),
+        (
+            "      if(tipo != DEAL_TYPE_BUY && tipo != DEAL_TYPE_SELL)\n",
+            "      if(tipo == DEAL_TYPE_BALANCE && false)\n",
+            "SaldoAlEmpezarElDia no filtra los deals de trading",
+        ),
+        # arreglo 3: sin la negativa por el stops level
+        (
+            "   if(stops > DISTANCIA_ENTRADA_PUNTOS)\n",
+            "   if(false)\n",
+            "Comprobaciones no se niega con un stops level mayor",
+        ),
+        # arreglo 4: la fila de un guion parado dice que no se pudo cerrar
+        (
+            '           IsStopped() ? "parado por el usuario: Limpiar" : '
+            '"la posicion no se pudo cerrar: Limpiar");',
+            '           "la posicion no se pudo cerrar: Limpiar");',
+            "parado por el usuario",
         ),
         # un tope que PuedeEmpezarCiclo no mira
         (

@@ -477,7 +477,10 @@ bool EnHoraMuerta(const datetime t)
   }
 
 // (b) El saldo al empezar el dia de riesgo, rehecho del historial de TODA la cuenta: el saldo de
-// ahora menos lo que han movido los deals desde las 00:00 del servidor. -1 si no se puede leer.
+// ahora menos lo que han movido los deals DE TRADING (DEAL_TYPE_BUY y DEAL_TYPE_SELL) desde las
+// 00:00 del servidor. Un deposito u otro movimiento de saldo no es perdida del dia: el dia en que se
+// activa la prueba, el DEAL_TYPE_BALANCE de 100.000 esta en el historial de hoy, y restarlo dejaba
+// el saldo del dia en 0 y el tope sin saltar (revision del consultor, arreglo 1). -1 si no se lee.
 double SaldoAlEmpezarElDia()
   {
    datetime desde = InicioDelDia(TimeCurrent());
@@ -488,6 +491,9 @@ double SaldoAlEmpezarElDia()
      {
       ulong d = HistoryDealGetTicket(i);
       if(d == 0)
+         continue;
+      long tipo = HistoryDealGetInteger(d, DEAL_TYPE);
+      if(tipo != DEAL_TYPE_BUY && tipo != DEAL_TYPE_SELL)
          continue;
       movido += HistoryDealGetDouble(d, DEAL_PROFIT) + HistoryDealGetDouble(d, DEAL_COMMISSION) +
                 HistoryDealGetDouble(d, DEAL_SWAP) + HistoryDealGetDouble(d, DEAL_FEE);
@@ -859,7 +865,9 @@ bool Ciclo(const int ciclo, const bool compra)
      }
    if(salida == 0)
      {
-      Dato("ciclo", "sin_salida", IntegerToString(ciclo), "la posicion no se pudo cerrar: Limpiar");
+      // si falta porque se paro el guion, lo dice (revision del consultor, arreglo 4)
+      Dato("ciclo", "sin_salida", IntegerToString(ciclo),
+           IsStopped() ? "parado por el usuario: Limpiar" : "la posicion no se pudo cerrar: Limpiar");
       return false;
      }
    HistoryDealSelect(salida);
@@ -928,6 +936,15 @@ bool Comprobaciones(string &motivo)
    if(MathAbs(capital - CAPITAL_INICIAL) > 0.005)
      {
       motivo = "el capital del historial (" + DoubleToString(capital, 2) + ") no es el de la prueba: no se adivina";
+      return false;
+     }
+   // con un stops level mayor que la distancia de la entrada, cada orden se rechazaria: se niega al
+   // empezar en vez de gastar peticiones (revision del consultor, arreglo 3)
+   long stops = SymbolInfoInteger(SIMBOLO, SYMBOL_TRADE_STOPS_LEVEL);
+   if(stops > DISTANCIA_ENTRADA_PUNTOS)
+     {
+      motivo = "el stops level de EURUSD (" + IntegerToString(stops) + " puntos) es mayor que DISTANCIA_ENTRADA_PUNTOS (" +
+               IntegerToString(DISTANCIA_ENTRADA_PUNTOS) + "): cada orden se rechazaria";
       return false;
      }
    return true;

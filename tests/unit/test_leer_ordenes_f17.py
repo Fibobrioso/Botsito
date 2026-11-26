@@ -339,7 +339,36 @@ def test_main_lee_el_grabador(tmp_path: Path) -> None:
     texto = salida.read_text(encoding="utf-8")
     assert "GRABADOR: 2 ticks leidos; 1 dias con ticks en la ventana" in texto
     assert "spread FTMO 10:00: n 2, p50 2, p90 5, p99 5, max 5" in texto
+    assert "CONTROL: 0 horas rehechas" in texto
     assert "1.170" not in texto
+
+
+def test_el_control_distingue_hueco_de_mercado_cerrado(tmp_path: Path) -> None:
+    """Revision del consultor, arreglo 5: una hora vacia de fin de semana es `mercado_cerrado`, no
+    un `HUECO`; y se cuentan los arranques con `hueco_largo` (arreglo 2) y los `tick_tarde`."""
+    _escribir(
+        tmp_path / "F17G_control_20261207_090000.csv",
+        "clave,valor,nota",
+        [
+            '"digits","5",""',
+            '"hueco_largo","300","mas de MAX_HORAS_REHACER"',
+            '"rehecha_2026-12-05_10_ticks","0","mercado_cerrado"',
+            '"rehecha_2026-12-05_10_error","0",""',
+            '"rehecha_2026-12-04_15_ticks","0","HUECO: el servidor no devuelve ticks de esa hora"',
+            '"rehecha_2026-12-04_14_ticks","812",""',
+            '"tick_tarde","1","de una hora ya cerrada"',
+        ],
+    )
+    cuenta = L.controles_del_grabador(tmp_path)
+    assert cuenta == {
+        "rehechas": 3,
+        "HUECO": 1,
+        "mercado_cerrado": 1,
+        "hueco_largo": 1,
+        "tick_tarde": 1,
+    }
+    linea = L.linea_controles(cuenta)
+    assert "(HUECO) 1; en fin de semana (mercado_cerrado) 1" in linea
 
 
 def test_una_clase_desconocida_no_se_adivina() -> None:

@@ -745,6 +745,46 @@ En la rama, los mismos y sus vecinos (`test_leer_historial_f17.py`, `test_export
 `git worktree prune`; `git worktree list` solo con el repo, las mismas ramas, 176 tags, y en origin
 solo `refs/heads/main`.
 
+## 3. La revisión del consultor de los dos `.mq5` y del yaml (2026-11-26)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> REVISIÓN DEL CONSULTOR de los dos `.mq5` y del yaml de `trabajo/f17-ordenes` (2026-11-26, 16:20, hora de Lima). Cópiala tal cual al informe. El yaml de D3 queda como está.
+>
+> Los dos añadidos se quedan: (1) el objetivo de respaldo a 54 puntos, con su salida `otro_TP` fuera de las clases, porque acota una posición si el guion muere; (2) el grabador no reabre una hora cerrada y apunta `tick_tarde`, porque reabrirla truncaría el fichero.
+>
+> Arreglos antes de compilar, cada uno con su test (contrato en el texto, como los demás) y en un commit sellado:
+>
+> 1. IMPORTA · MedirOrdenesFTMO.mq5, `SaldoAlEmpezarElDia` (:481-496): resta todos los deals del día, también el `DEAL_TYPE_BALANCE` del depósito. El día en que se activa la prueba, el depósito de 100.000 está en el historial de hoy, el saldo al empezar el día sale ≈ 0 y el tope (b) queda en −3.000, así que no salta nunca, justo el día en que se piensa correr la medida. Arreglo: `movido` solo suma los deals de trading (`DEAL_TYPE_BUY` y `DEAL_TYPE_SELL`); un depósito u otro movimiento de saldo no es pérdida del día. El test exige que la función filtre por esos dos tipos. Lección para el revisor: un tope que se calcula del historial se prueba también el primer día de la cuenta.
+> 2. IMPORTA · GrabarTicksFTMO.mq5, `SiguienteAlUltimo` y el bucle de `OnStart` (:265-274): al relanzarlo rehace desde el último `F17G_*.csv` que encuentre, sin límite. Con los CSV de una prueba anterior en `MQL5/Files`, bajaría semanas de ticks, como un exportador sin la guardia de meses de ExportarTicksFTMO. Arreglo: una constante `MAX_HORAS_REHACER` de 72 (cubre un fin de semana y una noche). Si la hora siguiente al último CSV está más atrás, no rehace nada, empieza como la primera vez y escribe en el control `hueco_largo` con las horas que faltan. El control apunta además `ACCOUNT_LOGIN` al empezar. Y el runbook: al empezar cada prueba, los `F17G_*` y `F17M_*` de la anterior se mueven a una carpeta propia antes de lanzar nada. Test: la constante existe, vale 72 y el bucle la usa.
+> 3. MENOR · MedirOrdenesFTMO.mq5, `Comprobaciones`: si `SYMBOL_TRADE_STOPS_LEVEL` es mayor que `DISTANCIA_ENTRADA_PUNTOS`, el guion se niega al empezar y lo dice, en vez de gastar peticiones rechazadas ciclo tras ciclo.
+> 4. MENOR · MedirOrdenesFTMO.mq5, `Ciclo` (:860-863): si la salida falta porque se paró el guion (`IsStopped`), la fila dice «parado por el usuario» y no «la posición no se pudo cerrar».
+> 5. MENOR · GrabarTicksFTMO.mq5, `RehacerHora`: una hora sin ticks en sábado o domingo del servidor se apunta como `mercado_cerrado`, no como `HUECO`; el lector y el runbook las distinguen.
+> 6. MENOR · runbook: los estratos van por ejecución (`InpEstrato`), así que el runbook reparte las ejecuciones «bot» entre los días y las horas de la ventana en que corre «uno», para que las medianas se comparen en las mismas condiciones (lo que pedía el punto 7 de la PARADA con «alternados»).
+>
+> Después: compilar con el comando que el consultor da en un mensaje aparte (Aleks lo lanza con «!»); los logs a los anexos y su commit; empujar `fix/f17-ordenes` para la CI (si el clasificador niega el push, lo lanza Aleks con «!») y darme el número del run; el revisor con los alcances de §7 más los puntos 2, 3 y 7 de la PARADA y los arreglos 1 y 2 de esta revisión; las líneas del cierre y la fila de ERRORES-RECURRENTES. Termina con «Rama lista para revisión, NO cerrada.»
+
+### 3.1 Lo hecho con la revisión
+
+Los dos añadidos se quedan. Cada arreglo, con su test en el contrato (en el texto, con su mutación
+que rompe):
+
+| arreglo | dónde | test |
+|---|---|---|
+| 1 · el saldo al empezar el día solo resta `DEAL_TYPE_BUY` y `DEAL_TYPE_SELL` | `SaldoAlEmpezarElDia` | el filtro, antes de sumar; dos mutaciones (sin filtro, filtro que no filtra) |
+| 2 · `MAX_HORAS_REHACER` 72; más atrás, `hueco_largo` y como la primera vez; `login` en el control | `GrabarTicksFTMO.mq5`, `OnStart` | la constante vale 72 y el bucle la usa; cuatro mutaciones (500, sin la rama, sin empezar de nuevo, sin el login) |
+| 3 · se niega si el stops level pasa de `DISTANCIA_ENTRADA_PUNTOS` | `Comprobaciones` | una mutación |
+| 4 · «parado por el usuario» si falta la salida porque se paró | `Ciclo` | una mutación |
+| 5 · una hora vacía de sábado o domingo, `mercado_cerrado` | `RehacerHora`; el lector la cuenta (`controles_del_grabador`) | una mutación; y un test del lector con HUECO, `mercado_cerrado`, `hueco_largo` y `tick_tarde` |
+| 6 · los estratos repartidos en los mismos días y horas; mover los ficheros de la prueba anterior | `docs/runbooks/F17-ORDENES.md` | — |
+
+Una precisión del arreglo 2: el control del grabador apunta el `login`, pero el CSV vive fuera de
+git y ese número no se copia al manifiesto ni a ningún informe, porque el repositorio es público
+(`DEMO-FTMO.md`, «La prueba de octubre de 2026»); lo dicen el runbook y el esquema de
+`data/manifests/README.md`. Tests de la rama: 108 PASSED, 0 FAILED.
+
 ## Estado
 
 EN CURSO: la respuesta a la PARADA aplicada en el criterio de D3 (2.1); viene el código de D1 a D9.

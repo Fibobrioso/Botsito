@@ -65,10 +65,29 @@ def problemas(src: str) -> list[str]:
         salida.append("el bucle no mira IsStopped")
     if re.search(r"\bCopyTicks(?:Range)?\s*\([^;]*,\s*0\s*[,)]", codigo):
         salida.append("una peticion de ticks desde 0: «el primer tick disponible»")
-    if "desde = ahora;" not in cuerpo_de(src, "OnStart"):
+    inicio = re.sub(r"\s+", "", sin_comentarios(cuerpo_de(src, "OnStart")))
+    if "if(desde==0){desde=ahora;" not in inicio:
         salida.append("la primera vez no empieza al inicio de la hora en que se lanza")
     if "g_ultimo = (long)ahora * 1000;" not in cuerpo_de(src, "OnStart"):
         salida.append("la hora en curso no empieza en su inicio")
+    # revision del consultor, arreglo 2: no rehace mas de MAX_HORAS_REHACER (72) hacia atras; si
+    # la hora siguiente al ultimo CSV esta mas atras, hueco_largo y como la primera vez
+    if not re.search(r"^#define\s+MAX_HORAS_REHACER\s+72\b", codigo, re.MULTILINE):
+        salida.append("MAX_HORAS_REHACER no es 72")
+    largo = re.search(r"elseif\(desde<ahora-MAX_HORAS_REHACER\*HORA_S\)\{(.*?)\}else", inicio)
+    if largo is None:
+        salida.append("el relanzado no usa MAX_HORAS_REHACER")
+    elif 'Control("hueco_largo"' not in largo.group(1) or "desde=ahora;" not in largo.group(1):
+        salida.append("con un hueco largo no escribe hueco_largo o no empieza como la primera vez")
+    if "AccountInfoInteger(ACCOUNT_LOGIN)" not in cuerpo_de(src, "OnStart"):
+        salida.append("el control no apunta ACCOUNT_LOGIN")
+    # arreglo 5: una hora vacia de fin de semana es mercado_cerrado, no HUECO
+    rehacer = re.sub(r"\s+", "", cuerpo_de(src, "RehacerHora"))
+    if (
+        "boolfin_de_semana=(s.day_of_week==0||s.day_of_week==6);" not in rehacer
+        or '?"mercado_cerrado":"HUECO' not in rehacer
+    ):
+        salida.append("RehacerHora no apunta mercado_cerrado en sabado o domingo")
     return salida
 
 
@@ -135,6 +154,36 @@ def test_el_fuente_es_utf8_sin_bom_y_lf() -> None:
         ),
         # control: un comentario con OrderSend no cuenta
         ("bool Comprobaciones(", "// OrderSend(r, s);\nbool Comprobaciones(", None),
+        # arreglo 2: sin tope hacia atras, otro tope, o el hueco largo sin escribirlo
+        (
+            "#define MAX_HORAS_REHACER 72",
+            "#define MAX_HORAS_REHACER 500",
+            "MAX_HORAS_REHACER no es 72",
+        ),
+        (
+            "   else if(desde < ahora - MAX_HORAS_REHACER * HORA_S)",
+            "   else if(false)",
+            "no usa MAX_HORAS_REHACER",
+        ),
+        (
+            '      desde = ahora;\n      Control("inicio", "primera_vez", '
+            '"desde el inicio de la hora en que se lanza (tras un hueco largo)");',
+            '      Control("inicio", "primera_vez", '
+            '"desde el inicio de la hora en que se lanza (tras un hueco largo)");',
+            "no empieza como la primera vez",
+        ),
+        (
+            '   Control("login", IntegerToString(AccountInfoInteger(ACCOUNT_LOGIN)), '
+            '"no se copia al repositorio");\n',
+            "",
+            "ACCOUNT_LOGIN",
+        ),
+        # arreglo 5: una hora vacia de sabado o domingo como HUECO
+        (
+            "   bool fin_de_semana = (s.day_of_week == 0 || s.day_of_week == 6);",
+            "   bool fin_de_semana = false;",
+            "mercado_cerrado",
+        ),
         (
             "int n = CopyTicks(SIMBOLO, ticks, COPY_TICKS_ALL, (ulong)desde_msc, LOTE_TICKS);",
             "int n = CopyTicks(SIMBOLO, ticks, COPY_TICKS_ALL, 0, LOTE_TICKS);",
