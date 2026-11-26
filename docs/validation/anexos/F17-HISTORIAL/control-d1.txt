@@ -1,0 +1,6 @@
+CRITERIO: docs/plan/F17-HISTORIAL.yaml (pre-registrado, ADR-0099 §5)
+CONTROL (d1) sobre Dukascopy, meses 2026-04, 2026-07, 2026-08, 2026-01
+MES 2026-04: 22 dias; horas dia-hora con tick 162; con al menos 3 spreads distintos 162/162 (100.00 %): PASA
+MES 2026-07: 23 dias; horas dia-hora con tick 101; con al menos 3 spreads distintos 101/101 (100.00 %): PASA
+MES 2026-08: 21 dias; horas dia-hora con tick 165; con al menos 3 spreads distintos 165/165 (100.00 %): PASA
+MES 2026-01: 21 dias; horas dia-hora con tick 163; con al menos 3 spreads distintos 163/163 (100.00 %): PASA

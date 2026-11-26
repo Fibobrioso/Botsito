@@ -589,6 +589,61 @@ consultor:**
 
 Si algún mes no pasa (d1), PARA: la cifra no se cambia (punto 2).
 
+### 4.1 Lo que dieron los dos comandos (Aleks, con «!», el 2026-11-26)
+
+1. **La compilación de D6**: «tools/mql5/ExportarTicksFTMO.mq5: PASA (0 errores, 0 avisos)» y
+   «tools/mql5/MedirDemoFTMO.mq5: PASA (0 errores, 0 avisos)». Los logs, en los anexos:
+   `ExportarTicksFTMO.log` (copia del índice con sha256 `5359f686…`, el del fuente; log original
+   `e9f2b5ae…`) y `MedirDemoFTMO.log` (`f9903c6f…`; log `1f6d350e…`), los dos «puerta: PASA (0
+   errores, 0 avisos, .ex5 si)», con el código de salida 1 de MetaEditor, que no es la puerta.
+2. **El control (d1) sobre Dukascopy** (`anexos/F17-HISTORIAL/control-d1.txt`): los cuatro PASAN.
+
+   | Mes | Días (punto 0) | Horas día-hora con tick | Con 3 spreads distintos o más |
+   |---|---|---|---|
+   | 2026-04 | 22 | 162 | 162 (100 %) |
+   | 2026-07 | 23 | 101 | 101 (100 %) |
+   | 2026-08 | 21 | 165 | 165 (100 %) |
+   | 2026-01 | 21 | 163 | 163 (100 %) |
+
+### 4.2 PARADA 2: lo medido contradice el (d2) implementado
+
+Las horas día-hora de la ventana de esos días son 8 por día: 168 en enero y agosto, 176 en abril y
+184 en julio. **Dukascopy no tiene ticks en todas**: el control solo encuentra 163, 162, 101 y 165. La
+causa está en sus manifiestos: los datasets de ticks de construcción no son meses enteros, sino las
+horas que se descargaron. Sus `horas.presentes` son 184 (enero), 182 (abril), 114 (julio) y 186
+(agosto), con 0 ausentes y 0 vacías. Julio, por ejemplo, cubre poco más de la mitad de sus horas de
+ventana.
+
+(d1) no se ve afectado, porque su denominador son las horas con tick. **(d2) sí**: el yaml compara la
+mediana de ticks por minuto de FTMO «sobre todos los minutos de la ventana de los días del mes (un
+minuto sin ticks cuenta 0)» con la de Dukascopy «en los mismos minutos». El lector cuenta hoy como 0
+los minutos en que Dukascopy no tiene NADA descargado, y eso baja su mediana y hace (d2) más fácil.
+En julio solo 101 de las 184 horas de ventana tienen ticks de Dukascopy (el 55 %), así que la
+mediana cae en el extremo bajo de las descargadas; con un poco menos de cobertura sería 0, y (d2)
+pasaría siempre. No se ha medido el valor: el lector no lo imprime en el control. La diferencia mediana del spread no se ve afectada, porque solo usa pares día-hora
+con ticks de las dos fuentes.
+
+## Lo que necesito que decidas (PARADA 2)
+
+0. **Qué minutos compara (d2).** Opciones:
+   - (a) los minutos de las horas que Dukascopy tiene descargadas (`horas.presentes` de su
+     manifiesto), las dos medianas sobre ese mismo conjunto. Es la lectura de «en los mismos
+     minutos», y el texto de FTMO («sobre todos los minutos de la ventana») queda acotado por ahí.
+   - (b) dejarlo como está (0 donde Dukascopy no tiene descarga).
+   - (c) bajar antes los ticks de Dukascopy de todas las horas de la ventana de los cuatro meses, en
+     su propia rama.
+
+   Recomiendo (a). Coste de (a): si el consultor la lee como un cambio de criterio y no como su
+   lectura, el yaml (fijado por sha256) se reescribe con su texto en un commit propio a la vista,
+   antes de ver un tick de FTMO, que es lo único que lo autoriza. Coste de (b): (d2) deja de
+   discriminar en julio. Coste de (c): otra rama y otra descarga.
+1. **Si el yaml cambia o no.** Opciones: (a) no cambia, porque «en los mismos minutos» ya lo dice, y
+   el lector y su test lo implementan; (b) se añade una frase al bloque `d2_ticks_por_minuto`, con el
+   sha nuevo en su test. Recomiendo (b): un criterio pre-registrado no se deja a una lectura.
+
+Sigo mientras tanto con lo que no depende de esto: el recuadro de ADR-0090 §7, las líneas del
+cierre y el informe; el revisor y la CI van después de la respuesta.
+
 ## Informe del auditor (subagente `auditor-encargo`, 2026-11-25), tal cual
 
 Copiado tal cual, con sus títulos bajados dos niveles. No cita ninguna fecha de un mes reservado
@@ -716,6 +771,6 @@ Propongo que la PARADA lleve las tres primeras como preguntas al consultor antes
 
 ## Estado
 
-EN CURSO: PARADA de D6 (la compilación y el control (d1), para Aleks con «!» tras la revisión del
-consultor). Faltan después el recuadro de ADR-0090 §7, las líneas del cierre, el revisor y la CI de
+EN CURSO: PARADA 2 (qué minutos compara (d2), §4.2). La compilación de D6 y el control (d1) están
+hechos (§4.1). Faltan el recuadro de ADR-0090 §7, las líneas del cierre, el revisor y la CI de
 `fix/f17-historial`.
