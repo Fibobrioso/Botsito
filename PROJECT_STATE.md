@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/f17-historial
+main
 
 ## Current Feature
-trabajo/f17-historial EN CURSO (R4.7, F): el historial de ticks de F17 (ADR-0099 §5) y el ajuste por cuenta. Encargo docs/encargos/trabajo-f17-historial.md; informe docs/validation/F17-HISTORIAL.md.
+Ninguna abierta: trabajo/f17-historial cerrada en main (stable/F39p-f17-historial). Lo siguiente, en la Next Action (F).
 
 ## Stable Main State
-96b250fd · merge de `trabajo/contraste-trader` (tag `stable/F39o-contraste-trader`), sobre `stable/F39n-diagnostico-premisa` (42fdb0b5). Informe docs/validation/CONTRASTE-TRADER.md; el registro del cierre, al final de HISTORIA.
+8066b377 · merge de `trabajo/f17-historial` (tag `stable/F39p-f17-historial`), sobre `stable/F39o-contraste-trader` (96b250fd). Informe docs/validation/F17-HISTORIAL.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-96b250fd · merge trabajo/contraste-trader: el contraste con el trader de ADR-0099 §6 y la petición escrita de los meses del backtest con costes · tag stable/F39o-contraste-trader
+8066b377 · merge trabajo/f17-historial: F17, primera parte, el historial de ticks de la demo de FTMO con herramientas y sin correr · tag stable/F39p-f17-historial
 
 ## Tests Currently Passing
 2188 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
