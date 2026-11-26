@@ -387,6 +387,208 @@ Copiada también al final del encargo. Llegó con el reloj de la máquina en las
 esos meses: el del 1 de enero de 2026 (:44-48); el diario (16:55-17:05 de Nueva York, :31-33) cae
 fuera de la ventana, y el del 8 de marzo es domingo. Punto 0, sin PARADA.
 
+## 3. Lo hecho tras la respuesta
+
+### 3.1 El criterio de D3, lo primero (`3ce320e6`)
+
+`docs/plan/F17-HISTORIAL.yaml`, con los puntos 0 a 3 de la respuesta y (a), (b) y (c) del encargo,
+fijado por su sha256 (`51a8ada2…`) en `tests/unit/test_f17_historial_criterio.py` (7 tests): el sha,
+LF, las cifras, que la tolerancia de (c) es `TOLERANCIA_PUNTOS` de `ticks_integridad.py`, que el
+calendario de cierres cubre los cuatro meses de construcción, que las filas `spread_menos_1` y
+`spread_menos_2` existen en las piezas de `PUENTE-TECHO.yaml`, y uno que rompe a propósito (d1 a
+0,90). Commiteado antes de leer ningún tick, de FTMO o de Dukascopy.
+
+### 3.2 El lector, `scripts/leer_historial_f17.py` (D2), con el manifiesto (D4)
+
+Como el diseño de §1.2, con dos cambios. (1) **Los días** son los del punto 0, por
+`dias_del_mes`: los laborables menos los que tienen un cierre del calendario de FTMO que toca su
+ventana; un día fuera del calendario para. (2) **El reloj, inverso**: la primera versión solo
+probaba dos horarios de verano y no veía la hora repetida del 1-nov (los dos sondeos daban 0); ahora
+sondea el de la víspera, el del día y el del siguiente, y el test lo comprueba. Valida además el
+manifiesto (`validar_manifiesto`, esquema en `data/manifests/README.md`).
+`tests/unit/test_leer_historial_f17.py`, 20 tests sintéticos:
+- el reloj a los dos lados de cada cambio, con `us`, `eu` y `ninguno`;
+- la hora repetida y la que no existe, que fallan con nombre;
+- un calendario desconocido;
+- que el guion no lleva 120 ni 180;
+- el control;
+- la negativa por nombre, con un fichero de febrero ilegible: sale con 2 sin escribir salida;
+- los días, y un día fuera del calendario;
+- un mes lleno que cubre y cada punto que rompe por separado;
+- la diferencia mediana;
+- los precios en puntos exactos y CRLF.
+
+`tests/unit/test_manifiestos_f17.py`, 3 tests (9 mutaciones del esquema que rompen a propósito).
+
+**El control (d1) sobre Dukascopy (punto 2 de la respuesta) no se ha corrido**: la guardia lo negó
+a la sesión («el codigo nombra la carpeta /, que contiene material protegido, y no se puede decidir
+que abrira dentro»; un guion nuevo de la rama). No se rodeó. Va en §4, para Aleks con «!».
+
+### 3.3 D5, F17 por cuenta (`criterio_fidelidad.py`)
+
+`cuentas_con_deslizamiento(cuentas, posiciones, puntos)` nueva: cada cuenta recompone su curva
+con `curva_con_deslizamiento` (que no cambia, y su docstring dice ahora que una curva es UNA cuenta)
+solo con las posiciones de sus días; agrupa por la etiqueta recibida (`mes`) y nunca la deriva de
+la fecha; falla con nombre si dos cuentas comparten etiqueta o día, o si una posición no está en
+ninguna. `veredicto_con_f17` recibe `cuentas` en lugar de `curva` y `suspendida`, y saca d), e) y f)
+de `medir_por_cuentas`, como `cableado.py`. `CuentaDelTramo` y `cableado.py` no cambian. **El
+constructor de la cuenta arrastrada de ADR-0092 §5 falta en el motor**: es de la rama que mida §5.
+Tests en `test_metodo_adr0092.py`:
+- **adaptado:** el de F17 de hoy pasa su curva como una sola cuenta, con sus cuatro aserciones
+  iguales;
+- **nuevos:** dos cuentas, donde el ajuste de una no baja el corte de la otra (con, al lado, la curva
+  seguida, que sí lo arrastra); dos cuentas del mismo mes, donde no se arrastra, y una etiqueta de
+  dos meses, donde sí; las cuentas mal formadas; y f), que nombra la cuenta suspendida.
+
+**Rompe en `main` por la firma**: con el código de `main`, en un clon desechable, el fichero no
+importa («cannot import name 'cuentas_con_deslizamiento'»).
+
+### 3.4 El exportador y su contrato (D1)
+
+`tools/mql5/ExportarTicksFTMO.mq5` (1.0, sha256 `5359f686…`), como §1.1 con las correcciones de la
+respuesta:
+- no exige trading algorítmico ni mercado abierto;
+- la profundidad: el primer tick de cada mes, buscado dentro del mes (fila
+  `mes_<AAAA-MM>_primer_msc`), y la primera M1 del servidor y del terminal por `SeriesInfoInteger`
+  (`SERIES_SERVER_FIRSTDATE`, `SERIES_TERMINAL_FIRSTDATE`). **Si `SeriesInfoInteger` descarga
+  historial o no, no está citado: queda por medir en la corrida**, como su valor;
+- escribe en `MQL5/Files` con el prefijo `F17_`, sin carpeta propia: así no da por supuesto que
+  `FileOpen` cree subcarpetas.
+
+`tests/contract/test_exportar_ticks_ftmo.py`, 10 tests: ninguna función de trading (la lista de
+`test_capa_mt5.py`), la condición DEMO literal de la 759, `MESES_CONSTRUCCION` igual a `construccion`,
+la negativa y el rango antes de cualquier petición de series en `OnStart`, solo EURUSD, UTF-8 y LF; y
+siete mutaciones que rompen a propósito (una `OrderSend`, un `#include <Trade\...>`, febrero en la
+lista, la negativa quitada, el rango sin comprobar, una petición antes de la negativa y otro símbolo).
+
+### 3.5 La compilación (D6), el runbook y los textos (D4, D7)
+
+`compilar.py` gana el camino `herramienta` (sha256 `dbf63514…`), con `exportar_herramienta`,
+`instalar_herramienta` y `_herramienta`. `exportar` e `instalar` de la capa no cambian, y sus tests
+pasan igual. Cuatro tests nuevos en `test_compilar_mql5.py`, en los dos sentidos:
+- la herramienta y `mql5/` se exportan, y `exportar` sigue copiando solo `mql5/`;
+- se rechaza lo que no es una herramienta;
+- se exige que esté en el índice;
+- cada camino instala donde va y rechaza el del otro.
+
+Además: `docs/runbooks/F17-HISTORIAL.md` con su entrada en el índice, el esquema `f17/` en
+`data/manifests/README.md`, `tools/mql5/README.md` y `scripts/README.md`, y `/tools/mql5/*.ex5` en
+`.gitignore` (`test_no_unexpected_ignored_paths` sigue en verde). El recuadro de ADR-0090 §7 va en
+su propio commit, después.
+
+## 4. PARADA de D6 (respuesta, «D6, la compilación»)
+
+`compilar.py` y `ExportarTicksFTMO.mq5` están escritos y, con este commit, sellados. El diff de
+este commit (sin este informe), `git diff --cached --stat`:
+
+```
+ .gitignore                                 |   2 +
+ data/manifests/README.md                   |  29 ++
+ docs/runbooks/F17-HISTORIAL.md             |  72 +++
+ docs/runbooks/README.md                    |   4 +
+ docs/validation/HOLDOUT-EXPOSICIONES.md    |   1 +
+ scripts/README.md                          |  12 +-
+ scripts/leer_historial_f17.py              | 693 +++++++++++++++++++++++++++++
+ src/botsito/cases/criterio_fidelidad.py    |  59 ++-
+ src/botsito/mql5bridge/compilar.py         |  74 ++-
+ tests/contract/test_exportar_ticks_ftmo.py | 140 ++++++
+ tests/unit/test_compilar_mql5.py           |  62 +++
+ tests/unit/test_leer_historial_f17.py      | 295 ++++++++++++
+ tests/unit/test_manifiestos_f17.py         | 128 ++++++
+ tests/unit/test_metodo_adr0092.py          |  74 ++-
+ tools/mql5/ExportarTicksFTMO.mq5           | 266 +++++++++++
+ tools/mql5/README.md                       |   8 +
+ 16 files changed, 1908 insertions(+), 11 deletions(-)
+```
+
+Más `PROJECT_STATE.md` (el recuento de tests, 2156 → 2184) y este informe.
+
+**Las funciones nuevas de `compilar.py`, enteras:**
+
+```python
+# Las herramientas de solo lectura o de medida de `tools/mql5/` (MedirDemoFTMO, ExportarTicksFTMO):
+# un camino APARTE del de la capa (rama trabajo/f17-historial, D6), que no cambia `exportar` ni
+# `instalar`. Una herramienta es un `.mq5` directamente bajo `tools/mql5/` y se instala como script.
+CARPETA_HERRAMIENTAS = "tools/mql5"
+_HERRAMIENTA = re.compile(r"^tools/mql5/[A-Za-z][A-Za-z0-9_]*\.mq5$")
+
+
+def exportar_herramienta(repo: Path, destino: Path, fuente: str) -> list[str]:
+    """Copia a `destino` la herramienta `fuente` tal como esta en el INDICE de git, y `mql5/` para
+    `/include` (con `exportar`). Rechaza cualquier ruta que no sea un `.mq5` directamente bajo
+    `tools/mql5/`, y una herramienta que no este en el indice."""
+    if not _HERRAMIENTA.match(fuente):
+        raise CompilarError(f"{fuente}: no es una herramienta de {CARPETA_HERRAMIENTAS}/ (un .mq5)")
+    listado = subprocess.run(
+        ["git", "-C", str(repo), "ls-files", "-z", "--", fuente],
+        check=True,
+        capture_output=True,
+    ).stdout.decode("utf-8")
+    if [f for f in listado.split("\0") if f] != [fuente]:
+        raise CompilarError(f"{fuente}: no esta en el indice de git")
+    copiados = exportar(repo, destino)
+    prefijo = destino.resolve().as_posix().rstrip("/") + "/"
+    subprocess.run(
+        ["git", "-C", str(repo), "checkout-index", "-f", f"--prefix={prefijo}", "--", fuente],
+        check=True,
+        capture_output=True,
+    )
+    return [*copiados, fuente]
+
+
+def instalar_herramienta(c: Compilacion, datos: Path) -> Path:
+    """Copia el `.ex5` de una herramienta a `MQL5/Scripts/Botsito/` del terminal."""
+    if c.ex5 is None:
+        raise CompilarError(f"{c.fuente}: no hay .ex5 que instalar")
+    if not _HERRAMIENTA.match(c.fuente):
+        raise CompilarError(f"{c.fuente}: no es una herramienta de {CARPETA_HERRAMIENTAS}/")
+    destino = datos / "MQL5" / "Scripts" / "Botsito" / c.ex5.name
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(c.ex5, destino)
+    return destino
+
+
+def _herramienta(a: argparse.Namespace) -> int:
+    """Compila herramientas de `tools/mql5/`, cada una en su copia del indice (D6)."""
+    a.salida.mkdir(parents=True, exist_ok=True)
+    todas = True
+    for fuente in a.fuentes:
+        with tempfile.TemporaryDirectory(prefix="botsito-herramienta-") as tmp:
+            raiz = Path(tmp)
+            exportar_herramienta(a.repo, raiz, fuente)
+            c = compilar_uno(a.metaeditor, raiz, fuente)
+            (a.salida / (Path(fuente).stem + ".log")).write_text(
+                log_para_anexo(c), encoding="utf-8", newline="\n"
+            )
+            puerta = "PASA" if c.pasa else "NO PASA"
+            print(f"{fuente}: {puerta} ({c.errores} errores, {len(c.avisos)} avisos)")
+            todas = todas and c.pasa and not c.avisos
+            if c.pasa and a.instalar is not None:
+                print(f"  instalado en {instalar_herramienta(c, a.instalar)}")
+    return 0 if todas else 1
+```
+
+Y en `main`, el subcomando `herramienta` (`--repo`, `--metaeditor`, `--salida`, `--instalar` y las
+fuentes) y un diccionario de órdenes en lugar del `if`; `compilar` y `pruebas`, sin cambios. El
+docstring del módulo nombra el uso nuevo. `_herramienta` devuelve 1 también con avisos: D6 pide «sin
+errores ni avisos».
+
+**Los dos comandos para Aleks, con «!» desde la raíz del repositorio, tras la revisión del
+consultor:**
+
+1. La compilación de D6. `ExportarTicksFTMO.mq5` y, como control, `MedirDemoFTMO.mq5`, cada uno en
+   su copia del índice; sin `--instalar`, porque se instala en la rama de la corrida. Los dos logs
+   van a los anexos. Tiene que imprimir «PASA (0 errores, 0 avisos)» dos veces:
+
+       ! uv run python src/botsito/mql5bridge/compilar.py herramienta --repo . --metaeditor "C:/Program Files/MetaTrader 5/MetaEditor64.exe" --salida docs/validation/anexos/F17-HISTORIAL tools/mql5/ExportarTicksFTMO.mq5 tools/mql5/MedirDemoFTMO.mq5
+
+2. El control (d1) del punto 2, que la guardia le negó a la sesión. Lee los ticks de Dukascopy de
+   construcción (su fila de HOLDOUT del día ya está escrita) e imprime solo recuentos:
+
+       ! uv run python scripts/leer_historial_f17.py --control-dukascopy --salida docs/validation/anexos/F17-HISTORIAL/control-d1.txt
+
+Si algún mes no pasa (d1), PARA: la cifra no se cambia (punto 2).
+
 ## Informe del auditor (subagente `auditor-encargo`, 2026-11-25), tal cual
 
 Copiado tal cual, con sus títulos bajados dos niveles. No cita ninguna fecha de un mes reservado
@@ -514,4 +716,6 @@ Propongo que la PARADA lleve las tres primeras como preguntas al consultor antes
 
 ## Estado
 
-EN CURSO: fase 0, PARADA.
+EN CURSO: PARADA de D6 (la compilación y el control (d1), para Aleks con «!» tras la revisión del
+consultor). Faltan después el recuadro de ADR-0090 §7, las líneas del cierre, el revisor y la CI de
+`fix/f17-historial`.

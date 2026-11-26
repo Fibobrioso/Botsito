@@ -23,6 +23,8 @@ Thumbs.db
 # la salida de make check: se escribe a fichero (CLAUDE.md) y no se versiona; si no estuviera
 # ignorada, el sello de make check (scripts/sello_make_check.py) nunca se escribiria
 /make-check.log
+# el .ex5 que deja MetaEditor junto a una herramienta de tools/mql5 (rama trabajo/f17-historial, D6)
+/tools/mql5/*.ex5
 # Claude Code: los ajustes de cada maquina no se versionan; .claude/settings.json si
 # (rama trabajo/guardias-claude)
 /.claude/settings.local.json

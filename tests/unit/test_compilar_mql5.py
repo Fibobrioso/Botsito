@@ -21,7 +21,10 @@ from botsito.mql5bridge.compilar import (
     comparar_con_golden,
     comprobar_capa_hash,
     exportar,
+    exportar_herramienta,
     ini_de_pruebas,
+    instalar,
+    instalar_herramienta,
     leer_log,
     log_para_anexo,
     resumen_de_resultado,
@@ -111,6 +114,65 @@ def test_exportar_sin_mql5_en_el_indice_falla(tmp_path: Path) -> None:
     subprocess.run(["git", "-C", str(repo), "init", "-q"], check=True, capture_output=True)
     with pytest.raises(CompilarError, match="indice"):
         exportar(repo, tmp_path / "copia")
+
+
+def _repo_con_herramienta(tmp_path: Path) -> Path:
+    """El repo de `_repo` con una herramienta estadiada en `tools/mql5/` (D6 de f17-historial)."""
+    repo = _repo(tmp_path)
+    (repo / "tools" / "mql5").mkdir(parents=True)
+    (repo / "tools" / "mql5" / "H.mq5").write_text("herramienta\n", encoding="utf-8")
+    (repo / "tools" / "mql5" / "Otra.mq5").write_text("otra\n", encoding="utf-8")
+    subprocess.run(["git", "-C", str(repo), "add", "-A"], check=True, capture_output=True)
+    return repo
+
+
+def test_exportar_herramienta_copia_esa_y_mql5_y_la_capa_no_cambia(tmp_path: Path) -> None:
+    repo = _repo_con_herramienta(tmp_path)
+    destino = tmp_path / "copia"
+    assert exportar_herramienta(repo, destino, "tools/mql5/H.mq5") == [
+        "mql5/Experts/X.mq5",
+        "tools/mql5/H.mq5",
+    ]
+    assert (destino / "tools" / "mql5" / "H.mq5").read_text(encoding="utf-8") == "herramienta\n"
+    assert not (destino / "tools" / "mql5" / "Otra.mq5").exists()
+    # el camino de la capa sigue copiando solo mql5/, aunque haya herramientas en el indice
+    capa = tmp_path / "capa"
+    assert exportar(repo, capa) == ["mql5/Experts/X.mq5"]
+    assert not (capa / "tools").exists()
+
+
+@pytest.mark.parametrize(
+    "fuente",
+    ["mql5/Experts/X.mq5", "tools/mql5/sub/H.mq5", "tools/mql5/H.mqh", "../tools/mql5/H.mq5"],
+)
+def test_exportar_herramienta_rechaza_lo_que_no_es_una_herramienta(
+    tmp_path: Path, fuente: str
+) -> None:
+    repo = _repo_con_herramienta(tmp_path)
+    with pytest.raises(CompilarError, match="no es una herramienta"):
+        exportar_herramienta(repo, tmp_path / "copia", fuente)
+
+
+def test_exportar_herramienta_exige_que_este_en_el_indice(tmp_path: Path) -> None:
+    repo = _repo_con_herramienta(tmp_path)
+    (repo / "tools" / "mql5" / "Nueva.mq5").write_text("sin estadiar\n", encoding="utf-8")
+    with pytest.raises(CompilarError, match="indice"):
+        exportar_herramienta(repo, tmp_path / "copia", "tools/mql5/Nueva.mq5")
+
+
+def test_una_herramienta_se_instala_en_scripts_y_la_capa_donde_iba(tmp_path: Path) -> None:
+    ex5 = tmp_path / "H.ex5"
+    ex5.write_bytes(b"ex5")
+    datos = tmp_path / "terminal"
+    h = Compilacion("tools/mql5/H.mq5", "0" * 64, b"", "", 0, (), 1, ex5)
+    assert instalar_herramienta(h, datos) == datos / "MQL5" / "Scripts" / "Botsito" / "H.ex5"
+    # la capa no se instala por el camino de las herramientas, ni una herramienta por el de la capa
+    with pytest.raises(CompilarError, match="no es una herramienta"):
+        instalar_herramienta(_compilacion(0, ex5), datos)
+    with pytest.raises(CompilarError, match="solo se instalan"):
+        instalar(h, datos)
+    capa = Compilacion("mql5/Experts/X.mq5", "0" * 64, b"", "", 0, (), 1, ex5)
+    assert instalar(capa, datos) == datos / "MQL5" / "Experts" / "Botsito" / "H.ex5"
 
 
 def test_sustituir_exige_una_sola_aparicion(tmp_path: Path) -> None:

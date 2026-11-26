@@ -1,0 +1,295 @@
+"""El lector del historial de ticks de FTMO (`scripts/leer_historial_f17.py`, rama
+`trabajo/f17-historial`): el reloj del servidor a UTC a los dos lados de los cambios de hora de
+EE. UU. y de Europa, la negativa a meses que no son de construccion, los dias, y los puntos (a) a
+(d2) del criterio, con datos sinteticos. Varios rompen a proposito.
+"""
+
+from __future__ import annotations
+
+import importlib.util
+import sys
+from collections.abc import Set as AbstractSet
+from datetime import UTC, date, datetime
+from fractions import Fraction
+from pathlib import Path
+from types import ModuleType
+from typing import Any
+
+import pytest
+
+from botsito.cases.relojes import RelojSesiones
+
+RAIZ = Path(__file__).resolve().parents[2]
+GUION = RAIZ / "scripts" / "leer_historial_f17.py"
+
+
+def _cargar() -> ModuleType:
+    spec = importlib.util.spec_from_file_location("leer_historial_f17", GUION)
+    assert spec is not None and spec.loader is not None
+    modulo = importlib.util.module_from_spec(spec)
+    sys.modules["leer_historial_f17"] = modulo
+    spec.loader.exec_module(modulo)
+    return modulo
+
+
+L = _cargar()
+MS = 60_000
+
+
+def _ms(texto: str) -> int:
+    return int(datetime.fromisoformat(texto).replace(tzinfo=UTC).timestamp() * 1000)
+
+
+class _Registro:
+    def __init__(self, base: int, dst: str) -> None:
+        self._base, self._dst = base, dst
+
+    def minutos(self, nombre: str) -> int:
+        assert nombre == "broker_offset_base"
+        return self._base
+
+    def opcion(self, nombre: str) -> str:
+        assert nombre == "broker_dst"
+        return self._dst
+
+
+def _reloj(dst: str) -> Any:
+    # la base de las pruebas no es la del registro: el lector la lee, no la lleva dentro
+    return L.RelojServidor.del_registro(_Registro(120, dst))
+
+
+# --- el reloj del servidor -----------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("dst", "antes", "despues", "d_antes", "d_despues"),
+    [
+        # EE. UU. adelanta el 8-mar-2026 y atrasa el 1-nov-2026
+        ("us", "2026-03-06T12:00", "2026-03-09T12:00", 120, 180),
+        ("us", "2026-10-30T12:00", "2026-11-02T12:00", 180, 120),
+        # Europa adelanta el 29-mar-2026 y atrasa el 25-oct-2026: con `us` no cambia nada
+        ("us", "2026-03-27T12:00", "2026-03-30T12:00", 180, 180),
+        ("us", "2026-10-23T12:00", "2026-10-26T12:00", 180, 180),
+        ("eu", "2026-03-27T12:00", "2026-03-30T12:00", 120, 180),
+        ("eu", "2026-10-23T12:00", "2026-10-26T12:00", 180, 120),
+        ("eu", "2026-03-06T12:00", "2026-03-09T12:00", 120, 120),
+        ("ninguno", "2026-07-15T12:00", "2026-12-15T12:00", 120, 120),
+    ],
+)
+def test_el_reloj_a_los_dos_lados_de_cada_cambio(
+    dst: str, antes: str, despues: str, d_antes: int, d_despues: int
+) -> None:
+    r = _reloj(dst)
+    for texto, desfase in ((antes, d_antes), (despues, d_despues)):
+        utc = _ms(texto)
+        assert r.desfase_minutos(utc) == desfase
+        servidor = r.a_servidor(utc)
+        assert servidor - utc == desfase * MS
+        assert r.a_utc(servidor) == utc
+
+
+def test_la_hora_repetida_y_la_que_no_existe_fallan_con_nombre() -> None:
+    r = _reloj("us")
+    # 1-nov-2026: las 01:30 de Nueva York existen dos veces (05:30 y 06:30 UTC): el servidor
+    # marca las 08:30 en los dos instantes
+    assert r.a_servidor(_ms("2026-11-01T05:30")) == r.a_servidor(_ms("2026-11-01T06:30"))
+    with pytest.raises(L.HistorialError, match="se repite"):
+        r.a_utc(r.a_servidor(_ms("2026-11-01T05:30")))
+    # 8-mar-2026: de las 08:59 a las 10:00 del servidor no hay nada (06:59 y 07:00 UTC)
+    assert r.a_servidor(_ms("2026-03-08T07:00")) - r.a_servidor(_ms("2026-03-08T06:59")) == 61 * MS
+    with pytest.raises(L.HistorialError, match="no existe"):
+        r.a_utc(_ms("2026-03-08T09:30"))
+
+
+def test_un_calendario_desconocido_no_se_adivina() -> None:
+    with pytest.raises(L.HistorialError, match="no es un calendario"):
+        L.RelojServidor.del_registro(_Registro(120, "asia"))
+
+
+def test_el_reloj_no_lleva_ninguna_cifra_del_registro() -> None:
+    """Rompe si alguien escribe el desfase en el codigo en lugar de leerlo (ADR-0002)."""
+    import re
+
+    codigo = GUION.read_text(encoding="utf-8")
+    assert not re.search(r"(?<![\w.])(120|180)(?![\w.])", codigo)
+
+
+def test_el_control_cuadra_o_no_con_el_registro() -> None:
+    r = _reloj("us")
+    gmt = _ms("2026-04-15T10:00") // 1000
+    assert L.control_cuadra({"time_gmt_s": str(gmt), "desfase_servidor_gmt_min": "180"}, r) == (
+        180,
+        180,
+    )
+    assert (
+        L.control_cuadra({"time_gmt_s": str(gmt), "desfase_servidor_gmt_min": "120"}, r)[0] != 180
+    )
+
+
+# --- la negativa ---------------------------------------------------------------------------
+
+CONSTRUCCION = ("2026-04", "2026-07", "2026-08", "2026-01")
+
+
+def test_decide_por_el_nombre_que_meses_lee() -> None:
+    assert (
+        L.comprobar_meses(
+            [
+                "F17_2026-04-15_ticks.csv",
+                "F17_2026-01-02_m1.csv",
+                "F17_control_20261201_101500.csv",
+            ],
+            CONSTRUCCION,
+        )
+        == []
+    )
+    assert L.comprobar_meses(
+        ["F17_2026-02-10_ticks.csv", "F17_2026-03-02_m1.csv", "otro.csv"], CONSTRUCCION
+    ) == ["F17_2026-02-10_ticks.csv", "F17_2026-03-02_m1.csv", "otro.csv"]
+
+
+def test_se_niega_a_un_mes_que_no_es_de_construccion_sin_leerlo(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Rompe a proposito: un fichero de febrero (heredado 6) con bytes que no se pueden leer; el
+    lector sale con 2 antes de abrirlo."""
+    carpeta = tmp_path / "historial"
+    carpeta.mkdir()
+    (carpeta / "F17_2026-04-15_ticks.csv").write_bytes(b"time_msc,bid,ask,flags\r\n")
+    (carpeta / "F17_2026-02-10_ticks.csv").write_bytes(b"\xff\xfe no es un csv")
+    salida = tmp_path / "salida.txt"
+    assert L.main([str(carpeta), "--salida", str(salida)], raiz=RAIZ) == 2
+    assert "F17_2026-02-10_ticks.csv" in capsys.readouterr().err
+    assert not salida.exists()
+
+
+# --- los dias ------------------------------------------------------------------------------
+
+UTC_PARED = RelojSesiones.de_pared("UTC")
+
+
+def _ms_dia(d: date, hhmm: str) -> int:
+    return int(UTC_PARED.instante(d, hhmm)) * MS
+
+
+def test_los_dias_son_los_laborables_menos_los_cierres_que_tocan_la_ventana() -> None:
+    cubre = (_ms("2026-03-01T00:00"), _ms("2026-05-01T00:00"))
+    # un cierre el miercoles 1-abr dentro de la ventana, y otro el jueves 2 despues de ella
+    cierres = [
+        (_ms_dia(date(2026, 4, 1), "09:00"), _ms_dia(date(2026, 4, 1), "10:00")),
+        (_ms_dia(date(2026, 4, 2), "16:00"), _ms_dia(date(2026, 4, 2), "17:00")),
+    ]
+    dias = L.dias_del_mes("2026-04", UTC_PARED, "07:00", "15:00", cierres, cubre)
+    fechas = [d.dia for d in dias]
+    assert date(2026, 4, 1) not in fechas  # el cierre toca la ventana
+    assert date(2026, 4, 2) in fechas  # el cierre cae fuera de ella
+    assert all(f.weekday() < 5 for f in fechas)
+    assert len(fechas) == 22 - 1  # abril de 2026 tiene 22 laborables
+    assert all(d.hasta - d.desde == 8 * 60 for d in dias)
+
+
+def test_un_dia_fuera_del_calendario_para() -> None:
+    cubre = (_ms("2026-04-01T00:00"), _ms("2026-04-20T00:00"))
+    with pytest.raises(L.HistorialError, match="no cubre"):
+        L.dias_del_mes("2026-04", UTC_PARED, "07:00", "15:00", [], cubre)
+
+
+# --- los puntos ----------------------------------------------------------------------------
+
+CRITERIO = L.Criterio(
+    a_minimo=Fraction(99, 100),
+    b_umbral=5,
+    b_maximo=3,
+    b_hueco_maximo=30,
+    c_tolerancia=2,
+    c_minimo=Fraction(99, 100),
+    d1_valores=3,
+    d1_minimo=Fraction(95, 100),
+    d2_fraccion=Fraction(1, 2),
+)
+DIA = date(2026, 4, 15)
+
+
+def _dia() -> Any:
+    return L.DiaVentana(
+        DIA, int(UTC_PARED.instante(DIA, "07:00")), int(UTC_PARED.instante(DIA, "15:00"))
+    )
+
+
+def _lleno(dia: Any, sin: AbstractSet[int] = frozenset(), por_minuto: int = 4) -> Any:
+    """Ticks en cada minuto de la ventana salvo `sin`, con spreads 1, 2, 3 y 4 que rotan."""
+    t = L.TicksDelMes()
+    for i, m in enumerate(dia.minutos()):
+        if m in sin:
+            continue
+        for k in range(por_minuto):
+            bid = 100_000 + i
+            t.anadir(m * MS + k, bid, bid + 1 + (k % 4))
+    return t
+
+
+def _m1_de(t: Any) -> dict[int, Any]:
+    return dict(t.m1)
+
+
+def test_un_mes_lleno_cubre() -> None:
+    d = _dia()
+    t = _lleno(d)
+    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, _lleno(d))
+    assert p.cumple(CRITERIO) == {"a": True, "b": True, "c": True, "d1": True, "d2": True}
+
+
+def test_cada_punto_rompe_por_separado() -> None:
+    """Rompe a proposito: cada punto falla con su causa, y solo el suyo."""
+    d = _dia()
+    minutos = list(d.minutos())
+    # (a) y (b): un hueco de 31 minutos (y con el, menos del 99 % de minutos con tick)
+    t = _lleno(d, sin=set(minutos[10:41]))
+    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, _lleno(d))
+    assert p.hueco_maximo == 31 and not p.cumple(CRITERIO)["b"] and not p.cumple(CRITERIO)["a"]
+    # (b) solo: cuatro huecos de 6 minutos, el 95 % de los minutos con tick
+    sin = {m for i in range(4) for m in minutos[100 * i : 100 * i + 6]}
+    t = _lleno(d, sin=sin)
+    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, _lleno(d))
+    assert p.huecos_largos == 4 and not p.cumple(CRITERIO)["b"]
+    # (c): la M1 del servidor corrida 3 puntos en todos los minutos
+    t = _lleno(d)
+    corrida = {
+        m: L.Ohlc(o.abierta + 3, o.maxima + 3, o.minima + 3, o.cierre + 3) for m, o in t.m1.items()
+    }
+    assert not L.puntos_del_mes([d], t, corrida, UTC_PARED, CRITERIO, _lleno(d)).cumple(CRITERIO)[
+        "c"
+    ]
+    # (d1): el spread siempre igual (como unos ticks fabricados de la M1 con su spread)
+    plano = L.TicksDelMes()
+    for m in minutos:
+        for k in range(4):
+            plano.anadir(m * MS + k, 100_000, 100_002)
+    p = L.puntos_del_mes([d], plano, _m1_de(plano), UTC_PARED, CRITERIO, _lleno(d))
+    assert p.cumple(CRITERIO) == {"a": True, "b": True, "c": True, "d1": False, "d2": True}
+    # (d2): un tick por minuto frente a cuatro de Dukascopy
+    t = _lleno(d, por_minuto=1)
+    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, _lleno(d, por_minuto=4))
+    assert p.mediana_ticks_minuto == 1 and not p.cumple(CRITERIO)["d2"]
+
+
+def test_la_diferencia_mediana_es_la_mediana_de_las_diferencias_por_dia_hora() -> None:
+    d = _dia()
+    ftmo, duk = L.TicksDelMes(), L.TicksDelMes()
+    for m in d.minutos():
+        ftmo.anadir(m * MS, 100_000, 100_003)  # 3 puntos
+        duk.anadir(m * MS, 100_000, 100_005)  # 5 puntos
+    diferencia, global_ = L.diferencias_de_spread([d], ftmo, duk, UTC_PARED)
+    assert (diferencia, global_) == (-2, -2)
+
+
+def test_los_precios_pasan_a_puntos_exactos_y_el_csv_admite_crlf(tmp_path: Path) -> None:
+    assert L.a_puntos("1.17345", 5) == 117345
+    with pytest.raises(L.HistorialError, match="decimales"):
+        L.a_puntos("1.173451", 5)
+    ruta = tmp_path / "F17_control_20261201_101500.csv"
+    ruta.write_bytes(b"clave,valor,nota\r\ndigits,5,\r\n")
+    assert L.leer_control(ruta) == {"digits": "5"}
+    ruta.write_bytes(b"clave,valor\r\n")
+    with pytest.raises(L.HistorialError, match="columnas"):
+        L.leer_control(ruta)

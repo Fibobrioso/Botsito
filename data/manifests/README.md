@@ -76,3 +76,32 @@ bajo `data/manifests/`). No hay comando que lo genere: se escribe a mano con `sh
 
 El valor que salga de un CSV entra en `knowledge/` citando el ADR que cita su manifiesto y su fila
 (el trailer `Fuente:` no admite un manifiesto).
+
+## Historial de ticks de FTMO (`f17/`, rama `trabajo/f17-historial`)
+
+Lo que exporta `tools/mql5/ExportarTicksFTMO.mq5` desde la demo de FTMO (F17, ADR-0099 §5): por dia
+de un mes de construccion, `F17_<AAAA-MM-DD>_ticks.csv` (`time_msc,bid,ask,flags`) y
+`F17_<AAAA-MM-DD>_m1.csv` (`time,open,high,low,close,tick_volume,spread,real_volume`), y un
+`F17_control_<AAAAMMDD_HHMMSS>.csv` (`clave,valor,nota`) con los relojes y lo pedido. Los CSV viven
+en `data/f17/<AAAA-MM>/`, fuera de git, con el nombre que les da el script, en ANSI y CRLF; el
+manifiesto, `data/manifests/f17/<dataset_id>.yaml`, uno por mes, es INMUTABLE como los demas. Va
+aparte de `demo_ftmo/` porque `tests/unit/test_manifiestos_demo_ftmo.py` exige alli exactamente las
+ejecuciones 1, 2 y 3, y no es un dataset de velas del bot (el esquema v2 `mt5_demo` de MASTER_PLAN
+§H no existe en `src/`). Se escribe a mano con `sha256sum` y el lector
+(`scripts/leer_historial_f17.py`) delante, que lo valida (`validar_manifiesto`,
+`tests/unit/test_manifiestos_f17.py`); el runbook es `docs/runbooks/F17-HISTORIAL.md`. Que un mes
+CUBRA no autoriza a usar sus ticks como fuente de una medida: eso pide un ADR que enmiende ADR-0005 y
+ADR-0024 §4. Esquema (`schema_f17_historial: 1`):
+
+| Campo | Contenido |
+|---|---|
+| `dataset_id` | `f17-historial-<AAAA-MM>-<8 hex>`: el sufijo son los 8 primeros del sha256 de los sha256 de sus ficheros, ordenados por su ruta |
+| `mes` | el mes, de `construccion` de `criterio_fidelidad.yaml` |
+| `ficheros[]` | `ruta` (relativa a `data/`), `tipo` (`ticks`, `m1` o `control`), `bytes`, `sha256`, `filas` de datos sin la cabecera y `fin_de_linea` (medido con Python o `grep -U`, no con `grep` a secas) |
+| `dias` | `pedidos`, `con_ticks` y `sin_ticks[]`, de las filas `dia_*` del control |
+| `primer_tick_msc_servidor` | el primer tick del mes, buscado dentro de ese mes (fila `mes_<AAAA-MM>_primer_msc`) |
+| `primera_m1_servidor_s` | la primera M1 del servidor, por `SeriesInfoInteger` (metadato de la serie) |
+| `control` | `time_trade_server_s`, `time_gmt_s`, `desfase_servidor_gmt_min` y `cuadra`: si ese desfase es el que da el registro (`broker_offset_base` y `broker_dst`) en ese instante |
+| `script` | `ruta`, `version` (la fila `version_script`), `sha256` del `.mq5` y el `commit` que lo trajo |
+| `cuenta` | `servidor`, `empresa` y `build`, del control |
+| `declarado_por`, `congelado_el`, `rama`, `informe` | quien lo copio y como, cuando y donde se congelo |
