@@ -64,16 +64,17 @@ def _reloj(dst: str) -> Any:
 @pytest.mark.parametrize(
     ("dst", "antes", "despues", "d_antes", "d_despues"),
     [
-        # EE. UU. adelanta el 8-mar-2026 y atrasa el 1-nov-2026
-        ("us", "2026-03-06T12:00", "2026-03-09T12:00", 120, 180),
-        ("us", "2026-10-30T12:00", "2026-11-02T12:00", 180, 120),
-        # Europa adelanta el 29-mar-2026 y atrasa el 25-oct-2026: con `us` no cambia nada
-        ("us", "2026-03-27T12:00", "2026-03-30T12:00", 180, 180),
-        ("us", "2026-10-23T12:00", "2026-10-26T12:00", 180, 180),
-        ("eu", "2026-03-27T12:00", "2026-03-30T12:00", 120, 180),
-        ("eu", "2026-10-23T12:00", "2026-10-26T12:00", 180, 120),
-        ("eu", "2026-03-06T12:00", "2026-03-09T12:00", 120, 120),
-        ("ninguno", "2026-07-15T12:00", "2026-12-15T12:00", 120, 120),
+        # Fechas de 2027, un año sin meses reservados (revisor, a4). EE. UU. adelanta el
+        # 14-mar-2027 y atrasa el 7-nov-2027
+        ("us", "2027-03-12T12:00", "2027-03-15T12:00", 120, 180),
+        ("us", "2027-11-05T12:00", "2027-11-08T12:00", 180, 120),
+        # Europa adelanta el 28-mar-2027 y atrasa el 31-oct-2027: con `us` no cambia nada
+        ("us", "2027-03-26T12:00", "2027-03-29T12:00", 180, 180),
+        ("us", "2027-10-29T12:00", "2027-11-01T12:00", 180, 180),
+        ("eu", "2027-03-26T12:00", "2027-03-29T12:00", 120, 180),
+        ("eu", "2027-10-29T12:00", "2027-11-01T12:00", 180, 120),
+        ("eu", "2027-03-12T12:00", "2027-03-15T12:00", 120, 120),
+        ("ninguno", "2027-07-15T12:00", "2027-12-15T12:00", 120, 120),
     ],
 )
 def test_el_reloj_a_los_dos_lados_de_cada_cambio(
@@ -88,17 +89,48 @@ def test_el_reloj_a_los_dos_lados_de_cada_cambio(
         assert r.a_utc(servidor) == utc
 
 
-def test_la_hora_repetida_y_la_que_no_existe_fallan_con_nombre() -> None:
-    r = _reloj("us")
-    # 1-nov-2026: las 01:30 de Nueva York existen dos veces (05:30 y 06:30 UTC): el servidor
-    # marca las 08:30 en los dos instantes
-    assert r.a_servidor(_ms("2026-11-01T05:30")) == r.a_servidor(_ms("2026-11-01T06:30"))
+@pytest.mark.parametrize(
+    ("dst", "repetida_a", "repetida_b", "salto_antes", "salto_despues", "inexistente"),
+    [
+        # `us`: el 7-nov-2027 las 01:30 de Nueva York existen dos veces (05:30 y 06:30 UTC) y el
+        # servidor marca las 08:30 en los dos; el 14-mar-2027, de las 08:59 a las 10:00 del
+        # servidor no hay nada (06:59 y 07:00 UTC)
+        (
+            "us",
+            "2027-11-07T05:30",
+            "2027-11-07T06:30",
+            "2027-03-14T06:59",
+            "2027-03-14T07:00",
+            "2027-03-14T09:30",
+        ),
+        # `eu` (revisor, b7): el 31-oct-2027 las 01:30 de Londres existen dos veces (00:30 y
+        # 01:30 UTC), y el servidor marca las 03:30 en los dos; el 28-mar-2027, de las 02:59 a
+        # las 04:00 del servidor no hay nada (00:59 y 01:00 UTC)
+        (
+            "eu",
+            "2027-10-31T00:30",
+            "2027-10-31T01:30",
+            "2027-03-28T00:59",
+            "2027-03-28T01:00",
+            "2027-03-28T03:30",
+        ),
+    ],
+)
+def test_la_hora_repetida_y_la_que_no_existe_fallan_con_nombre(
+    dst: str,
+    repetida_a: str,
+    repetida_b: str,
+    salto_antes: str,
+    salto_despues: str,
+    inexistente: str,
+) -> None:
+    r = _reloj(dst)
+    assert r.a_servidor(_ms(repetida_a)) == r.a_servidor(_ms(repetida_b))
     with pytest.raises(L.HistorialError, match="se repite"):
-        r.a_utc(r.a_servidor(_ms("2026-11-01T05:30")))
-    # 8-mar-2026: de las 08:59 a las 10:00 del servidor no hay nada (06:59 y 07:00 UTC)
-    assert r.a_servidor(_ms("2026-03-08T07:00")) - r.a_servidor(_ms("2026-03-08T06:59")) == 61 * MS
+        r.a_utc(r.a_servidor(_ms(repetida_a)))
+    assert r.a_servidor(_ms(salto_despues)) - r.a_servidor(_ms(salto_antes)) == 61 * MS
     with pytest.raises(L.HistorialError, match="no existe"):
-        r.a_utc(_ms("2026-03-08T09:30"))
+        r.a_utc(_ms(inexistente))
 
 
 def test_un_calendario_desconocido_no_se_adivina() -> None:
@@ -115,15 +147,33 @@ def test_el_reloj_no_lleva_ninguna_cifra_del_registro() -> None:
 
 
 def test_el_control_cuadra_o_no_con_el_registro() -> None:
-    r = _reloj("us")
-    gmt = _ms("2026-04-15T10:00") // 1000
-    assert L.control_cuadra({"time_gmt_s": str(gmt), "desfase_servidor_gmt_min": "180"}, r) == (
-        180,
-        180,
-    )
-    assert (
-        L.control_cuadra({"time_gmt_s": str(gmt), "desfase_servidor_gmt_min": "120"}, r)[0] != 180
-    )
+    """Rompe a proposito (revisor, b4): el 3-nov-2027 Europa ya esta en invierno y EE. UU. todavia
+    en verano. Un servidor que diga 120 cuadra con `eu` y NO con `us`, y uno que diga 180 al reves:
+    la comparacion del lector discrimina el calendario."""
+    gmt = str(_ms("2027-11-03T10:00") // 1000)
+    con_120 = {"time_gmt_s": gmt, "desfase_servidor_gmt_min": "120"}
+    con_180 = {"time_gmt_s": gmt, "desfase_servidor_gmt_min": "180"}
+    assert L.control_cuadra(con_180, _reloj("us")) == (180, 180)
+    assert L.control_cuadra_con_registro(con_180, _reloj("us"))
+    assert not L.control_cuadra_con_registro(con_120, _reloj("us"))
+    assert L.control_cuadra_con_registro(con_120, _reloj("eu"))
+    assert not L.control_cuadra_con_registro(con_180, _reloj("eu"))
+
+
+def test_los_dias_sin_ticks_o_con_error_se_dicen() -> None:
+    """Revisor, b5: un dia a medias (ERR_HISTORY_TIMEOUT) o vacio sale nombrado."""
+    control = {
+        "dia_2026-04-01_ticks": "1000",
+        "dia_2026-04-01_error": "0",
+        "dia_2026-04-02_ticks": "500",
+        "dia_2026-04-02_error": "4403",
+        "dia_2026-04-03_ticks": "0",
+        "dia_2026-04-03_error": "0",
+    }
+    assert L.dias_incompletos(control) == [
+        "2026-04-02 (ticks 500, error 4403)",
+        "2026-04-03 (ticks 0, error 0)",
+    ]
 
 
 # --- la negativa ---------------------------------------------------------------------------

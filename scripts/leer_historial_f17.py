@@ -483,6 +483,27 @@ def control_cuadra(control: Mapping[str, str], reloj: RelojServidor) -> tuple[in
     return int(control["desfase_servidor_gmt_min"]), reloj.desfase_minutos(gmt_s * 1000)
 
 
+def control_cuadra_con_registro(control: Mapping[str, str], reloj: RelojServidor) -> bool:
+    """Si el desfase servidor - GMT del control es el que da el registro en su instante."""
+    csv_d, reg_d = control_cuadra(control, reloj)
+    return csv_d == reg_d
+
+
+def dias_incompletos(control: Mapping[str, str]) -> list[str]:
+    """Los dias del control sin ticks o con un error al pedirlos (`dia_<AAAA-MM-DD>_ticks` de 0 o
+    menos, o `dia_<AAAA-MM-DD>_error` distinto de 0), para que un mes que no cubre diga por que
+    (revisor de trabajo/f17-historial, b5; `ERR_HISTORY_TIMEOUT` deja un dia a medias)."""
+    salida = []
+    for clave, valor in control.items():
+        m = re.fullmatch(r"dia_(\d{4}-\d{2}-\d{2})_ticks", clave)
+        if m is None:
+            continue
+        error = control.get(f"dia_{m.group(1)}_error", "0")
+        if int(valor) <= 0 or int(error) != 0:
+            salida.append(f"{m.group(1)} (ticks {valor}, error {error})")
+    return sorted(salida)
+
+
 # ----------------------------------------------------------------------- el manifiesto (D4)
 
 ESQUEMA_MANIFIESTO = "schema_f17_historial"
@@ -689,11 +710,14 @@ def leer_historial(
     control = leer_control(controles[0])
     digitos = int(control["digits"])
     csv_d, reg_d = control_cuadra(control, reloj)
+    incompletos = dias_incompletos(control)
     salida = [
         f"RELOJ: servidor = UTC + {reloj.base_minutos} min + verano de {reloj.huso or 'ninguno'} "
         "(broker_offset_base y broker_dst del registro)",
         f"CONTROL: desfase servidor-GMT del CSV {csv_d} min; el registro da {reg_d} min: "
-        f"{'cuadra' if csv_d == reg_d else 'NO CUADRA'}",
+        f"{'cuadra' if control_cuadra_con_registro(control, reloj) else 'NO CUADRA'}",
+        f"DIAS sin ticks o con error al pedirlos: {len(incompletos)}"
+        + (f" ({'; '.join(incompletos)})" if incompletos else ""),
     ]
     meses = sorted({m for p in carpeta.iterdir() if (m := mes_de_fichero(p.name)) is not None})
     for mes in meses:

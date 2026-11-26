@@ -16,7 +16,7 @@ trabajo/f17-historial EN CURSO (R4.7, F): el historial de ticks de F17 (ADR-0099
 96b250fd · merge trabajo/contraste-trader: el contraste con el trader de ADR-0099 §6 y la petición escrita de los meses del backtest con costes · tag stable/F39o-contraste-trader
 
 ## Tests Currently Passing
-2186 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2187 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

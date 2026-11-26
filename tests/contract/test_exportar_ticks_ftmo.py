@@ -79,6 +79,13 @@ def problemas(src: str, construccion: list[str]) -> list[str]:
         i = onstart.find(paso + "(")
         if i < 0 or i > primera:
             salida.append(f"OnStart no llama a {paso} antes de pedir nada")
+    # el rango se cuenta por dias enteros: una entrada con hora no puede llegar al mes siguiente
+    # (revisor de trabajo/f17-historial, b1)
+    for entrada in ("InpDesde", "InpHasta"):
+        if not re.search(rf"InicioDelDia\(\s*StringToTime\(\s*{entrada}\s*\)\s*\)", onstart):
+            salida.append(f"OnStart no lleva {entrada} al inicio del dia")
+    if "t-t%86400" not in re.sub(r"\s+", "", cuerpo_de(src, "InicioDelDia")):
+        salida.append("InicioDelDia no corta a las 00:00 del dia")
     simbolos = set(re.findall(r'"([A-Z]{6})"', sin_comentarios(src)))
     if simbolos != {"EURUSD"}:
         salida.append(f"simbolos {sorted(simbolos)}: solo EURUSD")
@@ -129,6 +136,14 @@ def test_el_fuente_es_utf8_sin_bom_y_lf() -> None:
             "   if(!Comprobaciones(motivo))",
             "antes de pedir nada",
         ),
+        # una entrada con hora sin llevarla al inicio del dia (b1: «2026.08.31 06:00» llegaba al
+        # 1-sep)
+        (
+            "datetime hasta = InicioDelDia(StringToTime(InpHasta));",
+            "datetime hasta = StringToTime(InpHasta);",
+            "InpHasta al inicio del dia",
+        ),
+        ("   return t - t % 86400;", "   return t;", "no corta a las 00:00"),
         # otro simbolo
         ('#define SIMBOLO        "EURUSD"', '#define SIMBOLO        "XAUUSD"', "solo EURUSD"),
     ],

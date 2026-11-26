@@ -21,16 +21,17 @@
 //| Lo que da por supuesto de MT5 (ADR-0082 D7): los limites del     |
 //| rango de CopyTicksRange (>= from_msc, <= to_msc) y COPY_TICKS_ALL|
 //| salen de la documentacion de MQL5 (docs/series/copyticksrange);  |
-//| en que reloj van time_msc y las barras, si la M1 es BID y si los |
-//| ticks son los guardados queda POR MEDIR en la corrida: el lector |
-//| lo contrasta con el control y con los puntos (c) y (d).          |
+//| en que reloj van time_msc y las barras, si la M1 es BID, si los  |
+//| ticks son los guardados y cuantos devuelve CopyTicksRange en una |
+//| llamada queda POR MEDIR en la corrida: el lector lo contrasta    |
+//| con el control (dia_*_ticks y dia_*_error) y con (c) y (d).      |
 //+------------------------------------------------------------------+
 #property copyright "Bot v3"
-#property version   "1.00"
+#property version   "1.01"
 #property description "Exporta el historial de ticks y la M1 de EURUSD del servidor de una cuenta DEMO, solo de los meses de construccion. No opera."
 #property script_show_inputs
 
-#define VERSION_SCRIPT "1.0"
+#define VERSION_SCRIPT "1.01"
 #define SIMBOLO        "EURUSD"
 #define INTENTOS       3
 #define PAUSA_MS       1000
@@ -72,6 +73,14 @@ string Dia(const datetime t)
    MqlDateTime s;
    TimeToStruct(t, s);
    return StringFormat("%04d-%02d-%02d", s.year, s.mon, s.day);
+  }
+
+// Las 00:00 del dia del servidor de `t`: el rango se cuenta siempre por dias enteros, aunque la
+// entrada traiga una hora (revisor de trabajo/f17-historial, b1: con «2026.08.31 06:00» el dia
+// pedido llegaba al 1-sep).
+datetime InicioDelDia(const datetime t)
+  {
+   return t - t % 86400;
   }
 
 bool EsDeConstruccion(const datetime t)
@@ -189,8 +198,8 @@ void OnStart()
       Alert("ExportarTicksFTMO: ", motivo);
       return;
      }
-   datetime desde = StringToTime(InpDesde);
-   datetime hasta = StringToTime(InpHasta);
+   datetime desde = InicioDelDia(StringToTime(InpDesde));
+   datetime hasta = InicioDelDia(StringToTime(InpHasta));
    if(!RangoDeConstruccion(desde, hasta, motivo))
      {
       Alert("ExportarTicksFTMO: ", motivo);

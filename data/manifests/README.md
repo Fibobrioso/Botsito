@@ -88,8 +88,8 @@ manifiesto, `data/manifests/f17/<dataset_id>.yaml`, uno por mes, es INMUTABLE co
 aparte de `demo_ftmo/` porque `tests/unit/test_manifiestos_demo_ftmo.py` exige alli exactamente las
 ejecuciones 1, 2 y 3, y no es un dataset de velas del bot (el esquema v2 `mt5_demo` de MASTER_PLAN
 §H no existe en `src/`). Se escribe a mano con `sha256sum` y el lector
-(`scripts/leer_historial_f17.py`) delante, que lo valida (`validar_manifiesto`,
-`tests/unit/test_manifiestos_f17.py`); el runbook es `docs/runbooks/F17-HISTORIAL.md`. Que un mes
+(`scripts/leer_historial_f17.py`) delante; el esquema lo comprueba su `validar_manifiesto` en
+`tests/unit/test_manifiestos_f17.py` (la CLI del lector todavía no lo llama); el runbook es `docs/runbooks/F17-HISTORIAL.md`. Que un mes
 CUBRA no autoriza a usar sus ticks como fuente de una medida: eso pide un ADR que enmiende ADR-0005 y
 ADR-0024 §4. Esquema (`schema_f17_historial: 1`):
 

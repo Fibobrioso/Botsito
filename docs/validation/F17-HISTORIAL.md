@@ -1,6 +1,9 @@
 # F17-HISTORIAL · El historial de ticks del servidor de la demo de FTMO, con sus herramientas y sin correr, y el ajuste por cuenta de F17 (R4.7, entrada F)
 
-> PLANTILLA hasta la fase 0: el inventario lo escribe la fase 0 (skill fase-cero) en su commit.
+> Informe de la rama. La fase 0 y su PARADA (§0 a §5 de la fase 0), lo hecho tras las respuestas
+> (§3 y §4), las líneas del cierre (§5), la fila de ERRORES (§6), el encargo punto por punto (§7),
+> la CI (§8), el revisor y lo hecho con sus hallazgos (§9), las desviaciones (§10), la PARADA 3
+> (§11) y lo que decide la orden de cierre (§12).
 
 Rama `trabajo/f17-historial`, abierta el 2026-11-25 desde `main` en 2dc4f7dd (commit de estado
 sobre el merge 96b250fd del tag `stable/F39o-contraste-trader`). Encargo:
@@ -143,7 +146,9 @@ registrado» de F15, F16 y F17.
 
 Lo que no está en la documentación queda **por medir en la corrida** (ADR-0082 D7): el reloj de
 `time_msc` y de las barras (se compara con el control de D1), si la M1 es BID (se ve en el
-punto (c)), y si los ticks son guardados.
+punto (c)), si los ticks son guardados, y cuántos devuelve `CopyTicksRange` en una llamada (la
+documentación no da un tope; un día a medias queda en `dia_*_ticks` y `dia_*_error` del control, y
+el lector lo dice: añadido tras el revisor, b5).
 
 ### 0.3 El auditor (subagente `auditor-encargo`)
 
@@ -296,7 +301,7 @@ La tolerancia de 2 vive en el yaml para este criterio, y un test comprueba que c
 `TOLERANCIA_PUNTOS` de `ticks_integridad.py` (auditor, 30). El test del sha256, como
 `test_premisa_costes.py`:151-153 y :182-189.
 
-## 5. PARADA
+## 5 de la fase 0. PARADA
 
 ## Lo que necesito que decidas
 
@@ -1029,35 +1034,45 @@ historial, F17-HISTORIAL.md).»
 - **sale la línea :100** (`curva_con_deslizamiento` y `veredicto_con_f17`), −196 bytes, por (a)
   PAGADA: `cuentas_con_deslizamiento` y la firma nueva de `veredicto_con_f17` (`81c89ea0`, §3.3) y
   sus tests, que rompen en `main`;
-- **(e) ACORTADA**, las cinco líneas de más de 200 bytes que ahorran 60 o más, con su arranque
-  literal cortado al final de una frase o inciso, 160 bytes como mucho, y su cita de informe
-  delante de la cola. Su texto entero, a HISTORIA:
+- **(e) ACORTADA**, las TRES líneas de más de 200 bytes que ahorran 60 o más con su arranque
+  literal cortado al final de una frase o inciso (160 bytes como mucho) y **su cita de informe con
+  su sección conservada delante de la cola** (`docs/state/README.md`:81-86). Su texto entero, a
+  HISTORIA. Corregido tras el revisor (a2): la primera medida quitaba la cita a dos líneas («Sin git
+  callan…» y «RN-029…»); con su cita ahorran 27 y 46 bytes y no valen. El texto de cada una, a la
+  letra:
 
-  | Línea (inicio) | Antes | Después | Ahorra |
-  |---|---|---|---|
-  | `- RN-019 no dispara nunca en el motor…` (cita PUNTO-USADO.md §1.h) | 280 | 211 | 69 |
-  | `- El visor no conecta \`--diagnostico-cuenta-diaria\`…` (VISOR-CONSTRUCCION.md §4.3) | 347 | 236 | 111 |
-  | `- Sin guardia contra fechas de días ocultos…` (GUARDIAS-HOLDOUT.md §4.3 y §9) | 362 | 157 | 205 |
-  | `- Sin git callan, sin aviso…` | 234 | 157 | 77 |
-  | `- RN-029 a RN-032 citan de relleno…` | 220 | 120 | 100 |
+  | Antes (bytes con salto) | Después, a la letra | Ahorra |
+  |---|---|---|
+  | `- RN-019 no dispara nunca en el motor…` (280) | `- RN-019 no dispara nunca en el motor: su forma pide \`por: activacion_sin_ruptura\` y la orden stop lleva \`por = primer_esquema\` (zonas.py) … (PUNTO-USADO.md §1.h; entera en HISTORIA, Technical Debt ACORTADA)` (211) | 69 |
+  | `- El visor no conecta \`--diagnostico-cuenta-diaria\`…` (347) | `- El visor no conecta \`--diagnostico-cuenta-diaria\` (cli.py: la valida \`_diagnostico_de\`, :2250-2261; el arnés la aplica, :2438; \`motor_visor\`, :2479, no) … (VISOR-CONSTRUCCION.md §4.3; entera en HISTORIA, Technical Debt ACORTADA)` (235) | 112 |
+  | `- Sin guardia contra fechas de días ocultos…` (362) | `- Sin guardia contra fechas de días ocultos en lo que añade una rama. … (GUARDIAS-HOLDOUT.md §4.3 y §9; entera en HISTORIA, Technical Debt ACORTADA)` (155) | 207 |
 
-  Las demás de más de 200 bytes ahorran menos de 60 (la del validador del journal, 58) o no tienen
-  un corte de frase dentro de los 160 (la de la zona de RN-005, 368 bytes). Ninguna línea de
-  Technical Debt ni de Reglas vivas está pagada, repetida ni sustituida con evidencia: el ADR 0087
-  de S-15 no existe, la nota de RN-019 y el docstring de `test_kit.py` siguen. Y el heredado 27 solo está
-  repetido a medias en la A.2.
+  Las demás de más de 200 bytes, con su cita, ahorran menos de 60:
+  - la del validador del journal, 58;
+  - «Sin git callan», 27;
+  - «RN-029», 46;
+  - y otras.
 
-**El tamaño:** con todo lo de arriba, PROJECT_STATE queda en **24.190 bytes** (margen 810) con el
-heredado 10 corregido, o en **24.092** (margen 908) si sale por (b). **No llega a los 1.000 de
-margen que pide el encargo con los criterios (a)-(e)**; faltan 92 bytes en el mejor caso. Cómo
-llegar lo decide la orden de cierre (decisión 1, abajo), porque la F es de la Next Action y no está
-bajo esos criterios.
+  La de la zona de RN-005 (368 bytes) no tiene un corte de frase dentro de los 160. Ninguna línea
+  de Technical Debt ni de Reglas vivas está pagada, repetida ni sustituida con evidencia:
+  - el ADR 0087 de S-15 no existe;
+  - la nota de RN-019 y el docstring de `test_kit.py` siguen;
+  - y el heredado 27 solo está repetido a medias en la A.2.
+
+**El tamaño**, con el heredado 10 fuera por (b), las tres acortadas y la salida de la :100:
+- con la F propuesta (+63), **24.266 bytes** (margen 734);
+- con la F corta de la decisión 1 (−36), **24.167** (margen 833);
+- con el heredado 10 corregido en lugar de sacarlo, 98 bytes más.
+
+**No llega a los 1.000 de margen que pide el encargo con los criterios (a)-(e)**: faltan 167 bytes
+en el mejor caso. Cómo llegar lo decide la orden de cierre (§11, decisión 1), porque la F es de la
+Next Action y no está bajo esos criterios.
 
 ## 6. La fila de ERRORES-RECURRENTES, preparada para el cierre
 
 | Rama | Hallazgos del revisor | Hallazgos del consultor despues | Que se le escapo |
 |---|---|---|---|
-| `trabajo/f17-historial` | REVISOR_RESUMEN | (1) D3 (c) decía que detectaba ticks fabricados, y no puede, porque cuadran con la M1 por construcción; (2) D7 atribuía a ADR-0090 §7 el spread, y lo que atribuye al grabador es el deslizamiento; (3) D1 pedía «el primer tick disponible», que obliga a preguntar por meses fuera de construcción; (4) D3 tomó `arnes.dias_de_mercado` de una auditoría sin comprobar qué devuelve (respuesta a la PARADA 1, «errores del consultor»); y lo que la sesión dejó a la revisión: la compilación de D6 lanzada antes de que el consultor revisara el diff (PARADA 2, punto 2). | (1) **La sesión**: el (d2) implementado contaba como 0 los minutos que Dukascopy no tiene descargados; lo cazó el control (d1) al contar horas, y cambió el yaml una vez, a la vista y sin dato de FTMO (PARADA 2). Lección: antes de comparar con una fuente de construcción, se mide qué cubre (`horas.presentes`, `seleccion`), no se supone que es el mes entero. (2) **La sesión**: la primera inversa del reloj del servidor no veía la hora repetida del 1-nov, porque los dos sondeos daban 0; su test la cazó en el borrador. (3) **La sesión**: dio en el mismo mensaje de la PARADA el comando de compilar que el consultor tenía que revisar antes; Aleks lo lanzó. Lección: un comando para «!» que espera una revisión va en un mensaje aparte, después de la respuesta. (4) La guardia negó lanzar a la sesión el lector y `compilar.py` cambiados en la rama, que lanzó Aleks: lo esperado (H5 del auditor). |
+| `trabajo/f17-historial` | Una pasada, opus, con los siete alcances del encargo (F17-HISTORIAL.md, «Informe del revisor»; lo hecho, en §9): eje (a) 0 bloquea, 3 importa, 1 menor; eje (b) 1 bloquea, 5 importa, 2 menor. b1 (**bloquea**: una entrada con hora pasaba la comprobación del mes y pedía el día siguiente, que podía ser de otro mes), a1 (el mes por la fecha del servidor, a la PARADA 3), a2 (las acortadas sin su cita), a3 (los guiones que escriben, sin clon), b2 (una regla de elección en el yaml, a la PARADA 3), b3 a b6, arreglados o declarados | (1) D3 (c) decía que detectaba ticks fabricados, y no puede, porque cuadran con la M1 por construcción; (2) D7 atribuía a ADR-0090 §7 el spread, y lo que atribuye al grabador es el deslizamiento; (3) D1 pedía «el primer tick disponible», que obliga a preguntar por meses fuera de construcción; (4) D3 tomó `arnes.dias_de_mercado` de una auditoría sin comprobar qué devuelve (respuesta a la PARADA 1, «errores del consultor»); y lo que la sesión dejó a la revisión: la compilación de D6 lanzada antes de que el consultor revisara el diff (PARADA 2, punto 2). | (1) **La sesión**: el (d2) implementado contaba como 0 los minutos que Dukascopy no tiene descargados; lo cazó el control (d1) al contar horas, y cambió el yaml una vez, a la vista y sin dato de FTMO (PARADA 2). Lección: antes de comparar con una fuente de construcción, se mide qué cubre (`horas.presentes`, `seleccion`), no se supone que es el mes entero. (2) **La sesión**: la primera inversa del reloj del servidor no veía la hora repetida del 1-nov, porque los dos sondeos daban 0; su test la cazó en el borrador. (3) **La sesión**: dio en el mismo mensaje de la PARADA el comando de compilar que el consultor tenía que revisar antes; Aleks lo lanzó. Lección: un comando para «!» que espera una revisión va en un mensaje aparte, después de la respuesta. (4) La guardia negó lanzar a la sesión el lector y `compilar.py` cambiados en la rama, que lanzó Aleks: lo esperado (H5 del auditor). |
 
 ## 7. El encargo, punto por punto
 
@@ -1066,7 +1081,7 @@ bajo esos criterios.
 | 1 | §0 Base, apertura, contrato (tramo R4), sin ADR nuevo | Hecho | «Base comprobada»; `fdc18717`; contrato con las tres rutas de la respuesta, punto 7 (`3ce320e6`) |
 | 2 | §0 La fila de HOLDOUT antes del primer `make check` de cada día | Hecho | filas del 2026-11-25 (2) y del 2026-11-26 (2) |
 | 3 | §0 «La herramienta X da Y», medido o citado; ADR-0082 D7 | Hecho | §0.2 (documentación de MQL5 citada; lo no citado, «por medir») |
-| 4 | §0 Insertar texto con Edit; guiones que escriben, en un clon | Hecho | los documentos, con Edit; el único guion que escribe en el repo es el lector, con `--salida`, y lo lanzó Aleks |
+| 4 | §0 Insertar texto con Edit; guiones que escriben, en un clon | Parcial: desviación declarada (§10) | los documentos, con Edit; `compilar.py herramienta` y el lector con `--salida` los lanzó Aleks directamente en el repo, sin ensayo en un clon (revisor, a3) |
 | 5 | §0 Sin programar nada que escriba en `.claude/` con un `make check` en marcha | Hecho | ningún `ScheduleWakeup` en la rama |
 | 6 | §0 La guardia negó compilar y el lector: dicho, sin rodearla, lo lanzó Aleks con «!» | Hecho | §3.2, §4 y §4.1 |
 | 7 | §2 Qué NO cambia (motor, simulador, `llenado.yaml`, spec, casos, evidencia, feedback, corpus, `data/`, `mql5/`, `MedirDemoFTMO.mq5`, `demo_ftmo/`, ADR-0092 §4, cifras de los yaml, ningún ADR salvo D7) | Hecho | `git diff --stat main...HEAD` sobre esas rutas, vacío (lo comprueba el revisor); el contrato las protege |
@@ -1082,19 +1097,98 @@ bajo esos criterios.
 | 17 | D5 F17 por cuenta, sin tocar `CuentaDelTramo` ni `cableado.py`; rompe en `main` por la firma | Hecho | §3.3; el clon de `main` no importa |
 | 18 | D6 La compilación aparte, con sus tests; los dos compilan sin errores ni avisos; logs en los anexos | Hecho; lanzada antes de la revisión (desviación, PARADA 2, punto 2) | §3.5 y §4.1 |
 | 19 | D7 Los README y el recuadro de ADR-0090 §7, en su propio commit | Hecho (los README); el recuadro, en su commit | §3.5; el commit del recuadro |
-| 20 | D8 La CI de Linux por `fix/f17-historial` | Hecho | §8 |
-| 21 | §6 Las líneas del cierre con sus bytes | Hecho, con el margen corto (908 en el mejor caso) | §5 |
-| 22 | §7 El informe, el revisor con sus alcances, la frase final | Hecho | este informe; «Informe del revisor»; «Estado» |
+| 20 | D8 La CI de Linux por `fix/f17-historial` | Hecho sobre `531e4318`; se repite sobre el último commit | §8 |
+| 21 | §6 Las líneas del cierre con sus bytes | Parcial: el margen queda en 734 u 833 bytes, no en 1.000 | §5 |
+| 22 | §7 El informe, el revisor con sus alcances, la frase final | Hecho el revisor; la frase, tras la PARADA 3 | «Informe del revisor»; «Estado» |
 
-## 8. Lo que necesito que decidas en la orden de cierre
+## 8. La CI de Linux (D8)
+
+`git push origin trabajo/f17-historial:refs/heads/fix/f17-historial` sobre `531e4318`: run
+**45797145889**, `completed` / `failure` con **un solo fallo, el esperado**:
+`tests/unit/test_cli.py::test_state_check_ok_on_real_repo` («assert 1 == 0»: `state check` ve
+`fix/` y PROJECT_STATE declara `trabajo/`), «1 failed, 3588 passed, 102 skipped»
+(`gh run view 45797145889 --log-failed`). Lo de después del revisor se vuelve a empujar, y el run
+del último commit va en «Estado».
+
+## 9. Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| b1 | **bloquea** | **Arreglado.** `InicioDelDia` lleva las dos entradas a las 00:00 del día del servidor antes de comprobar el rango (`.mq5` 1.01). El contrato exige `InicioDelDia(StringToTime(Inp…))` para las dos y que corte a las 00:00, con dos mutaciones que rompen a propósito. El `.mq5` cambia, así que **hay que volver a compilarlo** (§11). |
+| a1 | importa | **A la PARADA 3** (§11, decisión 0): choca con «Nada lee la M1 de marzo ni de junio» del punto 0 de la respuesta a la PARADA 1. |
+| a2 | importa | **Corregido** en §5: tres acortadas, con su cita, y su texto a la letra; el margen, 734 u 833 bytes. |
+| a3 | importa | **Declarado** como desviación (§10); no se puede deshacer. |
+| a4 | menor | **Arreglado** en los tests del reloj y de D5: fechas de 2027. Quedan a propósito los nombres de febrero y marzo del test de la negativa (es lo que prueba) y el `cubre` sintético del test de los días, que no son datos. |
+| b2 | importa | **A la PARADA 3** (§11, decisión 1): el yaml está fijado por su sha256. |
+| b3 | importa | **Arreglado**: el run, en §8; la fila 4 de §7, parcial; el «Estado», al día. |
+| b4 | importa | **Arreglado**: `control_cuadra_con_registro`, y un test que la discrimina con `us` y `eu` el 3-nov-2027 (120 cuadra con `eu` y no con `us`, 180 al revés). |
+| b5 | importa | **Arreglado** en el lector (`dias_incompletos`: los días sin ticks o con error al pedirlos salen nombrados, con su test). «Cuántos devuelve `CopyTicksRange` por llamada» pasa a la lista de lo que queda por medir, en la cabecera del `.mq5` y en §0.2. |
+| b6 | importa | **Arreglado**: §10, las desviaciones. |
+| b7 | menor | **Arreglado**: la hora repetida y la que no existe, también con `eu` (31-oct y 28-mar de 2027). |
+| b8 | menor | **Arreglado**: fuera la línea de PLANTILLA; las líneas del cierre siguen en §5 y la PARADA de la fase 0 queda como «§5 de la fase 0»; el README de manifiestos dice que el esquema lo valida `validar_manifiesto` en su test, y que la CLI todavía no lo llama. |
+
+## 10. Las desviaciones
+
+1. **El criterio de D3 cambió una vez después de fijarlo** (`802c159f`): (d2) compara solo las
+   horas que Dukascopy tiene descargadas. Motivo: los recuentos de horas de sus manifiestos y el
+   control (d1); ningún dato de FTMO, y la cifra no cambió (PARADA 2).
+2. **La compilación de D6 se lanzó antes de que el consultor revisara el diff** (PARADA 2, punto
+   2). Solo compiló, en un temporal desde el índice, y el exportador es de solo lectura.
+3. **Ningún guion que escribe se ensayó antes en un clon** (CLAUDE.md, «Ensayos aislados» 1; revisor,
+   a3): `compilar.py herramienta` (escribe los dos logs en los anexos) y el lector con `--salida`
+   (escribe `control-d1.txt`) los lanzó Aleks en el repo. Los dos sacan su ruta de un argumento
+   (regla 2) y no escriben fuera de ella.
+4. **El margen del cierre queda corto** (§5): 734 u 833 bytes, no 1.000.
+5. **D5 no tiene test de contenido que rompa en `main` con la firma de hoy**: rompe por la firma,
+   como el encargo previó.
+
+## 11. PARADA 3: dos hallazgos del revisor que chocan con lo fijado
+
+0. **El mes se decide por la fecha del servidor** (revisor, a1). El exportador pide cada día de
+   las 00:00 a las 24:00 del servidor, que va dos o tres horas por delante de UTC. Así, el fichero
+   del 1 de abril trae las últimas horas UTC del 31 de marzo, y el del 1 de julio las del 30 de
+   junio. Son horas fuera de la ventana, de noche, pero son ticks y M1 de marzo y de junio, y la
+   respuesta a la PARADA 1 dice «Nada lee la M1 de marzo ni de junio». Enero no se ve afectado: el
+   1 de enero el servidor está cerrado. Opciones:
+   - (a) el lector descarta, sin usarlas, las filas cuya fecha UTC no sea de construcción, y las
+     cuenta en su salida. El yaml y el runbook dicen que el día del servidor empieza antes que el
+     UTC, y la lectura se declara en HOLDOUT, por recuento, el día que corra (ADR-0021 §1: son velas).
+   - (b) el exportador no pide nada antes de las 00:00 UTC del primer día del mes. Para eso
+     necesita el desfase del servidor en ese instante, que hoy no conoce sin el registro.
+   - (c) dejarlo como está y declararlo.
+
+   Recomiendo (a). Coste de (a): los ficheros del primer día siguen trayendo esas horas desde el
+   servidor; no se leen para nada, pero están en el CSV. Coste de (b): meter en el exportador una
+   cifra o un cálculo de huso que el registro ya tiene.
+1. **El yaml lleva una regla de elección de fila que nadie dio** (revisor, b2).
+   `solo_si_cubre.diferencia_mediana.lectura` dice qué fila del puente «vale»: «cuyo número sea el
+   mayor que no pase de su valor absoluto». La regla está copiada de ADR-0099 §5. Pero D2 decía
+   «sin elegir», y la respuesta, punto 3, solo dice que es la que «se compara». Opciones:
+   - (a) se queda: es el texto de ADR-0099 §5, y el lector no elige (imprime la diferencia y nada
+     más);
+   - (b) el yaml cambia a la vista, con su sha256 nuevo, y esa frase pasa a decir «se compara con
+     las filas `spread_menos_1` y `spread_menos_2` del puente (ADR-0099 §5)».
+
+   Recomiendo (a), y que el informe lo declare. Coste de (b): un segundo cambio del criterio
+   pre-registrado, aunque sin datos detrás.
+
+**Y la compilación otra vez** (b1 cambió el `.mq5`): tras la revisión del consultor de este diff,
+desde la raíz del repo, el mismo comando de D6. Tiene que salir «PASA (0 errores, 0 avisos)» dos
+veces, y los logs sustituyen a los de `0dabbeab` en los anexos:
+
+    ! uv run python src/botsito/mql5bridge/compilar.py herramienta --repo . --metaeditor "C:/Program Files/MetaTrader 5/MetaEditor64.exe" --salida docs/validation/anexos/F17-HISTORIAL tools/mql5/ExportarTicksFTMO.mq5 tools/mql5/MedirDemoFTMO.mq5
+
+## 12. Lo que necesito que decidas en la orden de cierre
 
 0. **El heredado 10.** Opciones: (a) corregirlo (+31 bytes); (b) que salga por (b) REPETIDA (−67).
    Recomiendo (b): la F nueva dice entero lo que queda de F17. Coste de (b): ninguno.
-1. **Los 92 bytes que faltan para el margen de 1.000.** Opciones: (a) la F más corta, sin «con
-   herramientas y sin correr:» (la F diría «F17 (ADR-0099 §5; el historial: F17-HISTORIAL.md)»), o
-   sin «el diagnóstico de la premisa y el contraste con el trader, hechos», que ya están en
-   HISTORIA; (b) aceptar el margen de 908. Recomiendo (a), con la segunda forma: lo hecho sale de la
-   Next Action (RITUAL.md, punto 3). Coste de (b): un margen por debajo del que pide el encargo.
+1. **Los bytes que faltan para el margen de 1.000.** Opciones: (a) la F corta, «F17 (ADR-0099 §5;
+   el historial: F17-HISTORIAL.md) y el backtest del trader con costes (ADR-0100, R4.10),
+   pendientes.», que saca de la Next Action lo hecho (el diagnóstico de la premisa y el contraste,
+   ya en HISTORIA; RITUAL.md, punto 3): margen de 833; (b) aceptar el margen de 734 con la F
+   propuesta. Ninguna llega a 1.000 con los criterios (a)-(e); faltan 167 bytes en el mejor caso, y
+   no hay en Technical Debt, en los heredados ni en las Reglas vivas otra línea que salga con
+   evidencia. Recomiendo (a). Coste de (b): un margen más corto.
 
 ## Informe del auditor (subagente `auditor-encargo`, 2026-11-25), tal cual
 
@@ -1221,7 +1315,150 @@ Además:
 
 Propongo que la PARADA lleve las tres primeras como preguntas al consultor antes de escribir `docs/plan/F17-HISTORIAL.yaml`.
 
+## Informe del revisor (subagente `revisor`, 2026-11-26), tal cual
+
+Copiado tal cual, con sus títulos bajados dos niveles y con una clase de retiradas, por holdout: las
+fechas de días de meses con días reservados (marzo, mayo y junio de 2026) que citaba de los tests y
+del borde del mes: nueve retiradas, siete como «[fecha retirada]» y dos, de una lista de fechas,
+como «[fechas retiradas]». Sus números de línea son los
+del árbol que revisó (`531e4318`).
+
+#### Informe del revisor · trabajo/f17-historial · 2026-11-26
+
+Revisado sobre `531e4318`, con el árbol limpio. El último `make check` (`make-check.log`) sella el árbol `d42533cd0d402b456d65a436568aed6bcc024475`, que es `git rev-parse HEAD^{tree}`. El log dice «3685 passed, 6 xfailed in 1351.93s», y su línea `PICO DE MEMORIA` da 321 MiB en `test`.
+
+**Lo más importante:** la rama no está lista. Hay un **bloquea** en el eje (b): el exportador puede pedir ticks de un mes que no es de construcción si `InpDesde` lleva una hora. Además, el run de la CI no está en el informe y la tabla de §7 lo da por hecho.
+
+##### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 3 importa, 1 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | **El mes se decide por la fecha del servidor, y eso no está declarado.** El fichero del primer día de abril y el de julio trae ticks y M1 de las últimas 3 h UTC del [fecha retirada] y del [fecha retirada]. El lector lee esas filas y nadie las cuenta. Ni el informe ni el yaml dicen en qué reloj se define el mes. Por ADR-0021 §1 son velas y se pueden leer, pero se declaran por recuento. Además, la respuesta a la PARADA 1, punto 0, dice «Nada lee la M1 de marzo ni de junio». | `tools/mql5/ExportarTicksFTMO.mq5`:128-129 y :164: el día va de las 00:00 a las 24:00 del servidor. El registro da servidor = UTC + 120 + verano `us`, así que el 1-abr y el 1-jul van a UTC+180: las 00:00 del servidor son las 21:00 UTC del día anterior. `scripts/leer_historial_f17.py`:703-706 lee todas las filas del CSV. El yaml (`docs/plan/F17-HISTORIAL.yaml`:9) solo dice «meses: los de construccion». El encargo, :71. Enero no se ve afectado: está cerrado del 31-dic 16:55 NY al 1-ene 17:05 NY (`ftmo-2step-swing-100k.yaml`:44-48). |
+| a2 | importa | **Las líneas (e) ACORTADA de §5 incumplen la regla de la cita.** Dos de las cinco solo dan sus bytes «Después» si se quita la cita de su informe. `docs/state/README.md` exige conservarla («Si la línea citaba su informe con su sección, el paréntesis conserva esa cita delante»). Con las dos citas, el margen baja en 88 bytes: 820 en el mejor caso, no 908. El informe tampoco da el texto de ninguna línea acortada, así que nada se puede comprobar a la letra. | Medido sobre `git show main:PROJECT_STATE.md`. La línea :113 («Sin git callan…») cita `docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1`; su único corte válido, con la cita y la cola, da 207 bytes. Sin la cita da 157, que es lo que dice el informe (`F17-HISTORIAL.md`:1041). La línea :114 («RN-029…») cita `REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4`; con la cita da 158, sin ella 120, que es lo del informe (:1042). Regla: `docs/state/README.md`:81-86. |
+| a3 | importa | **Ningún guion que escribe se ensayó en un clon desechable.** Aleks lanzó `compilar.py herramienta` y el lector con `--salida` directamente en el repo. El primero escribe `.log` en `docs/validation/anexos/` (`compilar.py`, `_herramienta`); el segundo escribe `control-d1.txt`. CLAUDE.md, «Ensayos aislados» 1, y la lección del encargo (:15) lo piden. El informe no lo declara como desviación. Los dos sacan la ruta de un argumento, así que la regla 2 sí se cumple. | `F17-HISTORIAL.md`:583 y :588 son los comandos sobre `.`. `grep -n -i "clon\|worktree\|ensay"` en el informe solo encuentra el clon de `main` de D5 (:261, :443). |
+| a4 | menor | **Tests con fechas de marzo y mayo de 2026.** Son instantes sintéticos para los cambios de hora, sin etiqueta ni precio. Marzo es un mes reservado entero, y había años sin reserva para el mismo cambio de hora. | `tests/unit/test_leer_historial_f17.py`:68, :71, :73, :75 y :99-101: [fechas retiradas]. `tests/unit/test_metodo_adr0092.py`:388: [fecha retirada]. |
+
+Comprobado sin hallazgos:
+- **El contrato.** `scripts/contrato_rama.py` da «CONTRATO: 28 ficheros dentro del contrato de trabajo/f17-historial (riesgo medio, …, tramo 'R4', 4 comprobaciones para el revisor)» y «G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-26 para trabajo/f17-historial, estadiada». `botsito state check` da OK. `knowledge validate` (salida fuera del repo) sale con 0, con todos los OK («1255 documentos: todo id citado existe…»; manifiestos, feedback y evidencia con su historial intacto). `make check` está sellado sobre HEAD, como arriba.
+- **Los trailers `Fuente:`.** Ningún commit toca `knowledge/spec` ni `knowledge/cases`.
+- **El holdout.** Nada bajo `knowledge/`, `data/` (salvo `data/manifests/README.md`) ni `corpus/`. Hay cuatro filas de HOLDOUT, dos del 25 y dos del 26, cada una con su rama y su contenido. Ninguna nombra un día reservado: la de EA-CONEXION dice «un mes que hoy es reservado». No se ha leído ningún dato de FTMO. Los anexos solo traen rutas temporales y recuentos (`control-d1.txt`).
+- **Los regímenes de cambio.** No hay `A` ni `M` en evidence, feedback, transcripciones, fotogramas ni `libros.yaml`. Bajo `data/manifests/` solo cambia el README, que el encargo permite y que no es un `.yaml`. HISTORIA solo se amplía.
+- **Ambigüedades y spec.** Sin cambios. No hay ningún sitio nuevo con `cita`.
+- **El ADR.** El de ADR-0090 es un recuadro junto a §7, con fecha y rama, y el cuerpo está intacto: el diff solo añade líneas. Su `## Estado` no se toca. No hay ningún ADR nuevo.
+- **Diff vacío en lo protegido.** `git diff --stat main...HEAD` sale vacío para `engine/`, `domain/`, `spec/`, `knowledge/{spec,evidence,feedback,simulador,corpus,cuentas}`, `mql5/`, `MedirDemoFTMO.mq5` (sha `f9903c6f…`, el mismo que en `main`), `data/manifests/{demo_ftmo,ticks}`, `test_manifiestos_demo_ftmo.py`, `test_capa_mt5.py`, `test_medir_demo_ftmo.py`, `PREMISA-COSTES.yaml`, `PUENTE-TECHO.yaml`, `HOJA-DE-RUTA.md`, `MASTER_PLAN.md`, `cableado.py` y `test_cuenta_por_mes_metodo.py`.
+- **Las citas del informe.** Comprobé estas contra su fuente:
+  - `criterio_fidelidad.yaml`:47, que es la lista `construccion`;
+  - el calendario de cierres, :21-22 (`cubre`), :31-33 (el cierre diario) y :44-48 (el 1 de enero);
+  - `data/ticks.py`:436-440, que es la `seleccion`;
+  - PROJECT_STATE :100, de 196 bytes;
+  - las `horas.presentes` de los manifiestos de Dukascopy: 184, 182, 114 y 186.
+- **Los bytes del cierre.** El PROJECT_STATE de `main` tiene 24.854 bytes. Medí: la F +63, el heredado 10 +31 o −67, y el «Antes» de las cinco líneas (e) (280, 347, 362, 234 y 220).
+- **Las dos respuestas del consultor.** El encargo y el informe las copian igual (`diff` vacío).
+
+##### Eje (b) · Encargo
+Resumen: 1 bloquea, 5 importa, 2 menor. Requisitos: 43 hechos (y 3 de otra forma, declarados), 5 parciales, 2 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | §0 Base comprobada (main, origin, tag, CI, ninguna otra rama) | Hecho | informe :12-23 |
+| 2 | §0 Apertura: encargo, contrato (tramo R4) y Archivo | Hecho | `fdc18717`; `contrato.yaml`:4; `state check` OK |
+| 3 | §0 Ningún ADR nuevo | Hecho | no hay `A` en `docs/adr/` |
+| 4 | §0 Lista blanca; nada fuera de lo protegido | Hecho | contrato_rama: 28 ficheros dentro |
+| 5 | §0 Fila de HOLDOUT antes del primer make check | Hecho | filas del 25 y del 26; G2 OK |
+| 6 | §0 «La herramienta X da Y», citado o por medir (ADR-0082 D7) | Parcial | b5 |
+| 7 | §0 El guion que escribe, ensayado antes en un clon | No hecho | hallazgo a3 del eje (a) |
+| 8 | §0 La guardia negó compilar y el lector: lo lanzó Aleks con «!» | Hecho | §3.2, §4, §4.1 |
+| 9 | 0.1 La fila con el recuento de EA-CONEXION | Hecho | la primera fila del 25 |
+| 10 | 0.2 Lo leído, con fichero:línea | Hecho | §0.2 |
+| 11 | 0.3 El auditor | Hecho | §0.3 y su anexo |
+| 12 | §4 La PARADA | Hecho | `4661575d` |
+| 13 | D1 Ninguna función de trading, comprobado por el contrato | Hecho | `test_exportar_ticks_ftmo.py`:62-64 y mutaciones :106-117 |
+| 14 | D1 Se niega fuera de DEMO con la condición de la :759 | Hecho | test :88-89 |
+| 15 | D1 Solo EURUSD | Hecho | test :82-84 |
+| 16 | D1 Ticks y M1 por día, a `MQL5/Files` | Hecho | `.mq5`:125-180 |
+| 17 | D1 La profundidad (corregida por el punto 1) | De otra forma, declarado | §3.4 |
+| 18 | D1 Ningún otro mes: «se niega sin pedir nada» | **Parcial** | b1 |
+| 19 | D1 Control con TimeTradeServer y TimeGMT | Hecho | `.mq5`:212-226 |
+| 20 | D2 Del servidor a UTC sin cifras; tests a los dos lados, EE. UU. y Europa | Hecho | test :64-114; en pytest, 110 passed |
+| 21 | D2 Compara el control con el registro | Hecho (test débil) | b4 |
+| 22 | D2 Se niega a un mes que no es de construcción, por el nombre, antes de abrir | Hecho | lector :598-605; test :151-163 |
+| 23 | D2 Los puntos de D3 y el veredicto | Hecho | lector :290-385 y :564-578 |
+| 24 | D2 Spread por hora y diferencia mediana, como diagnóstico, «sin elegir» | Hecho (el yaml añade una regla de elección) | b2 |
+| 25 | D2 Ningún precio en la salida | Hecho | lector :564-578 y :712-725 |
+| 26 | D3 El yaml antes de cualquier tick, fijado por su sha256, con un test que rompe | Hecho | `3ce320e6` (00:41) es anterior a `81c89ea0` y a la fila del control (d1); `sha256sum` da `46af1341…`, el del test; test :119-127 |
+| 27 | D3 El control (d1) sobre Dukascopy | Hecho | `control-d1.txt`: los cuatro PASAN |
+| 28 | PARADA 2: el yaml en su commit, a la vista; el (d2) nuevo con un sintético que rompe | Hecho | `802c159f` (1 línea del yaml y el sha); `test_d2_compara_solo…` |
+| 29 | D4 El esquema `f17/` en el README y su test sintético | Hecho | `data/manifests/README.md`:80-107; `test_manifiestos_f17.py` |
+| 30 | D4 El runbook | Hecho | `docs/runbooks/F17-HISTORIAL.md` |
+| 31 | D5 `cuentas_con_deslizamiento` y `veredicto_con_f17` por cuenta, por la etiqueta | Hecho | `criterio_fidelidad.py`:870-898 y :917-956; agrupan por la pertenencia del día a la curva recibida, nunca por el mes |
+| 32 | D5 Tests de dos cuentas y de una arrastrada | Hecho | `test_metodo_adr0092.py`:359-384 |
+| 33 | D5 Rompe en `main` por la firma; uno de contenido si se puede | De otra forma, declarado | §1.4 :259-261; §3.3 :443 |
+| 34 | D5 Los tests de hoy, adaptados y explicados | Hecho | §3.3 :437-438 |
+| 35 | D5 Sin tocar `CuentaDelTramo` ni `cableado.py`; el constructor de la arrastrada falta | Hecho | diff vacío; §3.3 :434 |
+| 36 | D6 Camino aparte; `exportar` e `instalar` sin cambios; tests en los dos sentidos | Hecho | el único `-` de `compilar.py` es la línea del despacho |
+| 37 | D6 Los dos compilan sin errores ni avisos; logs en los anexos | Hecho | «Result: 0 errors, 0 warnings»; el sha del log es el del fuente |
+| 38 | D6 El `.ex5` no se versiona | Hecho | `.gitignore` `/tools/mql5/*.ex5` |
+| 39 | D6 El diff revisado antes de compilar | De otra forma, desviación declarada | «Cómo se aplica» :675-680 |
+| 40 | D7 Los dos README | Hecho | diff |
+| 41 | D7 El recuadro de ADR-0090 §7, en su commit y con el cuerpo intacto | Hecho | `531e4318` |
+| 42 | D8 La CI por `fix/f17-historial`, con el número del run | **Parcial** | b3 |
+| 43 | §6 La F y la A.5, con sus bytes | Hecho | §5 |
+| 44 | §6 Los textos «grabador»; la fila de MASTER_PLAN no se toca | Hecho | §5 |
+| 45 | §6 El recorte para dejar ≥1.000 bytes | Parcial, declarado (y el margen es menor: a2) | §5 :1050-1054 |
+| 46 | Punto 6: la línea para R6a.8 | Hecho | §5 :1024-1026 |
+| 47 | Punto 7: las tres rutas del contrato; `test_no_unexpected_ignored_paths` en verde | Hecho | `contrato.yaml`:25-27; make check en verde |
+| 48 | §7 La PARADA y su respuesta, tal cual | Hecho | `diff` vacío |
+| 49 | §7 «Las desviaciones» | Parcial | b6 |
+| 50 | §7 La fila de ERRORES, preparada | Hecho | §6, con 4 columnas |
+| 51 | §7 El revisor pegado y la frase final | No hecho (es lo que falta) | — |
+| 52 | PARADA 2, punto 2: el diff de `compilar.py` y del `.mq5`, en el informe | Hecho | §4 y §4.3; copia igual al fichero (sha `5359f686…`) |
+| 53 | PARADA 1, punto 0: parar si el calendario no cubre | Hecho (medido) | informe :384-388 |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | **bloquea** | **El exportador puede pedir un mes que no es de construcción.** `RangoDeConstruccion` solo mira el instante `desde`, `desde+86400`… a la hora del día que traiga `InpDesde`. En cambio, `ExportarTicks` y `ExportarM1` piden de `d` a `d+24 h`. Con `InpDesde = InpHasta = "2026.08.31 06:00"` el rango pasa, porque es agosto, y la petición llega al 1-sep 05:59 del servidor. Pasa lo mismo con el 31-ene y febrero (heredado 6). `StringToTime` acepta la hora; la capa del repo la usa así. El contrato no lo caza: solo exige que `EsDeConstruccion` aparezca en el cuerpo y que las llamadas directas vayan después. Hasta ahora lo evita solo el runbook, que da fechas sin hora. | `tools/mql5/ExportarTicksFTMO.mq5`:41-42 (entradas `string` libres), :113-114, :128-129, :164, :192-193 y :235 (ninguna normalización a las 00:00). `mql5/Scripts/BotsitoPruebasCapa.mq5`:95 (`T("2026.10.26 23:51:58")` → `StringToTime`). `tests/contract/test_exportar_ticks_ftmo.py`:72-73 y :75-81. Encargo :39 («cualquier otro mes, se niega sin pedir nada»). |
+| b2 | importa | **El yaml pre-registrado lleva una regla de elección que nadie dio.** `diferencia_mediana.lectura` dice qué fila del puente «vale» («cuyo número sea el mayor que no pase de su valor absoluto»). D2 decía «sin elegir», y el punto 3 de la respuesta solo dice que es la que «se compara». Ahora queda fijada por el sha256, y el informe no la declara. | `docs/plan/F17-HISTORIAL.yaml`:48. Encargo :40 y :77. `grep "mayor que no pase"` solo la encuentra en el yaml. |
+| b3 | importa | **La CI de D8 y el Estado del informe.** D8 pide el número del run, y el informe no lo trae. La fila 20 de §7 dice «Hecho» y remite a §8, que es «Lo que necesito que decidas en la orden de cierre», sin CI. La fila 4 dice «Hecho» al ensayo en un clon, que no se hizo (a3). El `## Estado` dice que falta el recuadro de ADR-0090 §7, ya commiteado en `531e4318`. | `F17-HISTORIAL.md`:1069, :1085, :1089-1097 y :1226-1227. `git ls-remote --heads origin` da `531e4318… refs/heads/fix/f17-historial`. `gh run list --branch fix/f17-historial` da el run `45797145889`, `in_progress`. |
+| b4 | importa | **El test del control no prueba el caso «no cuadra».** Su segunda aserción comprueba que `int("120") != 180`, que es cierto por la entrada misma. La comparación `csv_d == reg_d` del lector (:696) no la ejerce ningún test. | `tests/unit/test_leer_historial_f17.py`:124-126. `scripts/leer_historial_f17.py`:479-483 y :695-697. |
+| b5 | importa | **«Cuántos devuelve por llamada» no está ni citado ni por medir.** D1 lo nombra entre lo que se cita o se mide, y no aparece en ninguna de las dos listas. El informe cita `ERR_HISTORY_TIMEOUT` («the function has sent all it had»): un día parcial queda en el control (`dia_*_error`), pero el lector no lee esas filas. Un mes corto daría «NO CUBRE» sin decir por qué. | Encargo :39. `.mq5`:21-26 y :238-243. Informe :138-139 y :204-205. Lector :689-691 (solo `digits`, `time_gmt_s` y el desfase). |
+| b6 | importa | **No hay sección de «las desviaciones».** §7 del encargo la pide. Las dos de la PARADA 2 están declaradas sueltas («Cómo se aplica»), pero no las reúne nada. Faltan a1 (el mes por la fecha del servidor) y b2 (la regla de elección). | Encargo :57. Los títulos del informe (`grep "^## "`): ninguno de desviaciones. |
+| b7 | menor | **La hora repetida y la que no existe solo se prueban con `us`.** Con `eu` solo se prueban los dos lados. | `tests/unit/test_leer_historial_f17.py`:91-101. |
+| b8 | menor | **Restos de forma en el informe.** Queda la línea de PLANTILLA de la apertura y hay dos `## 5.`, el de la PARADA y el de las líneas del cierre. Además, `data/manifests/README.md`:90-92 dice que el lector «lo valida», pero su CLI no llama a `validar_manifiesto`: lo valida el test. | `F17-HISTORIAL.md`:3, :299 y :989. `scripts/leer_historial_f17.py`:581-625. `test_manifiestos_f17.py`:126-128. |
+
+##### Lo que no pude comprobar
+- **Si la CI de `fix/f17-historial` acaba verde con el único fallo de `state check`.** El run 45797145889 estaba `in_progress` a las 09:59 UTC.
+- **Si el [fecha retirada], el [fecha retirada], el [fechas retiradas] o el [fecha retirada] son días de una partición** (a1, a4). No abrí `casos_reservados` ni nada protegido; marzo es un mes reservado entero según CLAUDE.md.
+- **Si `CopyTicksRange` tiene un tope por llamada, y el comportamiento real de `StringToTime`** más allá de su uso con hora en la capa. No consulté la documentación de MQL5.
+- **Si la fila de HOLDOUT del 25 se estadió antes del primer `make check`.** Solo veo los commits, no el orden real de las ejecuciones.
+- **Que el encargo esté copiado tal cual del mensaje original.** No tengo el original.
+- **El texto «Después» de las cinco líneas (e).** El informe no lo trae; a2 sale de la aritmética de bytes sobre los únicos cortes válidos.
+- **La compilación.** No ejecuté `make check`, `compilar.py` ni el lector sobre datos (son comprobaciones que escriben): lo sustituyen `make-check.log` (SELLO y PICO), los anexos de la compilación y `control-d1.txt`.
+
+##### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. `git diff --name-status main...HEAD`
+3. `uv run python scripts/contrato_rama.py`
+4. `gh run list --branch fix/f17-historial --limit 3`; `git ls-remote --heads origin`
+5. `grep -n "SELLO\|PICO DE MEMORIA\|passed\|failed\|error" make-check.log`; `git rev-parse HEAD^{tree}`
+6. `uv run botsito state check`
+7. `uv run botsito knowledge validate` (salida a un temporal fuera del repo)
+8. `uv run pytest -p no:cacheprovider tests/contract/test_exportar_ticks_ftmo.py tests/unit/test_leer_historial_f17.py tests/unit/test_f17_historial_criterio.py tests/unit/test_manifiestos_f17.py tests/unit/test_compilar_mql5.py tests/unit/test_metodo_adr0092.py -rA` → 110 passed
+9. `git log --reverse --format='%h %ad %s' --date=iso main..HEAD`; `git show --stat` de los ocho commits
+10. `git show 802c159f -- docs/plan/F17-HISTORIAL.yaml tests/unit/test_f17_historial_criterio.py`; `sha256sum docs/plan/F17-HISTORIAL.yaml`
+11. `git diff main...HEAD --` sobre `criterio_fidelidad.py`, `compilar.py`, `test_metodo_adr0092.py`, `HOLDOUT-EXPOSICIONES.md`, `PROJECT_STATE.md`, `docs/adr/`, `.gitignore`, los tres README y `data/manifests/README.md`; `git show 0dabbeab -- HOLDOUT-EXPOSICIONES.md`
+12. `git diff --stat main...HEAD --` sobre las rutas protegidas de §2 (vacío; la guardia negó la primera forma, que llevaba `corpus/`, y la repetí sin él)
+13. `git diff --name-only main...HEAD | grep -E '^(knowledge|data|corpus)/'`
+14. `git diff main...HEAD | grep '^+' | grep -oE` fechas de meses que no son de construcción; `git grep` de sus contextos
+15. `git show main:PROJECT_STATE.md | wc -c` y `sed -n Np | wc -c` de las líneas 28, 57, 96, 99, 100, 101, 113 y 114; `printf … | wc -c` de las líneas propuestas
+16. `grep presentes data/manifests/ticks/*.yaml`; `sed` del calendario de cierres, de `criterio_fidelidad.yaml`:47 y de `data/ticks.py`:430-442
+17. `diff <(sed …encargo) <(sed …informe)` de las dos respuestas del consultor
+18. `head`/`tail` de los anexos; `sha256sum` de los dos `.mq5`
+19. Read de: encargo, contrato, informe entero, `ExportarTicksFTMO.mq5`, `leer_historial_f17.py`, `test_exportar_ticks_ftmo.py`, `test_leer_historial_f17.py` (parcial), `test_f17_historial_criterio.py` (parcial), `test_manifiestos_f17.py` (parcial), `F17-HISTORIAL.yaml`, el runbook, `docs/state/README.md`:55-95 y `BotsitoPruebasCapa.mq5`:50-69
+
 ## Estado
 
-EN CURSO: aplicada la respuesta a la PARADA 2 (§4.4). Faltan el recuadro de ADR-0090 §7, el
-revisor y la CI de `fix/f17-historial`.
+EN CURSO: PARADA 3 (§11). Hechos: la respuesta a la PARADA 2 (§4.4), el recuadro de ADR-0090 §7
+(`531e4318`), la CI sobre `531e4318` (run 45797145889, solo el fallo esperado, §8) y el revisor, con
+sus hallazgos atendidos (§9). Falta: la respuesta a las dos decisiones de §11, la compilación del
+`.mq5` 1.01 (que b1 cambió) con «!», y la CI del último commit.

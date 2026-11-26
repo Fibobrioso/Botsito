@@ -377,15 +377,16 @@ def test_la_cuenta_es_la_etiqueta_recibida_no_el_mes_de_la_fecha() -> None:
     x, y = _cuenta("x", "2026-04-01"), _cuenta("y", "2026-04-02")
     _, ry = cuentas_con_deslizamiento([x, y], [_p("2026-04-01", "-10")], Decimal(2))
     assert ry.curva == y.curva
-    arrastrada = _cuenta("2025-06..2025-11", "2025-06-30", "2025-07-01")
-    (r,) = cuentas_con_deslizamiento([arrastrada], [_p("2025-06-30", "-10")], Decimal(2))
-    assert r.curva[1] == ("2025-07-01", CAPITAL - 4, CAPITAL - 4, CAPITAL - 4)
+    # etiquetas y dias sinteticos de 2027, un año sin meses reservados (revisor, a4)
+    arrastrada = _cuenta("2027-06..2027-11", "2027-06-30", "2027-07-01")
+    (r,) = cuentas_con_deslizamiento([arrastrada], [_p("2027-06-30", "-10")], Decimal(2))
+    assert r.curva[1] == ("2027-07-01", CAPITAL - 4, CAPITAL - 4, CAPITAL - 4)
 
 
 def test_las_cuentas_mal_formadas_fallan_con_nombre() -> None:
     a = _cuenta("2026-04", "2026-04-30")
     with pytest.raises(CriterioError, match="ninguna cuenta"):
-        cuentas_con_deslizamiento([a], [_p("2026-05-04", "-10")], Decimal(2))
+        cuentas_con_deslizamiento([a], [_p("2027-05-04", "-10")], Decimal(2))
     with pytest.raises(CriterioError, match="misma etiqueta"):
         cuentas_con_deslizamiento([a, _cuenta("2026-04", "2026-04-29")], [], Decimal(2))
     with pytest.raises(CriterioError, match="dos cuentas"):
