@@ -23,6 +23,10 @@ Operacion en demo y real (F33): arranque, pre-vuelo, incidentes, kill-switch. Va
 - `DEMO-FTMO.md` · para Aleks: ejecutar `tools/mql5/MedirDemoFTMO.mq5` en la prueba gratuita de
   FTMO, sin jerga, y a donde va su CSV (`data/demo_ftmo/`); tres veces, alrededor del cambio de hora
   de octubre. Se lee con `scripts/leer_demo_ftmo.py`.
+- `F17-HISTORIAL.md` · para Aleks: exportar con `tools/mql5/ExportarTicksFTMO.mq5` el historial de
+  ticks que el servidor de la demo de FTMO ya guarda, un mes de construccion cada vez, y a donde van
+  sus CSV (`data/f17/<AAAA-MM>/`, con su manifiesto en `data/manifests/f17/`). Se lee con
+  `scripts/leer_historial_f17.py` y el criterio de `docs/plan/F17-HISTORIAL.yaml` (ADR-0099 §5).
 - `CONTRATO-DE-RAMA.md` · el `contrato.yaml` de una rama de trabajo: rutas permitidas y
   protegidas, comprobaciones, riesgo y el informe esperado; lo comprueba `make check`. Con la
   plantilla y tres ejemplos.

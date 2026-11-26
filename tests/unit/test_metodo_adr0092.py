@@ -29,6 +29,7 @@ from botsito.cases.criterio_fidelidad import (
     STOP_FUERA,
     CriterioError,
     CriterioRentabilidad,
+    CuentaDelTramo,
     MaterialSinVideo,
     MedidaRentabilidad,
     Operacion,
@@ -39,6 +40,7 @@ from botsito.cases.criterio_fidelidad import (
     cascada_por_criterios,
     cascada_por_mes,
     con_deslizamiento,
+    cuentas_con_deslizamiento,
     curva_con_deslizamiento,
     equity_minima_del_tramo,
     esperanza_r,
@@ -321,10 +323,10 @@ def test_con_f17_se_reevalua_con_la_mediana_y_el_percentil_tiene_que_dejar_esper
         v = veredicto_con_f17(
             ps,
             ["d1", "d2"],
-            CURVA_SIN_PERDIDA,
+            # D5 de trabajo/f17-historial: la curva de siempre, como UNA cuenta
+            [CuentaDelTramo("una", tuple(CURVA_SIN_PERDIDA), False)],
             CAPITAL,
             "saldo_corte_diario",
-            False,
             RENT,
             mediana=Decimal(mediana),
             percentil_f17=Decimal(percentil),
@@ -340,6 +342,75 @@ def test_con_f17_se_reevalua_con_la_mediana_y_el_percentil_tiene_que_dejar_esper
     # la esperanza con ese percentil sigue positiva: esa condicion se cumple
     assert con(20, 20) == (NO_PASA, "d)")
     assert con(21, 21) == (NO_PASA, "b)", "d)")
+
+
+# ---------------------------- D5 de trabajo/f17-historial: F17 por cuenta (ADR-0092 §8)
+
+
+def _cuenta(etiqueta: str, *dias: str, suspendida: bool = False) -> CuentaDelTramo:
+    """Una cuenta de 100.000 sin perdidas propias: cada dia abre y cierra en el capital."""
+    return CuentaDelTramo(
+        etiqueta,
+        tuple((d, CAPITAL, CAPITAL, CAPITAL) for d in dias),
+        suspendida,
+    )
+
+
+def test_el_ajuste_de_una_cuenta_no_baja_el_saldo_al_corte_de_otra() -> None:
+    """Dos cuentas con etiquetas distintas: los 4 USD de ajuste del dia 1 bajan su cuenta y no el
+    corte del dia 2, que es de otra cuenta. Rompe en `main` por la firma: alli no existe
+    `cuentas_con_deslizamiento` y `veredicto_con_f17` no recibe cuentas."""
+    a, b = _cuenta("2026-04", "2026-04-30"), _cuenta("2026-07", "2026-07-01")
+    ps = [_p("2026-04-30", "-10")]  # dos llenados afectados: -4 con 2 puntos
+    ra, rb = cuentas_con_deslizamiento([a, b], ps, Decimal(2))
+    assert ra.curva == (("2026-04-30", CAPITAL, CAPITAL - 4, CAPITAL - 4),)
+    assert rb.curva == b.curva  # ni el corte ni el final de la otra cuenta cambian
+    # la curva seguida, como la recompone `curva_con_deslizamiento` con una sola cuenta, si lo
+    # arrastra: es lo que este arreglo evita
+    seguida = curva_con_deslizamiento([*a.curva, *b.curva], ps, Decimal(2))
+    assert seguida[1][1] == CAPITAL - 4
+
+
+def test_la_cuenta_es_la_etiqueta_recibida_no_el_mes_de_la_fecha() -> None:
+    """Dos cuentas con dias del MISMO mes: no se arrastra entre ellas (nada se deriva de la fecha);
+    y una sola etiqueta con dias de dos meses (la arrastrada de ADR-0092 §5): si se arrastra."""
+    x, y = _cuenta("x", "2026-04-01"), _cuenta("y", "2026-04-02")
+    _, ry = cuentas_con_deslizamiento([x, y], [_p("2026-04-01", "-10")], Decimal(2))
+    assert ry.curva == y.curva
+    # etiquetas y dias sinteticos de 2027, un año sin meses reservados (revisor, a4)
+    arrastrada = _cuenta("2027-06..2027-11", "2027-06-30", "2027-07-01")
+    (r,) = cuentas_con_deslizamiento([arrastrada], [_p("2027-06-30", "-10")], Decimal(2))
+    assert r.curva[1] == ("2027-07-01", CAPITAL - 4, CAPITAL - 4, CAPITAL - 4)
+
+
+def test_las_cuentas_mal_formadas_fallan_con_nombre() -> None:
+    a = _cuenta("2026-04", "2026-04-30")
+    with pytest.raises(CriterioError, match="ninguna cuenta"):
+        cuentas_con_deslizamiento([a], [_p("2027-05-04", "-10")], Decimal(2))
+    with pytest.raises(CriterioError, match="misma etiqueta"):
+        cuentas_con_deslizamiento([a, _cuenta("2026-04", "2026-04-29")], [], Decimal(2))
+    with pytest.raises(CriterioError, match="dos cuentas"):
+        cuentas_con_deslizamiento([a, _cuenta("otra", "2026-04-30")], [], Decimal(2))
+
+
+def test_con_f17_f_nombra_la_cuenta_que_entro_en_suspendida() -> None:
+    """`veredicto_con_f17` evalua d), e) y f) por `medir_por_cuentas`: f) dice que cuenta falla."""
+    ps = [_p("d1", "50") for _ in range(RENT.n_minimo)]
+    v = veredicto_con_f17(
+        ps,
+        ["d1", "d2", "d3"],
+        [
+            CuentaDelTramo("2026-04", tuple(CURVA_SIN_PERDIDA), False),
+            _cuenta("2026-07", "d3", suspendida=True),
+        ],
+        CAPITAL,
+        "saldo_corte_diario",
+        RENT,
+        mediana=Decimal(1),
+        percentil_f17=Decimal(5),
+    )
+    assert v.estado == NO_PASA
+    assert v.motivos == ("f) alguna cuenta entro en SUSPENDIDA (2026-07)",)
 
 
 # -------------------------------------------- la salida del arnes: solo se ANADE al final

@@ -844,7 +844,8 @@ def curva_con_deslizamiento(
 ) -> list[DiaCurva]:
     """ADR-0092 §4: la curva recompuesta operacion a operacion, sumando el ajuste al dia de cada
     cierre: el ajuste de un dia baja su equity minima y su saldo final, y el acumulado de los dias
-    anteriores baja tambien su saldo al corte. Los bloqueos de RN-032 no se recalculan."""
+    anteriores baja tambien su saldo al corte. Los bloqueos de RN-032 no se recalculan. La curva
+    es la de UNA cuenta: con varias, `cuentas_con_deslizamiento`, que la llama por cuenta."""
     por_dia: dict[str, Decimal] = {}
     for p in posiciones:
         por_dia[p.dia] = por_dia.get(p.dia, Decimal(0)) + (
@@ -866,6 +867,37 @@ def curva_con_deslizamiento(
     return salida
 
 
+def cuentas_con_deslizamiento(
+    cuentas: Sequence[CuentaDelTramo], posiciones: Sequence[PosicionCerrada], puntos: Decimal
+) -> tuple[CuentaDelTramo, ...]:
+    """ADR-0092 §4 y §8, cuenta a cuenta: cada cuenta recompone su curva con
+    `curva_con_deslizamiento` y solo con las posiciones de sus dias, sin arrastrar el ajuste de
+    otra; dentro de una cuenta que abarca varios meses (la arrastrada de §5), el ajuste si se
+    arrastra. Las cuentas son las que se reciben, con su etiqueta (`mes`): nada se deriva de la
+    fecha (respuesta del consultor a la PARADA de `trabajo/f17-historial`, punto 5). Un dia que este
+    en dos cuentas, dos cuentas con la misma etiqueta o una posicion de un dia que no este en
+    ninguna cuenta fallan con nombre."""
+    etiquetas = [c.mes for c in cuentas]
+    if len(set(etiquetas)) != len(etiquetas):
+        raise CriterioError(f"dos cuentas con la misma etiqueta: {etiquetas}")
+    cuenta_del_dia: dict[str, str] = {}
+    for c in cuentas:
+        for dia, *_ in c.curva:
+            if dia in cuenta_del_dia:
+                otra = cuenta_del_dia[dia]
+                raise CriterioError(f"{dia}: esta en dos cuentas ({otra}, {c.mes})")
+            cuenta_del_dia[dia] = c.mes
+    por_cuenta: dict[str, list[PosicionCerrada]] = {e: [] for e in etiquetas}
+    for p in posiciones:
+        if p.dia not in cuenta_del_dia:
+            raise CriterioError(f"{p.dia}: una posicion de un dia que no esta en ninguna cuenta")
+        por_cuenta[cuenta_del_dia[p.dia]].append(p)
+    return tuple(
+        replace(c, curva=tuple(curva_con_deslizamiento(c.curva, por_cuenta[c.mes], puntos)))
+        for c in cuentas
+    )
+
+
 def punto_de_equilibrio(posiciones: Sequence[PosicionCerrada], objetivo: Decimal) -> Decimal | None:
     """ADR-0092 §4: el deslizamiento por llenado afectado, en puntos, que lleva la esperanza del R
     neto a `objetivo`. La esperanza baja en linea recta con el deslizamiento; sin ninguna operacion
@@ -885,10 +917,9 @@ def punto_de_equilibrio(posiciones: Sequence[PosicionCerrada], objetivo: Decimal
 def veredicto_con_f17(
     posiciones: Sequence[PosicionCerrada],
     dias: Sequence[str],
-    curva: Sequence[DiaCurva],
+    cuentas: Sequence[CuentaDelTramo],
     capital: Decimal,
     base: str,
-    suspendida: bool,
     criterio: CriterioRentabilidad,
     *,
     mediana: Decimal,
@@ -897,16 +928,31 @@ def veredicto_con_f17(
     """ADR-0092 §4, cuando F17 mida el deslizamiento de las ordenes stop: SIN volver a correr el
     bot, se resta la MEDIANA a cada llenado afectado y se vuelven a evaluar b), c), d) y e) (d y e
     sobre la curva recompuesta); y la esperanza con el percentil `percentil_deslizamiento_f17` de
-    F17 tiene que ser > 0. Los lotes y los bloqueos de RN-032 no se recalculan."""
+    F17 tiene que ser > 0. Los lotes y los bloqueos de RN-032 no se recalculan.
+
+    Por cuenta (ADR-0092 §8; rama `trabajo/f17-historial`, D5): `cuentas` son las de la corrida
+    (`CuentaDelTramo`): en construccion una por mes; en los meses no vistos de §5, una sola
+    arrastrada, que hoy ningun constructor del motor da (es de la rama que mida §5). Cada una se
+    recompone por `cuentas_con_deslizamiento`, y d), e) y f) salen de `medir_por_cuentas`, como la
+    medida sin F17 de `cableado.py`, para que f) siga diciendo que cuenta falla."""
     con_mediana = [con_deslizamiento(p, mediana) for p in posiciones]
+    recompuestas = cuentas_con_deslizamiento(cuentas, posiciones, mediana)
     medida = medir_rentabilidad(
         con_mediana,
         dias,
-        curva_con_deslizamiento(curva, posiciones, mediana),
+        [x for c in recompuestas for x in c.curva],
         capital,
         base,
-        suspendida,
+        any(c.suspendida for c in recompuestas),
         criterio,
+    )
+    por = medir_por_cuentas(recompuestas, capital, base)
+    medida = replace(
+        medida,
+        perdida_diaria_maxima=por.perdida_diaria_maxima,
+        equity_minima=por.equity_minima,
+        cuentas=len(recompuestas),
+        meses_suspendidos=por.meses_suspendidos,
     )
     veredicto = veredicto_rentabilidad(medida, criterio, deslizamiento_medido=True)
     if veredicto.estado == INSUFICIENTE:
@@ -935,6 +981,7 @@ __all__ = [
     "CriterioError",
     "CriterioRentabilidad",
     "CuentaDelTramo",
+    "cuentas_con_deslizamiento",
     "curva_con_deslizamiento",
     "DESLIZAMIENTO_PENDIENTE_F17",
     "emparejar",

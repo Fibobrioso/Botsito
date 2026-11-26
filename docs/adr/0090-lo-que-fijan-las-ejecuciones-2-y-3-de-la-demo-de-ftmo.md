@@ -236,6 +236,8 @@ abrir y 0,0 al cerrar (filas 54-55) y 0,0 en la buy stop (fila 58); la 3, 0,0, 0
 la franja. Siete muestras de un minuto no son un modelo: lo mide el grabador de spread y ticks de
 F17 (heredado 10).
 
+> **RECUADRO de corrección (2026-11-26, `trabajo/f17-historial`; el cuerpo no se toca).** Por ADR-0099 §5, F17 tiene tres partes, y un grabador que no coloca órdenes no puede medir el deslizamiento: el deslizamiento de este §7 lo mide **la medida de las órdenes stop**, la segunda rama de F17. El spread de FTMO sale **del historial** de ticks que el servidor de la demo ya guarda, si cubre los meses de construcción por el criterio pre-registrado de `docs/plan/F17-HISTORIAL.yaml` (herramientas en `docs/validation/F17-HISTORIAL.md`), **o, si no, del grabador**.
+
 ## Problema que resuelve
 
 A-28 seguía ABIERTA con sus dos parámetros en UNKNOWN; la comisión del perfil era un supuesto

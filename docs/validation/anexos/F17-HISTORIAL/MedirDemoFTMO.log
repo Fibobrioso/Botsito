@@ -1,0 +1,43 @@
+# fuente: tools/mql5/MedirDemoFTMO.mq5 (copia del indice de git; sha256 f9903c6f3ef62e29c17d77d9306343af91612218c398a161c83936f977859151)
+# log original: UTF-16LE con BOM y CRLF, sha256 e961e8b4273aaa496d89830bfacea6ee6cc009e848a169a1416e166d4200eecd
+# codigo de salida de MetaEditor: 1 (1 con exito, 0 con error: no es la puerta)
+# puerta: PASA (0 errores, 0 avisos, .ex5 si)
+
+
+C:\Users\USER\AppData\Local\Temp\botsito-herramienta-k3pu_x2w\tools\mql5\MedirDemoFTMO.mq5 : information: compiling C:\Users\USER\AppData\Local\Temp\botsito-herramienta-k3pu_x2w\tools\mql5\MedirDemoFTMO.mq5
+ : information: generating code
+ : information: generating code 3%
+ : information: generating code 6%
+ : information: generating code 9%
+ : information: generating code 12%
+ : information: generating code 15%
+ : information: generating code 18%
+ : information: generating code 21%
+ : information: generating code 24%
+ : information: generating code 27%
+ : information: generating code 30%
+ : information: generating code 33%
+ : information: generating code 36%
+ : information: generating code 39%
+ : information: generating code 42%
+ : information: generating code 45%
+ : information: generating code 48%
+ : information: generating code 51%
+ : information: generating code 54%
+ : information: generating code 57%
+ : information: generating code 60%
+ : information: generating code 63%
+ : information: generating code 66%
+ : information: generating code 69%
+ : information: generating code 72%
+ : information: generating code 75%
+ : information: generating code 78%
+ : information: generating code 81%
+ : information: generating code 84%
+ : information: generating code 87%
+ : information: generating code 90%
+ : information: generating code 93%
+ : information: generating code 95%
+ : information: generating code 100%
+ : information: code generated
+Result: 0 errors, 0 warnings, 1245 ms elapsed, cpu='X64 Regular'

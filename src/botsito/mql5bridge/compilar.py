@@ -21,6 +21,9 @@ Code no ejecuta `python -m` de un modulo que no sea pytest):
     uv run python src/botsito/mql5bridge/compilar.py compilar --repo <raiz> --metaeditor <exe>
         --salida <carpeta de anexos> [--instalar <carpeta de datos del terminal>]
         [--sustituir <ruta> <viejo> <nuevo>]... <fuente>...
+    uv run python src/botsito/mql5bridge/compilar.py herramienta --repo <raiz> --metaeditor <exe>
+        --salida <carpeta de anexos> [--instalar <carpeta de datos del terminal>]
+        tools/mql5/<Herramienta>.mq5...
     uv run python src/botsito/mql5bridge/compilar.py pruebas --terminal <exe>
         --datos <carpeta de datos del terminal> --simbolo <simbolo del grafico>
         --golden <tests/golden/journal_v2> --salida <carpeta de anexos> --repo <raiz>
@@ -109,6 +112,48 @@ def exportar(repo: Path, destino: Path) -> list[str]:
         capture_output=True,
     )
     return ficheros
+
+
+# Las herramientas de solo lectura o de medida de `tools/mql5/` (MedirDemoFTMO, ExportarTicksFTMO):
+# un camino APARTE del de la capa (rama trabajo/f17-historial, D6), que no cambia `exportar` ni
+# `instalar`. Una herramienta es un `.mq5` directamente bajo `tools/mql5/` y se instala como script.
+CARPETA_HERRAMIENTAS = "tools/mql5"
+_HERRAMIENTA = re.compile(r"^tools/mql5/[A-Za-z][A-Za-z0-9_]*\.mq5$")
+
+
+def exportar_herramienta(repo: Path, destino: Path, fuente: str) -> list[str]:
+    """Copia a `destino` la herramienta `fuente` tal como esta en el INDICE de git, y `mql5/` para
+    `/include` (con `exportar`). Rechaza cualquier ruta que no sea un `.mq5` directamente bajo
+    `tools/mql5/`, y una herramienta que no este en el indice."""
+    if not _HERRAMIENTA.match(fuente):
+        raise CompilarError(f"{fuente}: no es una herramienta de {CARPETA_HERRAMIENTAS}/ (un .mq5)")
+    listado = subprocess.run(
+        ["git", "-C", str(repo), "ls-files", "-z", "--", fuente],
+        check=True,
+        capture_output=True,
+    ).stdout.decode("utf-8")
+    if [f for f in listado.split("\0") if f] != [fuente]:
+        raise CompilarError(f"{fuente}: no esta en el indice de git")
+    copiados = exportar(repo, destino)
+    prefijo = destino.resolve().as_posix().rstrip("/") + "/"
+    subprocess.run(
+        ["git", "-C", str(repo), "checkout-index", "-f", f"--prefix={prefijo}", "--", fuente],
+        check=True,
+        capture_output=True,
+    )
+    return [*copiados, fuente]
+
+
+def instalar_herramienta(c: Compilacion, datos: Path) -> Path:
+    """Copia el `.ex5` de una herramienta a `MQL5/Scripts/Botsito/` del terminal."""
+    if c.ex5 is None:
+        raise CompilarError(f"{c.fuente}: no hay .ex5 que instalar")
+    if not _HERRAMIENTA.match(c.fuente):
+        raise CompilarError(f"{c.fuente}: no es una herramienta de {CARPETA_HERRAMIENTAS}/")
+    destino = datos / "MQL5" / "Scripts" / "Botsito" / c.ex5.name
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(c.ex5, destino)
+    return destino
 
 
 def sustituir(raiz: Path, ruta: str, viejo: str, nuevo: str) -> None:
@@ -280,6 +325,26 @@ def _compilar(a: argparse.Namespace) -> int:
     return 0 if todas else 1
 
 
+def _herramienta(a: argparse.Namespace) -> int:
+    """Compila herramientas de `tools/mql5/`, cada una en su copia del indice (D6)."""
+    a.salida.mkdir(parents=True, exist_ok=True)
+    todas = True
+    for fuente in a.fuentes:
+        with tempfile.TemporaryDirectory(prefix="botsito-herramienta-") as tmp:
+            raiz = Path(tmp)
+            exportar_herramienta(a.repo, raiz, fuente)
+            c = compilar_uno(a.metaeditor, raiz, fuente)
+            (a.salida / (Path(fuente).stem + ".log")).write_text(
+                log_para_anexo(c), encoding="utf-8", newline="\n"
+            )
+            puerta = "PASA" if c.pasa else "NO PASA"
+            print(f"{fuente}: {puerta} ({c.errores} errores, {len(c.avisos)} avisos)")
+            todas = todas and c.pasa and not c.avisos
+            if c.pasa and a.instalar is not None:
+                print(f"  instalado en {instalar_herramienta(c, a.instalar)}")
+    return 0 if todas else 1
+
+
 def _pruebas(a: argparse.Namespace) -> int:
     carpeta = a.datos / "MQL5" / "Files" / Path(*CARPETA_PRUEBAS)
     resultado = carpeta / "resultado.txt"
@@ -351,9 +416,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     t.add_argument("--golden", type=Path, required=True)
     t.add_argument("--salida", type=Path, required=True)
     t.add_argument("--repo", type=Path, required=True, help="de donde sale Generado.mqh (indice)")
+    h = sub.add_parser("herramienta", help="compila herramientas de tools/mql5 (camino aparte)")
+    h.add_argument("--repo", type=Path, required=True)
+    h.add_argument("--metaeditor", type=Path, required=True)
+    h.add_argument("--salida", type=Path, required=True)
+    h.add_argument("--instalar", type=Path)
+    h.add_argument("fuentes", nargs="+")
     a = p.parse_args(argv)
+    ordenes = {"compilar": _compilar, "pruebas": _pruebas, "herramienta": _herramienta}
     try:
-        return _compilar(a) if a.orden == "compilar" else _pruebas(a)
+        return ordenes[a.orden](a)
     except CompilarError as e:
         print(f"ERROR: {e}")
         return 2
