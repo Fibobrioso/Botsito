@@ -965,6 +965,137 @@ void OnStart()
 La copia de arriba se comprueba contra el fichero con `uv run python` antes de este commit
 (§4.3, comprobación): idéntica línea a línea.
 
+### 4.4 El punto 0 de la PARADA 2, en el lector
+
+`scripts/leer_historial_f17.py`:
+- `horas_descargadas(dias, horas_utc, perdidas)` saca del manifiesto de Dukascopy las horas que
+  tiene descargadas, que `_dukascopy_del_mes` devuelve junto a sus ticks;
+- `puntos_del_mes` recibe esas horas y calcula (d2) solo sobre los minutos de la ventana cuya hora
+  UTC está en ellas, con 0 en cada fuente para un minuto sin ticks y las dos medianas sobre ese
+  conjunto. Sin ninguna hora descargada, (d2) no se puede evaluar y no cubre;
+- (a), (b), (c) y (d1) siguen sobre todos los minutos de la ventana, y la diferencia mediana del
+  spread no cambia.
+
+La salida dice sobre cuántos minutos se mide (d2). Tests nuevos en `test_leer_historial_f17.py`:
+- `test_d2_compara_solo_las_horas_que_dukascopy_tiene_descargadas`, que rompe a propósito como
+  pide el punto 1. Con Dukascopy descargado solo en las cuatro primeras horas y denso (8 ticks por
+  minuto) frente a FTMO escaso (2), da 240 minutos y medianas 2 y 8: **no cubre** por (d2). Con FTMO
+  denso en esas horas y vacío en las otras cuatro, (d2) cubre, aunque (a) falle, porque las horas
+  sin descarga no cuentan como 0. Sin horas descargadas, no cubre;
+- `test_las_horas_descargadas_salen_del_manifiesto`.
+
+Los tests de hoy pasan a dar las horas de la ventana como descargadas. Son 22 tests en el fichero.
+
+## 5. Las líneas propuestas para el cierre (encargo, §6)
+
+Medidas con un guion de la carpeta de trabajo sobre `git show main:PROJECT_STATE.md` (24.854 bytes),
+aplicando cada cambio a la letra.
+
+**La F de la Next Action** (`PROJECT_STATE.md`:28), +63 bytes: «F17 (ADR-0099 §5) y el backtest del
+trader con costes (ADR-0100, R4.10), pendientes; el diagnóstico de la premisa y el contraste con el
+trader, hechos.» pasa a «F17 (ADR-0099 §5; el historial, con herramientas y sin correr:
+F17-HISTORIAL.md) y el backtest del trader con costes (ADR-0100, R4.10), pendientes; el diagnóstico
+de la premisa y el contraste con el trader, hechos.»
+
+**Los textos que llaman «grabador» a todo F17:**
+- **El heredado 10** (`PROJECT_STATE.md`:57), dos opciones (decisión 0, abajo):
+  - (a) corregirlo, +31 bytes: «- 10. De la demo de FTMO queda F17 (ADR-0099 §5): el historial, el
+    grabador y las órdenes stop.»;
+  - (b) que salga por (b) REPETIDA, −67 bytes: su contenido, lo que queda de F17, vive entero en la
+    F nueva (`docs/state/README.md`:65-66); va literal a HISTORIA bajo `# Pendiente heredado SALE`.
+- **La hoja de ruta, A.1** (HECHA):
+  - :716, «A-28 y el grabador de spread y ticks (F17, PARCIAL)» pasa a «A-28 y F17 (PARCIAL; desde
+    ADR-0099 §5, el historial, el grabador y la medida de las órdenes stop)»;
+  - :727, «(el panel, el BE por el ASK y el grabador) pasa a A.5» pasa a «(el panel, el BE por el ASK
+    y F17) pasa a A.5».
+- **La A.5**:
+  - en su «Qué es», tras «y la medida de las órdenes stop.», se añade «El historial: herramientas
+    hechas y sin correr (trabajo/f17-historial, F17-HISTORIAL.md); la corrida, en una prueba
+    gratuita, en su rama.»;
+  - su «Hecho cuando», «el panel declarado (HECHO el 2026-11-07) y el grabador hecho», pasa a «el
+    panel declarado (HECHO el 2026-11-07) y las tres partes de F17 de ADR-0099 §5 hechas (el
+    historial, corrido y leído; el grabador, para lo que no cubra; y la medida de las órdenes
+    stop)».
+- **La fila F:F17** (:923) pasa a «PARCIAL: el script de medición (tres ejecuciones, ADR-0071 y
+  ADR-0090) y las herramientas del historial, sin correr; no el grabador ni la medida de las
+  órdenes stop», con `F17-HISTORIAL.md` añadido en su columna de prueba.
+- **La fila de F17 de MASTER_PLAN no se toca** (su NOTA del 2026-11-24).
+
+**R6a.8** (respuesta a la PARADA, punto 6): en su «Qué es» se añade «Las aperturas H4 del servidor
+(V02 de la auditoría «cazador») se pueden derivar de la M1 del servidor que exporta F17 (el
+historial, F17-HISTORIAL.md).»
+
+**Technical Debt:**
+- **sale la línea :100** (`curva_con_deslizamiento` y `veredicto_con_f17`), −196 bytes, por (a)
+  PAGADA: `cuentas_con_deslizamiento` y la firma nueva de `veredicto_con_f17` (`81c89ea0`, §3.3) y
+  sus tests, que rompen en `main`;
+- **(e) ACORTADA**, las cinco líneas de más de 200 bytes que ahorran 60 o más, con su arranque
+  literal cortado al final de una frase o inciso, 160 bytes como mucho, y su cita de informe
+  delante de la cola. Su texto entero, a HISTORIA:
+
+  | Línea (inicio) | Antes | Después | Ahorra |
+  |---|---|---|---|
+  | `- RN-019 no dispara nunca en el motor…` (cita PUNTO-USADO.md §1.h) | 280 | 211 | 69 |
+  | `- El visor no conecta \`--diagnostico-cuenta-diaria\`…` (VISOR-CONSTRUCCION.md §4.3) | 347 | 236 | 111 |
+  | `- Sin guardia contra fechas de días ocultos…` (GUARDIAS-HOLDOUT.md §4.3 y §9) | 362 | 157 | 205 |
+  | `- Sin git callan, sin aviso…` | 234 | 157 | 77 |
+  | `- RN-029 a RN-032 citan de relleno…` | 220 | 120 | 100 |
+
+  Las demás de más de 200 bytes ahorran menos de 60 (la del validador del journal, 58) o no tienen
+  un corte de frase dentro de los 160 (la de la zona de RN-005, 368 bytes). Ninguna línea de
+  Technical Debt ni de Reglas vivas está pagada, repetida ni sustituida con evidencia: el ADR 0087
+  de S-15 no existe, la nota de RN-019 y el docstring de `test_kit.py` siguen. Y el heredado 27 solo está
+  repetido a medias en la A.2.
+
+**El tamaño:** con todo lo de arriba, PROJECT_STATE queda en **24.190 bytes** (margen 810) con el
+heredado 10 corregido, o en **24.092** (margen 908) si sale por (b). **No llega a los 1.000 de
+margen que pide el encargo con los criterios (a)-(e)**; faltan 92 bytes en el mejor caso. Cómo
+llegar lo decide la orden de cierre (decisión 1, abajo), porque la F es de la Next Action y no está
+bajo esos criterios.
+
+## 6. La fila de ERRORES-RECURRENTES, preparada para el cierre
+
+| Rama | Hallazgos del revisor | Hallazgos del consultor despues | Que se le escapo |
+|---|---|---|---|
+| `trabajo/f17-historial` | REVISOR_RESUMEN | (1) D3 (c) decía que detectaba ticks fabricados, y no puede, porque cuadran con la M1 por construcción; (2) D7 atribuía a ADR-0090 §7 el spread, y lo que atribuye al grabador es el deslizamiento; (3) D1 pedía «el primer tick disponible», que obliga a preguntar por meses fuera de construcción; (4) D3 tomó `arnes.dias_de_mercado` de una auditoría sin comprobar qué devuelve (respuesta a la PARADA 1, «errores del consultor»); y lo que la sesión dejó a la revisión: la compilación de D6 lanzada antes de que el consultor revisara el diff (PARADA 2, punto 2). | (1) **La sesión**: el (d2) implementado contaba como 0 los minutos que Dukascopy no tiene descargados; lo cazó el control (d1) al contar horas, y cambió el yaml una vez, a la vista y sin dato de FTMO (PARADA 2). Lección: antes de comparar con una fuente de construcción, se mide qué cubre (`horas.presentes`, `seleccion`), no se supone que es el mes entero. (2) **La sesión**: la primera inversa del reloj del servidor no veía la hora repetida del 1-nov, porque los dos sondeos daban 0; su test la cazó en el borrador. (3) **La sesión**: dio en el mismo mensaje de la PARADA el comando de compilar que el consultor tenía que revisar antes; Aleks lo lanzó. Lección: un comando para «!» que espera una revisión va en un mensaje aparte, después de la respuesta. (4) La guardia negó lanzar a la sesión el lector y `compilar.py` cambiados en la rama, que lanzó Aleks: lo esperado (H5 del auditor). |
+
+## 7. El encargo, punto por punto
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | §0 Base, apertura, contrato (tramo R4), sin ADR nuevo | Hecho | «Base comprobada»; `fdc18717`; contrato con las tres rutas de la respuesta, punto 7 (`3ce320e6`) |
+| 2 | §0 La fila de HOLDOUT antes del primer `make check` de cada día | Hecho | filas del 2026-11-25 (2) y del 2026-11-26 (2) |
+| 3 | §0 «La herramienta X da Y», medido o citado; ADR-0082 D7 | Hecho | §0.2 (documentación de MQL5 citada; lo no citado, «por medir») |
+| 4 | §0 Insertar texto con Edit; guiones que escriben, en un clon | Hecho | los documentos, con Edit; el único guion que escribe en el repo es el lector, con `--salida`, y lo lanzó Aleks |
+| 5 | §0 Sin programar nada que escriba en `.claude/` con un `make check` en marcha | Hecho | ningún `ScheduleWakeup` en la rama |
+| 6 | §0 La guardia negó compilar y el lector: dicho, sin rodearla, lo lanzó Aleks con «!» | Hecho | §3.2, §4 y §4.1 |
+| 7 | §2 Qué NO cambia (motor, simulador, `llenado.yaml`, spec, casos, evidencia, feedback, corpus, `data/`, `mql5/`, `MedirDemoFTMO.mq5`, `demo_ftmo/`, ADR-0092 §4, cifras de los yaml, ningún ADR salvo D7) | Hecho | `git diff --stat main...HEAD` sobre esas rutas, vacío (lo comprueba el revisor); el contrato las protege |
+| 8 | 0.1 La fila con el recuento de EA-CONEXION | Hecho | fila 1 del 2026-11-25; el inicio de la M1 del log, en la fila 2 |
+| 9 | 0.2 Lo leído, con fichero:línea | Hecho | §0.2 |
+| 10 | 0.3 El auditor | Hecho | §0.3 e «Informe del auditor» |
+| 11 | §4 La PARADA con el diseño, el yaml en borrador, D5, D6 y el auditor | Hecho | §1, §2 y §5 (fase 0); `4661575d` |
+| 12 | D1 El exportador de solo lectura, con su contrato | Hecho de otra forma (respuesta, D1 y punto 1) | `ExportarTicksFTMO.mq5` y `test_exportar_ticks_ftmo.py` (§3.4); sin trading algorítmico; la profundidad por mes y `SeriesInfoInteger` |
+| 13 | D2 El lector, con el reloj a UTC sin cifras, la negativa, los puntos, el veredicto, el spread y la diferencia mediana | Hecho | §3.2 y §4.4; 22 tests |
+| 14 | D3 El criterio, antes de ver un tick, fijado por su sha256 | Hecho, con un cambio a la vista (PARADA 2) | `3ce320e6` y `802c159f`; ningún tick de FTMO visto |
+| 15 | D3 El control (d1) sobre Dukascopy (respuesta, punto 2) | Hecho | §4.1: los cuatro pasan |
+| 16 | D4 El manifiesto `f17/` y el runbook | Hecho | `data/manifests/README.md`, `test_manifiestos_f17.py`, `F17-HISTORIAL.md` |
+| 17 | D5 F17 por cuenta, sin tocar `CuentaDelTramo` ni `cableado.py`; rompe en `main` por la firma | Hecho | §3.3; el clon de `main` no importa |
+| 18 | D6 La compilación aparte, con sus tests; los dos compilan sin errores ni avisos; logs en los anexos | Hecho; lanzada antes de la revisión (desviación, PARADA 2, punto 2) | §3.5 y §4.1 |
+| 19 | D7 Los README y el recuadro de ADR-0090 §7, en su propio commit | Hecho (los README); el recuadro, en su commit | §3.5; el commit del recuadro |
+| 20 | D8 La CI de Linux por `fix/f17-historial` | Hecho | §8 |
+| 21 | §6 Las líneas del cierre con sus bytes | Hecho, con el margen corto (908 en el mejor caso) | §5 |
+| 22 | §7 El informe, el revisor con sus alcances, la frase final | Hecho | este informe; «Informe del revisor»; «Estado» |
+
+## 8. Lo que necesito que decidas en la orden de cierre
+
+0. **El heredado 10.** Opciones: (a) corregirlo (+31 bytes); (b) que salga por (b) REPETIDA (−67).
+   Recomiendo (b): la F nueva dice entero lo que queda de F17. Coste de (b): ninguno.
+1. **Los 92 bytes que faltan para el margen de 1.000.** Opciones: (a) la F más corta, sin «con
+   herramientas y sin correr:» (la F diría «F17 (ADR-0099 §5; el historial: F17-HISTORIAL.md)»), o
+   sin «el diagnóstico de la premisa y el contraste con el trader, hechos», que ya están en
+   HISTORIA; (b) aceptar el margen de 908. Recomiendo (a), con la segunda forma: lo hecho sale de la
+   Next Action (RITUAL.md, punto 3). Coste de (b): un margen por debajo del que pide el encargo.
+
 ## Informe del auditor (subagente `auditor-encargo`, 2026-11-25), tal cual
 
 Copiado tal cual, con sus títulos bajados dos niveles. No cita ninguna fecha de un mes reservado
@@ -1092,6 +1223,5 @@ Propongo que la PARADA lleve las tres primeras como preguntas al consultor antes
 
 ## Estado
 
-EN CURSO: PARADA 2 (qué minutos compara (d2), §4.2). La compilación de D6 y el control (d1) están
-hechos (§4.1). Faltan el recuadro de ADR-0090 §7, las líneas del cierre, el revisor y la CI de
-`fix/f17-historial`.
+EN CURSO: aplicada la respuesta a la PARADA 2 (§4.4). Faltan el recuadro de ADR-0090 §7, el
+revisor y la CI de `fix/f17-historial`.

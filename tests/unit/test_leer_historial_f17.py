@@ -232,10 +232,15 @@ def _m1_de(t: Any) -> dict[int, Any]:
     return dict(t.m1)
 
 
+def _horas(d: Any) -> frozenset[tuple[date, int]]:
+    """Todas las horas UTC de la ventana de `d`, como si Dukascopy las tuviera descargadas."""
+    return frozenset(L.hora_utc(m) for m in d.minutos())
+
+
 def test_un_mes_lleno_cubre() -> None:
     d = _dia()
     t = _lleno(d)
-    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, _lleno(d))
+    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, _lleno(d), _horas(d))
     assert p.cumple(CRITERIO) == {"a": True, "b": True, "c": True, "d1": True, "d2": True}
 
 
@@ -245,32 +250,67 @@ def test_cada_punto_rompe_por_separado() -> None:
     minutos = list(d.minutos())
     # (a) y (b): un hueco de 31 minutos (y con el, menos del 99 % de minutos con tick)
     t = _lleno(d, sin=set(minutos[10:41]))
-    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, _lleno(d))
+    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, _lleno(d), _horas(d))
     assert p.hueco_maximo == 31 and not p.cumple(CRITERIO)["b"] and not p.cumple(CRITERIO)["a"]
     # (b) solo: cuatro huecos de 6 minutos, el 95 % de los minutos con tick
     sin = {m for i in range(4) for m in minutos[100 * i : 100 * i + 6]}
     t = _lleno(d, sin=sin)
-    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, _lleno(d))
+    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, _lleno(d), _horas(d))
     assert p.huecos_largos == 4 and not p.cumple(CRITERIO)["b"]
     # (c): la M1 del servidor corrida 3 puntos en todos los minutos
     t = _lleno(d)
     corrida = {
         m: L.Ohlc(o.abierta + 3, o.maxima + 3, o.minima + 3, o.cierre + 3) for m, o in t.m1.items()
     }
-    assert not L.puntos_del_mes([d], t, corrida, UTC_PARED, CRITERIO, _lleno(d)).cumple(CRITERIO)[
-        "c"
-    ]
+    assert not L.puntos_del_mes([d], t, corrida, UTC_PARED, CRITERIO, _lleno(d), _horas(d)).cumple(
+        CRITERIO
+    )["c"]
     # (d1): el spread siempre igual (como unos ticks fabricados de la M1 con su spread)
     plano = L.TicksDelMes()
     for m in minutos:
         for k in range(4):
             plano.anadir(m * MS + k, 100_000, 100_002)
-    p = L.puntos_del_mes([d], plano, _m1_de(plano), UTC_PARED, CRITERIO, _lleno(d))
+    p = L.puntos_del_mes([d], plano, _m1_de(plano), UTC_PARED, CRITERIO, _lleno(d), _horas(d))
     assert p.cumple(CRITERIO) == {"a": True, "b": True, "c": True, "d1": False, "d2": True}
     # (d2): un tick por minuto frente a cuatro de Dukascopy
     t = _lleno(d, por_minuto=1)
-    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, _lleno(d, por_minuto=4))
+    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, _lleno(d, por_minuto=4), _horas(d))
     assert p.mediana_ticks_minuto == 1 and not p.cumple(CRITERIO)["d2"]
+
+
+def test_d2_compara_solo_las_horas_que_dukascopy_tiene_descargadas() -> None:
+    """PARADA 2, punto 0. Rompe a proposito (punto 1): unas horas con ticks densos en Dukascopy y
+    escasos en FTMO dan «no cubre»; y las horas que Dukascopy no tiene descargadas no entran, ni
+    como 0 ni comparadas."""
+    d = _dia()
+    minutos = list(d.minutos())
+    primeras = minutos[: 4 * 60]  # Dukascopy solo tiene descargadas las cuatro primeras horas
+    horas = frozenset(L.hora_utc(m) for m in primeras)
+    duk = L.TicksDelMes()
+    for m in primeras:
+        for k in range(8):  # densos: 8 por minuto
+            duk.anadir(m * MS + k, 100_000, 100_002 + k % 3)
+    # FTMO escaso (2 por minuto) en esas horas: no cubre
+    escaso = _lleno(d, por_minuto=2)
+    p = L.puntos_del_mes([d], escaso, _m1_de(escaso), UTC_PARED, CRITERIO, duk, horas)
+    assert (p.minutos_d2, p.mediana_ticks_minuto, p.mediana_ticks_minuto_dukascopy) == (240, 2, 8)
+    assert p.cumple(CRITERIO) == {"a": True, "b": True, "c": True, "d1": False, "d2": False}
+    # FTMO denso en esas horas y sin nada en las otras cuatro: (a) y (b) fallan, pero d2 cubre,
+    # porque las horas sin descarga de Dukascopy no cuentan como 0 ni se comparan
+    t = L.TicksDelMes()
+    for m in primeras:
+        for k in range(8):
+            t.anadir(m * MS + k, 100_000, 100_001 + k % 4)
+    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, duk, horas)
+    assert p.cumple(CRITERIO)["d2"] and not p.cumple(CRITERIO)["a"]
+    # sin ninguna hora descargada, d2 no se puede evaluar: no cubre
+    p = L.puntos_del_mes([d], t, _m1_de(t), UTC_PARED, CRITERIO, duk, frozenset())
+    assert p.minutos_d2 == 0 and not p.cumple(CRITERIO)["d2"]
+
+
+def test_las_horas_descargadas_salen_del_manifiesto() -> None:
+    horas = L.horas_descargadas(["2026-07-01", "2026-07-02"], [5, 6], ["2026-07-02T06Z"])
+    assert horas == frozenset({(date(2026, 7, 1), 5), (date(2026, 7, 1), 6), (date(2026, 7, 2), 5)})
 
 
 def test_la_diferencia_mediana_es_la_mediana_de_las_diferencias_por_dia_hora() -> None:

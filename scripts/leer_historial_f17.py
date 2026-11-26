@@ -35,6 +35,7 @@ import re
 import sys
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Set as AbstractSet
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
@@ -282,8 +283,9 @@ class Puntos:
     m1_cuadran: int
     horas_con_tick: int
     horas_spread_variable: int
-    mediana_ticks_minuto: int
+    mediana_ticks_minuto: int  # la de FTMO sobre los minutos de d2
     mediana_ticks_minuto_dukascopy: int | None
+    minutos_d2: int = 0  # los de las horas que Dukascopy tiene descargadas (PARADA 2, punto 0)
 
     def cumple(self, c: Criterio) -> dict[str, bool]:
         return {
@@ -292,7 +294,8 @@ class Puntos:
             "c": self.m1_con_tick > 0 and Fraction(self.m1_cuadran, self.m1_con_tick) >= c.c_minimo,
             "d1": self.horas_con_tick > 0
             and Fraction(self.horas_spread_variable, self.horas_con_tick) >= c.d1_minimo,
-            "d2": self.mediana_ticks_minuto_dukascopy is not None
+            "d2": self.minutos_d2 > 0
+            and self.mediana_ticks_minuto_dukascopy is not None
             and Fraction(self.mediana_ticks_minuto)
             >= c.d2_fraccion * self.mediana_ticks_minuto_dukascopy,
         }
@@ -311,6 +314,27 @@ def d1(
     return con, variables
 
 
+def hora_utc(minuto: int) -> tuple[date, int]:
+    """El dia y la hora UTC de un minuto UTC."""
+    t = datetime.fromtimestamp(minuto * MS_POR_MINUTO / 1000, tz=UTC)
+    return t.date(), t.hour
+
+
+def horas_descargadas(
+    dias: Iterable[str], horas_utc: Iterable[int], perdidas: Iterable[str]
+) -> frozenset[tuple[date, int]]:
+    """Las horas que un dataset de ticks de Dukascopy tiene descargadas, de su manifiesto:
+    `seleccion.dias` por `seleccion.horas_utc`, menos `horas.perdidas` (`AAAA-MM-DDTHHZ`)."""
+    fuera = {(date.fromisoformat(p[:10]), int(p[11:13])) for p in perdidas}
+    horas = list(horas_utc)
+    return frozenset(
+        (date.fromisoformat(d), h)
+        for d in dias
+        for h in horas
+        if (date.fromisoformat(d), h) not in fuera
+    )
+
+
 def puntos_del_mes(
     dias: Sequence[DiaVentana],
     ticks: TicksDelMes,
@@ -318,7 +342,11 @@ def puntos_del_mes(
     reloj_sesiones: Any,
     c: Criterio,
     dukascopy: TicksDelMes | None,
+    horas_dukascopy: AbstractSet[tuple[date, int]] = frozenset(),
 ) -> Puntos:
+    """Los puntos (a) a (d2) del mes. (a), (b), (c) y (d1), sobre todos los minutos de la ventana de
+    `dias`; (d2), solo sobre los de las horas que Dukascopy tiene descargadas (`horas_dukascopy`,
+    respuesta a la PARADA 2, punto 0), donde un minuto sin ticks cuenta 0 en cada fuente."""
     minutos = [m for d in dias for m in d.minutos()]
     con_tick = [m for m in minutos if ticks.por_minuto.get(m, 0)]
     largos = [h for h in huecos(dias, ticks) if h > c.b_umbral]
@@ -338,9 +366,10 @@ def puntos_del_mes(
         ):
             cuadran += 1
     horas, variables = d1(dias, ticks, reloj_sesiones, c)
+    de_d2 = [m for m in minutos if hora_utc(m) in horas_dukascopy]
     duk = None
-    if dukascopy is not None and minutos:
-        duk = mediana(dukascopy.por_minuto.get(m, 0) for m in minutos)
+    if dukascopy is not None and de_d2:
+        duk = mediana(dukascopy.por_minuto.get(m, 0) for m in de_d2)
     return Puntos(
         minutos=len(minutos),
         con_tick=len(con_tick),
@@ -350,8 +379,9 @@ def puntos_del_mes(
         m1_cuadran=cuadran,
         horas_con_tick=horas,
         horas_spread_variable=variables,
-        mediana_ticks_minuto=mediana(ticks.por_minuto.get(m, 0) for m in minutos) if minutos else 0,
+        mediana_ticks_minuto=mediana(ticks.por_minuto.get(m, 0) for m in de_d2) if de_d2 else 0,
         mediana_ticks_minuto_dukascopy=duk,
+        minutos_d2=len(de_d2),
     )
 
 
@@ -542,7 +572,8 @@ def lineas_del_mes(mes: str, dias: int, p: Puntos, c: Criterio) -> list[str]:
         f"  (c) M1 que cuadran {_fr(p.m1_cuadran, p.m1_con_tick)}: {'si' if cumple['c'] else 'no'}",
         f"  (d1) horas con spread variable {_fr(p.horas_spread_variable, p.horas_con_tick)}: "
         f"{'si' if cumple['d1'] else 'no'}",
-        f"  (d2) mediana de ticks por minuto {p.mediana_ticks_minuto}, Dukascopy "
+        f"  (d2) sobre {p.minutos_d2} minutos de horas que Dukascopy tiene descargadas: mediana "
+        f"de ticks por minuto {p.mediana_ticks_minuto}, Dukascopy "
         f"{p.mediana_ticks_minuto_dukascopy}: {'si' if cumple['d2'] else 'no'}",
     ]
 
@@ -594,18 +625,24 @@ def main(argv: Sequence[str] | None = None, raiz: Path = RAIZ) -> int:
     return 0
 
 
-def _dukascopy_del_mes(raiz: Path, mes: str, dias: Sequence[DiaVentana]) -> TicksDelMes:
+def _dukascopy_del_mes(
+    raiz: Path, mes: str, dias: Sequence[DiaVentana]
+) -> tuple[TicksDelMes, frozenset[tuple[date, int]]]:
+    """Los ticks de Dukascopy de la ventana de `dias` y las horas que su dataset tiene
+    descargadas."""
     from botsito.config.ajustes import carpeta_datos
     from botsito.data.ticks import buscar_manifiesto_ticks, cargar_manifiesto_ticks, cargar_ticks
 
     ticks = TicksDelMes()
     manifiesto = cargar_manifiesto_ticks(buscar_manifiesto_ticks(raiz, f"eurusd-ticks-{mes}"))
     datos = carpeta_datos(raiz)
+    horas: frozenset[tuple[date, int]] = frozenset()
     for d in dias:
         serie = cargar_ticks(manifiesto, datos, d.desde * MS_POR_MINUTO, d.hasta * MS_POR_MINUTO)
+        horas = horas_descargadas(serie.dias_seleccion, serie.horas_seleccion, serie.horas_perdidas)
         for t in serie.ticks:
             ticks.anadir(int(t.instante), int(t.bid), int(t.ask))
-    return ticks
+    return ticks, horas
 
 
 def control_dukascopy(
@@ -622,7 +659,7 @@ def control_dukascopy(
     salida = [f"CONTROL (d1) sobre Dukascopy, meses {', '.join(construccion)}"]
     for mes in construccion:
         dias = dias_del_mes(mes, sesiones, inicio, fin, cierres, cubre)
-        ticks = _dukascopy_del_mes(raiz, mes, dias)
+        ticks, _ = _dukascopy_del_mes(raiz, mes, dias)
         horas, variables = d1(dias, ticks, sesiones, c)
         pasa = horas > 0 and Fraction(variables, horas) >= c.d1_minimo
         salida.append(
@@ -667,8 +704,8 @@ def leer_historial(
             leer_ticks(p, reloj, digitos, ftmo)
         for p in sorted(carpeta.glob(f"F17_{mes}-*_m1.csv")):
             m1.update(leer_m1(p, reloj, digitos))
-        duk = _dukascopy_del_mes(raiz, mes, dias)
-        p_mes = puntos_del_mes(dias, ftmo, m1, sesiones, c, duk)
+        duk, horas_duk = _dukascopy_del_mes(raiz, mes, dias)
+        p_mes = puntos_del_mes(dias, ftmo, m1, sesiones, c, duk, horas_duk)
         salida += lineas_del_mes(mes, len(dias), p_mes, c)
         if all(p_mes.cumple(c).values()):
             diferencia, global_ = diferencias_de_spread(dias, ftmo, duk, sesiones)
