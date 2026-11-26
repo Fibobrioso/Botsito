@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/f17-historial
 
 ## Current Feature
-Ninguna abierta: trabajo/contraste-trader cerrada en main (stable/F39o-contraste-trader). Lo siguiente, en la Next Action (F).
+trabajo/f17-historial EN CURSO (R4.7, F): el historial de ticks de F17 (ADR-0099 §5) y el ajuste por cuenta. Encargo docs/encargos/trabajo-f17-historial.md; informe docs/validation/F17-HISTORIAL.md.
 
 ## Stable Main State
 96b250fd · merge de `trabajo/contraste-trader` (tag `stable/F39o-contraste-trader`), sobre `stable/F39n-diagnostico-premisa` (42fdb0b5). Informe docs/validation/CONTRASTE-TRADER.md; el registro del cierre, al final de HISTORIA.
@@ -171,8 +171,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 83 (2026-11-25).
+— ninguna desde el Archivo 84 (2026-11-25).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 83 (2026-11-25).
+— ninguna desde el Archivo 84 (2026-11-25).
