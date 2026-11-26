@@ -436,7 +436,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### R4.7 · La salida C de ADR-0098: los costes y la premisa, antes de seguir
 - **Refs:** NA:F · ID:ADR-0098 · ID:ADR-0099 · ID:ADR-0100 · ID:A-16 · F:F17
-- **Qué es:** lo que ADR-0098 §3 C pide antes de seguir, porque el techo del trader no gana con nuestros costes (RECORRIDA-CONSTRUCCION-3.md §4): F17 en una prueba gratuita nueva de FTMO (deslizamiento y spread reales; A.5); revisar el sesgo del material sin vídeo (S-14) y la otra serie de precios (A-16); y que Aleks contraste la premisa con el trader, con sus resultados reales, sin enseñarle ninguna cifra de la medida. La auditoría profunda (solo lectura, sin rama; AUDITORIA-PROFUNDA-2026-11.md, que partió de AUDITORIA-2026-11-21.md) se centró en la premisa: de dónde sale la diferencia entre el techo y lo que el trader dice ganar. ADR-0099 decide medir primero tres cosas: el puente del techo pieza a pieza (R4.8, HECHA), F17 rediseñado (ADR-0099 §5; A.5) y el contraste de la premisa con el trader (ADR-0099 §6). ADR-0100: la premisa se mide con el backtest del trader con costes y dos diagnósticos, con la lectura escrita antes (R4.9, HECHA; R4.10). Hasta el ADR no se graba ninguna sesión de fidelidad.
+- **Qué es:** lo que ADR-0098 §3 C pide antes de seguir, porque el techo del trader no gana con nuestros costes (RECORRIDA-CONSTRUCCION-3.md §4): F17 en una prueba gratuita nueva de FTMO (deslizamiento y spread reales; A.5); revisar el sesgo del material sin vídeo (S-14) y la otra serie de precios (A-16); y que Aleks contraste la premisa con el trader, con sus resultados reales, sin enseñarle ninguna cifra de la medida. La auditoría profunda (solo lectura, sin rama; AUDITORIA-PROFUNDA-2026-11.md, que partió de AUDITORIA-2026-11-21.md) se centró en la premisa: de dónde sale la diferencia entre el techo y lo que el trader dice ganar. ADR-0099 decide medir primero tres cosas: el puente del techo pieza a pieza (R4.8, HECHA), F17 rediseñado (ADR-0099 §5; A.5) y el contraste de la premisa con el trader (ADR-0099 §6) (hecho, CONTRASTE-TRADER.md: lo dicho y lo pedido entran sin `fb-`; lo que se le enseñó, sin determinar). ADR-0100: la premisa se mide con el backtest del trader con costes y dos diagnósticos, con la lectura escrita antes (R4.9, HECHA; R4.10). Hasta el ADR no se graba ninguna sesión de fidelidad.
 - **Depende de:** una prueba gratuita de FTMO viva para F17 (A.5).
 - **Quién:** Aleks (la prueba, el contraste con el trader y el ADR); el consultor (la auditoría y la propuesta del ADR); la sesión (F17, con el encargo del consultor).
 - **Hecho cuando:** el ADR de Aleks que acota ADR-0099 §7 decide, con lo que salga, si se sigue y cómo (ADR-0098 §3 C).
@@ -891,6 +891,13 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Depende de:** nada. Va antes de volver a mover el corpus al disco D, porque Aleks necesita espacio en C.
 - **Quién:** el código, hecho (F39i); falta el traslado de Aleks.
 - **Hecho cuando:** un test que la rompe a propósito con las dos rutas (la del repo a través del enlace y la resuelta) y la carpeta en sí; y Aleks repite el traslado con la guardia simulada denegando las cuatro.
+
+### G.9 · Lo que esta rama no pudo hacer con las herramientas de main
+- **Refs:** —
+- **Qué es:** cuatro cosas de trabajo/contraste-trader (CONTRASTE-TRADER.md §0.2, §0.4 y §6.8). La guardia negó tres medidas legítimas: `ffprobe` sobre un `.ogg` (solo admite contenedores de vídeo), un guion de recuento ciego de la carpeta de trabajo sobre unas transcripciones de fuera del repo, y el `mv` que renombra una captura de «Mensajes del trader» sin abrirla (lo hizo Aleks). En `main` no hay nada que transcriba un audio suelto (`transcribir_sesion.py` exige el vídeo de una sesión): la transcripción de los audios del 2026-11-23 queda fuera del repo, nombrada por su sha256. Y el paso 4 de `knowledge/feedback/README.md` dice «Si trae una respuesta, registro de feedback», cuando debería decir «si trae una respuesta a un objetivo del esquema».
+- **Depende de:** nada; no adelanta el camino crítico.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** las tres formas admitidas por la guardia con su test que las rompe a propósito (o descartadas por escrito), un camino de `main` que transcribe un audio suelto con cuarentena, y el README precisado.
 
 ## Carril: material reservado que no se toca
 

@@ -21451,3 +21451,46 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 82 (2026-11-24).
+
+# Registro de cierre · `trabajo/contraste-trader` (2026-11-25)
+
+- Orden de cierre del consultor del 2026-11-25 (21:00, hora de Lima), tras revisar la rama
+  entregada (`ff6ef2af`), pegada por Aleks en la conversación de la sesión; antes, la sesión comprobó
+  el paso 0 de la orden (5 commits sellados; la fila 2 de HOLDOUT del 2026-11-25 ya recoge el punto 9
+  de la respuesta a la PARADA, así que no hizo falta otro commit). Después, Aleks lanzó
+  `/cerrar-rama trabajo/contraste-trader`. Con el `chore(cierre)`, 6 commits.
+- Tag: `stable/F39o-contraste-trader`. El merge es
+  `git rev-parse "stable/F39o-contraste-trader^{commit}"` (su sha queda en `Last Stable Commit`).
+- **Lo hecho** (tramo R4, R4.7; CONTRASTE-TRADER.md): el contraste con el trader de ADR-0099 §6 y
+  la petición escrita de los meses del backtest con costes (ADR-0100 §2) entran al corpus y al
+  repo. Once ficheros nuevos en «Mensajes del trader» (fuera de git) y en `manifest.yaml`: cuatro
+  capturas, renombradas por Aleks porque la guardia negó el `mv` a la sesión, con los sha256 de A1, y
+  siete notas de voz del trader del 2026-11-23; el duplicado y la nota de voz del 2026-11-24 (una
+  risa, según Aleks) no entran. El ensayo del inventario en un clon y el inventario en la rama dan el
+  mismo diff (11 entradas y el `resumen`), y `corpus check --hashes` sale en verde. El párrafo de
+  «Mensajes del trader» de `fuentes.yaml`, ampliado con las cautelas de D3. Ningún `fb-` (D1, con el
+  apartamiento del paso 4 de `knowledge/feedback/README.md` declarado) y ningún literal de audio:
+  la respuesta 3 de Aleks llegó vacía. Lo que se le enseñó al trader, SIN DETERMINAR: posible
+  desviación de ADR-0098 §3 C, para el ADR de ADR-0099 §7. Dos filas de HOLDOUT del 2026-11-25, con
+  la declaración tardía del 2026-11-23 (desviación de ADR-0021 §4). El recuadro de ADR-0100 §1.
+- **Las dos decisiones del consultor sobre §12 del informe (orden de cierre, punto 1):**
+  0. (a): se acepta como desviación declarada que los cinco guiones de inserción se ejecutaran sin
+     clon; la lección, a ERRORES-RECURRENTES.
+  1. (a): la cifra del techo se queda en la copia del encargo, que es literal.
+- **Next Action:** la F cambia solo en «F17 (ADR-0099 §5) y el backtest del trader con costes
+  (ADR-0100, R4.10), pendientes; el diagnóstico de la premisa y el contraste con el trader, hechos.»
+  Ninguna letra sale ni entra, y Technical Debt no cambia.
+- **Hoja de ruta:** R4.7 apunta el contraste en su «Qué es» (sigue ABIERTA); entra G.9 en «Carril:
+  guardias y deuda» (las tres guardias que negaron medidas legítimas, la transcripción de audios
+  sueltos que falta en `main` y la precisión del README de feedback).
+- **Commits de la rama** (6):
+  - `459b4514` la apertura (encargo, contrato y Archivo 83 de PROJECT_STATE);
+  - `b2fd52cb` la fase 0 y su PARADA;
+  - `abf23d00` la respuesta del consultor aplicada: el corpus, `manifest.yaml`, `fuentes.yaml` y la
+    segunda fila de HOLDOUT del día;
+  - `e81e13e6` el recuadro de corrección en ADR-0100 §1 (D6);
+  - `ff6ef2af` el revisor y la entrega;
+  - y este, `chore(cierre)`: sale el contrato; entran este registro, la fila de ERRORES-RECURRENTES,
+    la F y la hoja de ruta.
+- **CI:** ninguna antes del merge: la rama no toca la plataforma (solo documentos y el registro del
+  corpus) y no se empujó como `fix/`. La que cuenta es la de `main` sobre el commit de estado.
