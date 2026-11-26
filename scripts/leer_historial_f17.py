@@ -503,6 +503,28 @@ def leer_m1(
     return salida
 
 
+def leer_mes_ftmo(
+    carpeta: Path, mes: str, reloj: RelojServidor, digitos: int
+) -> tuple[TicksDelMes, dict[int, Ohlc], Counter[str]]:
+    """Los ticks y la M1 de FTMO de `mes` en `carpeta`, con lo que cae fuera de ese mes UTC
+    descartado sin leer y contado (respuesta a la PARADA 3, punto 0)."""
+    ftmo = TicksDelMes()
+    m1: dict[int, Ohlc] = {}
+    descartes: Counter[str] = Counter()
+    for p in sorted(carpeta.glob(f"F17_{mes}-*_ticks.csv")):
+        leer_ticks(p, reloj, digitos, ftmo, mes, descartes)
+    for p in sorted(carpeta.glob(f"F17_{mes}-*_m1.csv")):
+        m1.update(leer_m1(p, reloj, digitos, mes, descartes))
+    return ftmo, m1, descartes
+
+
+def linea_descartes(descartes: Counter[str]) -> str:
+    """La linea de la salida con las filas descartadas, por su mes y en numero de filas."""
+    return "  DESCARTADAS sin usar (fuera del mes UTC pedido; para HOLDOUT, por recuento): " + (
+        ", ".join(f"{n} filas de {k}" for k, n in sorted(descartes.items())) or "ninguna"
+    )
+
+
 def control_cuadra(control: Mapping[str, str], reloj: RelojServidor) -> tuple[int, int]:
     """(desfase servidor - GMT del CSV, el que da el registro en ese instante), en minutos. El
     instante es `time_gmt_s` del control, en segundos UTC; el desfase del CSV, su fila."""
@@ -749,20 +771,11 @@ def leer_historial(
     meses = sorted({m for p in carpeta.iterdir() if (m := mes_de_fichero(p.name)) is not None})
     for mes in meses:
         dias = dias_del_mes(mes, sesiones, inicio, fin, cierres, cubre)
-        ftmo = TicksDelMes()
-        m1: dict[int, Ohlc] = {}
-        descartes: Counter[str] = Counter()
-        for p in sorted(carpeta.glob(f"F17_{mes}-*_ticks.csv")):
-            leer_ticks(p, reloj, digitos, ftmo, mes, descartes)
-        for p in sorted(carpeta.glob(f"F17_{mes}-*_m1.csv")):
-            m1.update(leer_m1(p, reloj, digitos, mes, descartes))
+        ftmo, m1, descartes = leer_mes_ftmo(carpeta, mes, reloj, digitos)
         duk, horas_duk = _dukascopy_del_mes(raiz, mes, dias)
         p_mes = puntos_del_mes(dias, ftmo, m1, sesiones, c, duk, horas_duk)
         salida += lineas_del_mes(mes, len(dias), p_mes, c)
-        salida.append(
-            "  DESCARTADAS sin usar (fuera del mes UTC pedido; para HOLDOUT, por recuento): "
-            + (", ".join(f"{n} filas de {k}" for k, n in sorted(descartes.items())) or "ninguna")
-        )
+        salida.append(linea_descartes(descartes))
         if all(p_mes.cumple(c).values()):
             diferencia, global_ = diferencias_de_spread(dias, ftmo, duk, sesiones)
             salida.append(

@@ -11,6 +11,7 @@ import sys
 from collections import Counter
 from collections.abc import Set as AbstractSet
 from datetime import UTC, date, datetime
+from decimal import InvalidOperation
 from fractions import Fraction
 from pathlib import Path
 from types import ModuleType
@@ -193,8 +194,17 @@ def test_las_filas_de_otro_mes_utc_se_descartan_sin_leer_su_precio(tmp_path: Pat
     assert list(velas) == [_ms("2027-04-01T10:00") // MS]
     assert descartes == Counter({"ticks del 2027-03": 1, "M1 del 2027-03": 1})
     # sin `mes`, el lector leeria el precio ilegible y fallaria: el descarte va antes de leerlo
-    with pytest.raises(Exception):  # noqa: B017
+    with pytest.raises(InvalidOperation):
         L.leer_ticks(ticks, r, 5, L.TicksDelMes())
+    # y el recorrido de la carpeta (el que usa leer_historial) pasa el mes y lo dice en su linea
+    ftmo, velas_mes, desc_mes = L.leer_mes_ftmo(tmp_path, "2027-04", r, 5)
+    assert list(ftmo.por_minuto) == [_ms("2027-04-01T10:00") // MS]
+    assert list(velas_mes) == [_ms("2027-04-01T10:00") // MS]
+    assert desc_mes == descartes
+    assert L.linea_descartes(desc_mes).endswith(
+        "1 filas de M1 del 2027-03, 1 filas de ticks del 2027-03"
+    )
+    assert L.linea_descartes(Counter()).endswith(": ninguna")
 
 
 def test_los_dias_sin_ticks_o_con_error_se_dicen() -> None:
