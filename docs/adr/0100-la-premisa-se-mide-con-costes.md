@@ -36,6 +36,8 @@ cada operación pesa lo mismo en R, y la comisión, fija por lote, se come las d
 un lote fijo cada operación pesa por sus pips. Son dos medidas distintas de la misma estrategia, y la
 segunda no se ha hecho nunca.
 
+> **RECUADRO de corrección (2026-11-25, `trabajo/contraste-trader`; el cuerpo no se toca).** La frase de este §1 «su respuesta entra con su `fb-` por su propia rama, ADR-0099 §6» no se cumple así: esa respuesta no tiene objetivo de `fb-` en el esquema (la premisa y el coste de FX Replay no son ninguno de los objetivos de `feedback/modelo.py`, y nada se cierra), y entra, sin registro de feedback, por `docs/validation/CONTRASTE-TRADER.md` (§6.3, el literal de la respuesta; §6.8, por qué no lleva `fb-`), con su captura en el corpus.
+
 Se miden tres cosas, con la lectura de cada una escrita aquí:
 
 1. **El backtest del trader con costes** (§2 a §4): su estrategia, decidida por él y en su
