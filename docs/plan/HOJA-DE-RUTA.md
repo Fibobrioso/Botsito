@@ -519,7 +519,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** F26 y F27 tienen informe con su cifra contra el umbral pre-registrado.
 
 ### R5.6 · La rentabilidad, la puerta para operar en vivo
-- **Refs:** NA:G · NA:N · HER:7 · HER:9 · HER:10 · ID:ADR-0092 · F:F27
+- **Refs:** NA:G · NA:N · HER:7 · HER:9 · F:F17 · ID:ADR-0092 · F:F27
 - **Qué es:** la medida de rentabilidad de ADR-0092 §3, UNA vez, sobre junio a noviembre de
   2025 (y su extensión, de uno en uno y solo si N no llega), en la fase fondeada y con la cuenta
   arrastrada, por su propia rama con su ADR y su comando (ADR-0070 punto 6: hoy no existe).
@@ -646,7 +646,9 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Qué es:** el EA de R6a.1 escribe en el journal de la demo la hora de apertura de las velas H4
   (`iTime`), para medir `anclaje_h4` contra la rejilla real del servidor (ADR-0027 §4; ADR-0090 §2).
   Su journal en la demo es v2: la sesión comprueba que su `capa_hash` es el del repo en el tag
-  vigente (procedimiento en `docs/runbooks/DEMO-FTMO.md`).
+  vigente (procedimiento en `docs/runbooks/DEMO-FTMO.md`). Las aperturas H4 del servidor (V02 de la
+  auditoría «cazador») se pueden derivar de la M1 del servidor que exporta F17 (el historial,
+  F17-HISTORIAL.md).
 - **Depende de:** R6a.1 y R6a.2.
 - **Quién:** la sesión, con el encargo del consultor; Aleks pone el EA en la demo.
 - **Hecho cuando:** el journal trae las aperturas H4 de una semana con un cambio de día y caen a las
@@ -713,7 +715,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Refs:** ID:A-28 · ID:ADR-0090 · F:F17
 - **Qué es:** las ejecuciones 2 y 3 de MedirDemoFTMO (A-28, el nivel exacto de ADR-0057, los
   deslizamientos y los swaps); el BE de una venta que salta por el ASK; y, del heredado 10, lo
-  que queda: A-28 y el grabador de spread y ticks (F17, PARCIAL).
+  que queda: A-28 y F17 (PARCIAL; desde ADR-0099 §5, el historial, el grabador y la medida de las órdenes stop).
   La ejecución 2 está hecha (2026-10-29, script 1.1): desfase del servidor 180 minutos; comisión
   2,50 por lado con 1,00 lote; margen 3720,77 con el ask de la apertura, que cuadra con
   FTMO-P-D1 §3. El script 1.2 (trabajo/margen-pendiente) mide en la 3 el instante en que MT5
@@ -724,7 +726,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Hecho cuando:** los dos CSV están congelados y A-28 decidida.
 - **Estado:** HECHA (`trabajo/demo-ejecuciones-2-3`, ADR-0090; DEMO-EJECUCIONES-2-3.md): los tres
   CSV congelados, A-28 DECIDIDA, la comisión a 2,50 por lado y ADR-0081 §4 enmendado. Lo que queda
-  (el panel, el BE por el ASK y el grabador) pasa a A.5.
+  (el panel, el BE por el ASK y F17) pasa a A.5.
 
 ### A.2 · Las preguntas a FTMO
 - **Refs:** HER:27 · ID:A-54 · ID:A-55 · ID:ADR-0068 · ID:ADR-0071
@@ -772,14 +774,14 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 ## Carril: guardias y deuda
 
 ### A.5 · Lo que queda de la demo de FTMO
-- **Refs:** NA:A · NA:M · HER:10 · F:F17 · ID:ADR-0099
+- **Refs:** NA:A · NA:M · F:F17 · ID:ADR-0099
 - **Qué es:** el panel del límite diario, HECHO el 2026-11-07 (medianoche de España; NA:A queda con
   lo opcional de las noticias); el BE de una venta que salta por el ASK (NA:M,
   ADR-0065 §6); y F17 rediseñado (heredado 10; ADR-0099 §5): el historial de ticks del servidor
-  de la demo, el grabador de ticks y spread y la medida de las órdenes stop. La salida C de ADR-0098 lo pide antes de seguir (R4.7).
+  de la demo, el grabador de ticks y spread y la medida de las órdenes stop. El historial: herramientas hechas y sin correr (trabajo/f17-historial, F17-HISTORIAL.md); la corrida, en una prueba gratuita, en su rama. La salida C de ADR-0098 lo pide antes de seguir (R4.7).
 - **Depende de:** una prueba gratuita de FTMO viva. Se puede repetir cuantas veces haga falta, con una sola activa a la vez (ftmo.com/es/ftmo-free-trial, leído por el consultor el 2026-11-09).
 - **Quién:** Aleks mira el panel; la sesión, con el encargo del consultor, lo demás.
-- **Hecho cuando:** el panel declarado (HECHO el 2026-11-07) y el grabador hecho; M, sin objeto mientras break_even_condicion sea cierre (NA:M).
+- **Hecho cuando:** el panel declarado (HECHO el 2026-11-07) y las tres partes de F17 de ADR-0099 §5 hechas (el historial, corrido y leído; el grabador, para lo que no cubra; y la medida de las órdenes stop); M, sin objeto mientras break_even_condicion sea cierre (NA:M).
 
 ### G.1 · La guardia de Claude Code
 - **Refs:** NA:D
@@ -920,7 +922,7 @@ sus ambigüedades, sin revisar cada informe a fondo.
 | F:F18, F:F19, F:F20, F:F21 | HECHA, con ambigüedades abiertas | `MOTOR-SESGO-H4.md`, `LIQUIDEZ-M15.md`, `BREAKER-M1.md`, `BE-AL-TICK.md` |
 | F:F14 | PARCIAL: casos y particiones, sin cierre formal | `CASOS-AGOSTO-ABRIL.md`, `GUARDA-DE-HOLDOUT.md` |
 | F:F16 | PARCIAL: ticks congelados en CSV, no Parquet | `TICKS-LLENADO.md` |
-| F:F17 | PARCIAL: el script de medición (tres ejecuciones, ADR-0071 y ADR-0090), no el grabador | `DEMO-EJECUCION-1.md`, `DEMO-EJECUCIONES-2-3.md` |
+| F:F17 | PARCIAL: el script de medición (tres ejecuciones, ADR-0071 y ADR-0090) y las herramientas del historial, sin correr; no el grabador ni la medida de las órdenes stop | `DEMO-EJECUCION-1.md`, `DEMO-EJECUCIONES-2-3.md`, `F17-HISTORIAL.md` |
 | F:F22 | PARCIAL: el motor es un intérprete de la spec | `ARNES-MOTOR.md` |
 | F:F23 | PARCIAL: bucle y reloj, sin journal | `ARNES-MOTOR.md` |
 | F:F24 | PARCIAL: broker, llenado y cuenta, sin contador de N | `CABLEADO-SIMULADOR.md` |

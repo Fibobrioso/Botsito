@@ -21675,3 +21675,104 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 83 (2026-11-25).
+
+# Pendiente heredado SALE · sale de PROJECT_STATE.md en trabajo/f17-historial (2026-11-26)
+
+Condicion (b) REPETIDA de `docs/state/README.md`: lo que queda de F17 vive entero en la F de la Next
+Action («F17 (ADR-0099 §5; el historial: F17-HISTORIAL.md) y el backtest del trader con costes
+(ADR-0100, R4.10), pendientes.»). Por orden de cierre del consultor del 2026-11-26 (punto 1;
+docs/validation/F17-HISTORIAL.md §11.1, decision 0, y §12). Su texto literal en «Pendientes heredados
+(sin verificar)»:
+
+- 10. De la demo de FTMO queda el grabador de spread y ticks, F17.
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/f17-historial (2026-11-26)
+
+La pagan `cuentas_con_deslizamiento` y la firma nueva de `veredicto_con_f17`, por cuenta
+(`src/botsito/cases/criterio_fidelidad.py`, commit `81c89ea0`), con sus tests en
+`tests/unit/test_metodo_adr0092.py`, que rompen en `main` (docs/validation/F17-HISTORIAL.md §3.3).
+Condicion (a). Por orden de cierre del consultor del 2026-11-26 (punto 1; F17-HISTORIAL.md §12). Su
+texto literal en «Technical Debt»:
+
+- `curva_con_deslizamiento` y `veredicto_con_f17` (criterio_fidelidad.py) toman una sola curva y arrastran `previo` entre cuentas: cuando F17 los use, por cuenta (CUENTA-POR-MES.md, fase 0 e) 8).
+
+# Technical Debt ACORTADA · sale de PROJECT_STATE.md en trabajo/f17-historial (2026-11-26)
+
+Condicion (e) de `docs/state/README.md` («Que sale de PROJECT_STATE, y con que criterio»; orden de
+cierre del consultor del 2026-11-26, punto 1; docs/validation/F17-HISTORIAL.md §5 y §12). Cada linea,
+entera y literal como estaba en «Technical Debt», y lo que queda de ella en PROJECT_STATE:
+
+- RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py); nada produce ese `por`, y la acción `reentrar` no está escrita (PUNTO-USADO.md §1.h). Dueño: va con la reentrada de ADR-0083 D1 (R4.6).
+  Queda en PROJECT_STATE: - RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py) … (PUNTO-USADO.md §1.h; entera en HISTORIA, Technical Debt ACORTADA)
+
+- El visor no conecta `--diagnostico-cuenta-diaria` (cli.py: la valida `_diagnostico_de`, :2250-2261; el arnés la aplica, :2438; `motor_visor`, :2479, no): la pone en el nombre y en el HTML y corre una cuenta por mes (ADR-0092 §8; VISOR-CONSTRUCCION.md §4.3; auditoría del 2026-11-21, C1). Dueño: rama corta del visor (conectarla o negarla).
+  Queda en PROJECT_STATE: - El visor no conecta `--diagnostico-cuenta-diaria` (cli.py: la valida `_diagnostico_de`, :2250-2261; el arnés la aplica, :2438; `motor_visor`, :2479, no) … (VISOR-CONSTRUCCION.md §4.3; entera en HISTORIA, Technical Debt ACORTADA)
+
+- Sin guardia contra fechas de días ocultos en lo que añade una rama. En main hay 32 ids exactos de casos ocultos fuera de knowledge/cases, uno de ellos de F39a-F39g en tests/unit. Primero, una rama que los sustituya en tests sin abrirlos (los informes cerrados, por recuadro o declarados); después, la variante estrecha V2 (GUARDIAS-HOLDOUT.md §4.3 y §9).
+  Queda en PROJECT_STATE: - Sin guardia contra fechas de días ocultos en lo que añade una rama. … (GUARDIAS-HOLDOUT.md §4.3 y §9; entera en HISTORIA, Technical Debt ACORTADA)
+
+# Registro de cierre · `trabajo/f17-historial` (2026-11-26)
+
+- Orden de cierre del consultor del 2026-11-26 (10:00, hora de Lima), dada por Aleks tras la revisión
+  del consultor de la rama entregada (`eeded79d`), pegada en la conversación de la sesión; la sesión
+  comprobó antes el paso 0 (11 commits sellados, de `fdc18717` a `eeded79d`; la fila de HOLDOUT del
+  2026-11-26 ya estaba, así que no hizo falta otro commit). Después, Aleks lanzó
+  `/cerrar-rama trabajo/f17-historial`. Con el `chore(cierre)`, 12 commits.
+- Tag: `stable/F39p-f17-historial`. El merge es
+  `git rev-parse "stable/F39p-f17-historial^{commit}"` (su sha queda en `Last Stable Commit`).
+- **Lo hecho** (tramo R4, R4.7; F17-HISTORIAL.md): la primera parte de F17 de ADR-0099 §5, el
+  historial de ticks que el servidor de la demo de FTMO ya guarda, con las herramientas hechas,
+  probadas y compiladas, y SIN CORRER (ningún dato de FTMO visto):
+  - **D3, el criterio**, `docs/plan/F17-HISTORIAL.yaml`, pre-registrado antes de ningún tick
+    (`3ce320e6`) y cambiado una vez a la vista (`802c159f`, PARADA 2: (d2) solo sobre las horas que
+    Dukascopy tiene descargadas), fijado por su sha256 `46af1341…` en
+    `tests/unit/test_f17_historial_criterio.py`. El control (d1) sobre los ticks de Dukascopy de
+    construcción PASA en los cuatro meses (`anexos/F17-HISTORIAL/control-d1.txt`).
+  - **D1, el exportador** `tools/mql5/ExportarTicksFTMO.mq5` 1.01, de solo lectura: se niega fuera de
+    DEMO, fuera de EURUSD y con un día que no sea de construcción (el rango por días enteros desde la
+    1.01, revisor b1); su contrato en `tests/contract/test_exportar_ticks_ftmo.py`. Compilado por Aleks
+    con «!» tras la revisión del consultor, 0 errores y 0 avisos (los logs, en los anexos).
+  - **D2, el lector** `scripts/leer_historial_f17.py`: del reloj del servidor a UTC sin cifras, el
+    control contra el registro, los puntos (a) a (d2) y el veredicto; las filas de otro mes UTC (el
+    día del servidor empieza antes que el UTC), descartadas sin leer y contadas (PARADA 3, punto 0).
+  - **D4** el esquema `f17/` en `data/manifests/README.md` y el runbook `docs/runbooks/F17-HISTORIAL.md`;
+    **D5** `cuentas_con_deslizamiento` y `veredicto_con_f17` por cuenta; **D6** el camino
+    `herramienta` de `compilar.py`; **D7** los README y el recuadro de ADR-0090 §7 (`531e4318`).
+- **Las decisiones del consultor del cierre** (F17-HISTORIAL.md §11.1 y §12, aplicado a la letra):
+  el heredado 10 sale por (b); la F corta; sale de Technical Debt la línea de
+  `curva_con_deslizamiento` por (a); tres líneas, (e) ACORTADA (arriba). PROJECT_STATE, 24.257 bytes
+  con este commit (el margen de 833 de §12 está medido sobre el de `main`, y vuelve con el commit de
+  estado). No llega a 1.000 de margen, y la orden lo da por bueno porque a2 exige conservar las citas.
+- **Next Action:** solo la F, «F17 (ADR-0099 §5; el historial: F17-HISTORIAL.md) y el backtest del
+  trader con costes (ADR-0100, R4.10), pendientes.». Ninguna letra sale ni entra.
+- **Hoja de ruta:** A.1 (:716 y :727), el «Qué es» y el «Hecho cuando» de A.5, el «Qué es» de R6a.8
+  y la fila F:F17 del Marcador, como en §12. Ninguna entrada pasa a HECHA. La fila de F17 de
+  MASTER_PLAN no se toca. Y lo que §12 no previó, decidido por Aleks en la sesión durante el cierre:
+  con el heredado 10 fuera, `test_hoja_de_ruta.py` negaba las dos Refs `HER:10` de entradas
+  abiertas («no es un heredado vivo»), así que en R5.6 `HER:10` pasa a `F:F17` y en A.5 se quita
+  (ya llevaba `F:F17`); la prosa que dice «heredado 10» no cambia.
+- **Commits de la rama** (12):
+  - `fdc18717` la apertura (encargo, contrato y Archivo 84 de PROJECT_STATE);
+  - `4661575d` la fase 0 y su PARADA;
+  - `3ce320e6` el criterio de D3, pre-registrado antes de ver un tick;
+  - `81c89ea0` el exportador, el lector, el manifiesto, la compilación de tools/mql5 y F17 por cuenta;
+  - `0dabbeab` la compilación de D6, el control (d1) y la PARADA 2;
+  - `802c159f` el (d2) del criterio sobre las horas descargadas de Dukascopy;
+  - `1c89b3e3` el (d2) del lector y las líneas del cierre;
+  - `531e4318` el recuadro de corrección en ADR-0090 §7;
+  - `958ffec3` los hallazgos del revisor (b1 bloquea) y la PARADA 3;
+  - `ed2a15de` la respuesta a la PARADA 3 y los logs de la 1.01;
+  - `eeded79d` la segunda pasada del revisor y la entrega;
+  - y este, `chore(cierre)`: sale el contrato; entran este registro, la fila de ERRORES-RECURRENTES,
+    la F, Technical Debt, el heredado 10 y la hoja de ruta.
+- **CI** de `fix/f17-historial`, todos con solo `test_state_check_ok_on_real_repo` por el nombre
+  `fix/`, el fallo aceptado: sobre `531e4318`, run 45797145889 (1 failed, 3588 passed); sobre
+  `958ffec3`, run 45805382618 (3592 passed); sobre `ed2a15de`, run 45833012704 (3593 passed); sobre
+  `eeded79d`, run **45840010627** (1 failed, 3593 passed, 102 skipped). CI de `main` sobre `2dc4f7dd`,
+  al abrir: run 45747377112, success.
+- **Filas de HOLDOUT-EXPOSICIONES de la rama** (cuatro): dos del 2026-11-25 (la apertura; la fase 0)
+  y dos del 2026-11-26 (la respuesta a la PARADA y el criterio de D3; el control (d1) sobre los
+  ticks de Dukascopy de construcción). Ningún dato de FTMO.
+- **Revisor** (opus), dos pasadas pegadas en F17-HISTORIAL.md: la primera, eje (a) 0 bloquea, 3
+  importa, 1 menor, y eje (b) 1 bloquea, 5 importa, 2 menor; la segunda, acotada a lo de la PARADA 3,
+  0 bloquea, 3 importa, 3 menor. Todo arreglado, declarado o llevado a la PARADA 3.

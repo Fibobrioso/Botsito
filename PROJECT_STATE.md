@@ -25,7 +25,7 @@ trabajo/f17-historial EN CURSO (R4.7, F): el historial de ticks de F17 (ADR-0099
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. La sesión 7, en dos días con el método de ADR-0093 (R4.3), ingerida y ACTIVADA: la 7a (F39e: ADR-0094, A-58 abierta; break even al cierre, A-13 abierta por el margen) y la 7b (F39k: la stop cuyo 0 queda del lado malo espera, ADR-0097, A-59 abierta); A-48 y A-58, a la sesión siguiente. La corrida (3) de ADR-0070 §3 dio «no» (cobertura 15.2 %, precisión 14.4 %; RECORRIDA-CONSTRUCCION-3.md). La línea base vigente es anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt. El pivote de ADR-0093 §6, por su contingencia sobre la diaria (19 parejas de julio y 40 de más): «una sesión más». La meta de ADR-0098: salida C (el techo no gana), que manda sobre el pivote; lo que pide antes de seguir, en R4.7: hasta el ADR de Aleks que la resuelva no se graba ninguna sesión de fidelidad, y la siguiente (R4.6) se prepara. ADR-0099: se mide primero; el puente del techo, hecho (PUENTE-TECHO.md, lectura «solo_juntas»); F17 (ADR-0099 §5) y el backtest del trader con costes (ADR-0100, R4.10), pendientes; el diagnóstico de la premisa y el contraste con el trader, hechos. El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. La letra C y R6a, en los huecos.
+F. La sesión 7, en dos días con el método de ADR-0093 (R4.3), ingerida y ACTIVADA: la 7a (F39e: ADR-0094, A-58 abierta; break even al cierre, A-13 abierta por el margen) y la 7b (F39k: la stop cuyo 0 queda del lado malo espera, ADR-0097, A-59 abierta); A-48 y A-58, a la sesión siguiente. La corrida (3) de ADR-0070 §3 dio «no» (cobertura 15.2 %, precisión 14.4 %; RECORRIDA-CONSTRUCCION-3.md). La línea base vigente es anexos/RECORRIDA-CONSTRUCCION-3/cuenta-por-mes.txt. El pivote de ADR-0093 §6, por su contingencia sobre la diaria (19 parejas de julio y 40 de más): «una sesión más». La meta de ADR-0098: salida C (el techo no gana), que manda sobre el pivote; lo que pide antes de seguir, en R4.7: hasta el ADR de Aleks que la resuelva no se graba ninguna sesión de fidelidad, y la siguiente (R4.6) se prepara. ADR-0099: se mide primero; el puente del techo, hecho (PUENTE-TECHO.md, lectura «solo_juntas»); F17 (ADR-0099 §5; el historial: F17-HISTORIAL.md) y el backtest del trader con costes (ADR-0100, R4.10), pendientes. El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. La letra C y R6a, en los huecos.
 
 
 
@@ -54,7 +54,6 @@ criterio de salida: `docs/state/README.md`.
 - 7. JUNIO, LA GUARDIA Y LOS ONCE DIAS. La guardia de `stable/F14-cobertura` saca junio del universo de un…
 - 8. EL BRIEF PARA ABRIR LOS 4 `dev` DE SEPTIEMBRE, que es lo unico que se puede abrir de ese material y no se…
 - 9. LA CITA QUE YA TENEMOS CON UN PROBLEMA, y no es una deuda abstracta: RE-DESCARGAR UN MES ROMPE `kit build`…
-- 10. De la demo de FTMO queda el grabador de spread y ticks, F17.
 - 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); la medida de ADR-0090 §3 casa con leer «commission: 5» como ida y vuelta.
 ## Known Ambiguities
 Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/state/README.md`.
@@ -93,12 +92,11 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - Riesgo residual de la excepción de la carga por ruta (revisor, A2; GUARDIA-G1.md §6.2) … (entera en HISTORIA, Technical Debt ACORTADA)
 - Riesgo residual de ADR-0088 (revisor, B7) … (entera en HISTORIA, Technical Debt ACORTADA)
 - ADR 0087 (S-15, no existe) sigue en los `ids-inexistentes` del encargo y del informe de trabajo/activar-sesion-05-motor; lo saca la rama que lo cree.
-- RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py); nada produce ese `por`, y la acción `reentrar` no está escrita (PUNTO-USADO.md §1.h). Dueño: va con la reentrada de ADR-0083 D1 (R4.6).
+- RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py) … (PUNTO-USADO.md §1.h; entera en HISTORIA, Technical Debt ACORTADA)
 - La nota de RN-019 (strategy_spec.yaml, hacia :1840) dice que A-31 lo pregunta, y A-31 está RESUELTA desde el 2026-09-29 (PUNTO-USADO.md §1.h).
 - Una zona del productor reutilizada en un escenario nuevo (misma caja del mismo punto tras una toma nueva) … (PUNTO-USADO.md §1.c y §4.f; entera en HISTORIA, Technical Debt ACORTADA)
-- El visor no conecta `--diagnostico-cuenta-diaria` (cli.py: la valida `_diagnostico_de`, :2250-2261; el arnés la aplica, :2438; `motor_visor`, :2479, no): la pone en el nombre y en el HTML y corre una cuenta por mes (ADR-0092 §8; VISOR-CONSTRUCCION.md §4.3; auditoría del 2026-11-21, C1). Dueño: rama corta del visor (conectarla o negarla).
-- `curva_con_deslizamiento` y `veredicto_con_f17` (criterio_fidelidad.py) toman una sola curva y arrastran `previo` entre cuentas: cuando F17 los use, por cuenta (CUENTA-POR-MES.md, fase 0 e) 8).
-- Sin guardia contra fechas de días ocultos en lo que añade una rama. En main hay 32 ids exactos de casos ocultos fuera de knowledge/cases, uno de ellos de F39a-F39g en tests/unit. Primero, una rama que los sustituya en tests sin abrirlos (los informes cerrados, por recuadro o declarados); después, la variante estrecha V2 (GUARDIAS-HOLDOUT.md §4.3 y §9).
+- El visor no conecta `--diagnostico-cuenta-diaria` (cli.py: la valida `_diagnostico_de`, :2250-2261; el arnés la aplica, :2438; `motor_visor`, :2479, no) … (VISOR-CONSTRUCCION.md §4.3; entera en HISTORIA, Technical Debt ACORTADA)
+- Sin guardia contra fechas de días ocultos en lo que añade una rama. … (GUARDIAS-HOLDOUT.md §4.3 y §9; entera en HISTORIA, Technical Debt ACORTADA)
 - VISOR-DIAS.md no recoge las opciones de diagnóstico del visor ni que calienta con el M1 del mes anterior (VISOR-CONSTRUCCION.md §4.3).
 - El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10; VISOR-CONSTRUCCION.md §4.3).
 - `test_visor.py` y `test_preparar_a35.py` hacen leer el M1 de marzo (calienta abril) en cada make check (HOLDOUT-EXPOSICIONES, 2026-10-18 y 2026-10-26; VISOR-CONSTRUCCION.md §4.3).
