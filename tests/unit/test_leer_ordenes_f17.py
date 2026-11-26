@@ -343,6 +343,40 @@ def test_main_lee_el_grabador(tmp_path: Path) -> None:
     assert "1.170" not in texto
 
 
+def test_main_junta_varias_carpetas(tmp_path: Path) -> None:
+    """Revisor, b3: los tamanos de D3 solo se alcanzan juntando dias y pruebas; el lector lee juntas
+    todas las carpetas que se le den, y busca los ticks de cada llenado junto a su CSV."""
+    dentro = _ms_servidor_en_ventana("10:00")
+    cab = ",".join(L.COLUMNAS_MEDIDA)
+
+    def linea(**k: str) -> str:
+        f = fila(**k)
+        return ",".join(f[c] for c in L.COLUMNAS_MEDIDA)
+
+    for dia, precio in (("2026-12-02", "1.17102"), ("2026-12-03", "1.17103")):
+        carpeta = tmp_path / dia
+        carpeta.mkdir()
+        filas = [
+            linea(evento="contexto", clase="digits", motivo="5"),
+            linea(
+                evento="llenado", clase="entrada_stop", lado="compra", nivel="1.17100",
+                precio=precio, instante_msc=str(dentro), puesta_msc=str(dentro - 1000),
+                cot_bid="1.17090", cot_ask="1.17095", cot_msc=str(dentro - 1500),
+                ticks_fichero="F17M_ticks_1.csv",
+            ),
+        ]  # fmt: skip
+        _escribir(carpeta / "F17M_uno_20261202_100000.csv", cab, filas)
+        # el mismo nombre de ticks en cada carpeta: cada llenado lee el suyo
+        _escribir(
+            carpeta / "F17M_ticks_1.csv", "time_msc,bid,ask,flags", [f"{dentro},1.17095,1.17100,6"]
+        )
+    salida = tmp_path / "salida.txt"
+    argv = ["medida", str(tmp_path / "2026-12-02"), str(tmp_path / "2026-12-03")]
+    assert L.main([*argv, "--salida", str(salida)], raiz=RAIZ) == 0
+    texto = salida.read_text(encoding="utf-8")
+    assert "entrada_stop · uno: n 2; mediana 2, p90 3, max 3" in texto
+
+
 def test_el_control_distingue_hueco_de_mercado_cerrado(tmp_path: Path) -> None:
     """Revision del consultor, arreglo 5: una hora vacia de fin de semana es `mercado_cerrado`, no
     un `HUECO`; y se cuentan los arranques con `hueco_largo` (arreglo 2) y los `tick_tarde`."""

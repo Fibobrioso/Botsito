@@ -2,8 +2,12 @@
 `tools/mql5/GrabarTicksFTMO.mq5` (el grabador) en la demo de FTMO, con el criterio pre-registrado de
 `docs/plan/F17-ORDENES.yaml` (ADR-0099 §5; rama `trabajo/f17-ordenes`).
 
-    uv run python scripts/leer_ordenes_f17.py medida <carpeta> --salida <fichero>
-    uv run python scripts/leer_ordenes_f17.py grabador <carpeta> --salida <fichero>
+    uv run python scripts/leer_ordenes_f17.py medida <carpeta> [<carpeta> ...] --salida <fichero>
+    uv run python scripts/leer_ordenes_f17.py grabador <carpeta> [<carpeta> ...] --salida <fichero>
+
+Lee juntas TODAS las carpetas que se le den (los dias y las pruebas: los tamanos de D3 solo se
+alcanzan juntandolos; revisor de la rama, b3), y cada CSV de ticks de un llenado en la carpeta de
+su CSV de medida.
 
 **medida.** De cada llenado (fila `llenado` de un `F17M_<estrato>_*.csv`), el tick que dispara se
 busca en su `F17M_ticks_<deal>.csv`: el primero en `(puesta, llenado]` cuyo ASK (lo que compra) o
@@ -78,6 +82,13 @@ PATRON_MEDIDA = re.compile(r"^F17M_(uno|bot)_\d{8}_\d{6}\.csv$")
 PATRON_TICKS_MEDIDA = re.compile(r"^F17M_ticks_\d+\.csv$")
 PATRON_HORA = re.compile(r"^F17G_(\d{4}-\d{2}-\d{2})_(\d{2})\.csv$")
 PATRON_CONTROL_GRABADOR = re.compile(r"^F17G_control_\d{8}_\d{6}\.csv$")
+
+
+def ficheros_de(carpetas: Path | Sequence[Path], patron: re.Pattern[str]) -> list[Path]:
+    """Los ficheros de todas las `carpetas` (sin bajar a subcarpetas) cuyo nombre casa con
+    `patron`, ordenados por carpeta y nombre."""
+    lista = [carpetas] if isinstance(carpetas, Path) else list(carpetas)
+    return [q for c in lista for q in sorted(c.iterdir()) if q.is_file() and patron.match(q.name)]
 
 
 class OrdenesError(ValueError):
@@ -373,12 +384,12 @@ def _minutos(hhmm: str) -> int:
 
 
 def leer_medida(
-    carpeta: Path, digitos: int, en_ventana: Any, reloj: Any, c: Criterio
+    carpeta: Path | Sequence[Path], digitos: int, en_ventana: Any, reloj: Any, c: Criterio
 ) -> tuple[dict[tuple[str, str], Resumen], dict[str, int]]:
     """Los resumenes por (clase, estrato) y los recuentos de lo demas (otras salidas, filas)."""
     resumenes: dict[tuple[str, str], Resumen] = defaultdict(Resumen)
     otros: dict[str, int] = defaultdict(int)
-    for csv_medida in sorted(p for p in carpeta.iterdir() if PATRON_MEDIDA.match(p.name)):
+    for csv_medida in ficheros_de(carpeta, PATRON_MEDIDA):
         for fila in _filas(csv_medida, COLUMNAS_MEDIDA):
             if fila["evento"] != "llenado":
                 otros[fila["evento"]] += 1
@@ -387,7 +398,7 @@ def leer_medida(
                 otros[f"llenado {fila['clase']}"] += 1
                 continue
             nombre = fila["ticks_fichero"]
-            ticks = leer_ticks_de(carpeta / nombre, digitos) if nombre else []
+            ticks = leer_ticks_de(csv_medida.parent / nombre, digitos) if nombre else []
             m = muestra_de(fila, ticks, digitos, en_ventana, reloj, c)
             resumenes[(m.clase, m.estrato)].anadir(m)
     return resumenes, otros
@@ -438,13 +449,13 @@ def lineas_medida(
 
 
 def spread_por_hora(
-    carpeta: Path, digitos: int, reloj: Any, sesiones: Any, inicio: int, fin: int
+    carpeta: Path | Sequence[Path], digitos: int, reloj: Any, sesiones: Any, inicio: int, fin: int
 ) -> tuple[dict[int, list[int]], set[date], int]:
     """Los spreads de la ventana por hora nominal, los dias grabados y cuantos ticks se leyeron."""
     por_hora: dict[int, list[int]] = defaultdict(list)
     dias: set[date] = set()
     leidos = 0
-    for p in sorted(q for q in carpeta.iterdir() if PATRON_HORA.match(q.name)):
+    for p in ficheros_de(carpeta, PATRON_HORA):
         for t in leer_ticks_de(p, digitos):
             leidos += 1
             utc = reloj.a_utc(t.msc)
@@ -472,12 +483,12 @@ def lineas_grabador(
     return salida
 
 
-def controles_del_grabador(carpeta: Path) -> dict[str, int]:
+def controles_del_grabador(carpeta: Path | Sequence[Path]) -> dict[str, int]:
     """Lo que dicen los controles del grabador, por recuento (revision del consultor, arreglo 5):
     las horas rehechas, cuantas sin ticks un dia laborable (`HUECO`) y cuantas en fin de semana
     (`mercado_cerrado`), los arranques con `hueco_largo` y los `tick_tarde`."""
     cuenta = {"rehechas": 0, "HUECO": 0, "mercado_cerrado": 0, "hueco_largo": 0, "tick_tarde": 0}
-    for p in sorted(q for q in carpeta.iterdir() if PATRON_CONTROL_GRABADOR.match(q.name)):
+    for p in ficheros_de(carpeta, PATRON_CONTROL_GRABADOR):
         for f in _filas(p, H.COLUMNAS_CONTROL):
             clave, nota = f["clave"], f["nota"]
             if clave.startswith("rehecha_") and clave.endswith("_ticks"):
@@ -582,7 +593,7 @@ def validar_manifiesto(doc: Mapping[str, Any], tipo: str) -> list[str]:
 def main(argv: Sequence[str] | None = None, raiz: Path = RAIZ) -> int:
     ap = argparse.ArgumentParser(description=(__doc__ or "").splitlines()[0])
     ap.add_argument("forma", choices=("medida", "grabador"))
-    ap.add_argument("carpeta", type=Path)
+    ap.add_argument("carpetas", type=Path, nargs="+")
     ap.add_argument("--salida", type=Path, required=True)
     a = ap.parse_args(argv)
     sys.path.insert(0, str(raiz / "src"))
@@ -593,36 +604,38 @@ def main(argv: Sequence[str] | None = None, raiz: Path = RAIZ) -> int:
     sesiones = reloj_de_las_sesiones(registro)
     reloj = RelojServidor.del_registro(registro)
     c = cargar_criterio_ordenes(raiz)
-    digitos = _digitos(a.carpeta, a.forma)
+    digitos = _digitos(a.carpetas, a.forma)
     salida = [
         f"CRITERIO: {CRITERIO.as_posix()} (pre-registrado, ADR-0099 §5)",
         f"RELOJ: servidor = UTC + {reloj.base_minutos} min + verano de {reloj.huso or 'ninguno'} "
         "(broker_offset_base y broker_dst del registro)",
     ]
     if a.forma == "medida":
-        resumenes, otros = leer_medida(a.carpeta, digitos, ventana_de(registro, sesiones), reloj, c)
+        resumenes, otros = leer_medida(
+            a.carpetas, digitos, ventana_de(registro, sesiones), reloj, c
+        )
         salida += lineas_medida(resumenes, otros, c)
     else:
         inicio = _minutos(registro.hora("ventana_inicio").hora)
         fin = _minutos(registro.hora("ventana_fin").hora)
         salida += lineas_grabador(
-            *spread_por_hora(a.carpeta, digitos, reloj, sesiones, inicio, fin)
+            *spread_por_hora(a.carpetas, digitos, reloj, sesiones, inicio, fin)
         )
-        salida.append(linea_controles(controles_del_grabador(a.carpeta)))
+        salida.append(linea_controles(controles_del_grabador(a.carpetas)))
     a.salida.write_text("\n".join(salida) + "\n", encoding="utf-8", newline="\n")
     print("\n".join(salida))
     return 0
 
 
-def _digitos(carpeta: Path, forma: str) -> int:
+def _digitos(carpeta: Path | Sequence[Path], forma: str) -> int:
     """Los `digits` del simbolo, de la fila de contexto de la medida o del control del grabador."""
     if forma == "medida":
-        for p in sorted(q for q in carpeta.iterdir() if PATRON_MEDIDA.match(q.name)):
+        for p in ficheros_de(carpeta, PATRON_MEDIDA):
             for f in _filas(p, COLUMNAS_MEDIDA):
                 if f["evento"] == "contexto" and f["clase"] == "digits":
                     return int(f["motivo"])
     else:
-        for p in sorted(q for q in carpeta.iterdir() if PATRON_CONTROL_GRABADOR.match(q.name)):
+        for p in ficheros_de(carpeta, PATRON_CONTROL_GRABADOR):
             control = H.leer_control(p)
             if "digits" in control:
                 return int(control["digits"])

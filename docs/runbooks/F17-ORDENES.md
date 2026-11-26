@@ -89,7 +89,12 @@ un día con un cierre anunciado por FTMO, ni el día hábil anterior**.
 
 Lo que no se sabe de MetaTrader se mide con lo que sale (ADR-0082 D7): en qué huso van las sesiones
 (la capa las da por servidor), si una petición rechazada entra en el historial, si a los 5 s el
-terminal tiene todos los ticks del llenado y hasta dónde guarda el servidor los ticks hacia atrás.
+terminal tiene todos los ticks del llenado y hasta dónde guarda el servidor los ticks hacia atrás;
+y, de lo que el revisor de la rama no pudo medir, si `CopyTicksRange` bloquea en un script, si se
+puede pedir algo en los 3 s que siguen a quitar el script del gráfico (la limpieza de al terminar) y
+si FTMO mueve el saldo con deals que no son de trading (el tope diario solo resta los de trading). Si
+EURUSD no admite caducidad en las pendientes, el guion se niega al empezar; y una colocación
+rechazada para la ejecución.
 
 ## Una vez: compilarlos e instalarlos
 
@@ -145,10 +150,13 @@ de días, y si su mes está en `meses_reservados.yaml`) y congela cada carpeta c
 `data/manifests/f17-ordenes/` o `data/manifests/f17-grabador/` (esquemas `schema_f17_ordenes: 1` y
 `schema_f17_grabador: 1` de `data/manifests/README.md`; nunca en `f17/`). Después:
 
-    uv run python scripts/leer_ordenes_f17.py medida data/f17-ordenes/<dia> --salida <fichero fuera del repo>
-    uv run python scripts/leer_ordenes_f17.py grabador data/f17-grabador/<dia> --salida <fichero fuera del repo>
+    uv run python scripts/leer_ordenes_f17.py medida data/f17-ordenes/<dia 1> data/f17-ordenes/<dia 2> ... --salida <fichero fuera del repo>
+    uv run python scripts/leer_ordenes_f17.py grabador data/f17-grabador/<dia 1> ... --salida <fichero fuera del repo>
 
-La medida da por clase y estrato n, mediana, percentil 90, máximo, `sin_tick`, `al_colocar`, fuera
+**El veredicto de D3 se lee con TODAS las carpetas congeladas a la vez**, de todos los días y de
+todas las pruebas: los tamaños (100 por clase en «uno», 30 en «bot») solo se alcanzan juntándolos, y
+una carpeta sola saldrá «insuficiente». El lector las junta y busca los ticks de cada llenado junto a
+su CSV. La medida da por clase y estrato n, mediana, percentil 90, máximo, `sin_tick`, `al_colocar`, fuera
 de ventana y `bot_reducido`, y el veredicto de D3; el grabador, el spread de FTMO por hora de la
 ventana. Imprimen puntos y recuentos; ningún precio. Lo que el número no dice: que la prueba
 gratuita ejecute como el Challenge y la cuenta real (P4-08).

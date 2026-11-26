@@ -229,6 +229,67 @@ def problemas(
         or "if(stops>DISTANCIA_ENTRADA_PUNTOS)" not in comprobaciones_s
     ):
         salida.append("Comprobaciones no se niega con un stops level mayor que la distancia")
+    # revisor, b1: cada tope COMPARA con su constante, no solo se llama
+    puede_s = re.sub(r"\s+", "", puede)
+    cortar_s = re.sub(r"\s+", "", cuerpo_de(codigo, "HayQueCortar"))
+    for donde, texto, comparacion in (
+        ("PuedeEmpezarCiclo", puede_s, "equity<saldo_dia-TOPE_DIA_USD"),
+        ("PuedeEmpezarCiclo", puede_s, "equity<CAPITAL_INICIAL-TOPE_TOTAL_USD"),
+        ("PuedeEmpezarCiclo", puede_s, "peticiones+3>TOPE_PETICIONES"),
+        ("PuedeEmpezarCiclo", puede_s, "peor>TOPE_PEOR_CASO_USD"),
+        ("HayQueCortar", cortar_s, "equity<saldo_dia-TOPE_DIA_USD"),
+        ("HayQueCortar", cortar_s, "equity<CAPITAL_INICIAL-TOPE_TOTAL_USD"),
+    ):
+        if comparacion not in texto:
+            salida.append(f"{donde} no compara {comparacion}")
+    cierre_s = re.sub(r"\s+", "", cuerpo_de(codigo, "CercaDelCierre"))
+    if "return(b-segundo<MARGEN_CIERRE_MIN*60);" not in cierre_s:
+        salida.append("CercaDelCierre no compara con MARGEN_CIERRE_MIN")
+    peticiones_s = re.sub(r"\s+", "", cuerpo_de(codigo, "PeticionesDelDia"))
+    if "returnn+g_rechazadas_previas+g_rechazadas;" not in peticiones_s:
+        salida.append("PeticionesDelDia no suma las rechazadas (las previas y las de ahora)")
+    if "==ORDER_STATE_CANCELED)n++;" not in peticiones_s:
+        salida.append("PeticionesDelDia no cuenta el borrado de una pendiente")
+    if "!=ORDER_REASON_EXPERT)" not in peticiones_s:
+        salida.append("PeticionesDelDia cuenta las ordenes que crea el servidor")
+    if "g_rechazadas_previas = RechazadasDeHoy(nombre);" not in onstart:
+        salida.append("OnStart no lee las rechazadas de hoy de sus CSV (tras relanzarlo)")
+    if '"\\"peticion_rechazada\\""' not in cuerpo_de(codigo, "RechazadasDeHoy"):
+        salida.append("RechazadasDeHoy no cuenta las filas peticion_rechazada")
+    if "g_rechazadas++" not in cuerpo_de(codigo, "Pedir"):
+        salida.append("Pedir no cuenta las rechazadas")
+    ciclo_s = re.sub(r"\s+", "", ciclo)
+    if (
+        "if(peor>=0.0&&peor<=TOPE_PEOR_CASO_USD)break;vol=VolumenHaciaAbajo(vol-paso);"
+        not in ciclo_s
+    ):
+        salida.append("Ciclo no baja el lote hasta que quepa en TOPE_PEOR_CASO_USD (punto 2)")
+    # revisor, b4: toda pendiente caduca; sin caducidad, se niega
+    if "ORDER_TIME_GTC" in codigo:
+        salida.append("una pendiente puede ir sin caducidad (ORDER_TIME_GTC)")
+    if "if(!AdmiteCaducidad())" not in re.sub(r"\s+", "", comprobaciones):
+        salida.append("Comprobaciones no se niega si el simbolo no admite caducidad")
+    # revisor, b6: una colocacion rechazada para la ejecucion
+    if not re.search(
+        r'if\(!ColocarStop\([^)]*\)\)\{Dato\("ciclo","colocacion_rechazada"[^}]*returnfalse;\}',
+        ciclo_s,
+    ):
+        salida.append("una colocacion rechazada no para la ejecucion")
+    # revisor, b5: los ticks de la entrada se copian despues de la salida, y las esperas por
+    # TimeLocal
+    i_salida = ciclo_s.find("EsperarDealDeSalida(")
+    i_entrada = ciclo_s.find('FilaDeLlenado(ciclo,"entrada_stop"')
+    if i_salida < 0 or i_entrada < 0 or i_entrada < i_salida:
+        salida.append("Ciclo copia los ticks de la entrada antes de la salida")
+    if "datetimefin=TimeLocal()+SALIDA_A_MERCADO_S;" not in ciclo_s:
+        salida.append("la salida a mercado no se cuenta por TimeLocal desde el llenado")
+    # revisor, b7: las esperas del historial, y nunca ticks desde 0
+    if "EsperarDealDeLaOrden(orden,deal);" not in ciclo_s:
+        salida.append("Ciclo no espera el deal de una pendiente llenada al borrarla")
+    if "if(desde_msc<=0||hasta_msc<desde_msc)return-1;" not in re.sub(
+        r"\s+", "", cuerpo_de(codigo, "GuardarTicks")
+    ):
+        salida.append("GuardarTicks puede pedir ticks desde 0")
     # arreglo 4: una salida que falta porque se paro el guion lo dice
     if not re.search(r'IsStopped\(\)\s*\?\s*"parado por el usuario', cuerpo_de(codigo, "Ciclo")):
         salida.append("Ciclo no dice «parado por el usuario» cuando se paro el guion")
@@ -448,6 +509,96 @@ def test_el_fuente_es_utf8_sin_bom_y_lf() -> None:
             "OrderCalcMargin(compra ? ORDER_TYPE_BUY : ORDER_TYPE_SELL, SIMBOLO, 1.0,",
             "OrderCalcMargin(compra ? ORDER_TYPE_BUY_STOP : ORDER_TYPE_SELL_STOP, SIMBOLO, 1.0,",
             "OrderCalcMargin con un tipo pendiente",
+        ),
+        # revisor, b1: cada comparacion de un tope, quitada
+        (
+            "      if(saldo_dia < 0.0 || equity < saldo_dia - TOPE_DIA_USD)\n        {",
+            "      if(saldo_dia < 0.0)\n        {",
+            "PuedeEmpezarCiclo no compara equity<saldo_dia-TOPE_DIA_USD",
+        ),
+        (
+            "   else if(saldo_dia < 0.0 || equity < saldo_dia - TOPE_DIA_USD)\n"
+            '      tope = "b_dia";',
+            '   else if(saldo_dia < 0.0)\n      tope = "b_dia";',
+            "HayQueCortar no compara equity<saldo_dia-TOPE_DIA_USD",
+        ),
+        (
+            '   else if(equity < CAPITAL_INICIAL - TOPE_TOTAL_USD)\n      tope = "c_total";',
+            '   else if(false)\n      tope = "c_total";',
+            "HayQueCortar no compara equity<CAPITAL_INICIAL-TOPE_TOTAL_USD",
+        ),
+        (
+            "      else if(peticiones + 3 > TOPE_PETICIONES)",
+            "      else if(false)",
+            "PuedeEmpezarCiclo no compara peticiones+3>TOPE_PETICIONES",
+        ),
+        (
+            "      else if(peor < 0.0 || peor > TOPE_PEOR_CASO_USD)",
+            "      else if(peor < 0.0)",
+            "PuedeEmpezarCiclo no compara peor>TOPE_PEOR_CASO_USD",
+        ),
+        (
+            "         return (b - segundo < MARGEN_CIERRE_MIN * 60);",
+            "         return false;",
+            "CercaDelCierre no compara con MARGEN_CIERRE_MIN",
+        ),
+        (
+            "   return n + g_rechazadas_previas + g_rechazadas;",
+            "   return n;",
+            "PeticionesDelDia no suma las rechazadas",
+        ),
+        (
+            "         if(HistoryOrderGetInteger(o, ORDER_STATE) == ORDER_STATE_CANCELED)\n"
+            "            n++;\n",
+            "",
+            "no cuenta el borrado",
+        ),
+        (
+            "   g_rechazadas_previas = RechazadasDeHoy(nombre);",
+            "   g_rechazadas_previas = 0;",
+            "OnStart no lee las rechazadas de hoy",
+        ),
+        (
+            "      vol = VolumenHaciaAbajo(vol - paso);",
+            "      break;",
+            "Ciclo no baja el lote",
+        ),
+        # revisor, b4: el fallback a GTC, o sin la negativa
+        (
+            "   req.type_time = ORDER_TIME_SPECIFIED;\n"
+            "   req.expiration = TimeTradeServer() + CADUCIDAD_S;",
+            "   req.type_time = ORDER_TIME_GTC;",
+            "ORDER_TIME_GTC",
+        ),
+        (
+            "   if(!AdmiteCaducidad())\n",
+            "   if(false)\n",
+            "no admite caducidad",
+        ),
+        # revisor, b6: una colocacion rechazada sigue con el ciclo siguiente
+        (
+            '      Limpiar("ciclo_" + IntegerToString(ciclo));\n      return false;\n     }\n'
+            "   ulong orden = res.order;",
+            '      return (Limpiar("ciclo_" + IntegerToString(ciclo)) == 0);\n     }\n'
+            "   ulong orden = res.order;",
+            "una colocacion rechazada no para la ejecucion",
+        ),
+        # revisor, b5: la salida contada por TimeCurrent
+        (
+            "   datetime fin = TimeLocal() + SALIDA_A_MERCADO_S;",
+            "   datetime fin = TimeCurrent() + SALIDA_A_MERCADO_S;",
+            "no se cuenta por TimeLocal",
+        ),
+        # revisor, b7: sin esperar el deal de una pendiente llenada al borrarla, o ticks desde 0
+        (
+            "   if(deal == 0)\n      EsperarDealDeLaOrden(orden, deal);\n",
+            "",
+            "no espera el deal de una pendiente",
+        ),
+        (
+            "   if(desde_msc <= 0 || hasta_msc < desde_msc)\n      return -1;\n",
+            "",
+            "GuardarTicks puede pedir ticks desde 0",
         ),
     ],
 )

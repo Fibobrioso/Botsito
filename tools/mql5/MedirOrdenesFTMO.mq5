@@ -74,11 +74,14 @@
 // El peor caso de (a), como el paso 8 de MedirDemoFTMO: comision conservadora y deslizamiento supuesto
 #define COMISION_LADO_USD  5.00
 #define DESLIZ_PEOR_PUNTOS 10
-// Un ciclo como mucho: la espera del llenado, la de la salida y un minuto de margen
+// Lo mas que algo del ciclo esta vivo: la espera del llenado, la de la salida y un minuto de margen
+// (que cubre las esperas del historial, ESPERA_HISTORIAL_MS cada una); los ticks se copian despues
+// de cerrar, con nada vivo
 #define DURACION_MAXIMA_CICLO_S (ESPERA_LLENADO_S + SALIDA_A_MERCADO_S + 60)
 // El objetivo de respaldo: lejos, para que no salte en SALIDA_A_MERCADO_S; solo cierra si el script muere
 #define OBJETIVO_RESPALDO_PUNTOS (3 * STOP_PUNTOS)
 #define ESPERA_TICKS_MS    5000
+#define ESPERA_HISTORIAL_MS 10000 // lo que se espera a que un deal llegue al historial
 #define INTENTOS_TICKS     3
 #define CADUCIDAD_S        900
 
@@ -201,16 +204,17 @@ ENUM_ORDER_TYPE_FILLING Llenado()
    return ORDER_FILLING_RETURN;
   }
 
+// Toda pendiente caduca (D1): sin el fallback a GTC de MedirDemoFTMO. Si el simbolo no admite
+// SYMBOL_EXPIRATION_SPECIFIED, Comprobaciones se niega antes de pedir nada (revisor, b4).
 void PonerCaducidad(MqlTradeRequest &req)
   {
-   long modos = SymbolInfoInteger(SIMBOLO, SYMBOL_EXPIRATION_MODE);
-   if((modos & SYMBOL_EXPIRATION_SPECIFIED) != 0)
-     {
-      req.type_time = ORDER_TIME_SPECIFIED;
-      req.expiration = TimeTradeServer() + CADUCIDAD_S;
-     }
-   else
-      req.type_time = ORDER_TIME_GTC;
+   req.type_time = ORDER_TIME_SPECIFIED;
+   req.expiration = TimeTradeServer() + CADUCIDAD_S;
+  }
+
+bool AdmiteCaducidad()
+  {
+   return ((SymbolInfoInteger(SIMBOLO, SYMBOL_EXPIRATION_MODE) & SYMBOL_EXPIRATION_SPECIFIED) != 0);
   }
 
 // Toda peticion pasa por aqui: la escribe (aceptada o rechazada), la cuenta si se rechaza y espera
@@ -711,6 +715,30 @@ bool DealDeSalida(const ulong posicion, ulong &deal)
    return false;
   }
 
+// Espera, hasta ESPERA_HISTORIAL_MS, a que el deal de la orden llegue al historial (revisor, b7).
+bool EsperarDealDeLaOrden(const ulong orden, ulong &deal)
+  {
+   for(int ms = 0; ms <= ESPERA_HISTORIAL_MS; ms += 500)
+     {
+      if(DealDeLaOrden(orden, deal))
+         return true;
+      Sleep(500);
+     }
+   return false;
+  }
+
+// Espera, hasta ESPERA_HISTORIAL_MS, a que el deal de salida de la posicion llegue al historial.
+bool EsperarDealDeSalida(const ulong posicion, ulong &deal)
+  {
+   for(int ms = 0; ms <= ESPERA_HISTORIAL_MS; ms += 500)
+     {
+      if(DealDeSalida(posicion, deal))
+         return true;
+      Sleep(500);
+     }
+   return false;
+  }
+
 ulong TicketDeLaPosicion(const ulong posicion)
   {
    for(int i = PositionsTotal() - 1; i >= 0; i--)
@@ -726,6 +754,12 @@ ulong TicketDeLaPosicion(const ulong posicion)
 // F17M_ticks_<deal>.csv, tras ESPERA_TICKS_MS para que el terminal los tenga. Devuelve cuantos.
 int GuardarTicks(const ulong deal, const long desde_msc, const long hasta_msc, string &fichero, int &error)
   {
+   fichero = "";
+   error = 0;
+   // sin un inicio conocido no se pide nada: CopyTicksRange desde 0 bajaria historial desde 1970
+   // (revisor, b7 iii)
+   if(desde_msc <= 0 || hasta_msc < desde_msc)
+      return -1;
    Sleep(ESPERA_TICKS_MS);
    MqlTick ticks[];
    int n = -1;
@@ -805,17 +839,24 @@ bool Ciclo(const int ciclo, const bool compra)
 
    MqlTradeResult res;
    if(!ColocarStop(compra, vol, nivel, ciclo, res))
-      return (Limpiar("ciclo_" + IntegerToString(ciclo)) == 0); // rechazada: sigue si no queda nada
+     {
+      // una colocacion rechazada para la ejecucion: no se gastan peticiones rechazadas ciclo tras
+      // ciclo (revisor, b6; A-54 no sabe si FTMO las cuenta)
+      Dato("ciclo", "colocacion_rechazada", IntegerToString(ciclo), "se para la ejecucion");
+      Limpiar("ciclo_" + IntegerToString(ciclo));
+      return false;
+     }
    ulong orden = res.order;
    long puesta = 0;
    ulong deal = 0;
-   datetime limite = TimeCurrent() + ESPERA_LLENADO_S;
+   // las esperas, por el reloj del ordenador (TimeLocal): TimeCurrent no avanza si no llegan ticks
+   datetime limite = TimeLocal() + ESPERA_LLENADO_S;
    while(!IsStopped())
      {
       if(OrderSelect(orden))
         {
          puesta = OrderGetInteger(ORDER_TIME_SETUP_MSC);
-         if(TimeCurrent() >= limite || HayQueCortar(tope))
+         if(TimeLocal() >= limite || HayQueCortar(tope))
            {
             BorrarPendiente(orden, ciclo);
             break;
@@ -826,10 +867,13 @@ bool Ciclo(const int ciclo, const bool compra)
       if(DealDeLaOrden(orden, deal))
          break;
       Sleep(200);
-      if(TimeCurrent() >= limite)
+      if(TimeLocal() >= limite)
          break;
      }
-   if(deal == 0 && !DealDeLaOrden(orden, deal))
+   // si se lleno justo al borrarla, el deal puede tardar en llegar al historial (revisor, b7 ii)
+   if(deal == 0)
+      EsperarDealDeLaOrden(orden, deal);
+   if(deal == 0)
      {
       Dato("ciclo", "sin_llenado", IntegerToString(ciclo), "no se lleno en " + IntegerToString(ESPERA_LLENADO_S) + " s");
       return (Limpiar("ciclo_" + IntegerToString(ciclo)) == 0 && tope == "");
@@ -839,26 +883,25 @@ bool Ciclo(const int ciclo, const bool compra)
    HistoryDealSelect(deal);
    ulong posicion = (ulong)HistoryDealGetInteger(deal, DEAL_POSITION_ID);
    long entrada_msc = HistoryDealGetInteger(deal, DEAL_TIME_MSC);
-   // la entrada: los ticks desde la cotizacion leida antes de colocarla (para ver si llego ya pasada)
-   FilaDeLlenado(ciclo, "entrada_stop", compra, orden, deal, posicion, nivel, lote_d2, puesta, cot,
-                 MathMin(cot.time_msc, puesta));
 
-   // la salida: por su stop o, a los SALIDA_A_MERCADO_S, a mercado
-   datetime fin = TimeCurrent() + SALIDA_A_MERCADO_S;
+   // la salida: por su stop o, a los SALIDA_A_MERCADO_S del llenado, a mercado (revisor, b5: los
+   // ticks de la entrada se copian DESPUES de cerrarla, para que la espera no se alargue ni deje de
+   // mirar los topes)
+   datetime fin = TimeLocal() + SALIDA_A_MERCADO_S;
    ulong salida = 0;
    MqlTick cot_cierre;
    ZeroMemory(cot_cierre);
    ulong orden_cierre = 0;
    while(!IsStopped() && !DealDeSalida(posicion, salida))
      {
-      if(TimeCurrent() >= fin || HayQueCortar(tope))
+      if(TimeLocal() >= fin || HayQueCortar(tope))
         {
          ulong tk = TicketDeLaPosicion(posicion);
          MqlTradeResult rc;
          if(tk != 0 && CerrarPosicion(tk, ciclo, cot_cierre, rc))
             orden_cierre = rc.order;
-         Sleep(500);
-         DealDeSalida(posicion, salida);
+         // el deal de salida puede tardar en llegar al historial (revisor, b7 i)
+         EsperarDealDeSalida(posicion, salida);
          break;
         }
       Sleep(200);
@@ -870,21 +913,28 @@ bool Ciclo(const int ciclo, const bool compra)
            IsStopped() ? "parado por el usuario: Limpiar" : "la posicion no se pudo cerrar: Limpiar");
       return false;
      }
+   // los datos de la salida, leidos antes de escribir nada (la seleccion del historial cambia)
    HistoryDealSelect(salida);
    long motivo = HistoryDealGetInteger(salida, DEAL_REASON);
+   ulong orden_salida = (ulong)HistoryDealGetInteger(salida, DEAL_ORDER);
    string clase = (motivo == DEAL_REASON_SL) ? "cierre_stop" :
                   ((motivo == DEAL_REASON_EXPERT && orden_cierre != 0) ? "cierre_mercado" : "otro_" + NombreMotivo(motivo));
+   long puesta_cierre = 0;
+   if(orden_cierre != 0 && HistoryOrderSelect(orden_cierre))
+      puesta_cierre = HistoryOrderGetInteger(orden_cierre, ORDER_TIME_SETUP_MSC);
+
+   // la entrada: los ticks desde la cotizacion leida antes de colocarla (para ver si llego ya
+   // pasada); sin puesta conocida, desde esa cotizacion, nunca desde 0 (revisor, b7 iii)
+   long desde_entrada = (puesta > 0) ? MathMin(cot.time_msc, puesta) : cot.time_msc;
+   FilaDeLlenado(ciclo, "entrada_stop", compra, orden, deal, posicion, nivel, lote_d2, puesta, cot, desde_entrada);
    if(clase == "cierre_stop")
      {
       MqlTick vacio;
       ZeroMemory(vacio);
-      FilaDeLlenado(ciclo, clase, !compra, (ulong)HistoryDealGetInteger(salida, DEAL_ORDER), salida, posicion,
-                    sl, lote_d2, entrada_msc, vacio, entrada_msc);
+      FilaDeLlenado(ciclo, clase, !compra, orden_salida, salida, posicion, sl, lote_d2, entrada_msc, vacio, entrada_msc);
      }
    else
-      FilaDeLlenado(ciclo, clase, !compra, (ulong)HistoryDealGetInteger(salida, DEAL_ORDER), salida, posicion,
-                    0, lote_d2, (orden_cierre != 0 && HistoryOrderSelect(orden_cierre)) ?
-                    HistoryOrderGetInteger(orden_cierre, ORDER_TIME_SETUP_MSC) : 0, cot_cierre,
+      FilaDeLlenado(ciclo, clase, !compra, orden_salida, salida, posicion, 0, lote_d2, puesta_cierre, cot_cierre,
                     cot_cierre.time_msc > 0 ? cot_cierre.time_msc : entrada_msc);
    if(Limpiar("ciclo_" + IntegerToString(ciclo)) != 0)
       return false;
@@ -940,6 +990,11 @@ bool Comprobaciones(string &motivo)
      }
    // con un stops level mayor que la distancia de la entrada, cada orden se rechazaria: se niega al
    // empezar en vez de gastar peticiones (revision del consultor, arreglo 3)
+   if(!AdmiteCaducidad())
+     {
+      motivo = "EURUSD no admite caducidad en las pendientes (SYMBOL_EXPIRATION_SPECIFIED): toda pendiente tiene que llevarla";
+      return false;
+     }
    long stops = SymbolInfoInteger(SIMBOLO, SYMBOL_TRADE_STOPS_LEVEL);
    if(stops > DISTANCIA_ENTRADA_PUNTOS)
      {

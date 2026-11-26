@@ -16,7 +16,7 @@ trabajo/f17-ordenes, EN CURSO (F17, segunda parte: la medida de las ordenes stop
 8066b377 · merge trabajo/f17-historial: F17, primera parte, el historial de ticks de la demo de FTMO con herramientas y sin correr · tag stable/F39p-f17-historial
 
 ## Tests Currently Passing
-2232 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2233 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

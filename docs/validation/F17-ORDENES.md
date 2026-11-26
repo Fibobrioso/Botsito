@@ -1,6 +1,6 @@
 # F17-ORDENES · La medida de las órdenes stop y el grabador de ticks de la demo de FTMO, con sus herramientas y sin correr (R4.7, entrada F)
 
-> PLANTILLA: informe de la rama `trabajo/f17-ordenes`. Estado: EN CURSO (respuesta a la PARADA, aplicándose). La fase 0 y su
+> PLANTILLA: informe de la rama `trabajo/f17-ordenes`. Estado: EN CURSO (arreglos del revisor hechos; falta recompilar y la CI del último commit). La fase 0 y su
 > PARADA, lo hecho tras la respuesta, el encargo punto por punto, las desviaciones, las líneas del
 > cierre, la fila de ERRORES y el informe del revisor se escriben aquí según avanza la rama.
 
@@ -799,6 +799,298 @@ del fichero commiteado (`sha256sum`: `91fdda77…` y `46b229dc…`). El camino `
 `compilar.py` no cambió (D8). El `.ex5` no se versiona; la instalación en el terminal
 (`--instalar`) va con el runbook, en la rama de la prueba.
 
+## 4. Lo hecho con los hallazgos del revisor
+
+El revisor (opus, una pasada, con los alcances de §7 del encargo, los puntos 2, 3 y 7 de la PARADA y
+los arreglos 1 y 2 de la revisión del consultor) sobre `24987139`: eje (a) 0 bloquea, 0 importa, 2
+menor; eje (b) 0 bloquea, 4 importa, 3 menor. Su informe, pegado al final (§10). Lo hecho:
+
+| # | hallazgo | lo hecho |
+|---|---|---|
+| a1 | el estado del informe, desfasado | cabecera y `## Estado` al día |
+| a2 | el README decía que el lector valida los manifiestos, y el diseño y el código difieren en dos detalles | `scripts/README.md`: «su `validar_manifiesto` comprueba los esquemas en los tests (la CLI no lo llama)», también en la entrada de `leer_historial_f17.py`, que decía lo mismo; las dos diferencias, en las desviaciones (§6, 2) |
+| b1 | el contrato llamaba a cada tope pero no comprobaba su comparación | el contrato exige cada comparación con su constante (`equity < saldo_dia - TOPE_DIA_USD` y `equity < CAPITAL_INICIAL - TOPE_TOTAL_USD` en `PuedeEmpezarCiclo` y en `HayQueCortar`, `peticiones + 3 > TOPE_PETICIONES`, `peor > TOPE_PEOR_CASO_USD`, `MARGEN_CIERRE_MIN * 60`), la suma de las rechazadas, el borrado contado, `ORDER_REASON_EXPERT`, `RechazadasDeHoy` al arrancar, `g_rechazadas++` y el bucle que baja el lote; con diez mutaciones nuevas, una por cada una que el revisor dio |
+| b2 | faltaban las secciones de entrega | §5 a §9 |
+| b3 | el lector leía una carpeta; el veredicto de D3 pide juntar días y pruebas | `leer_ordenes_f17.py` lee juntas todas las carpetas que se le den (`ficheros_de`), y los ticks de cada llenado junto a su CSV; test nuevo con dos carpetas y el mismo nombre de ticks en cada una; el runbook lo dice |
+| b4 | la caducidad caía a GTC | `PonerCaducidad` siempre `ORDER_TIME_SPECIFIED`; `Comprobaciones` se niega si EURUSD no admite `SYMBOL_EXPIRATION_SPECIFIED`; el contrato rompe con `ORDER_TIME_GTC` en el fuente y sin la negativa |
+| b5 | la salida a mercado iba a ≥305 s y las esperas no miraban los topes | la salida se cuenta desde que se ve el llenado, por `TimeLocal` (las esperas no dependen de que lleguen ticks); los ticks de la entrada se copian DESPUÉS de cerrar la posición; `DURACION_MAXIMA_CICLO_S` acota lo que está vivo (la espera del llenado, la de la salida y un minuto, que cubre las del historial) |
+| b6 | una colocación rechazada seguía con el ciclo siguiente | la ejecución para, con su fila `colocacion_rechazada` |
+| b7 | (i) el deal de salida se buscaba una vez; (ii) el de una pendiente llena al borrarla también; (iii) ticks desde 0 | `EsperarDealDeSalida` y `EsperarDealDeLaOrden`, hasta `ESPERA_HISTORIAL_MS` (10 s); sin puesta, los ticks desde la cotización previa, y `GuardarTicks` no pide nada desde 0; los datos de la salida se leen antes de escribir nada (lo que el revisor no pudo medir de la selección del historial en los argumentos); cada uno con su mutación |
+
+Lo que el revisor no pudo medir de MT5 (las esperas por `TimeCurrent`, si `CopyTicksRange` bloquea,
+`OrderSend` tras `IsStopped`, si FTMO-Demo admite `SYMBOL_EXPIRATION_SPECIFIED`, otros tipos de deal
+que muevan el saldo) sigue sin medir y lo dice el runbook en «Lo que no se sabe de MetaTrader»; dos de
+ellos ya no importan (las esperas van por `TimeLocal`, y sin caducidad el guion se niega).
+
+**Los `.mq5` cambiaron tras la compilación de `24987139`** (b4 a b7): los logs de §3.2 son de la
+versión anterior. Hace falta que el consultor revise el diff (`git diff 8178c600 -- tools/mql5/`) y
+dé otra vez el comando de compilar, y que la CI corra sobre el último commit.
+
+## 5. El encargo, punto por punto
+
+| punto | qué pide | hecho | dónde |
+|---|---|---|---|
+| §0 | base, apertura, tramo R4, ningún ADR, lista blanca, lecciones | sí | «Base comprobada»; `contrato.yaml`; ningún ADR en el diff |
+| §1 | las dos partes, hechas, probadas y compiladas, sin correr | sí (falta recompilar tras §4) | §2, §3, §4 |
+| §2 | qué no cambia | sí: diff vacío (revisor, requisito 3) | §10 |
+| §3 | fase 0: 0.1 a 0.5 | sí | §0 |
+| §4 | PARADA | sí, y la respuesta tal cual | §1, «Lo que necesito que decidas», «Respuesta del consultor» |
+| D1 | `MedirOrdenesFTMO.mq5` y su contrato | sí | §2.2, §3.1, §4 |
+| D2 | `GrabarTicksFTMO.mq5`, de solo lectura | sí | §2.2, §3.1 |
+| D3 | el yaml, antes de cualquier llenado, fijado por su sha | sí (`3d453e90`, commiteado antes que el lector) | §2.1 |
+| D4 | los topes, del historial, con tests que rompen | sí (b1 reforzado) | §2.2, §4 |
+| D5 | los lectores y sus tests | sí (uno, con dos formas; junta carpetas) | §2.2, §4 |
+| D6 | holdout: no filtran por mes, no imprimen precios | sí | el lector; el runbook |
+| D7 | los manifiestos fuera de `f17/`, el runbook, la línea en F17-HISTORIAL y el índice | sí | §2.2 |
+| D8 | la compilación por `herramienta`, sin cambiar `compilar.py` | sí sobre `8178c600`; **pendiente la recompilación** tras §4 | §3.2 |
+| D9 | la CI de `fix/f17-ordenes` | sí sobre `24987139` (run 45904547776); **pendiente sobre el último commit** | §9 |
+| §6 | las líneas del cierre con sus bytes | sí | §7 |
+| §7 | el informe, el revisor, «Rama lista para revisión, NO cerrada.» | el informe y el revisor sí; la frase, tras la recompilación y la CI | §10, `## Estado` |
+
+## 6. Desviaciones
+
+1. **Una lectura antes de su fila de HOLDOUT** (fase 0): las claves de `meses_reservados.yaml` y los
+   nombres de primer nivel de `knowledge/cases/` se leyeron antes de escribir su fila; se declararon
+   el mismo día, en la segunda fila del 2026-11-26 (ADR-0021 §4). Nada de dentro de `holdout/`.
+2. **El código y el diseño de la PARADA difieren en dos detalles**, sin cambiar lo decidido: una sola
+   `validar_manifiesto(doc, tipo)` en lugar de dos funciones; y el valor del punto con
+   `OrderCalcProfit` de un punto (documentado: la moneda de la cuenta) en lugar de
+   `SYMBOL_TRADE_TICK_VALUE / SYMBOL_TRADE_TICK_SIZE`. Y en las filas que no son de llenado, el valor
+   va en la columna `motivo`.
+3. **§2.2 decía más de lo que probaba el contrato** («cada tope con un test que rompe»): las
+   comparaciones no tenían test (revisor, b1). Corregido en §4; queda dicho aquí.
+4. **La compilación se repite**: los arreglos de §4 cambian los dos `.mq5` después de compilarlos.
+5. **`git worktree remove --force`** en la prueba contra `main` (§2.3), por los tests copiados sin
+   seguir; dicho allí.
+6. **El informe del revisor** va pegado entero, con las rutas de «Ficheros» relativas a la raíz (las
+   daba absolutas).
+7. Nada se ensayó con datos reales: no existe ninguno (la medida y el grabador no han corrido); los
+   lectores se prueban con CSV sintéticos en un temporal.
+
+## 7. Las líneas del cierre, con sus bytes
+
+Medidas sobre los ficheros de `main` (PROJECT_STATE en 24.131 bytes; el tope es 25.000,
+`tests/unit/test_project_state.py`). Antes de proponerlas, `grep` en `tests/`, `docs/`, `scripts/`,
+`src/`, `.claude/skills/` y PROJECT_STATE de cada texto que cambia: solo los citan informes cerrados
+y `docs/state/HISTORIA.md` (F17-HISTORIAL.md:1045, :1220, :1276 y :1314; HISTORIA.md:21682, :21746 y
+:21809), que no se tocan; ningún test.
+
+- **PROJECT_STATE, la F de la Next Action:** «F17 (ADR-0099 §5; el historial: F17-HISTORIAL.md) y el
+  backtest del trader con costes (ADR-0100, R4.10), pendientes.» → «F17 (ADR-0099 §5;
+  F17-HISTORIAL.md y F17-ORDENES.md, sin correr) y el backtest del trader con costes (ADR-0100,
+  R4.10), pendientes.» **+15 bytes**: 24.146 de 25.000 (con `Current Branch` y `Current Feature`
+  devueltos a los de `main` y el recuento de tests con los mismos dígitos).
+- **HOJA-DE-RUTA, A.5, «Qué es»:** «El historial: herramientas hechas y sin correr
+  (trabajo/f17-historial, F17-HISTORIAL.md); la corrida, en una prueba gratuita, en su rama.» → «Las
+  tres partes, en código y sin correr: el historial (trabajo/f17-historial, F17-HISTORIAL.md), y el
+  grabador y la medida de las órdenes stop (trabajo/f17-ordenes, F17-ORDENES.md). Las corridas, en
+  pruebas gratuitas y en su rama; la medida pide varias (cuántas, en F17-ORDENES.md) y no se lanza
+  hasta que FTMO conteste el correo del 2026-11-26 (A.2).» **+217 bytes**. Sin recuentos
+  (HOJA:12-13). Ninguna entrada pasa a HECHA.
+- **HOJA-DE-RUTA, «F01-F35 · Estado medido», fila F:F17** (no está en el «Marcador»: error menor del
+  consultor): «PARCIAL: el script de medición (tres ejecuciones, ADR-0071 y ADR-0090) y las
+  herramientas del historial, sin correr; no el grabador ni la medida de las órdenes stop» → «PARCIAL:
+  el script de medición (tres ejecuciones, ADR-0071 y ADR-0090) y las tres partes de ADR-0099 §5 (el
+  historial, el grabador y la medida de las órdenes stop), en código y sin correr», y en sus
+  documentos `F17-ORDENES.md`. **+43 bytes**.
+- **HOJA-DE-RUTA, A.2, «Estado»** (punto 7 de la respuesta), al final: «Enviado el 2026-11-26 (hilo
+  nuevo): si la prueba gratuita ejecuta como el Challenge y la cuenta real (P4-08), y si medir con un
+  guion propio, con dos tamaños de lote, es práctica prohibida, hiperactividad o afecta a un
+  Challenge futuro (R13, R16 y R17); respuesta pendiente, y la medida de F17 no se lanza sin ella
+  (F17-ORDENES.md).» Sin recuentos.
+- **Nada sale ni cambia de nombre** (ninguna Ref, heredado ni línea de Technical Debt).
+
+## 8. La fila de ERRORES-RECURRENTES, preparada
+
+Con las cuatro columnas de la tabla (`Rama | Hallazgos del revisor | Hallazgos del consultor despues |
+Que se le escapo`):
+
+| `trabajo/f17-ordenes` | Una pasada, opus, con los alcances de §7, los puntos 2, 3 y 7 de la PARADA y los arreglos 1 y 2 de la revisión de los `.mq5` (F17-ORDENES.md, §10; lo hecho, en §4): eje (a) 0 bloquea, 0 importa, 2 menor; eje (b) 0 bloquea, 4 importa, 3 menor. b1 (el contrato comprobaba que cada tope se LLAMA, no que COMPARA con su `TOPE_*`: una prueba que no prueba lo que dice), b3 (el lector leía una carpeta y el veredicto de D3 pide juntar días y pruebas), b4 (la caducidad caía a GTC, heredado de MedirDemoFTMO), b2 (las secciones de entrega) y b5 a b7 (tiempos y robustez del ciclo); arreglados todos | En la fase 0 (la sesión y el auditor): (1) «las siete observaciones de ADR-0090 §7 ... 0,01 lotes», copiado del ADR sin contar la lista (son nueve; seis a mercado, cuatro con 1,00 lote); (2) R17 no citado, solo R16; (3) `OrderCalcMargin` sin decir el tipo de orden, con la tasa 0;0 de la stop ya escrita en ADR-0090; (4) «tan cerca como deje el servidor» sin mirar los llenados al colocar de la ejecución 3; menores: las 2 h 30 min atribuidas a R15, los festivos en ADR-0068 §4 y la fila F:F17 en el «Marcador». En la revisión de los `.mq5` (consultor): el saldo del día restaba el depósito del primer día, así que el tope (b) no saltaba nunca ese día; y el grabador rehacía sin límite desde los CSV de una prueba anterior | Lo que el consultor copia de un ADR se cuenta y se cruza con el resto del ADR antes de escribirlo; un tope que se calcula del historial se prueba también el primer día de la cuenta y tras relanzar; y un contrato en el texto que comprueba que una función se llama no comprueba que compara: cada tope necesita la mutación de su comparación |
+
+## 9. La CI de `fix/f17-ordenes`
+
+- **Run 45904547776**, sobre `24987139` (empujado con
+  `git push origin trabajo/f17-ordenes:refs/heads/fix/f17-ordenes`): `failure` con **un solo fallo, el
+  esperado**, `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` (PROJECT_STATE declara
+  `trabajo/f17-ordenes` y la rama es `fix/f17-ordenes`, RITUAL.md); «1 failed, 3701 passed, 102
+  skipped».
+- **Pendiente:** la CI sobre el último commit, tras la recompilación de §4.
+
+## 10. Informe del revisor (subagente `revisor`, sobre `24987139`)
+
+Pegado tal cual, con los títulos bajados un nivel:
+
+
+He revisado HEAD 24987139 contra la base e8c20a80: 6 commits y 23 ficheros, con el árbol de trabajo limpio. La rama no está lista: el eje (a) no tiene nada que bloquee, pero en el eje (b) quedan cuatro hallazgos importa, dos de ellos en código y tests.
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 0 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | menor | El estado del informe está desfasado. La cabecera dice «EN CURSO (respuesta a la PARADA, aplicándose)» y el `## Estado` final dice «viene el código de D1 a D9», cuando el código ya está commiteado (1d483ce6, 8178c600) y compilado (24987139). | `docs/validation/F17-ORDENES.md`:3 y :802-804 |
+| a2 | menor | Afirmaciones sobre el lector que el código no sostiene. `scripts/README.md` dice «Valida los manifiestos de `data/manifests/f17-ordenes/` y `f17-grabador/`», pero `main()` nunca llama a `validar_manifiesto`: solo la usa el test. El diseño de la PARADA hablaba de `validar_manifiesto_ordenes` y `validar_manifiesto_grabador` (§1.3) y de un valor del punto `SYMBOL_TRADE_TICK_VALUE/...` (§1.1). El código hace otra cosa (una sola `validar_manifiesto(doc, tipo)` y `OrderCalcProfit`) y §2 no lo declara. El README de `leer_historial_f17` tiene la misma frase. | `scripts/README.md` (diff, línea «Valida los manifiestos…»); `scripts/leer_ordenes_f17.py`:541 (def) y :582-614 (`main` sin llamada); `MedirOrdenesFTMO.mq5`:384-390; informe :288 y :363 |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` da «CONTRATO: 23 ficheros dentro del contrato… G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-26 para trabajo/f17-ordenes, estadiada», exit 0.
+- **Comprobaciones del contrato.**
+  - `uv run botsito state check`: OK.
+  - `uv run botsito knowledge validate` (a stdout): todo OK, solo con los dos AVISO de config congelado de siempre.
+  - `make check` no lo ejecuté. Su `make-check.log` trae «3798 passed, 6 xfailed», «SELLO: make check en verde sobre el arbol f49b0da2…», que es `git rev-parse HEAD^{tree}`, y «PICO DE MEMORIA … 322 MiB».
+- **Trailers `Fuente:`.** Ningún commit toca `knowledge/spec` ni `knowledge/cases`.
+- **Holdout y material.** No se toca `knowledge/cases/holdout`. Hay seis filas de HOLDOUT del 2026-11-26 que nombran la rama. La segunda declara, el mismo día, que la lectura de las claves de `meses_reservados.yaml` y de los nombres de primer nivel de `knowledge/cases/` se hizo antes de escribir la fila: cumple ADR-0021 §4. No hay libros, imágenes, fotogramas ni crudas.
+- **Regímenes de cambio.** Nada en `knowledge/evidence`, `knowledge/feedback`, `data/manifests` ni `corpus`. `HISTORIA.md` y `data/manifests/README.md` tienen 0 líneas quitadas.
+- **Ambigüedades, ADR y citas.** No hay ambigüedades, ningún ADR cambia y no se añade ningún sitio con `cita`. No hay items de evidencia nuevos.
+- **Informes cerrados.** No se cambia ninguno; HOLDOUT-EXPOSICIONES solo gana filas.
+- **Cifras.** Las del `.mq5` se comparan con el registro y el yaml (test :170-175).
+- **Citas del informe comprobadas contra su fuente (5):**
+  - `premisa.txt`:67, «mediana de D: 18 puntos»;
+  - ADR-0090:168-173, la 3 con la sell stop y la buy stop «llenada al instante»;
+  - `DEMO-EJECUCIONES-2-3.md`:84-86, «tasas de margen buy stop 0.0000;0.0000… calculado a la orden 0.00»;
+  - `DEMO-FTMO.md`:158-166, el reinicio a las 00:00 de España;
+  - ADR-0068 «Alternativas» 2 (:117-118), las sesiones no traen los festivos.
+- **Copias literales.** La respuesta a la PARADA es idéntica en el encargo (:86-120) y en el informe (:564-598): `diff` sin salida. El correo literal está en :600-619; frente al pedido solo cambia el formato (negritas y comillas de código) y una frase de enlace añadida.
+
+#### Eje (b) · Encargo
+Resumen: 0 bloquea, 4 importa, 3 menor. Requisitos: 38 hechos, 5 parciales, 6 no hechos.
+
+**Requisitos**
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | §0 base verificada, apertura, tramo R4, ningún ADR, lista blanca | Hecho | informe :12-23; `contrato.yaml`:4; `diff --stat` de `docs/adr` vacío; contrato_rama OK |
+| 2 | §0 fila HOLDOUT antes del primer `make check` | Hecho | HOLDOUT, cinco filas nuevas en el diff |
+| 3 | §2 diff vacío (motor, simulador, `knowledge/`, `src/`, `mql5/`, MedirDemo, ExportarTicks, `leer_historial_f17`, F17-HISTORIAL.yaml, `f17/`, `demo_ftmo/`, criterio, PREMISA, PUENTE, ADR, MASTER_PLAN, sus tests, config, Makefile, `.claude`, `.gitignore`) | Hecho | `git diff --stat main...HEAD -- <todas>`: sin salida |
+| 4 | Fase 0, puntos 0.1 a 0.5 | Hecho | informe :25-244, :621-651 |
+| 5 | PARADA con diseño, yaml en borrador y decisiones | Hecho | informe :246-558 |
+| 6 | D1, la condición DEMO de :759 la primera, antes de cualquier petición | Hecho | `MedirOrdenesFTMO.mq5`:899 y :956; test :115-125 y :256-257 |
+| 7 | D1, solo EURUSD y mágico propio | Hecho | :50-51 (57057100 frente a 57057000 en `MedirDemoFTMO.mq5`:33); `grep` de `magic` en `mql5/` vacío |
+| 8 | D1, limpieza al empezar, al terminar y si falla, solo lo suyo, y comprobada | Hecho | :294-344, :808, :835, :889, :987, :995 |
+| 9 | D1, toda pendiente con caducidad | **Parcial** | `PonerCaducidad` :204-214, que cae a GTC (hallazgo b4) |
+| 10 | D1, toda posición con stop desde que nace | Hecho | stop en la orden, :245 |
+| 11 | D1, ciclo alterno a 5 puntos, stop 18, salida a mercado a 300 s | Hecho (b5) | :54-57, :783, :847, :992 |
+| 12 | D1, estrato «bot» con `OrderCalcMargin` a mercado y ADR-0081 D2 | Hecho | :375-402; test :212-216 y :447-451 |
+| 13 | D1, columnas del CSV y ticks por llenado | Hecho | :179-181, :727-754 |
+| 14 | D2, grabador de solo lectura con contrato | Hecho | `Grep` de OrderSend, CTrade, Position, OrderCalc, HistorySelect y OrdersTotal en el fuente: 0 coincidencias; test :31-36 con las 33 de `FUNCIONES_DE_TRADING` |
+| 15 | D2, DEMO y EURUSD; `CopyTicks` desde el último `time_msc`; atómico por hora; prefijo `F17G_` | Hecho | `GrabarTicksFTMO.mq5`:99-112, :118-141, :300-326 |
+| 16 | D3, yaml antes de cualquier llenado, fijado por sha y commiteado antes que su lector | Hecho | sha256 3d453e90… igual al del test :23; yaml en 1cac097f (14:56) y lector en 1d483ce6 (15:35); `git diff 1cac097f HEAD` del yaml y su test vacío; no existe `data/f17*` ni `data/manifests/f17-*` |
+| 17 | D4 (a), peor caso con compras y ventas ≤ 1.000, de la terminal | Hecho | :406-458; test :207-211 y :440-445 |
+| 18 | D4 (b) y (c), desde la cuenta y el historial | Hecho en código (b1) | :484-517, :629-638, :664-667 |
+| 19 | D4 (d), 500 peticiones y pausa fija de 1.500 ms | Hecho en código (b1) | :218-232, :523-577, :639 |
+| 20 | D4 (e), 150 min, y los festivos en el runbook | Hecho | :582-605; runbook :74-81 |
+| 21 | D4, constantes comparadas con el runbook | Hecho | test :66-75 y :176-180 |
+| 22 | D4, cada tope con un test que rompe | **Parcial** | hallazgo b1 |
+| 23 | D4, cada tope que salta escribe su fila | Hecho | :652, :670, :799 |
+| 24 | D5, lector `medida` y `grabador` con `RelojServidor`, sin cifras | Hecho | `leer_ordenes_f17.py`:100-105, :594 |
+| 25 | D5, los seis tests que rompen (ASK/BID con otro tick, `sin_tick`, >5 %, «bot» +1, p90 = máx(p90 uno, máx bot), fuera de ventana) | Hecho | `test_leer_ordenes_f17.py`:81-95, :139, :238, :229, :218, :194 |
+| 26 | D5, sin comparación con Dukascopy | Hecho | yaml :65 |
+| 27 | D6, no filtra por mes y no imprime precios | Hecho | lector :396-437, :461-472 |
+| 28 | D7, manifiestos fuera de `f17/`, esquema en el README y test | Hecho | test :120-146; README :37 |
+| 29 | D7, el runbook con su contenido | Hecho | `F17-ORDENES.md` entero |
+| 30 | D7, «cómo se lee» | **Parcial** | hallazgo b3 |
+| 31 | D7, línea en F17-HISTORIAL e índice | Hecho | diff de los dos ficheros |
+| 32 | D8, compilación PASA en los dos; `compilar.py` sin diff; logs de los fuentes commiteados | Hecho | logs: «Result: 0 errors, 0 warnings», sha 91fdda77… y 46b229dc…, iguales a `git show HEAD:<f> \| sha256sum` |
+| 33 | D9, CI de `fix/f17-ordenes` en verde salvo `state check` | **Parcial** | run 45904547776 en curso; no lo consulté |
+| 34 | Punto 0, las dos estimaciones como supuestos y el replanteo | Hecho | runbook :41-48 |
+| 35 | Punto 1, constantes fijas sin `input` | Hecho | test :181-183 |
+| 36 | Punto 2, lote bajado, lote usado y lote D2 en la fila, `bot_reducido` <90 %, margen a mercado | Hecho (bucle sin test, b1) | `.mq5` :786-796 y :159; lector :212-221; test :202-205 |
+| 37 | Punto 3, ventana 22-03, zoneinfo 2026-2030 a los dos lados, nada vivo a las 22:00 en el contrato | Hecho (b5) | test :521-553 y :424-438 |
+| 38 | Punto 4, historial más las rechazadas de los CSV | Hecho en código (b1) | :523-577, :969 |
+| 39 | Punto 5, toda la cuenta; en el runbook, que no opera nada más | Hecho | runbook :77-78 |
+| 40 | Punto 6, script; relanzado; hueco en el control | Hecho | runbook :110-118 |
+| 41 | Punto 7, la medida no se lanza sin la respuesta de FTMO, qué pasa con cada respuesta, y el correo literal | Hecho | runbook :13-21; informe :600-619 |
+| 42 | Puntos 8 y 9, `al_colocar` y búsqueda en `(puesta, llenado]` | Hecho | lector :167-197; yaml :19-35 |
+| 43 | Revisión, arreglo 1, solo `DEAL_TYPE_BUY` y `DEAL_TYPE_SELL` | Hecho | :495-497; test :219-224 y :389-398 |
+| 44 | Revisión, arreglo 2: `MAX_HORAS_REHACER` 72, `hueco_largo`, login en el control y no en el repo | Hecho | grabador :40, :264, :282-290; `git grep -i login` no da ningún valor; manifiestos README :136 |
+| 45 | Revisión, arreglos 3 a 6 | Hecho | informe :774-781 |
+| 46 | §7, el encargo punto por punto (la tabla de `entregar-rama`, E5) | **No hecho** | `grep` de «punto por punto» en el informe: solo la cabecera :4 |
+| 47 | §7, desviaciones y fila de ERRORES-RECURRENTES preparada | **No hecho** | el informe acaba en :804 |
+| 48 | §6, las líneas de cierre (Next Action F, A.5 y F:F17, A.2 del punto 7) con sus bytes | **No hecho** | ídem |
+| 49 | §7, informe del revisor pegado y «Rama lista para revisión, NO cerrada.» | **No hecho** | pendiente; no lo pego yo |
+
+En el conteo del resumen, las filas 46 a 49 suman seis requisitos no hechos (la 47 y la 49 cuentan dos cada una). Los 5 parciales son 9, 22, 30, 33 y la 49 vista como «pendiente de entrega».
+
+**Hallazgos**
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | **Los topes (a) a (d) tienen test, pero su comparación no.** El contrato solo exige que `PuedeEmpezarCiclo` contenga las llamadas (`"SaldoAlEmpezarElDia()"`, `"PeticionesDelDia()"`, `"PeorCaso("`…) y que las funciones lean `HistorySelect` y similares. No mira que cada comparación use su `TOPE_*`. Mutaciones como estas pasarían el contrato: borrar `\|\| equity < saldo_dia - TOPE_DIA_USD` en `PuedeEmpezarCiclo` (:629) o en `HayQueCortar` (:664); cambiar `peticiones + 3 > TOPE_PETICIONES` (:639) por `false`; borrar el `peor > TOPE_PEOR_CASO_USD` (:644) o el bucle que baja el lote (:790-796, punto 2); quitar `+ g_rechazadas_previas + g_rechazadas` (:549) o el `n++` de la borrada (:537-538); dejar `RechazadasDeHoy` en 0 (:969), que es justo lo que vale «tras relanzarlo»; o quitar el `MARGEN_CIERRE_MIN` de :600. El docstring del test (:18-19) y el informe (:694) dicen más de lo que el test prueba. Es «una prueba que no prueba lo que dice», justo en el alcance «cada uno con un test que rompe». | `tests/contract/test_medir_ordenes_ftmo.py`:78-92, :185-193 y :199-202. `Grep` de `TOPE_\|peticiones \+\|g_rechazadas\|RechazadasDeHoy\|CANCELED` en el test: `TOPE_*` solo sale en `DEL_RUNBOOK` (:67-70) y en las mutaciones de `#define` (:345-362); `g_rechazadas` solo como sustituto en :415. No pude ejecutar las mutaciones: la guardia negó el import (abajo). |
+| b2 | importa | **Faltan las secciones de entrega de §7.** No están la tabla «El encargo, punto por punto» (E5 de `trabajo/entorno-code`), las desviaciones (entre ellas la lectura previa a la fila de HOLDOUT que la fila llama «desviación del informe»), las líneas de §6 con sus bytes (incluida la A.2 que pide el punto 7) ni la fila de ERRORES-RECURRENTES. | informe :748-804; HOLDOUT, segunda fila nueva («desviación del informe») |
+| b3 | importa | **El lector no puede dar el veredicto de D3 por el camino que documenta el runbook.** El lector lee una sola carpeta, sin recursión. El runbook congela y lee por día. Los tamaños de D3 (100 por clase en «uno», unos 3 días; «bot» en 2 o 3 pruebas) solo se alcanzan juntando días y pruebas, así que cada lectura por día saldrá «insuficiente». Nada dice cómo se agregan, y el informe no lo declara. | `leer_ordenes_f17.py`:381 (`carpeta.iterdir()`); runbook :141 (`data/f17-ordenes/<AAAA-MM-DD>/`) y :148 (`medida data/f17-ordenes/<dia>`); runbook :35 («unos 3 días de ventana») |
+| b4 | importa | **«Toda pendiente lleva caducidad» (D1) no está garantizado.** Si el símbolo no admite `SYMBOL_EXPIRATION_SPECIFIED`, `PonerCaducidad` pone `ORDER_TIME_GTC`, es decir, sin caducidad (el propio informe :55 lo dice de MedirDemoFTMO). El nuevo guion hereda ese camino sin negarse, y la cabecera (:19) y el runbook (:58-59) afirman «y caducidad». El contrato solo exige la llamada a `PonerCaducidad(req)` (test :141-142). No está declarado como decisión. Leído al pie de la letra («falta algo que el encargo pide explícitamente») podría ser bloquea; lo dejo en importa porque el patrón viene de `MedirDemoFTMO`, que el encargo manda reutilizar. | `MedirOrdenesFTMO.mq5`:204-214, :19; runbook :58-59 |
+| b5 | menor | **El ciclo dura más de lo que dicen T y `DURACION_MAXIMA_CICLO_S`.** Los 300 s empiezan a contar después de copiar los ticks de la entrada (`fin` en :847, tras `FilaDeLlenado` en :843, que duerme 5.000 ms y hasta 3×1.000 ms en :729 y :739). La salida a mercado es, por tanto, a ≥305 s del llenado, no «a los 300 s» (runbook :60; yaml `salida_a_mercado_s`). `DURACION_MAXIMA_CICLO_S` (120+300+60, :78), que el informe llama «duración máxima» (:693), no cuenta las dos esperas de ticks ni las pausas de `Pedir`. Sin bloqueos el ciclo cabe (unos 440 s); si `CopyTicksRange` bloquea, no. Durante esas esperas no se consulta `HayQueCortar`. | :78, :729-740, :843-847 |
+| b6 | menor | **Una colocación rechazada no para la ejecución.** Si `ColocarStop` es rechazada, `Ciclo` sigue con el ciclo siguiente cuando `Limpiar` da 0. Ante un rechazo persistente se envían hasta `InpCiclos` peticiones rechazadas, acotadas solo por (d). Es lo que el arreglo 3 quería evitar, y A-54 no sabe si FTMO las cuenta. | :807-808; :990-994 |
+| b7 | menor | **Tres caminos de robustez que pierden muestras o piden de más.** (i) Un cierre aceptado se busca en el historial una sola vez, tras 500 ms. Si el historial va con retraso, sale `sin_salida` y se para toda la ejecución, aunque `rc.deal` ya traía el deal. (ii) Si la pendiente se llena justo al borrarla y el deal aún no está en el historial, sale `sin_llenado` y `Limpiar` cierra la posición sin registrar la entrada. (iii) Si fallan `OrderSelect` y `HistoryOrderSelect`, `puesta` queda en 0 y `GuardarTicks` pide desde `MathMin(cot.time_msc, 0)` = 0, es decir, desde 1970. Los tres son seguros (no dejan nada abierto). | (i) :858-862, :866-871; (ii) :820-836; (iii) :810, :837-844 |
+
+Lo que la rama añade sin que el encargo lo pida: el objetivo de respaldo a 54 puntos y `tick_tarde`. Los dos están declarados (informe :716-720) y el consultor los aceptó (§3, :756). No hay más añadidos sin justificar.
+
+**Lo demás de los alcances:**
+- **Grabador.** No puede enviar órdenes (fila 14).
+- **Reloj del servidor a UTC.** `RelojServidor` se importa sin editar el guion y sin cifras: lector :87-105; test :386.
+- **Manifiestos.** No caen en `f17/`: test :120-125; ninguno existe todavía.
+- **Arreglo 1, prueba mental del primer día y del relanzado:**
+  - Primer día: el depósito de 100.000 es un `DEAL_TYPE_BALANCE` y se salta (:496). `movido` = P y el saldo es 100.000 + P, así que el saldo del día da 100.000, (b) salta en 97.000 y (c) da un capital de 100.000 (:505-517).
+  - Relanzado el mismo día: da lo mismo, porque todo se lee del historial.
+  - Día siguiente: 100.000 + P1.
+  - Se sostiene.
+
+#### Lo que no pude comprobar
+- **Las mutaciones de b1.** La guardia negó `uv run python -B -c "import tests.contract.test_medir_ordenes_ftmo …"` («no se pudo resolver el modulo `tests.contract.test_capa_mt5`»), y antes la variable `PYTHONDONTWRITEBYTECODE`. No la rodeé: la evidencia de b1 es el texto del test.
+- **`make check`**, porque escribe. Su evidencia es `make-check.log`: el SELLO cae sobre el árbol de HEAD, «3798 passed», 322 MiB.
+- **La CI**, run 45904547776, por indicación del encargo.
+- **Comportamientos de MT5 sin medir:**
+  - si `HistoryOrderSelect` en los argumentos de :885-888 (orden de evaluación) deja sin selección el deal antes de `HistoryDealGetInteger(salida, DEAL_ORDER)`;
+  - si `CopyTicksRange` bloquea en un script (b5);
+  - si las esperas basadas en `TimeCurrent` (:812, :847) se alargan cuando no llegan ticks;
+  - si `OrderSend` funciona en los 3 s que siguen a `IsStopped` (el `Limpiar("al_terminar")` cuando se para a mano);
+  - si FTMO-Demo admite `SYMBOL_EXPIRATION_SPECIFIED` (eso volvería teórico b4);
+  - si FTMO mueve el saldo con deals de otros tipos (`CHARGE`, `COMMISSION` diaria, `CORRECTION`), que `SaldoAlEmpezarElDia` no resta y que estrecharían el margen de (b).
+- **Los recuentos de tests del informe** (108, 148 y 57 FAILED contra `main`) no los rehíce. Los seis ficheros de la rama más `test_manifiestos_f17.py` pasan todos en `pytest -q` (salida sin F).
+
+#### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. Read: el encargo y `contrato.yaml`
+3. `uv run python scripts/contrato_rama.py`
+4. `git diff --name-status main...HEAD` y `git log … --name-status main..HEAD`
+5. Read: `tools/mql5/MedirOrdenesFTMO.mq5` y `tools/mql5/GrabarTicksFTMO.mq5`
+6. `sed -n 750,775p tools/mql5/MedirDemoFTMO.mq5`; `grep` de MAGICO y `#define`; `grep -rn magic mql5/`
+7. Read: los dos contratos, `leer_ordenes_f17.py`, el yaml, `test_f17_ordenes_criterio.py` y `test_manifiestos_f17_ordenes.py`
+8. `sha256sum` del yaml; `git diff --stat 1cac097f HEAD -- <yaml, test>`; `git show --stat 1cac097f`; `git diff --stat main...HEAD -- <rutas de §2>`
+9. `PYTHONDONTWRITEBYTECODE=1 uv run … pytest …` (negado por la guardia)
+10. `uv run python -B -m pytest -p no:cacheprovider -q` con los 6 ficheros (todo pasa)
+11. `Grep` en `test_capa_mt5.py`
+12. `grep` de los `def test_` del lector y de los manifiestos; Read de `test_leer_ordenes_f17.py`:36-265
+13. `sed -n 120,132p tests/unit/test_manifiestos_f17.py`; `Grep` de rglob y manifests en `src/botsito`
+14. `cat` de los dos logs de compilación
+15. `git show HEAD:<mq5> | sha256sum` (los dos) y `git show 8178c600:…`; `git diff --stat 8178c600 HEAD -- tools/`; `git diff main...HEAD --stat -- compilar.py`
+16. Read del informe (:1-804); `Grep` de GTC y caducidad
+17. Read del runbook `F17-ORDENES.md`
+18. `git diff main...HEAD` de F17-HISTORIAL, el índice de runbooks, los dos README, PROJECT_STATE y HOLDOUT
+19. `git diff … data/manifests/README.md | grep`; `git grep -n -i login HEAD`
+20. `Grep` de `validar_manifiesto` en los dos lectores
+21. `sed` de las citas (premisa, DEMO-EJECUCIONES, DEMO-FTMO, parametros) y `ls docs/adr | grep`; `sed` de ADR-0090, ADR-0068 y ADR-0099
+22. `uv run python -B -c "import tests.contract…"` (negado por la guardia)
+23. `Grep` de `TOPE_` y demás en el contrato de la medida
+24. `uv run botsito state check`
+25. `uv run botsito knowledge validate`
+26. `ls -la make-check.log; grep SELLO/PICO`; `git rev-parse HEAD^{tree} HEAD~1^{tree}`
+27. `diff <(sed …encargo) <(sed …informe)`: la primera forma, negada; la segunda, IGUALES
+28. `ls data/manifests | grep f17; ls data | grep f17`; `grep` de secciones en el informe
+29. `Grep` de funciones de trading en `GrabarTicksFTMO.mq5` (0)
+
+Ficheros:
+- tools/mql5/MedirOrdenesFTMO.mq5
+- tools/mql5/GrabarTicksFTMO.mq5
+- tests/contract/test_medir_ordenes_ftmo.py
+- scripts/leer_ordenes_f17.py
+- docs/runbooks/F17-ORDENES.md
+- docs/validation/F17-ORDENES.md
+
+(Las rutas de «Ficheros», relativas a la raíz del repo; el informe original las daba absolutas.)
+
 ## Estado
 
-EN CURSO: la respuesta a la PARADA aplicada en el criterio de D3 (2.1); viene el código de D1 a D9.
+EN CURSO: el código, los tests, la compilación de `8178c600`, la CI de `24987139` y el revisor,
+hechos; los arreglos del revisor (§4) cambian los `.mq5`, así que faltan la revisión del diff por
+el consultor, la recompilación con su comando y la CI sobre el último commit. La rama NO está
+lista todavía.
