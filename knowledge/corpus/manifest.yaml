@@ -139,6 +139,34 @@ ficheros:
   papel: material_adicional
   ruta: Material adicional de su operativa/Backtest septiembre 2026/backtesting-analytics SEPTIEMBRE 2026.xlsx
   sha256: 8a37c24b841ad9d5c7058ffba93fe15d9abac32c0a1c25fcd97a8df83d3c0b3d
+- bytes: 421749
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/audio-whatsapp-2026-11-23-0959-caja-en-una-vela.ogg
+  sha256: 151a23bbad3baefc6cca793ad951ec0a0ff33afafdf2906ec96f7e6f1cd92011
+- bytes: 38026
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/audio-whatsapp-2026-11-23-0959-protegido-en-0-80.ogg
+  sha256: b74803c54ee28f58236493294b88b9b7daf566c28f37991f42de2570f0ebaaea
+- bytes: 120403
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/audio-whatsapp-2026-11-23-1001-break-even-y-comision.ogg
+  sha256: d1986b2275db4fe2878d9831b990fb5e1b8b2063f7092de1c2b06cb62d7656f6
+- bytes: 38510
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/audio-whatsapp-2026-11-23-1002-calculo-del-break-even.ogg
+  sha256: 2e6d6bba7fed1e00493b8d0355d5a2c49b94d759192d37fa2d7dc600afcb551c
+- bytes: 351319
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/audio-whatsapp-2026-11-23-1007-recalculo-y-reunion.ogg
+  sha256: 22704d844fc9ca730e71b27109d0145ef04cc3e9bb39643e1752f9edb39ebade
+- bytes: 387646
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/audio-whatsapp-2026-11-23-1010-objetivo-y-191-operaciones.ogg
+  sha256: bb7121e34315d27b076dbe49ed6e0d775ffdeaef5e4ae7fc0113bf68f8198199
+- bytes: 273451
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/audio-whatsapp-2026-11-23-1013-fundednext-y-esquemas.ogg
+  sha256: 2d93a892bb6bfa82c487b575ff282c665a563589f0a895ca64311422a9217056
 - bytes: 80269
   papel: material_adicional
   ruta: Material adicional de su operativa/Mensajes del trader/grafico-consultor-2026-10-14-pregunta-dos-casos.png
@@ -203,6 +231,22 @@ ficheros:
   papel: material_adicional
   ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-25-1358.png
   sha256: 75f9eda2d24ba1219e314f7ae036bcd6e60a7e1aeac5e20aa0cda49e4577e2c1
+- bytes: 391604
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-11-23-0126-cinco-preguntas.png
+  sha256: 65a2d71e9e223dd87d4c4edf68d754cb59881e220923b68ff7faca799306f4ca
+- bytes: 76224
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-11-23-0956-operativa-real.png
+  sha256: a635f76f3be4c89959822767268a6d8dfc3f115e801e68febe82fad7d9f7ef28
+- bytes: 168123
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-11-24-1718-propuesta-backtest-costes.png
+  sha256: 33fa10d2728bb956951e5e283a9153ad37c4e74ac85fce8a6172fa6a7b139ed7
+- bytes: 318435
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-11-24-1719-meses-enero-julio-2024.png
+  sha256: f47da4e8ffb5b787e8a6c4ed81e56a1186577f5fae6f3a0de5ff98502e5d57dc
 - bytes: 162226
   papel: material_adicional
   ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.55.36 PM.jpeg
@@ -2270,8 +2314,8 @@ resumen:
     bytes: 117626282
     ficheros: 477
   material_adicional:
-    bytes: 6850662
-    ficheros: 73
+    bytes: 9436152
+    ficheros: 84
   video_original:
     bytes: 98507386788
     ficheros: 21

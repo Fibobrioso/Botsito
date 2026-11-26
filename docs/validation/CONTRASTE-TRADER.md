@@ -1,7 +1,7 @@
 # CONTRASTE-TRADER · El contraste con el trader de ADR-0099 §6 y la petición escrita de los meses del backtest con costes (R4.7, entrada F)
 
-> PLANTILLA hasta la respuesta a la PARADA: la fase 0 (skill fase-cero) está en §0; lo que entra al
-> repo, tras la respuesta.
+> Informe de la rama. La fase 0 (skill fase-cero) está en §0 y §5; la respuesta del consultor y lo
+> que entra tras ella, en §6 a §8; el revisor, al final.
 
 Rama `trabajo/contraste-trader`, abierta el 2026-11-25 desde `main` en 6c113d16 (commit de estado
 sobre el merge 42fdb0b5 del tag `stable/F39n-diagnostico-premisa`). Encargo y su añadido (A1-A5):
@@ -360,6 +360,296 @@ pocos segundos; ese `make check` salió en verde y sellado (3624 passed, `SELLO`
 **Espero tu respuesta a la PARADA** (Aleks: las preguntas 1 a 5 y la decisión 0; el consultor: las
 decisiones 1 a 6 y lo que la medida haya dejado abierto).
 
+## Respuesta del consultor a la PARADA (2026-11-25, 18:40, hora de Lima), tal cual
+
+Con las respuestas de Aleks al final, como llegaron (la 2, la 3, la 4 y la segunda parte de la 5,
+vacías). Copiada también al final del encargo.
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> RESPUESTA DEL CONSULTOR A LA PARADA de `trabajo/contraste-trader` (2026-11-25, 18:40, hora de Lima). Cópiala tal cual al informe, en su sección de la PARADA, junto con las respuestas de Aleks que van al final de este mensaje.
+>
+> Veredicto: la fase 0 cumple el encargo y el añadido. Acepto las decisiones 0 a 6 con los matices de abajo.
+>
+> 0. Nombres y audio. Aleks renombra las capturas con tu orden «!». Después vuelve a calcular el sha256 de los cuatro nombres nuevos: tienen que ser los de A1, y si alguno no coincide, PARA. El audio de A2 NO entra: según Aleks (respuesta 5) es solo una risa. Corrección del añadido, error del consultor: A2 y A3 decían que el trader «valida» los meses en ese audio, y no es así. El informe pone la secuencia de las capturas 3 y 4 tal cual: el trader acepta por escrito junio y noviembre de 2024; Aleks pide por escrito enero y julio de 2024 si aún no había arrancado; el trader no contesta por escrito a eso (solo una nota de voz que, según Aleks, es una risa); y Aleks escribe «esos si son definitivos». Sin juzgar ADR-0100 §2 (D4). Sí dice, como hecho, que ninguna captura recoge que el trader no haya operado nunca enero ni julio de 2024.
+>
+> 1. Inventario: de acuerdo. Lo corres en la rama, compruebas que el diff es el del ensayo (11 entradas nuevas y el bloque resumen) con la raíz SIN cambiar, y después `uv run botsito corpus check --hashes`. Si cambia cualquier otra línea, PARA.
+>
+> 2. fuentes.yaml: de acuerdo. Amplías el párrafo de «Mensajes del trader» dentro de «Material adicional de su operativa», con la forma de la entrada del 2026-10-14 y las cautelas de D3. No creas una entrada propia.
+>
+> 3. D1 se mantiene: ningún `fb-`. El informe declara que esto se aparta del paso 4 de knowledge/feedback/README.md:79-82 («si trae una respuesta, registro de feedback»), y por qué: las respuestas no tienen objetivo en el esquema, nada se cierra y un CONFIRM escondería A-56. El README no se toca en esta rama. Precisarlo («si trae una respuesta a un objetivo del esquema») es una línea para «Carril: guardias y deuda» de la hoja de ruta en el cierre.
+>
+> 4. De acuerdo: el informe nombra Q, V18, A-13 y `ev-v4-012524-0ef85a89` (lo que ya hay de FundedNext) solo por su id, sin tocar ninguno.
+>
+> 5. De acuerdo: ninguna entrada nueva en la hoja de ruta. El cierre lo apunta en el «Qué es» de R4.7.
+>
+> 6. De acuerdo. Además, nada de esta rama crece PROJECT_STATE (está a 78 bytes del tope). Van todas a «Carril: guardias y deuda» en el cierre: las dos guardias que negaron medidas legítimas (ffprobe sobre .ogg, el guion de recuento y el cambio de nombre), la transcripción de audios sueltos que falta en `main` (D2) y la precisión del README (punto 3). Al informe solo van las líneas propuestas.
+>
+> 7. Los literales de los audios. Cuentan las frases que Aleks confirma en la respuesta 3. Donde Aleks corrige, la versión de Aleks es el literal, marcada «[corrige Aleks]». Donde confirma, va el texto del ASR tal cual. Tus cinco lecturas («13» → 1:3; «08»/«080» → 0,8/0,80; «pib» → pip; «funda de nex» → FundedNext; «esquema 12» → esquema 1 y 2) van como nota tuya al pie de la tabla, «lectura de la sesión», salvo las que Aleks diga que oye así. Ninguna frase que Aleks no haya escuchado entra al informe. Si la respuesta 3 está vacía, no entra ningún literal de audio: por cada audio, el fichero, su sha256, el minuto y el tema en una línea neutra, y la falta se dice.
+>
+> 8. Lo enseñado (D7). F10 y F11 dicen que el trader leyó «las 191 operaciones» y que comenta la fidelidad del bot y unos «Excel recalculados». Según Aleks (respuesta 1), la foto es parte del chat del trader con Gemini, y Aleks no leyó nada de esa parte para no tocar meses reservados. El informe y HOLDOUT lo declaran así: qué se le enseñó al trader queda SIN DETERMINAR; 191 coincide con el número de operaciones llenadas de la corrida (3) (ADR-0099 §8), y ADR-0098 §3 C pedía no enseñarle ninguna cifra de la medida; es una posible desviación que no se puede confirmar ni descartar. Lo mismo con las capturas del bot y los «Excel recalculados» si la respuesta 2 está vacía. No repites ninguna cifra que no sea el 191 que ya dijo él. La consecuencia la decide el ADR de ADR-0099 §7, no esta rama. Ningún ADR se toca por esto (D6 sigue siendo solo el recuadro de ADR-0100 §1).
+>
+> 9. Pregunta 4, la parte del consultor. Según el registro del consultor, el 2026-11-23 el consultor recibió de Aleks las respuestas escritas y un resumen de los audios en seis puntos hecho por esta sesión de Claude Code, no el texto del ASR. Y una exposición nueva, de hoy: el 2026-11-25 el consultor leyó, en las capturas de esta PARADA, las frases F1 a F14 del ASR. Va a la fila de HOLDOUT de hoy, antes del siguiente `make check`.
+>
+> 10. Después: aplicas D2 a D7, el recuadro de ADR-0100 §1 en su propio commit, el informe con las líneas propuestas para el cierre y la fila de ERRORES-RECURRENTES (con tu error del ScheduleWakeup y su lección: con un `make check` corriendo no se programa nada que escriba en `.claude/`; y el error del consultor del punto 0, que dio por buena una «validación» sin preguntar qué decía el audio). Luego el revisor con los alcances del encargo. Termina con «Rama lista para revisión, NO cerrada.»
+>
+> RESPUESTAS DE ALEKS:
+> 1. La foto del «191»: «Eso es parte del chat de Gemini donde él metió varias cosas, y para no tocar meses reservados o algo, simplemente no leí NADA.»
+> 2. Las capturas del bot y los «Excel recalculados»:
+> 3. F1 a F14 escuchadas (cuáles confirmo y qué corrijo; la F5, «sin multiplicarlo» o «multiplicarlo»; cuáles de las cinco lecturas oigo así):
+> 4. Lo que leí el día 23:
+> 5. El audio de 0:14 «es solo un audio riéndose, no es necesario». Captura 3 y captura de la configuración de FX Replay:
+
+### Cómo se aplica, punto por punto
+
+| Punto | Hecho | Dónde |
+|---|---|---|
+| 0 | Aleks renombró las cuatro capturas con la orden `!`; sus sha256, vueltos a calcular con los nombres nuevos, son los de A1 (sin PARADA). El audio del 2026-11-24 no entra. La secuencia de las capturas 3 y 4, tal cual, con los dos hechos que pide | §6.1, §6.4 |
+| 1 | `corpus inventory` en la rama: el diff es el del ensayo (11 entradas nuevas y el `resumen`), con la raíz sin cambiar; después `corpus check --hashes` | §6.9 |
+| 2 | Amplía el párrafo de «Mensajes del trader» de `Material adicional de su operativa`, con la forma de la entrada del 2026-10-14 y las cautelas de D3; sin entrada propia | §6.7; `fuentes.yaml` |
+| 3 | Ningún `fb-`; el apartamiento del paso 4 de `knowledge/feedback/README.md`:79-82, declarado; la precisión del README, a las líneas del cierre | §6.8, §8 |
+| 4 | Q, V18, A-13 y `ev-v4-012524-0ef85a89`, solo por su id | §7 |
+| 5 | Ninguna entrada nueva en la hoja de ruta; el «Qué es» de R4.7 | §8 |
+| 6 | PROJECT_STATE no crece (la F propuesta lo baja 13 bytes); las guardias, la transcripción de audios sueltos y el README, a «Carril: guardias y deuda» | §8 |
+| 7 | La respuesta 3 llegó vacía: **no entra ningún literal de audio**; por cada audio, el fichero, su sha256, los minutos y el tema en una línea neutra, y la falta se dice | §6.5 |
+| 8 | Lo enseñado, SIN DETERMINAR, en el informe y en HOLDOUT; la respuesta 2, vacía, igual; ninguna cifra salvo el 191 | §6.6; HOLDOUT, fila 2 del 2026-11-25 |
+| 9 | La parte del consultor del 2026-11-23 y su exposición de hoy (F1-F14), en la fila de HOLDOUT de hoy, escrita antes del siguiente `make check` | HOLDOUT, fila 2 del 2026-11-25 |
+| 10 | D2 a D7; el recuadro de ADR-0100 §1 en su propio commit; las líneas del cierre y la fila de ERRORES-RECURRENTES; el revisor | §6 a §8; commit del recuadro; «Informe del revisor» |
+
+## 6. Lo que entra
+
+### 6.1 Por fichero
+
+En `corpus/Estrategia del trader/Material adicional de su operativa/Mensajes del trader/` (fuera de
+git) y en `knowledge/corpus/manifest.yaml`, con el papel `material_adicional`:
+
+| Fichero | Bytes | sha256 |
+|---|---|---|
+| `mensaje-whatsapp-2026-11-23-0126-cinco-preguntas.png` | 391.604 | `65a2d71e9e223dd87d4c4edf68d754cb59881e220923b68ff7faca799306f4ca` |
+| `mensaje-whatsapp-2026-11-23-0956-operativa-real.png` | 76.224 | `a635f76f3be4c89959822767268a6d8dfc3f115e801e68febe82fad7d9f7ef28` |
+| `mensaje-whatsapp-2026-11-24-1718-propuesta-backtest-costes.png` | 168.123 | `33fa10d2728bb956951e5e283a9153ad37c4e74ac85fce8a6172fa6a7b139ed7` |
+| `mensaje-whatsapp-2026-11-24-1719-meses-enero-julio-2024.png` | 318.435 | `f47da4e8ffb5b787e8a6c4ed81e56a1186577f5fae6f3a0de5ff98502e5d57dc` |
+| `audio-whatsapp-2026-11-23-0959-caja-en-una-vela.ogg` | 421.749 | `151a23bbad3baefc6cca793ad951ec0a0ff33afafdf2906ec96f7e6f1cd92011` |
+| `audio-whatsapp-2026-11-23-0959-protegido-en-0-80.ogg` | 38.026 | `b74803c54ee28f58236493294b88b9b7daf566c28f37991f42de2570f0ebaaea` |
+| `audio-whatsapp-2026-11-23-1001-break-even-y-comision.ogg` | 120.403 | `d1986b2275db4fe2878d9831b990fb5e1b8b2063f7092de1c2b06cb62d7656f6` |
+| `audio-whatsapp-2026-11-23-1002-calculo-del-break-even.ogg` | 38.510 | `2e6d6bba7fed1e00493b8d0355d5a2c49b94d759192d37fa2d7dc600afcb551c` |
+| `audio-whatsapp-2026-11-23-1007-recalculo-y-reunion.ogg` | 351.319 | `22704d844fc9ca730e71b27109d0145ef04cc3e9bb39643e1752f9edb39ebade` |
+| `audio-whatsapp-2026-11-23-1010-objetivo-y-191-operaciones.ogg` | 387.646 | `bb7121e34315d27b076dbe49ed6e0d775ffdeaef5e4ae7fc0113bf68f8198199` |
+| `audio-whatsapp-2026-11-23-1013-fundednext-y-esquemas.ogg` | 273.451 | `2d93a892bb6bfa82c487b575ff282c665a563589f0a895ca64311422a9217056` |
+
+**No entra:**
+- el duplicado `WhatsApp Ptt 2026-11-23 at 9.59.43 AM (1).ogg`, sha256
+  `b74803c54ee28f58236493294b88b9b7daf566c28f37991f42de2570f0ebaaea` (el mismo que el de la nota de
+  las 09:59:43);
+- la nota de voz de 0:14 del trader del 2026-11-24 a las 18:01: según Aleks, «es solo un audio
+  riéndose, no es necesario» (respuesta 5); no se exporta ni se escucha;
+- las ocho transcripciones del 2026-11-23, fuera del repo con los sha256 de §0.2 (D2): en `main`
+  no hay nada que transcriba un audio suelto (auditor, 37);
+- ninguna captura de la configuración de FX Replay: la respuesta 5 no trae ninguna, y la del
+  2026-11-24 que se conoce trae un agregado de toda la cuenta con meses reservados (auditor, H3).
+
+### 6.2 Las cinco preguntas (captura 1)
+
+Literal del consultor (A1), de `mensaje-whatsapp-2026-11-23-0126-cinco-preguntas.png`, sha256
+`65a2d71e9e223dd87d4c4edf68d754cb59881e220923b68ff7faca799306f4ca`. Mensaje de Aleks al trader, el
+lunes 2026-11-23 a la 01:26 (hora de Lima). Una etiqueta de fecha tapa la palabra «Estamos», que se
+lee en la cita de la captura 2.
+
+> «Hola, ¿qué tal? Estamos ajustando el bot a las condiciones de una cuenta real (spread, comisión, ejecución) y para eso necesito saber cómo es tu operativa fuera del backtest. Son cinco preguntas cortas, puedes contestar con el número y la letra:
+> 1. Esta misma estrategia de EURUSD, ¿la estás operando hoy en una cuenta real o de fondeo? a) Sí, y ya he cobrado retiros b) Sí, todavía sin retiros c) Ahora mismo solo en backtest. Si es a) o b), ¿desde cuándo más o menos? No necesito cifras.
+> 2. ¿En qué firma o bróker es, y qué tipo de cuenta?
+> 3. En esa cuenta, ¿haces exactamente lo mismo que en tus backtests de FX Replay (mismas sesiones, misma caja, mismo stop y mismo objetivo)? a) Igual b) Cambio algo: ¿qué?
+> 4. Los resultados de tus backtests en FX Replay, ¿llevan ya descontados el spread y la comisión? a) Los dos b) Solo el spread c) Ninguno d) No lo sé
+> 5. Más adelante, ¿podrías pasarme el historial exportado de esa cuenta (el archivo que da la plataforma, no capturas) de unas semanas? No lo mandes todavía: yo te digo de qué fechas.
+> Estas van primero. Las otras que te mandé (las de M15 y las del PDF) pueden esperar a que tengas un rato. ¡Gracias!»
+
+### 6.3 Las respuestas escritas del trader (captura 2)
+
+Literal del consultor (A1), de `mensaje-whatsapp-2026-11-23-0956-operativa-real.png`, sha256
+`a635f76f3be4c89959822767268a6d8dfc3f115e801e68febe82fad7d9f7ef28`. Respuesta del trader del
+2026-11-23 a las 09:56, citando la captura 1.
+
+> «1-c
+> 2-foundnext
+> 3-si, todo igual
+> 4-no se trabajo con spreads o comisión
+> 5-las de fx replays que las envíe, ya no lo puedo enviar porque ya no tengo abiertas esas sesiones de backtest, pero están en el grupo los excels»
+
+### 6.4 La petición escrita de los meses del backtest con costes (D4)
+
+La secuencia de las capturas 3 y 4, con sus horas (hora de Lima) y los literales del consultor
+(A1). El día de la captura 3 sale del «Ayer» de la captura 4, tomada el 2026-11-25; Aleks no lo ha
+confirmado (la segunda parte de su respuesta 5 llegó vacía).
+
+1. **2026-11-24, 17:18, Aleks** (`mensaje-whatsapp-2026-11-24-1718-propuesta-backtest-costes.png`,
+   sha256 `33fa10d2728bb956951e5e283a9153ad37c4e74ac85fce8a6172fa6a7b139ed7`):
+
+   > «Te propongo algo que nos va a sacar de dudas a los dos: un backtest de dos meses que no hayas hecho nunca, con los costes reales puestos. Serían junio y noviembre de 2024 (si ya hiciste alguno, dime y elegimos otro de la misma época del año).
+   > Cómo:
+   > 1. Operas exactamente igual que siempre: mismas cajas, mismo 0,8, mismo objetivo y mismo break even. No cambies nada por saber que hay costes.
+   > 2. En FX Replay: datos de OANDA como siempre, spread de 0,2 pips, comisión de 5 USD por lote ida y vuelta (2,5 por lado si te lo pide así) y el lote calculado para arriesgar el 0,5 % en cada operación.
+   > 3. Grábalo en vídeo con tu voz, como hiciste con julio, todas las sesiones enteras.
+   > 4. Al terminar cada mes me mandas el CSV completo y los vídeos. No hace falta que calcules nada, los números los saco yo.
+   > Antes de empezar, confírmame que FX Replay te deja poner el spread y la comisión así, y qué dos meses vas a hacer.»
+
+2. Lo que sigue, de `mensaje-whatsapp-2026-11-24-1719-meses-enero-julio-2024.png`, sha256
+   `f47da4e8ffb5b787e8a6c4ed81e56a1186577f5fae6f3a0de5ff98502e5d57dc`:
+   - **17:19, el trader**, citando la captura 3, **acepta por escrito junio y noviembre de 2024**:
+     «Entonces queda junio y noviembre 2024».
+   - **17:20, Aleks:** «si bro».
+   - **18:00, Aleks**, **pide por escrito enero y julio de 2024 si aún no había arrancado**: «Una
+     cosa: si todavía no arrancaste el backtest, mejor hazlo de enero y julio de 2024 en vez de junio
+     y noviembre. Si ya empezaste, sigue con esos, no pasa nada. Lo demás igual: spread 0,2, comisión
+     5 USD por lote, lote al 0,5 %, grabando con tu voz y exportando el libro completo. ¡Gracias!»
+   - **18:01, el trader:** **no contesta por escrito a eso**; solo manda una nota de voz de 0:14
+     que, según Aleks, es una risa (respuesta 5), y que no entra.
+   - **18:02, Aleks:** «esos si son definitivos xd».
+
+   La captura trae además mensajes que no se registran ni se interpretan (dos de Aleks a las 18:00,
+   una risa del trader a las 18:01 y un «dale bro» de Aleks a las 18:02), como en el precedente del
+   2026-10-14.
+
+**Dos hechos, sin juzgar ADR-0100 §2** (D4, A3 y punto 0 de la respuesta):
+- la petición de enero y julio no repite la pregunta de si ya los había hecho, que solo estaba en
+  la captura 3, para junio y noviembre;
+- ninguna captura recoge que el trader no haya operado nunca enero ni julio de 2024.
+
+**La configuración**, como la pedida (A3): datos de OANDA (solo en la captura 3), spread de 0,2
+pips, comisión de 5 USD por lote de ida y vuelta, lote para arriesgar el 0,5 % en cada operación,
+las sesiones grabadas en vídeo con su voz y el libro completo exportado (el CSV en la captura 3, «el
+libro completo» en la de las 18:00). El apalancamiento 1:30 y el deslizamiento apagado no salen en
+ninguna captura y no se escriben como parte de la petición. Si cumple ADR-0100 §2 («uno de cada
+mitad», «que no haya operado nunca», «por escrito») lo decide la rama de entrada del backtest.
+
+Corrección del consultor (punto 0): A2 y A3 decían que el trader «valida» los meses en la nota de
+voz; según Aleks, es una risa.
+
+### 6.5 Los audios (D2; punto 7 de la respuesta)
+
+**La respuesta 3 de Aleks llegó vacía: nadie ha comprobado escuchándola ninguna frase de los
+audios, y no entra ningún literal de audio.** Ni el texto del ASR ni las lecturas de la sesión
+sobre él. Por cada audio, una línea neutra:
+
+| Fichero | sha256 | Minutos (inicio del segmento del ASR) | Tema |
+|---|---|---|---|
+| `audio-whatsapp-2026-11-23-0959-caja-en-una-vela.ogg` | `151a23bbad3baefc6cca793ad951ec0a0ff33afafdf2906ec96f7e6f1cd92011` | 00:00-00:36; 02:03-02:42 | cómo traza el bot la caja frente a los esquemas de entrada; desde dónde se calcula el objetivo |
+| `audio-whatsapp-2026-11-23-0959-protegido-en-0-80.ogg` | `b74803c54ee28f58236493294b88b9b7daf566c28f37991f42de2570f0ebaaea` | 00:01 | la referencia del objetivo y la protección en el 0,8 |
+| `audio-whatsapp-2026-11-23-1001-break-even-y-comision.ogg` | `d1986b2275db4fe2878d9831b990fb5e1b8b2063f7092de1c2b06cb62d7656f6` | 00:23-00:36 | el break even y la comisión |
+| `audio-whatsapp-2026-11-23-1002-calculo-del-break-even.ogg` | `2e6d6bba7fed1e00493b8d0355d5a2c49b94d759192d37fa2d7dc600afcb551c` | 00:00 | cómo se calcula el coste del break even |
+| `audio-whatsapp-2026-11-23-1007-recalculo-y-reunion.ogg` | `22704d844fc9ca730e71b27109d0145ef04cc3e9bb39643e1752f9edb39ebade` | 00:00-00:07; 01:27-01:36; 01:54-02:09 | recalcular sus operaciones con costes; el trazado de la caja; una reunión |
+| `audio-whatsapp-2026-11-23-1010-objetivo-y-191-operaciones.ogg` | `bb7121e34315d27b076dbe49ed6e0d775ffdeaef5e4ae7fc0113bf68f8198199` | 00:28-00:34; 00:55-01:10; 01:52-01:59; 02:07 | el objetivo; una gestión posible; lo que leyó (§6.6) |
+| `audio-whatsapp-2026-11-23-1013-fundednext-y-esquemas.ogg` | `2d93a892bb6bfa82c487b575ff282c665a563589f0a895ca64311422a9217056` | 00:17-00:32; 01:15-01:40 | operaciones en FundedNext; qué es cada esquema de entrada |
+
+Lo que la expectativa (b) del encargo pedía —decir literal si la voz
+dice la distancia 0-1 o «el stop»— **queda sin literal**: solo el ASR, sin comprobar, la nombraría,
+y eso no entra (punto 7).
+
+### 6.6 Lo que se le enseñó al trader (D7; punto 8 de la respuesta)
+
+**SIN DETERMINAR.** En el audio de las 10:10, según el ASR, el trader dice haber leído «las 191
+operaciones» y habla de la fidelidad del bot y de unos «Excel recalculados». Según Aleks (respuesta
+1), la foto «es parte del chat de Gemini donde él metió varias cosas», y Aleks no leyó nada de esa
+parte para no tocar meses reservados. 191 coincide con el número de operaciones llenadas de la
+corrida (3) (ADR-0099 §8), y ADR-0098 §3 C pedía el contraste sin enseñarle ninguna cifra de esa
+medida: **es una posible desviación de ADR-0098 §3 C que no se puede confirmar ni descartar.** Lo
+mismo con las capturas de operaciones del bot y los «Excel recalculados» (la respuesta 2 de Aleks
+llegó vacía). Ninguna otra cifra se repite aquí. La consecuencia la decide el ADR de ADR-0099 §7, no
+esta rama, y ningún ADR se toca por esto. Declarado en la fila 2 del 2026-11-25 de
+`HOLDOUT-EXPOSICIONES.md`.
+
+### 6.7 Las cautelas (D3), en `fuentes.yaml`
+
+El párrafo de «Mensajes del trader» de `Material adicional de su operativa` se amplía (sin entrada
+propia, punto 2) con lo que entra y su fecha, que es el contraste de ADR-0099 §6, que por primera
+vez trae audios, lo que no entra, y las cautelas: ningún nombre ni número del trader, ni el del
+grupo ni de sus miembros, entra al repo; las capturas no las abre la sesión (ADR-0038); el trader
+dice que ha operado algunas operaciones en FundedNext y que las compartió en el grupo: no se piden
+ni se abren, y si llega un historial, entra SIN ABRIR y un ADR fija antes quién lo lee (ADR-0099 §6,
+con ADR-0072 como precedente); y lo que se le mostró al trader, sin determinar.
+
+### 6.8 Ningún registro de feedback (D1; punto 3 de la respuesta)
+
+Ningún `fb-` en esta rama. **Se aparta del paso 4 de `knowledge/feedback/README.md`:79-82** («Si
+trae una respuesta, registro de feedback»), por tres motivos: las respuestas no tienen objetivo en
+el esquema (la premisa y el coste de FX Replay no son un `evidence`, una `regla`, un `parametro`,
+una `ambiguedad`, un `caso` ni una `contradiccion`, `feedback/modelo.py`:53-61; y no hay acción de
+nota, :37-51); nada se cierra (ninguna ambigüedad cambia de estado); y un CONFIRM sobre el objetivo
+o el stop escondería A-56, la diferencia entre la regla dicha y su registro, que es una medición
+(ADR-0073 §3). Además, sin literal de audio comprobado, un registro citaría un ASR hecho fuera de
+rama. El README no se toca aquí; su precisión va a las líneas del cierre (§8).
+
+### 6.9 El inventario en la rama (punto 1 de la respuesta)
+
+`uv run botsito corpus inventory`, con el log fuera del repo: exit 0, «OK: manifiesto escrito ·
+heredado_v2: 477 ficheros, 117,626,282 bytes · material_adicional: 84 ficheros, 9,436,152 bytes ·
+video_original: 21 ficheros, 98,507,386,788 bytes», 0 `AVISO`. `git diff --stat` de
+`knowledge/corpus/manifest.yaml`: 46 inserciones y 2 borrados, que son **11 entradas nuevas** (4
+líneas cada una, con las rutas y los sha256 de §6.1) y **el `resumen.material_adicional`**
+(`ficheros` 73 → 84, `bytes` 6.850.662 → 9.436.152). La línea `raiz:` no cambia, y ninguna otra
+tampoco: es el diff del ensayo de §0.3 con los nombres de A5. Después,
+`uv run botsito corpus check --hashes`: «OK: el corpus coincide con el manifiesto (hashes)», exit 0, con el log fuera del repo.
+
+### 6.10 El recuadro de ADR-0100 §1 (D6)
+
+En su propio commit, con el cuerpo intacto, junto a la frase que corrige (ADR-0100:31-32, «su
+respuesta entra con su `fb-` por su propia rama, ADR-0099 §6»): esa respuesta no tiene objetivo de
+`fb-` en el esquema y entra por `CONTRASTE-TRADER.md`. Ningún otro ADR se toca.
+
+## 7. Lo que va a la preparación de la sesión siguiente (R4.6) y al ADR de C
+
+Sin leerlo contra la premisa ni contra ninguna cifra (D5); los temas de audio, sin literal (§6.5).
+
+**Para preparar la sesión siguiente (R4.6):**
+- El tema de la caja trazada sobre una sola vela frente al esquema 1 o 2, y qué es cada esquema
+  (audios de las 09:59, 10:07 y 10:13): material para A-48 y para S-3 (`ACTIVAR-SESION-08.md`:55),
+  que no se cierran. Si se le pregunta, con su forma de pregunta y sin ninguna medida (ADR-0073 §3).
+- Siguen pendientes, como dice la captura 1, «las de M15 y las del PDF»: A-35, A-43 y S-3 (WhatsApp
+  del 2026-11-21, `ACTIVAR-SESION-08.md`:368). Nada de este material responde a A-35, y su línea de
+  Technical Debt sigue; tampoco a A-43 ni a A-58.
+
+**Para el ADR de Aleks de ADR-0099 §7 (la salida C):**
+- Las respuestas escritas de la captura 2 (§6.3), tal cual.
+- Que, según el ASR sin comprobar, el trader dice haber operado algunas operaciones en FundedNext
+  (audio de las 10:13); lo que ya trae el corpus sobre FundedNext es `ev-v4-012524-0ef85a89`. La
+  captura 2 dice «1-c» (ahora mismo solo en backtest); las dos cosas, sin conciliar.
+- La respuesta 4 de la captura 2, que cita ADR-0100 §1.
+- La respuesta 5 de la captura 2 toca la Q de la Next Action; no la cierra.
+- Lo que dice del break even y la comisión (audios de las 10:01 y 10:02): V18 de
+  `AUDITORIA-CAZADOR-2026-11-23.md` y A-13, sin tocar ninguna.
+- Lo que dice del objetivo y la protección en el 0,8 (audios de las 09:59 y 10:10), sin literal:
+  A-56, que es una medición.
+- Que dice que recalculará sus operaciones con comisión y lotaje (audio de las 10:07).
+- Lo que se le enseñó, SIN DETERMINAR (§6.6), y su posible desviación de ADR-0098 §3 C.
+- La secuencia de la petición de los meses (§6.4), para la rama de entrada del backtest.
+
+## 8. Las líneas propuestas para el cierre
+
+Ninguna hace crecer `PROJECT_STATE.md` (punto 6). Las cifras de tamaño, medidas con un guion de la
+carpeta de trabajo sobre `git show main:PROJECT_STATE.md`.
+
+- **La F** (`PROJECT_STATE.md`:28): «F17 (ADR-0099 §5), el contraste con el trader (ADR-0099 §6) y
+  el backtest del trader con costes (ADR-0100, R4.10), pendientes; el diagnóstico de la premisa,
+  hecho.» pasa a «F17 (ADR-0099 §5) y el backtest del trader con costes (ADR-0100, R4.10),
+  pendientes; el diagnóstico de la premisa y el contraste con el trader, hechos.» Con eso, y
+  `Current Branch` y `Current Feature` de vuelta a `main`, PROJECT_STATE queda en **24.837 bytes**
+  (24.850 en `main`, −13; el tope, 25.000).
+- **La hoja de ruta, R4.7**, sin entrada nueva (punto 5): en su «Qué es», tras «el contraste de la
+  premisa con el trader (ADR-0099 §6)», añadir «(hecho, CONTRASTE-TRADER.md: lo dicho y lo pedido
+  entran sin `fb-`; lo que se le enseñó, sin determinar)». La entrada sigue ABIERTA.
+- **La hoja de ruta, «Carril: guardias y deuda»**, una entrada nueva, G.9:
+
+  ```
+  ### G.9 · Lo que esta rama no pudo hacer con las herramientas de main
+  - **Refs:** —
+  - **Qué es:** cuatro cosas de trabajo/contraste-trader (CONTRASTE-TRADER.md §0.2, §0.4 y §6.8). La guardia negó tres medidas legítimas: `ffprobe` sobre un `.ogg` (solo admite contenedores de vídeo), un guion de recuento ciego de la carpeta de trabajo sobre unas transcripciones de fuera del repo, y el `mv` que renombra una captura de «Mensajes del trader» sin abrirla (lo hizo Aleks). En `main` no hay nada que transcriba un audio suelto (`transcribir_sesion.py` exige el vídeo de una sesión): la transcripción de los audios del 2026-11-23 queda fuera del repo, nombrada por su sha256. Y el paso 4 de `knowledge/feedback/README.md` dice «Si trae una respuesta, registro de feedback», cuando debería decir «si trae una respuesta a un objetivo del esquema».
+  - **Depende de:** nada; no adelanta el camino crítico.
+  - **Quién:** la sesión, con el encargo del consultor.
+  - **Hecho cuando:** las tres formas admitidas por la guardia con su test que las rompe a propósito (o descartadas por escrito), un camino de `main` que transcribe un audio suelto con cuarentena, y el README precisado.
+  ```
+
+- **Technical Debt de PROJECT_STATE:** nada (punto 6: va a G.9).
+- **La fila de ERRORES-RECURRENTES**, con sus cuatro columnas, en §9 tras el revisor.
+
 ## Informe del auditor (subagente `auditor-encargo`, 2026-11-25), tal cual
 
 Copiado tal cual, con sus títulos bajados dos niveles para que no partan este informe. Sus números
@@ -465,4 +755,4 @@ A esto se suma H3: el encargo deja entrar «una captura de la configuración sin
 
 ## Estado
 
-EN CURSO: fase 0, PARADA.
+EN CURSO: aplicada la respuesta a la PARADA; faltan el recuadro de ADR-0100 §1 y el revisor.

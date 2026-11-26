@@ -386,6 +386,33 @@ carpetas:
       mensaje siguiente de la captura (14:01) no se registra ni se interpreta. Ningun nombre ni
       numero del trader entra al repositorio. Aleks la guardo con doble extension (`.png.png`) y
       la renombro el 2026-10-25, antes del inventario.
+      El 2026-11-25 (rama trabajo/contraste-trader, docs/validation/CONTRASTE-TRADER.md) entran
+      ONCE ficheros mas: el contraste con el trader de ADR-0099 §6 y la peticion escrita de los
+      meses del backtest con costes (ADR-0100 §2), y por primera vez AUDIOS. Cuatro capturas de
+      WhatsApp (hora de Lima): `mensaje-whatsapp-2026-11-23-0126-cinco-preguntas.png`, las cinco
+      preguntas de Aleks al trader del 2026-11-23 a la 01:26;
+      `mensaje-whatsapp-2026-11-23-0956-operativa-real.png`, sus respuestas escritas de las
+      09:56; y `mensaje-whatsapp-2026-11-24-1718-propuesta-backtest-costes.png` y
+      `mensaje-whatsapp-2026-11-24-1719-meses-enero-julio-2024.png`, la peticion de los meses del
+      2026-11-24, de las 17:18 a las 18:02. Y siete notas de voz del trader del 2026-11-23, de las
+      09:59 a las 10:13 (`audio-whatsapp-2026-11-23-<HHMM>-<tema>.ogg`). Los literales de las
+      capturas los transcribio el consultor, porque la sesion no abre ninguna (ADR-0038): cada una
+      queda con su hash para verificarlos. Las notas de voz se transcribieron el 2026-11-23 con el
+      ASR del corpus FUERA de cualquier rama; esa transcripcion no entra al repositorio, y ninguna
+      frase de los audios entra como literal, porque nadie la ha comprobado escuchandola. No
+      entran: un duplicado byte a byte de la nota de las 09:59:43; la nota de voz de 0:14 del
+      trader del 2026-11-24 a las 18:01, que segun Aleks es una risa; ni ninguna captura de la
+      configuracion de FX Replay. La captura de las 17:19 trae ademas mensajes que no se registran
+      ni se interpretan. Ningun registro de feedback: las respuestas no tienen objetivo en el
+      esquema (CONTRASTE-TRADER.md §6.8). CAUTELAS: ningun nombre ni numero del trader, ni el
+      nombre del grupo ni los de sus miembros, entra al repositorio; las capturas no las abre la
+      sesion (ADR-0038); el trader dice que ha operado algunas operaciones en FundedNext y que las
+      compartio en el grupo: no se piden ni se abren, y si llega un historial de una cuenta real o
+      de fondeo, entra SIN ABRIR y un ADR fija antes quien lo lee (ADR-0099 §6, con ADR-0072 como
+      precedente); y lo que se le mostro al trader durante el intercambio, una foto a la que
+      respondio nombrando un numero de operaciones que coincide con el de la corrida (3), es parte
+      de un chat suyo con otro asistente que Aleks no leyo: queda SIN DETERMINAR, como posible
+      desviacion de ADR-0098 §3 C (HOLDOUT-EXPOSICIONES.md, 2026-11-25).
 
   - ruta: "Sesiones"
     papel: material_adicional

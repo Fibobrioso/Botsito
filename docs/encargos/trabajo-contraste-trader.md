@@ -129,3 +129,43 @@ A5, que llegó en el mismo mensaje tras A4, va dentro de él.
 > - `Captura de pantalla 2026-11-25 160945.png` → `mensaje-whatsapp-2026-11-24-1718-propuesta-backtest-costes.png` (33fa10d2…)
 > - `Captura de pantalla 2026-11-25 161009.png` → `mensaje-whatsapp-2026-11-24-1719-meses-enero-julio-2024.png` (f47da4e8…)
 > Si la guardia te niega el cambio de nombre, no la rodees: díselo a Aleks y que los renombre él.
+
+## Respuesta del consultor a la PARADA (2026-11-25), copiada tal cual
+
+Llegó en un solo mensaje, con las respuestas de Aleks al final; las respuestas 2, 3 y 4, y la
+segunda parte de la 5, llegaron vacías y se copian así.
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> RESPUESTA DEL CONSULTOR A LA PARADA de `trabajo/contraste-trader` (2026-11-25, 18:40, hora de Lima). Cópiala tal cual al informe, en su sección de la PARADA, junto con las respuestas de Aleks que van al final de este mensaje.
+>
+> Veredicto: la fase 0 cumple el encargo y el añadido. Acepto las decisiones 0 a 6 con los matices de abajo.
+>
+> 0. Nombres y audio. Aleks renombra las capturas con tu orden «!». Después vuelve a calcular el sha256 de los cuatro nombres nuevos: tienen que ser los de A1, y si alguno no coincide, PARA. El audio de A2 NO entra: según Aleks (respuesta 5) es solo una risa. Corrección del añadido, error del consultor: A2 y A3 decían que el trader «valida» los meses en ese audio, y no es así. El informe pone la secuencia de las capturas 3 y 4 tal cual: el trader acepta por escrito junio y noviembre de 2024; Aleks pide por escrito enero y julio de 2024 si aún no había arrancado; el trader no contesta por escrito a eso (solo una nota de voz que, según Aleks, es una risa); y Aleks escribe «esos si son definitivos». Sin juzgar ADR-0100 §2 (D4). Sí dice, como hecho, que ninguna captura recoge que el trader no haya operado nunca enero ni julio de 2024.
+>
+> 1. Inventario: de acuerdo. Lo corres en la rama, compruebas que el diff es el del ensayo (11 entradas nuevas y el bloque resumen) con la raíz SIN cambiar, y después `uv run botsito corpus check --hashes`. Si cambia cualquier otra línea, PARA.
+>
+> 2. fuentes.yaml: de acuerdo. Amplías el párrafo de «Mensajes del trader» dentro de «Material adicional de su operativa», con la forma de la entrada del 2026-10-14 y las cautelas de D3. No creas una entrada propia.
+>
+> 3. D1 se mantiene: ningún `fb-`. El informe declara que esto se aparta del paso 4 de knowledge/feedback/README.md:79-82 («si trae una respuesta, registro de feedback»), y por qué: las respuestas no tienen objetivo en el esquema, nada se cierra y un CONFIRM escondería A-56. El README no se toca en esta rama. Precisarlo («si trae una respuesta a un objetivo del esquema») es una línea para «Carril: guardias y deuda» de la hoja de ruta en el cierre.
+>
+> 4. De acuerdo: el informe nombra Q, V18, A-13 y `ev-v4-012524-0ef85a89` (lo que ya hay de FundedNext) solo por su id, sin tocar ninguno.
+>
+> 5. De acuerdo: ninguna entrada nueva en la hoja de ruta. El cierre lo apunta en el «Qué es» de R4.7.
+>
+> 6. De acuerdo. Además, nada de esta rama crece PROJECT_STATE (está a 78 bytes del tope). Van todas a «Carril: guardias y deuda» en el cierre: las dos guardias que negaron medidas legítimas (ffprobe sobre .ogg, el guion de recuento y el cambio de nombre), la transcripción de audios sueltos que falta en `main` (D2) y la precisión del README (punto 3). Al informe solo van las líneas propuestas.
+>
+> 7. Los literales de los audios. Cuentan las frases que Aleks confirma en la respuesta 3. Donde Aleks corrige, la versión de Aleks es el literal, marcada «[corrige Aleks]». Donde confirma, va el texto del ASR tal cual. Tus cinco lecturas («13» → 1:3; «08»/«080» → 0,8/0,80; «pib» → pip; «funda de nex» → FundedNext; «esquema 12» → esquema 1 y 2) van como nota tuya al pie de la tabla, «lectura de la sesión», salvo las que Aleks diga que oye así. Ninguna frase que Aleks no haya escuchado entra al informe. Si la respuesta 3 está vacía, no entra ningún literal de audio: por cada audio, el fichero, su sha256, el minuto y el tema en una línea neutra, y la falta se dice.
+>
+> 8. Lo enseñado (D7). F10 y F11 dicen que el trader leyó «las 191 operaciones» y que comenta la fidelidad del bot y unos «Excel recalculados». Según Aleks (respuesta 1), la foto es parte del chat del trader con Gemini, y Aleks no leyó nada de esa parte para no tocar meses reservados. El informe y HOLDOUT lo declaran así: qué se le enseñó al trader queda SIN DETERMINAR; 191 coincide con el número de operaciones llenadas de la corrida (3) (ADR-0099 §8), y ADR-0098 §3 C pedía no enseñarle ninguna cifra de la medida; es una posible desviación que no se puede confirmar ni descartar. Lo mismo con las capturas del bot y los «Excel recalculados» si la respuesta 2 está vacía. No repites ninguna cifra que no sea el 191 que ya dijo él. La consecuencia la decide el ADR de ADR-0099 §7, no esta rama. Ningún ADR se toca por esto (D6 sigue siendo solo el recuadro de ADR-0100 §1).
+>
+> 9. Pregunta 4, la parte del consultor. Según el registro del consultor, el 2026-11-23 el consultor recibió de Aleks las respuestas escritas y un resumen de los audios en seis puntos hecho por esta sesión de Claude Code, no el texto del ASR. Y una exposición nueva, de hoy: el 2026-11-25 el consultor leyó, en las capturas de esta PARADA, las frases F1 a F14 del ASR. Va a la fila de HOLDOUT de hoy, antes del siguiente `make check`.
+>
+> 10. Después: aplicas D2 a D7, el recuadro de ADR-0100 §1 en su propio commit, el informe con las líneas propuestas para el cierre y la fila de ERRORES-RECURRENTES (con tu error del ScheduleWakeup y su lección: con un `make check` corriendo no se programa nada que escriba en `.claude/`; y el error del consultor del punto 0, que dio por buena una «validación» sin preguntar qué decía el audio). Luego el revisor con los alcances del encargo. Termina con «Rama lista para revisión, NO cerrada.»
+>
+> RESPUESTAS DE ALEKS:
+> 1. La foto del «191»: «Eso es parte del chat de Gemini donde él metió varias cosas, y para no tocar meses reservados o algo, simplemente no leí NADA.»
+> 2. Las capturas del bot y los «Excel recalculados»:
+> 3. F1 a F14 escuchadas (cuáles confirmo y qué corrijo; la F5, «sin multiplicarlo» o «multiplicarlo»; cuáles de las cinco lecturas oigo así):
+> 4. Lo que leí el día 23:
+> 5. El audio de 0:14 «es solo un audio riéndose, no es necesario». Captura 3 y captura de la configuración de FX Replay:
