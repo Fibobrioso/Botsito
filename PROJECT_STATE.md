@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/renovar-cierres-2026-11-26
+main
 
 ## Current Feature
-trabajo/renovar-cierres-2026-11-26, EN CURSO: el calendario de cierres de EURUSD renovado hacia atrás hasta cubrir 2025 (R5.4 y R5.6, letra I). Encargo docs/encargos/trabajo-renovar-cierres-2026-11-26.md; informe docs/validation/RENOVAR-CIERRES-2025.md.
+Ninguna abierta: trabajo/renovar-cierres-2026-11-26 cerrada en main (stable/F39r-renovar-cierres-2026-11-26). Lo siguiente, en la Next Action (F).
 
 ## Stable Main State
-4581f529 · merge de `trabajo/f17-ordenes` (tag `stable/F39q-f17-ordenes`), sobre `stable/F39p-f17-historial` (8066b377). Informe docs/validation/F17-ORDENES.md; el registro del cierre, al final de HISTORIA.
+d44f3e58 · merge de `trabajo/renovar-cierres-2026-11-26` (tag `stable/F39r-renovar-cierres-2026-11-26`), sobre `stable/F39q-f17-ordenes` (4581f529). Informe docs/validation/RENOVAR-CIERRES-2025.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-4581f529 · merge trabajo/f17-ordenes: F17, segunda parte, la medida de las ordenes stop y el grabador de la demo de FTMO, hechas y compiladas, sin correr · tag stable/F39q-f17-ordenes
+d44f3e58 · merge trabajo/renovar-cierres-2026-11-26: el calendario de cierres de EURUSD de FTMO renovado hacia atras hasta el 2025-01-09, con la capa regenerada · tag stable/F39r-renovar-cierres-2026-11-26
 
 ## Tests Currently Passing
 2234 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
