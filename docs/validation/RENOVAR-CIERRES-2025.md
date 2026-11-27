@@ -1,7 +1,7 @@
 # RENOVAR-CIERRES-2025 · El calendario de cierres de EURUSD del perfil FTMO 2-Step Swing 100k, renovado hacia atrás hasta cubrir 2025 (R5.4 y R5.6, letra I)
 
-> PLANTILLA: informe de la rama `trabajo/renovar-cierres-2026-11-26`. Estado: EN CURSO (fase 0 hecha, con la PARADA (a)
-> acotada a la Navidad de 2024; el YAML renovado hasta el 2025-01-09). La fase 0, las Trading Updates leídas, los cierres que entran y los que no, las desviaciones, las
+> PLANTILLA: informe de la rama `trabajo/renovar-cierres-2026-11-26`. Estado: lista para revisión, NO cerrada (la PARADA (a)
+> acotada a la Navidad de 2024, con su decisión en §3; el YAML renovado hasta el 2025-01-09). La fase 0, las Trading Updates leídas, los cierres que entran y los que no, las desviaciones, las
 > comprobaciones, las líneas del cierre y el informe del revisor se escriben aquí según avanza la rama.
 
 Rama `trabajo/renovar-cierres-2026-11-26`, abierta el 2026-11-26 desde `main` en 93a4fc29 (commit de
@@ -78,14 +78,14 @@ ni tick de 2025.
 - **El cargador** (`src/botsito/engine/calendario_cierres.py`): `hasta < desde` da
   `CalendarioError("cubre: hasta va antes que desde")` (:96-97); `cubre` va de las 00:00 de `desde`
   a las 00:00 del día siguiente a `hasta`, en su huso (:98-99); se expande una semana más a cada
-  lado (:100-101); un extraordinario sin `fuente` no entra (:165-166); su etiqueta es
+  lado (:100-101); un extraordinario sin `fuente` no entra (:164-165); su etiqueta es
   `extraordinario <fecha de inicio>` (:179). Los cierres que se tocan se juntan, con las fuentes
   unidas por « + » (`domain/cierres.py`:135-146).
 - **Los tests que leen el calendario**, y cuál fija una fecha de `cubre` como literal:
   - `tests/unit/test_cierres_de_mercado.py`: lee el YAML real en `FTMO` (:63). :356-364 exige
     Navidad y Año Nuevo de 2025 (:359), que `cubre` vaya de antes del 1-4-2026 a después del 1-9-2026
     (:360, lee el YAML y compara con fechas literales), y que ningún cierre largo empiece antes de
-    las 17:00 de Madrid en laborable (:361-364). :388-410, el caso parametrizado: cambia
+    las 17:00 de Madrid en laborable (:361-364). :388-399 en `main` (:410-421 en la rama, con el test nuevo delante), el caso parametrizado: cambia
     `hasta: "2026-10-07"` por `"2025-01-01"` y espera el error de `hasta` (:393). **Es el único que
     fija un literal de `cubre` que esta renovación toca** (D5 a). :347-353 lee `cubre_desde_ms` del
     YAML (no fija fecha).
@@ -139,13 +139,25 @@ patrón). La semana del 1-may la cubre la del martes **29-abr-2025** (y la del 8
 las tablas de Navidad de las del 19-dic-2024 y 2-ene-2025... que no se pueden leer (abajo). Hay
 además una del lunes 23-jun-2025 (tensiones geopolíticas, nada de horarios).
 
-**Las tablas de Navidad de 2024 no existen en ninguna fuente de FTMO que se haya podido leer.** Las
+**Las tablas de Navidad de 2024 no están en ninguna de las fuentes de FTMO que se buscaron.** Las
 del 19-dic-2024 y del 2-ene-2025 dicen «Kindly refer to the schedule below for specific details:» y
-detrás no hay nada: ni tabla ni imagen, en inglés y en las versiones checa, alemana, española y
-portuguesa (la francesa del 2-ene da 301 y no se siguió). En el Wayback Machine, la única captura
-del 19-dic-2024 anterior a hoy (17-ene-2026) trae un `instruments-table` vacío, sin filas; no hay
-capturas de 2024 ni de 2025 (CDX). Es decir: **FTMO ya no publica si el Forex cerró el 25-dic-2024 o
-el 1-ene-2025, ni con qué horario el 24 y el 31**. Es la PARADA (a): §3.
+detrás no hay nada, ni tabla ni imagen. Se buscó en:
+- la del 19-dic-2024 en inglés, checo, alemán, español y portugués;
+- la del 2-ene-2025 en inglés y checo (la checa remite igual a «níže uvedené tabulce» y detrás no hay
+  nada); la francesa del 2-ene da 301 y, seguida (tras el revisor, a2), lleva a la portada de
+  FTMO en francés;
+- tras el revisor (a2), los otros sitemaps del índice (`post-sitemap.xml`, `post-sitemap2.xml`,
+  `post-sitemap3.xml`, `page-sitemap.xml`, `faq-sitemap.xml` y `press-release-sitemap.xml`,
+  consultados el 2026-11-27 hacia las 04:20 UTC): ninguna entrada `/en/` con `lastmod` del 5-dic-2024
+  al 10-ene-2025 salvo un artículo sobre el verano («holiday mode in the markets»: se descargó y no trae
+  horarios), y ninguna otra con «christmas», «holiday» o «new-year» que, por su título, trate
+  horarios de 2024;
+- el Wayback Machine: el CDX de la URL del 19-dic-2024 da tres capturas, todas de 2026 (17-ene,
+  16-mar y 18-jul; ninguna de 2024 ni de 2025). Se abrió la primera: trae un `instruments-table`
+  vacío, sin filas. Las otras dos son posteriores.
+
+Es decir: **en lo buscado, FTMO ya no publica si el Forex cerró el 25-dic-2024 o el 1-ene-2025, ni
+con qué horario el 24 y el 31**. Es la PARADA (a): §3.
 
 ### 0.5 La aritmética de `cubre.desde`
 
@@ -156,8 +168,12 @@ llevar el 2-ene, como la de 2025 llevaba el «2nd January») no se pueden certif
 con su Trading Update entera y sin remisiones vacías es el **9-ene-2025**: `desde: "2025-01-09"`.
 
 **No llega al 2025-01-01 que pide el encargo (§1): le faltan los días del 1 al 8 de enero.** Cubre
-de sobra lo que lo pide como paso previo: diciembre de 2025 entero (R5.4, letra I; hoy empieza el
-2025-12-04) y junio a noviembre de 2025 (R5.6, ADR-0092 §5).
+diciembre de 2025 entero (R5.4, letra I; hoy empieza el 2025-12-04), junio a noviembre de 2025 (la
+medida de R5.6) y de febrero a mayo de 2025. **No cubre enero de 2025 entero, y la extensión de
+ADR-0092 §5 sí puede llegar a él**: «se añaden con la misma spec mayo, abril, marzo, febrero y enero
+de 2025, en ese orden y de uno en uno, hasta N ≥ 100» (`docs/adr/0092-…`:131-134); por eso el paso
+previo dice «hasta enero de 2025» (:145-146). Enero solo hace falta si, con mayo a febrero, N sigue
+por debajo de 100 (revisor, a1).
 
 ## 1. Las Trading Updates leídas
 
@@ -206,7 +222,7 @@ relacionado): `Forex`, `EUR/USD`, `EURUSD`, `FX`, `currenc`, `Exotic`, `all symb
 | 30 | [19-jun-2025](https://ftmo.com/en/blog/trading-updates/trading-update-19-jun-2025/) | 200 | 2026-11-27 02:31:31 | `e177db773d8e109c` | mantenimiento de todas el domingo 22-jun, 09:00-13:00. Nada del Forex |
 | 31 | [23-jun-2025](https://ftmo.com/en/blog/trading-updates/trading-update-23-jun-2025/) | 200 | 2026-11-27 02:31:36 | `ff218b1ca6a7f990` | (lunes) aviso de volatilidad por tensiones geopolíticas; ningún horario |
 | 32 | [26-jun-2025](https://ftmo.com/en/blog/trading-updates/trading-update-26-jun-2025/) | 200 | 2026-11-27 02:31:41 | `aa96cbb0273e3865` | mantenimiento de todas el sábado 28-jun, 13:00-18:00. Nada del Forex |
-| 33 | [3-jul-2025](https://ftmo.com/en/blog/trading-updates/trading-update-3-jul-2025/) | 200 | 2026-11-27 02:31:46 | `d932cfaed3331d30` | mantenimiento de todas el sábado 5-jul, 08:00-13:00. Nada del Forex |
+| 33 | [3-jul-2025](https://ftmo.com/en/blog/trading-updates/trading-update-3-jul-2025/) | 200 | 2026-11-27 02:31:46 | `d932cfaed3331d30` | mantenimiento de todas el sábado 5-jul, 08:00-13:00; Independence Day (cierres anticipados de índices, el 3-jul y otros días); JP225. Nada del Forex |
 | 34 | [10-jul-2025](https://ftmo.com/en/blog/trading-updates/trading-update-10-jul-2025/) | 200 | 2026-11-27 02:31:51 | `fb29ff7964853284` | sin mantenimiento. Nada del Forex |
 | 35 | [17-jul-2025](https://ftmo.com/en/blog/trading-updates/trading-update-17-jul-2025/) | 200 | 2026-11-27 02:31:56 | `be6d3bd138dc9d77` | servidores de prueba y dos MT4 el sábado 19-jul; cambio de las cripto. Nada del Forex |
 | 36 | [24-jul-2025](https://ftmo.com/en/blog/trading-updates/trading-update-24-jul-2025/) | 200 | 2026-11-27 02:32:01 | `372b5d12da632cba` | todas las plataformas sin servicio el sábado 26 y el domingo 27-jul (00:00-23:59, por las cripto). Nada del Forex |
@@ -214,9 +230,9 @@ relacionado): `Forex`, `EUR/USD`, `EURUSD`, `FX`, `currenc`, `Exotic`, `all symb
 | 38 | [7-aug-2025](https://ftmo.com/en/blog/trading-updates/trading-update-7-aug-2025/) | 200 | 2026-11-27 02:32:15 | `3369c61de30425ba` | sin mantenimiento. Nada del Forex |
 | 39 | [14-aug-2025](https://ftmo.com/en/blog/trading-updates/trading-update-14-aug-2025/) | 200 | 2026-11-27 02:32:22 | `15d041c80d5c0b7b` | mantenimiento el sábado 16-ago (un servidor MT5 y, de 18:00 a 23:59, todas). Nada del Forex |
 | 40 | [21-aug-2025](https://ftmo.com/en/blog/trading-updates/trading-update-21-aug-2025/) | 200 | 2026-11-27 02:32:28 | `4e32d0ff234baf4a` | mantenimiento de todas el sábado 23-ago, 17:00-23:59. Nada del Forex |
-| 41 | [28-aug-2025](https://ftmo.com/en/blog/trading-updates/trading-update-28-aug-2025/) | 200 | 2026-11-27 02:32:35 | `1eef372bd4a4a1dd` | mantenimiento de todas el sábado 30-ago, el día entero. Nada del Forex |
+| 41 | [28-aug-2025](https://ftmo.com/en/blog/trading-updates/trading-update-28-aug-2025/) | 200 | 2026-11-27 02:32:35 | `1eef372bd4a4a1dd` | mantenimiento de todas el sábado 30-ago, el día entero; Labor Day (cierres anticipados de índices, metales y energía el 1-sep). Nada del Forex |
 | 42 | [4-sep-2025](https://ftmo.com/en/blog/trading-updates/trading-update-4-sep-2025/) | 200 | 2026-11-27 02:33:03 | `c26ba95366466a4c` | mantenimiento de todas el sábado 6-sep, el día entero. Nada del Forex |
-| 43 | [11-sep-2025](https://ftmo.com/en/blog/trading-updates/trading-update-11-sep-2025/) | 200 | 2026-11-27 02:33:08 | `aa6c76b9e4a96330` | mantenimiento de todas el sábado 13-sep; Volume Bands; comisión del Forex de 1,50 a 2,50 por lote y lado. Ningún cierre |
+| 43 | [11-sep-2025](https://ftmo.com/en/blog/trading-updates/trading-update-11-sep-2025/) | 200 | 2026-11-27 02:33:08 | `aa6c76b9e4a96330` | mantenimiento de todas el sábado 13-sep (y de los servidores de prueba y DXtrade el domingo 14-sep, 12:00-23:59); Volume Bands; baja de MKRUSD; comisión del Forex de 1,50 a 2,50 por lote y lado. Ningún cierre |
 | 44 | [18-sep-2025](https://ftmo.com/en/blog/trading-updates/trading-update-18-sep-2025/) | 200 | 2026-11-27 02:33:15 | `635fe69f365b29c8` | mantenimiento de MT5 el sábado 20-sep. Nada del Forex |
 | 45 | [25-sep-2025](https://ftmo.com/en/blog/trading-updates/trading-update-25-sep-2025/) | 200 | 2026-11-27 02:33:19 | `f41542174858fc4c` | mantenimiento de todas el sábado 27-sep y el domingo 28-sep (17:00-23:59); comisiones. Ningún cierre |
 | 46 | [2-oct-2025](https://ftmo.com/en/blog/trading-updates/trading-update-2-oct-2025/) | 200 | 2026-11-27 02:33:24 | `02c72b4b7c750bba` | mantenimiento el sábado 4-oct; DST de Australia (AUS100). Nada del Forex |
@@ -225,9 +241,9 @@ relacionado): `Forex`, `EUR/USD`, `EURUSD`, `FX`, `currenc`, `Exotic`, `all symb
 | 49 | [23-oct-2025](https://ftmo.com/en/blog/trading-updates/trading-update-23-oct-2025/) | 200 | 2026-11-27 02:33:41 | `7fef6b2bcd483d84` | mantenimiento el sábado 25-oct; Europa cambia el 26-oct; anuncia el cambio de EE. UU. del 2-nov (10:00 a 09:00 del servidor); HK50 el 29-oct. Nada del Forex |
 | 50 | [30-oct-2025](https://ftmo.com/en/blog/trading-updates/trading-update-30-oct-2025/) | 200 | 2026-11-27 02:33:46 | `5378923db1e618a8` | **mantenimiento de todas las plataformas el domingo 2-nov-2025, de 07:00 a 11:00, el día del cambio de hora de EE. UU. (09:00 a 08:00 del servidor)** (entra) |
 | 51 | [6-nov-2025](https://ftmo.com/en/blog/trading-updates/trading-update-6-nov-2025/) | 200 | 2026-11-27 02:33:53 | `87369b935e467924` | mantenimiento el sábado 8-nov; desde aquí, GMT+2. Nada del Forex |
-| 52 | [13-nov-2025](https://ftmo.com/en/blog/trading-updates/trading-update-13-nov-2025/) | 200 | 2026-11-27 02:33:57 | `b69a0bd0981e4195` | nada de horarios del Forex |
+| 52 | [13-nov-2025](https://ftmo.com/en/blog/trading-updates/trading-update-13-nov-2025/) | 200 | 2026-11-27 02:33:57 | `b69a0bd0981e4195` | sin mantenimiento; split de NFLX. Nada del Forex |
 | 53 | [20-nov-2025](https://ftmo.com/en/blog/trading-updates/trading-update-20-nov-2025/) | 200 | 2026-11-27 02:34:02 | `4259b13e8a35f4c1` | mantenimiento de todas el sábado 22-nov, 13:00-18:00. Nada del Forex |
-| 54 | [27-nov-2025](https://ftmo.com/en/blog/trading-updates/trading-update-27-nov-2025/) | 200 | 2026-11-27 02:34:09 | `44e2926b3d0d037b` | nada de horarios del Forex (última del tramo: el jueves anterior al 4-dic) |
+| 54 | [27-nov-2025](https://ftmo.com/en/blog/trading-updates/trading-update-27-nov-2025/) | 200 | 2026-11-27 02:34:09 | `44e2926b3d0d037b` | sin mantenimiento; Thanksgiving (cierres anticipados de índices, metales y energía). Nada del Forex (última del tramo: el jueves anterior al 4-dic) |
 | 55 | [4-dec-2025](https://ftmo.com/en/blog/trading-updates/trading-update-4-dec-2025/) | 200 | 2026-11-27 02:34:25 | `c003a907b46fb4cb` | ya leída en `trabajo/renovar-cierres` (2026-10-03); releída como control |
 | 56 | [15-aug-2024](https://ftmo.com/en/blog/trading-updates/trading-update-15-aug-2024/) | 200 | 2026-11-27 02:34:20 | `4c0e2fa4991a0776` | agosto de 2024, fuera del tramo; está en el sitemap entre las de diciembre de 2024 por su `lastmod` (2024-12-18) |
 
@@ -280,21 +296,22 @@ Madrid en día laborable**. No hay PARADA (e).
 **Qué falta.** La tabla «Christmas and New Year's Eve» de las Trading Updates del 19-dic-2024 y del
 2-ene-2025 (la del 26-dic-2024 no existe). FTMO la publicaba como un componente
 (`instruments-table`) que hoy sale vacío; en la captura del Wayback Machine del 17-ene-2026 ya salía
-vacío, y no hay capturas anteriores. Ninguna otra fuente oficial de FTMO la cubre (las versiones en
-otros idiomas, tampoco).
+vacío, y no hay capturas anteriores. Ninguna de las otras fuentes de FTMO que se buscaron la trae
+(§0.4: otros idiomas, los demás sitemaps); no se buscó fuera de `ftmo.com` y del Wayback.
 
 **Qué se ha hecho, por §4 (a).** `cubre.desde` no pasa del hueco: queda en el **2025-01-09**, el
 primer jueves después de él con su Trading Update entera. Todo lo demás está hecho (§4).
 
 **Qué no cubre.** Del 1 al 8 de enero de 2025, que el encargo pide (§1: «como mínimo el
-2025-01-01»). No lo necesita ninguna de las ramas que lo esperan: R5.4 (diciembre de 2025) y R5.6
-(junio a noviembre de 2025) quedan dentro.
+2025-01-01»). R5.4 (diciembre de 2025) y la medida de R5.6 (junio a noviembre de 2025) quedan
+dentro; **el último mes de la extensión de R5.6, enero de 2025, no entero** (§0.5, revisor a1).
 
 **Las opciones, para el consultor:**
 
-1. **Dejarlo en el 2025-01-09** y dar por cumplido el paso previo de R5.4 y R5.6 («hasta enero de
-   2025»). Si una rama pide un día anterior, el simulador se niega por fecha (ADR-0068 §7), como
-   ahora.
+1. **Dejarlo en el 2025-01-09**: cumplido el paso previo de R5.4 y el de la medida de R5.6; el de su
+   extensión, salvo del 1 al 8 de enero. Si la extensión llega a enero (N < 100 tras febrero), la
+   rama de R5.6 se encontraría el hueco: el simulador se niega por fecha (ADR-0068 §7), y enero no
+   se podría añadir entero sin decidir antes qué hacer con esos ocho días.
 2. **Pedírsela a FTMO** (soporte, en inglés): el horario del Forex del 24-12-2024 al 2-01-2025 en
    los servidores MT5. Con la respuesta, una rama nueva lleva `desde` al 2024-12-12 (el primer
    jueves con Trading Update entera antes del hueco) y `test_cierres_de_mercado.py` aprieta su
@@ -304,6 +321,21 @@ primer jueves después de él con su Trading Update entera. Todo lo demás está
 
 No se mete el horario de 2025 («Forex: 25th December Closed», «1st January: Closed») como si fuera
 el de 2024: no tiene fuente (D1, «lo que no tenga fuente no entra»).
+
+### Lo que necesito que decidas
+
+**1. La Navidad de 2024 (del 24-dic-2024 al 8-ene-2025, sin fuente legible).**
+- (a) Dejar `desde` en el 2025-01-09 (opción 1). Coste: ninguno ahora; si la extensión de R5.6
+  llega a enero, ese mes no entra entero y hay que volver aquí.
+- (b) Preguntar a soporte de FTMO el horario del Forex en MT5 del 24-12-2024 al 2-01-2025 (opción
+  2) y, con la respuesta escrita, una rama corta que lleve `desde` al 2024-12-12. Coste: un correo
+  y una rama de una hora; la respuesta es una fuente escrita como las de R15 (ticket VDW-DPMWR-965).
+- (c) Medirlo con velas o ticks de FTMO de esos días (opción 3). Coste: no hay datos de FTMO de
+  2024, y bajarlos es de otra rama.
+
+**Recomiendo (a) ahora, y (b) en paralelo**: la pregunta a FTMO no bloquea nada, y la rama de R5.6
+solo necesita enero si con mayo a febrero N < 100, lo que se sabrá al correrla. Si se elige (a), las
+líneas de §8 ya lo dicen así.
 
 ## 4. Lo hecho tras la fase 0 (la PARADA es condicional: §4 del encargo)
 
@@ -414,13 +446,13 @@ exit 0, ningún `failed`, `CONTRATO:`, `G2:` y `SELLO`):
 
 Antes de cada uno, `uv run botsito state check` (OK), `uv run python scripts/contrato_rama.py`
 (`CONTRATO:` y `G2:` en verde) y `uv run botsito knowledge validate` (sin `ERROR`, log fuera del
-repo). El del commit del runbook, en §9.
+repo). El del commit del runbook, y el del último, en §9.
 
 **El generador de la capa**: `--comprobar` da «al dia (capa_hash 6c846ba7…)» (§4).
 
 **La CI de Linux** (D6): `git push origin
 trabajo/renovar-cierres-2026-11-26:refs/heads/fix/renovar-cierres-2026-11-26`, run
-**45935357680** sobre `dcd680e4`. Resultado: en curso al sellar el commit del runbook; va en §9.
+**45935357680** sobre `dcd680e4`. Resultado, en §9.
 
 **`PROJECT_STATE.md`**: 24.322 bytes en la rama (tope 25.000, `tests/unit/test_project_state.py`:21);
 en `main`, 24.154 (los 846 de margen del encargo).
@@ -441,13 +473,14 @@ R5.4 no pasa a HECHA: falta ingerir diciembre o declararlo reservado (su «Hecho
 **R5.6** (`:526-527`), en «Antes:», donde dice «el calendario de cierres renovado hacia atrás hasta
 enero de 2025 (NA:N, condición 1)»:
 
-> el calendario de cierres renovado hacia atrás hasta enero de 2025 (hecho: cubre desde el
-> 2025-01-09, `trabajo/renovar-cierres-2026-11-26`; NA:N, condición 1, leída como NA:I por ADR-0092 §5)
+> el calendario de cierres renovado hacia atrás hasta enero de 2025 (hecho hasta el 2025-01-09,
+> `trabajo/renovar-cierres-2026-11-26`: del 1 al 8 de enero, sin fuente de FTMO, y solo los pide la
+> extensión si llega a enero; NA:N, condición 1, leída como NA:I por ADR-0092 §5)
 
 **N** (`PROJECT_STATE.md`:46): cambia una palabra, «cubre hasta el 7-10-2026» → «cubre del 9-1-2025 al
 7-10-2026»; lo demás sigue siendo verdad (la condición 2, R6a.5 sin hacer).
 
-**I** (`PROJECT_STATE.md`:36; hoy 739 bytes), más corta, porque ya no espera la renovación:
+**I** (`PROJECT_STATE.md`:36; hoy 738 bytes), más corta, porque ya no espera la renovación:
 
 > I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de Analytics, que no se
 > abren nunca; SIN vídeo), SIN ABRIR y fuera del repo. El calendario de cierres ya lo cubre
@@ -473,6 +506,189 @@ rama:
 4. **Una parada de fin de semana se junta con el cierre semanal**: un test que quiera probar la
    entrada mira la `fuente` del cierre, no solo el motivo (auditor).
 
+## 9. El commit del runbook, la CI, y lo que queda para el último
+
+- **`make check` de `8b0011a4`** (el runbook y el informe al día): 3816 passed, 6 xfailed (24 min 38
+  s), `CONTRATO:` y `G2:` en verde, `SELLO` sobre el árbol `ec6d26a3…`, pico de 322 MiB.
+- **La CI de Linux, run 45935357680 sobre `dcd680e4`**: `failure`, con **`1 failed, 3719 passed,
+  102 skipped`**; el único fallo es `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`
+  («PROJECT_STATE declara la rama 'trabajo/renovar-cierres-2026-11-26'; la rama actual es
+  'fix/renovar-cierres-2026-11-26'»), el aceptado en D6. Los tests del calendario pasan en Linux con
+  el `zoneinfo` del sistema.
+- **El último commit** (este informe con el revisor) lleva su propio `make check` y se empuja otra vez
+  a `fix/renovar-cierres-2026-11-26` (revisor, a3): su run no puede ir dentro del commit que lo
+  dispara, así que lo da el resumen final de la sesión.
+
+## 10. El encargo, punto por punto
+
+| Punto | Qué pide | Estado | Dónde |
+|---|---|---|---|
+| §0 | Base 93a4fc29, tag F39q, CI 45922991122 confirmada, ninguna otra rama | Hecho | «Base comprobada» |
+| §0 | `abrir-rama`: encargo tal cual, contrato (R5, alto, lista blanca y protegidas), Archivo 86 | Hecho | `dbae5f7c` |
+| §0 | Fila de HOLDOUT antes del primer `make check`; `state check` antes | Hecho | 0.1; §7 |
+| §1 | `cubre` hacia atrás hasta ≤ 2025-01-01 | **Parcial**: hasta el 2025-01-09, PARADA (a) | §0.5, §3 |
+| §1 | Decir que la lectura hacia atrás la da ADR-0092 §5 y D7 | Hecho | §0, «Por qué» |
+| §2 | Nada fuera de la lista; entradas del YAML y `hasta` intactos; ni velas, ni ticks, ni arnés de 2025 | Hecho | `git diff --name-status main...HEAD`; desviación 1 |
+| 0.1-0.5 | Inventario, reloj de 2025, lista medida, aritmética de `desde` | Hecho (la lista, por el sitemap: desviación 4) | §0 |
+| 0.6 | El auditor | Hecho | §5 |
+| §4 | Seguir salvo (a)-(e) | Hecho: solo (a), acotada | §3 |
+| D1 | Extraordinarios con URL y hora UTC; paradas de marzo y noviembre | Hecho | §2; YAML |
+| D2 | Nada que no sea EURUSD; horario de la API de 2026, declarado | Hecho | §2 |
+| D3 | `desde` al primer jueves revisado, comentario y cabecera | Hecho | §4 |
+| D4 | La capa en el mismo commit, su test, compilada con logs | Hecho | §4; anexos |
+| D5 | (a) parametrizado a 2024-01-01; (b) test nuevo que rompe en `main`; (c) recuento | Hecho; (b) con el 2025-01-09 | §4 |
+| D6 | Tests de 0.2, generador, `make check` sellado, CI por `fix/` con su run | Hecho; el run del último commit, en el resumen final | §7, §9 |
+| D7 | Párrafo del runbook en su commit | Hecho | `8b0011a4` |
+| D8 | La cabecera del arnés, los recuentos y los goldens | Hecho | §4 |
+| §6 | Informe completo, líneas del cierre, revisor pegado, frase final | Hecho | §8, §11, §12 |
+
+## 11. Lo que encontró el revisor, y qué se hizo
+
+| # | Qué | Qué se hizo |
+|---|---|---|
+| a1 | La extensión de ADR-0092 §5 llega a enero de 2025 entero, y el informe decía que nadie necesitaba del 1 al 8 de enero | Corregido en §0.5, §3 (con la decisión y la recomendación) y la línea propuesta de R5.6 (§8) |
+| a2 | «Ninguna otra fuente oficial» afirmaba más de lo buscado | Buscado lo que faltaba: los otros seis sitemaps, la francesa del 2-ene (lleva a la portada) y la checa del 2-ene (vacía igual); nada. El texto dice ahora lo buscado (§0.4, §3) y el comentario del YAML, «ninguna de las fuentes de FTMO buscadas» (solo comentario: `--comprobar` sigue «al dia») |
+| a3 | La CI corrió sobre `dcd680e4`, no sobre el último commit | El último commit se empuja otra vez a `fix/` (§9) |
+| a4 | «02:36»: la última del tramo es de las 02:34:38 | Se deja: la franja 02:28-02:36 es la de todas las descargas de esa tanda, que acaba con las versiones en otros idiomas (02:35:53); la del tramo cabe dentro |
+| a5 | El CDX da tres capturas, no una | Corregido (§0.4) |
+| a6 | La fila de HOLDOUT del día no nombraba lo leído después | Una fila más del 2026-11-26 con lo de después (sitemaps, Wayback, clon de `main`, compilación, revisor) |
+| a7 | Líneas corridas en 0.2 | Corregidas |
+| b1 | Faltaba «El encargo, punto por punto» | §10 |
+| b2 | La PARADA (a) sin «Lo que necesito que decidas» | Añadido en §3, con recomendación |
+| b3 | §7 remitía a un §9 que no existía | §9 |
+| b4 | Filas de la tabla de §1 sin los avisos que no son del Forex | Completadas (3-jul, 28-ago, 11-sep, 13-nov, 27-nov) |
+
+## 12. Informe del revisor
+
+### Informe del revisor · trabajo/renovar-cierres-2026-11-26 · 2026-11-26
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 3 importa, 4 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | **El informe dice que ninguna rama necesita los días del 1 al 8 de enero de 2025, y ADR-0092 §5 dice lo contrario.** El informe: «Cubre de sobra lo que lo pide como paso previo: [...] junio a noviembre de 2025 (R5.6, ADR-0092 §5)» y «No lo necesita ninguna de las ramas que lo esperan» (`docs/validation/RENOVAR-CIERRES-2025.md`:158-160 y :289-291). La opción 1 «da por cumplido el paso previo de R5.4 y R5.6» (:295-297), y la línea que se propone para R5.6 lo marca «hecho» (:444-445). Pero la extensión de la medida de ADR-0092 llega hasta enero de 2025 ENTERO: «se añaden con la misma spec mayo, abril, marzo, febrero y enero de 2025, en ese orden y de uno en uno, hasta N ≥ 100» (`docs/adr/0092-...md`:131-134). Por eso el paso previo dice «hasta enero de 2025» (:145-146), y R5.6 incluye «y su extensión» (`docs/plan/HOJA-DE-RUTA.md`:523-524). Con `desde` en el 2025-01-09, un mes de extensión «enero» no cabe entero en `cubre`. El patrón de `tests/unit/test_f17_historial_criterio.py`:105-107 exige `cubre_desde <= día 1 del mes`. El consultor tiene que decidir la opción 1 sabiéndolo. | las citas de la celda |
+| a2 | importa | **«Ninguna otra fuente oficial de FTMO la cubre» (informe :283-284) afirma más de lo que se buscó.** El YAML dice además «no se puede leer en ninguna fuente de FTMO» (`ftmo-2step-swing-100k.yaml`:24). Es justo la condición literal de la PARADA (a). Lo que se buscó: las versiones cs, de, es y pt del 19-dic-2024 y la captura del Wayback Machine. Lo que no: (1) el índice del sitemap publica `post-sitemap.xml`, `post-sitemap2.xml`, `post-sitemap3.xml`, `page-sitemap.xml`, `faq-sitemap.xml` y `press-release-sitemap.xml`, y ninguno se descargó; (2) la francesa del 2-ene da `301` hacia `https://ftmo.com/fr/?post_type=trading-updates&p=647370`, que no se siguió; (3) del 2-ene-2025 no se probó ninguna versión cs, de, es ni pt, aunque el informe (:143-145) las atribuye a «las del 19-dic-2024 y del 2-ene-2025». | `grep -o "<loc>[^<]*</loc>" sitemap.xml` (10 sitemaps); `ls` de `C:\Users\USER\.claude\jobs\630cf772\tmp\tu\`: solo `cs/de/es/pt-19-dec-2024.html`, ningún `post-sitemap*`; `h-fr-2-jan-2025.txt`: `HTTP/1.1 301`, `Location: ...p=647370` |
+| a3 | importa | **La CI corrió sobre `dcd680e4`, no sobre el último commit (`8b0011a4`).** `entregar-rama` dice: «El run que cuenta es el del ULTIMO commit» (`.claude/skills/entregar-rama/SKILL.md`:85, y la verificación en :108). `8b0011a4` solo cambia documentos, pero el commit que pegue este informe también necesita su push a `fix/` y su run. | `gh run list --branch fix/renovar-cierres-2026-11-26`: un único run, 45935357680, sobre `dcd680e4`; `git log`: HEAD = `8b0011a4` |
+| a4 | menor | El YAML (:23 y :61) y el mensaje de `dcd680e4` dicen que se revisaron «entre las 02:28 y las 02:36 UTC». La cabecera `Date` más tardía del tramo en `indice.tsv` es la de las 02:34:38 (1-may, 404), y la del 27-nov es de las 02:34:09. Las 02:36 no salen del índice. | `docs/validation/anexos/RENOVAR-CIERRES-2025/indice.tsv`:24 y :55 |
+| a5 | menor | El informe (:146) dice «la única captura del 19-dic-2024 anterior a hoy (17-ene-2026)». El CDX descargado da tres, todas anteriores a hoy: 2026-01-17, 2026-03-16 y 2026-07-18. Solo se abrió la primera. La conclusión no cambia, porque las otras son posteriores. | `wb-cdx4.txt`: `20260117220407`, `20260316082659` y `20260718174415`; `wb-19dec.json`: closest = `20260117220407` |
+| a6 | menor | La fila de HOLDOUT del día cubre solo «la apertura y la fase 0» y «las Trading Updates [...] de diciembre de 2024 a noviembre de 2025». Faltan cosas que se leyeron después: la del 15-ago-2024, la del 4-dic-2025, los sitemaps, el Wayback, el clon de `main` para D5(b), la compilación y el revisor. El precedente de `trabajo/f17-ordenes` declara cada tanda en su fila. Nada de eso es material del trader. | `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md` (una fila); las filas de f17-ordenes del mismo fichero, justo encima |
+| a7 | menor | Referencias de línea corridas en 0.2. «sin `fuente` no entra (:165-166)»: el `if` está en :164 y el `raise` en :165 (`calendario_cierres.py`). El parametrizado «:388-410» mezcla la línea de `main` (:388) con la de la rama (:410). | `src/botsito/engine/calendario_cierres.py`:164-165; `tests/unit/test_cierres_de_mercado.py`:410 |
+
+Comprobado sin hallazgos:
+- **El contrato.** `contrato_rama.py` da: «CONTRATO: 13 ficheros dentro del contrato [...] (riesgo alto, artefacto docs/validation/RENOVAR-CIERRES-2025.md, tramo 'R5', 6 comprobaciones para el revisor)» y «G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-26 para trabajo/renovar-cierres-2026-11-26, estadiada».
+- **Las comprobaciones que no escriben:**
+  - `state check`: OK.
+  - `generar_capa.py --comprobar`: «al dia (capa_hash 6c846ba7…)».
+  - pytest de los cuatro ficheros: 52 tests, todos en verde.
+- **`make check`, los tres sellos.** Cada uno coincide con el árbol de su commit: `df5f46e5`, `57d6312d` y `ec6d26a3` (`git rev-parse <c>^{tree}`). El `make-check.log` vigente es el del tercero: «3816 passed, 6 xfailed in 1478.88s», `SELLO ... ec6d26a399c0...` y `PICO DE MEMORIA 322 MiB`, y `knowledge validate` dentro, en OK.
+- **La CI.** El run 45935357680 sobre `dcd680e4cc75…` acaba «1 failed, 3719 passed, 102 skipped». El único fallo es `test_state_check_ok_on_real_repo`, con «PROJECT_STATE declara la rama 'trabajo/...'; la rama actual es 'fix/...'».
+- **Trailers `Fuente:`:** no aplican; ningún commit toca `knowledge/spec` ni `knowledge/cases`.
+- **El holdout y el material:** la rama no toca nada de `holdout/` ni material del trader.
+- **Los regímenes de cambio:**
+  - Nada en `evidence/`, `feedback/`, `manifests/`, `corpus/` ni `libros.yaml`.
+  - HISTORIA y el runbook solo añaden líneas (`--numstat`: 179/0 y 7/0).
+  - `PROJECT_STATE.md` tiene 24.322 bytes, por debajo de 25.000.
+- **Ambigüedades, ADR, informes cerrados y las tres guardias de una `cita`:** la rama no toca ninguno.
+- **Afirmación de items de evidencia nuevos:** no hay ninguno.
+- **Los índices y las citas de FTMO:**
+  - Los sha256 y tamaños de las 56 filas de `indice.tsv` coinciden con las descargas (0 discrepancias).
+  - Las citas de las `fuente` del 6-mar y del 30-oct-2025 coinciden con el HTML.
+  - Las tablas de Navidad del 19-dic-2024 y del 2-ene-2025 están vacías («Kindly refer to the schedule below», y detrás un `<hr />`), y el `instruments-table` del Wayback del 17-ene-2026 no tiene filas.
+  - El 23-oct dice 10:00→09:00 y el 30-oct, 09:00→08:00.
+  - Ningún 429 en las cabeceras.
+  - Los domingos con mantenimiento acaban a las 23:59 del servidor como muy tarde.
+- **El calendario, cargado en memoria** (el de `main` con `git show` y el de la rama):
+  - 228 → 463 cierres, con 95 largos, y ninguno empieza antes de las 17:00 de Madrid en día laborable.
+  - Los 218 cierres que tocan el `cubre` de `main` son idénticos en los dos.
+  - El 7-mar-2025 a las 15:30 de Nueva York: en `main`, `cierre_sin_calendario`; en la rama, `cierre_mercado` con «diario + semanal + extraordinario 2025-03-09». A las 14:54, `main` da `cierre_sin_calendario` y la rama, nada.
+- **Tres citas del informe:** `test_renovar_cierres.py`:150, `test_capa_generada.py`:110-113 y ADR-0068:127-129 sostienen lo que dice el informe; también D8 (`cuenta-por-mes.txt`:3123 dice 228 cierres, y los cinco goldens dicen «sin calendario»).
+
+#### Eje (b) · Encargo
+Resumen: 0 bloquea, 3 importa, 1 menor. Requisitos: 26 hechos, 2 hechos de otra forma (declarados), 3 parciales y 2 no hechos (pendientes por orden: el revisor y la frase final).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | §0 Base en 93a4fc29; CI de main 45922991122 confirmada con `gh` | Hecho | informe :15-24 |
+| 2 | §0 Abrir con `abrir-rama`: encargo tal cual, contrato y Archivo | Hecho | `dbae5f7c`; HISTORIA +179 líneas, «# Archivo 86» |
+| 3 | §0 Tramo R5, riesgo alto, ningún ADR | Hecho | `contrato.yaml`:2, :4 y :46 |
+| 4 | §0 Lista blanca, protegidas (el perfil exacto y PREREGISTRO) y comprobaciones | Hecho | `contrato.yaml`:5-53 |
+| 5 | §0/0.1 Fila de HOLDOUT antes del primer `make check` | Hecho | diff de HOLDOUT; G2 en verde |
+| 6 | §1 `cubre` hacia atrás hasta ≤ 2025-01-01 | **Parcial**: `desde` en el 2025-01-09, con la PARADA (a) que prevé §4 | YAML :25; informe §3 |
+| 7 | §1 Decir que la lectura hacia atrás la da ADR-0092 §5 y que D7 la escribe | Hecho | informe :28-36 |
+| 8 | §2 Nada fuera de la lista (src, scripts, .claude, mql5 salvo Generado, spec, casos, evidencia, feedback, corpus, data, perfil, ADR, informes cerrados, hoja de ruta) | Hecho | `git diff --name-status main...HEAD`: 13 rutas, todas en la lista |
+| 9 | §2 Las entradas del YAML no se editan; `hasta` intacto | Hecho | diff del YAML: solo cambian `desde`, comentarios y dos entradas nuevas al final |
+| 10 | §2 Ni velas ni ticks de 2025, ni arnés sobre 2025 | Hecho (por el informe; `data/manifests` sin cambios) | desviación 1, informe :392-394 |
+| 11 | 0.2 Inventario con fichero:línea; qué test fija un literal; `knowledge validate` no lee el calendario | Hecho | informe :45-104 (con a7) |
+| 12 | 0.3 El reloj del servidor de 2025 | Hecho, sin PARADA (c) | informe :106-122; el HTML del 23 y el 30-oct |
+| 13 | 0.4 La lista medida en el archivo de FTMO | **Hecho de otra forma** (con el sitemap), declarado | desviación 4; 1566 URL y 218 `/en/`, recontadas |
+| 14 | 0.4 Pausa entre descargas | Hecho | las `Date` del índice, separadas unos 5 s |
+| 15 | 0.5 La aritmética de `desde` | Hecho | informe :150-160 |
+| 16 | 0.6 El auditor | Hecho | informe §5 |
+| 17 | §4 Escribir la fase 0 y seguir, o parar por (a)-(e) | Hecho (PARADA (a) acotada) | informe §3-§4 (ver b2) |
+| 18 | D1 Los extraordinarios, con URL y hora UTC de consulta | Hecho | YAML :63-81 |
+| 19 | D2 Nada que no sea EURUSD; el horario sale de la API de 2026, y se declara | Hecho | informe :262-270 |
+| 20 | D3 `desde` = el primer jueves revisado, el comentario con las horas y la cabecera que cita el informe | Hecho (con a4) | YAML :16 y :20-25 |
+| 21 | D4 La capa en el mismo commit, su test y la compilación con logs | Hecho | `dcd680e4`; `--comprobar` al día; `compilacion/*.log`: «0 errors, 0 warnings» |
+| 22 | D5(a) El parametrizado pasa a `"2024-01-01"` | Hecho | `test_cierres_de_mercado.py`:415 |
+| 23 | D5(b) Test nuevo: `cubre` ≤ 2025-01-01, el motivo `MOTIVO_CIERRE` y que rompa en `main` | **Hecho de otra forma**: ≤ 2025-01-09, declarado | :370-386; informe :332-346; el motivo en `main`, reproducido en memoria |
+| 24 | D5(c) El recuento de tests | Hecho | PS: 2234; `state check` OK |
+| 25 | D6 La CI de Linux por `fix/` y el número de run | **Parcial**: el run es de `dcd680e4` y su resultado no está en el informe | `gh run list`; informe :421-423 |
+| 26 | D7 El párrafo del runbook, con su cita y en un commit de la rama | Hecho | `RENOVAR-CIERRES.md`:20-25; `8b0011a4` |
+| 27 | D8 La cabecera del arnés y los goldens | Hecho | informe :352-361; `cuenta-por-mes.txt`:3123 |
+| 28 | §6 Cada commit con su `make check` sellado | Hecho | tres sellos = tres árboles |
+| 29 | §6 El YAML y Generado juntos; el runbook en su commit | Hecho | `git show --stat` de `dcd680e4` y de `8b0011a4` |
+| 30 | §6 El informe con la salida de `make check` y el run de la CI | **Parcial** | ver b3 |
+| 31 | §6 Las líneas del cierre (R5.4, R5.6, N, e I más corta) | Hecho (I: 738 → 600 bytes, medido) | informe :428-462 (ver a1 sobre R5.6) |
+| 32 | §6 El revisor, pegado | No hecho (pendiente: este informe) | informe :478 |
+| 33 | §6 «Rama lista para revisión, NO cerrada.» | No hecho (pendiente) | informe :476-478: «EN CURSO» |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | **Falta la tabla «El encargo, punto por punto»** que piden `entregar-rama` y E5. | `Grep "punto por punto"` en el informe: sin coincidencias; `.claude/skills/entregar-rama/SKILL.md`:46-50 y :107 |
+| b2 | importa | **La PARADA (a) no tiene «Lo que necesito que decidas»**, con su forma: una decisión por punto, sus opciones, «Recomiendo…» y el coste. El §3 da tres opciones y no recomienda ninguna. Además, la opción 1 está planteada con la premisa de a1. | informe :293-303; `.claude/skills/fase-cero/SKILL.md`:70-79 |
+| b3 | importa | **El §7 remite a un §9 que no existe**, para el `make check` del commit del runbook y para el resultado de la CI. El informe acaba en §8 y «## Estado». Faltan los dos datos: el tercer `make check` (sello `ec6d26a3…` = árbol de `8b0011a4`, «3816 passed, 6 xfailed», 24 min 38 s, 322 MiB) y el resultado del run 45935357680 (failure, con solo `test_state_check_ok_on_real_repo`). El encargo los pide en §6. | informe :417 y :423; `make-check.log` (líneas `SELLO` y `PICO`); `gh run view 45935357680 --log-failed` |
+| b4 | menor | En la tabla del §1, varias filas no nombran los avisos que no son del Forex: el Independence Day (3-jul), el Labor Day (28-ago), Thanksgiving y el mantenimiento (27-nov), y el domingo 14-sep (11-sep). La conclusión, «nada del Forex», es correcta en todas: lo comprobé con grep de Forex, currenc, EURUSD y EUR/USD, y con sus `<h3>`. | informe :209, :217, :219 y :230; `grep "<h3"` en esos HTML |
+
+#### Lo que no pude comprobar
+- **La salida del clon de `main`** («1 failed, 4 passed», con `assert 1764824400000 <= 1736398800000`): el clon ya no existe (`git worktree list` solo da el repo). Lo sustituye que reproduje en memoria los motivos de `main` y de la rama en los dos instantes.
+- **El CDX del Wayback:** no sé con qué consulta se hicieron `wb-cdx3.txt` y `wb-cdx4.txt`. `wb-cdx.txt` está vacío y `wb-cdx2.txt` es un «504 Gateway Time-out». Así que «no hay capturas de 2024 ni de 2025» no lo puedo confirmar.
+- **Si existe otra fuente oficial de FTMO** (blog, FAQ, notas de prensa): no tengo red para mirarla. Solo constato que no se buscó (a2).
+- **Qué `Generado.mqh` compiló MetaEditor:** el log trae el sha256 del `.mq5`, no el de la capa incluida.
+- **El informe del auditor** (52, 36, 0 y 16): no está en el repo.
+- **Que el YAML y el runbook se editaron con Edit:** no deja rastro.
+- **La orden de las «56 entradas en el orden del sitemap»:** no la comprobé. Sí comprobé que hay Trading Update `/en/` para cada jueves del 9-ene al 27-nov-2025 salvo el 1-may, y que faltan el 26-dic-2024 y nada más de diciembre de 2024.
+- **`knowledge validate` suelto:** no lo lancé. La evidencia es su bloque en `make-check.log`, todo en OK.
+- **Aviso:** son las 23:10 de Lima (04:10 UTC). Si el `make check` que selle este informe empieza pasada la medianoche local, G2 exige antes la fila de HOLDOUT del 2026-11-27.
+
+#### Comandos ejecutados
+1. `git branch --show-current`; `git merge-base main HEAD`; `git log --format='%h %s' main..HEAD`; `git diff --stat main...HEAD`; `git status --short`
+2. `date -u`
+3. `git log --format='%h %ad | %cd | %s' --date=iso main..HEAD`
+4. `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md docs/runbooks/RENOVAR-CIERRES.md knowledge/cuentas/cierres/ftmo-2step-swing-100k.yaml tests/unit/test_cierres_de_mercado.py PROJECT_STATE.md`
+5. `uv run python scripts/contrato_rama.py`
+6. `uv run botsito state check`
+7. `uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil ftmo-2step-swing-100k --comprobar`
+8. `uv run pytest tests/unit/test_cierres_de_mercado.py tests/unit/test_renovar_cierres.py tests/unit/test_capa_generada.py tests/unit/test_f17_historial_criterio.py -q -p no:cacheprovider`
+9. `gh run view 45935357680 --log-failed`; `gh run view 45935357680 --json headSha,headBranch,status,conclusion,databaseId`; `gh run list --branch fix/renovar-cierres-2026-11-26 --limit 5`
+10. `ls -la` de `C:/Users/USER/.claude/jobs/630cf772/tmp/tu/`; `sha256sum trading-update-*.html`; `python -I -c` que compara `indice.tsv` con sha256 y bytes (56 filas, 0 discrepancias)
+11. `grep` de solo texto sobre las descargas: 6-mar, 30-oct, 23-oct, 19-dic y 2-ene (`schedule below`), `instruments-table`, `<table`, la Semana Santa, Thanksgiving, el Independence Day, Forex/currenc/EURUSD, Sunday, días laborables, cabeceras HTTP, `sitemap.xml`, `tu-sitemap1/2.xml`, `wb-*`
+12. `uv run python -c` que carga en memoria el calendario de `main` (`git show`) y el de la rama: recuentos, los 218 iguales, los largos, las 17:00 de Madrid y los extraordinarios de 2025
+13. `uv run python -c` con `ventana_prohibida_por_cierre` en `main` y en la rama, el 7-mar-2025 a las 15:30 y a las 14:54 de Nueva York
+14. `git diff main...HEAD -- mql5/Include/Botsito/Capa/Generado.mqh | grep ...`
+15. `sed -n` de `cuenta-por-mes.txt`:3120-3125 y de `cableado.py`:1262-1271; `git grep -n -i cierres -- tests/golden`
+16. `git log --format='%h' main..HEAD -- knowledge/spec knowledge/cases`; `git grep -n DIRECTORIOS_CON_FUENTE -- src`; `git diff --name-status main...HEAD`; `git log --format='%h%n%B' main..HEAD`
+17. `ls -la make-check.log`; `grep` de `SELLO`, `PICO`, `passed` y `knowledge` en `make-check.log`; `sed -n '112,131p' make-check.log`
+18. `git rev-parse HEAD^{tree} dcd680e4^{tree} dbae5f7c^{tree}`
+19. `git diff --numstat main...HEAD -- docs/state/HISTORIA.md docs/runbooks/RENOVAR-CIERRES.md docs/validation/HOLDOUT-EXPOSICIONES.md`
+20. `wc -c PROJECT_STATE.md`; `sed -n '36p;46p' PROJECT_STATE.md`; `python -I -c` que mide las líneas I (738 y 600 bytes)
+21. `sed -n` de `test_renovar_cierres.py`, `test_capa_generada.py`, `test_f17_historial_criterio.py`, `FTMO-REGLAS.md`:62, ADR-0068:125-130, `CIERRES-DE-MERCADO.md`:104-144 y `RITUAL.md`:95-110
+22. `git show --stat` de los tres commits; `git worktree list`; `git branch --list`; `git ls-files docs/validation/anexos/RENOVAR-CIERRES-2025`
+23. Read de: el encargo, `contrato.yaml`, el informe, `indice.tsv`, el YAML, `test_cierres_de_mercado.py` (:1-80 y :340-429), `calendario_cierres.py`:82-206, ADR-0092:125-159, `HOJA-DE-RUTA.md`:500-534, el log de compilación de Botsito y las skills `entregar-rama` y `fase-cero`; Grep de «renovado hacia atr» en `docs/` y de «punto por punto» en el informe y en las skills
+
 ## Estado
 
-EN CURSO: falta el revisor.
+Lista para revisión. Pendiente del consultor: la decisión de §3 (la Navidad de 2024) y las líneas
+del cierre de §8.
+
+Rama lista para revisión, NO cerrada.

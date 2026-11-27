@@ -21,7 +21,7 @@ cubre:
   # (1-oct-2026); revisadas el 2026-10-03 entre las 00:35 y las 01:00 UTC (informe §0.2). El
   # tramo del 9-ene al 3-dic-2025, hacia atras: las del 9-ene al 27-nov-2025, revisadas el
   # 2026-11-27 entre las 02:28 y las 02:36 UTC (RENOVAR-CIERRES-2025.md §0.4). La Navidad de
-  # 2024 queda fuera: su tabla no se puede leer en ninguna fuente de FTMO (PARADA a)
+  # 2024 queda fuera: su tabla no esta en ninguna de las fuentes de FTMO buscadas (PARADA a)
   desde: "2025-01-09"
   hasta: "2026-10-07"
   huso: America/New_York
