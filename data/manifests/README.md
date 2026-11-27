@@ -105,3 +105,33 @@ ADR-0024 §4. Esquema (`schema_f17_historial: 1`):
 | `script` | `ruta`, `version` (la fila `version_script`), `sha256` del `.mq5` y el `commit` que lo trajo |
 | `cuenta` | `servidor`, `empresa` y `build`, del control |
 | `declarado_por`, `congelado_el`, `rama`, `informe` | quien lo copio y como, cuando y donde se congelo |
+
+## La medida de las ordenes stop y el grabador de FTMO (`f17-ordenes/` y `f17-grabador/`, rama `trabajo/f17-ordenes`)
+
+Lo que graban `tools/mql5/MedirOrdenesFTMO.mq5` y `tools/mql5/GrabarTicksFTMO.mq5` en la demo de
+FTMO (F17, ADR-0099 §5): de la medida, `F17M_<estrato>_<AAAAMMDD_HHMMSS>.csv` por ejecucion y
+`F17M_ticks_<deal>.csv` (`time_msc,bid,ask,flags`) por llenado; del grabador,
+`F17G_<AAAA-MM-DD>_<HH>.csv` (`time_msc,bid,ask,flags`) por hora del servidor y
+`F17G_control_<AAAAMMDD_HHMMSS>.csv` (`clave,valor,nota`) por arranque. Los CSV viven en
+`data/f17-ordenes/<AAAA-MM-DD>/` y `data/f17-grabador/<AAAA-MM-DD>/`, fuera de git, con el nombre que
+les da el script, en ANSI y CRLF. Los manifiestos van en sus carpetas, `data/manifests/f17-ordenes/` y
+`data/manifests/f17-grabador/`, **nunca en `f17/`**: `tests/unit/test_manifiestos_f17.py` valida todo
+lo de alli con el esquema del historial, que exige un mes de construccion, y estos dias nunca lo son.
+Son INMUTABLES como los demas, y en esas carpetas solo van `.yaml` (`knowledge validate`). Se escriben a
+mano con `sha256sum` y el lector (`scripts/leer_ordenes_f17.py`) delante; los esquemas los comprueba
+su `validar_manifiesto` en `tests/unit/test_manifiestos_f17_ordenes.py`; el runbook es
+`docs/runbooks/F17-ORDENES.md`. Que se lean no los convierte en fuente de una medida: eso pide un ADR
+que enmiende ADR-0005 y ADR-0024 §4 (ADR-0099 §5). Esquemas (`schema_f17_ordenes: 1` y
+`schema_f17_grabador: 1`):
+
+| Campo | Contenido |
+|---|---|
+| `schema_f17_ordenes` o `schema_f17_grabador` | 1 |
+| `dataset_id` | `f17-ordenes-<AAAA-MM-DD>-<8 hex>` o `f17-grabador-<AAAA-MM-DD>-<8 hex>`: el sufijo, como en el historial |
+| `estrato` | solo en la medida: `uno` o `bot`, el de la ejecucion |
+| `ficheros[]` | `ruta` (relativa a `data/`), `tipo` (la medida: `medida` o `ticks`; el grabador: `hora` o `control`), `bytes`, `sha256`, `filas` de datos sin la cabecera y `fin_de_linea` |
+| `dias` | cuantos dias cubre, por recuento (para HOLDOUT-EXPOSICIONES, sin fechas: D6) |
+| `script` | `ruta`, `version` (la de su CSV), `sha256` del `.mq5` y el `commit` que lo trajo |
+| `control` | `time_trade_server_s`, `time_gmt_s`, `desfase_servidor_gmt_min` y `cuadra`: si ese desfase es el que da el registro (`broker_offset_base` y `broker_dst`) en ese instante |
+| `cuenta` | DEMO, con `servidor`, del CSV; **nunca el `login`** que apunta el control del grabador (el repositorio es público) |
+| `declarado_por`, `congelado_el`, `rama`, `informe` | quien lo copio y como, cuando y donde se congelo |

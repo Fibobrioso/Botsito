@@ -1,0 +1,80 @@
+# El criterio de la medida de las órdenes stop en la demo de FTMO, PRE-REGISTRADO antes de cualquier
+# llenado (ADR-0099 §5). Rama trabajo/f17-ordenes: propuesta del consultor en su encargo (D3) y su
+# respuesta a la PARADA del 2026-11-26 (puntos 0 a 9), aprobada por Aleks al pegarlos. Lo lee
+# scripts/leer_ordenes_f17.py.
+# NO SE EDITA: tests/unit/test_f17_ordenes_criterio.py fija su sha256, así que cambiar una cifra
+# exige cambiar ese test a la vista en el mismo commit.
+decidido_el: "2026-11-26"
+regla: ADR-0092 §4 (a cada llenado de orden stop y a cada cierre por stop o a mercado se le resta la mediana; la esperanza con el percentil percentil_deslizamiento_f17 tiene que ser > 0); no cambia
+referencia: ADR-0099 §5 (el precio del llenado menos el del tick que dispara la orden en FTMO)
+precisiones_nuevas: la referencia de un cierre a mercado, el estrato «uno», bot_reducido, sin_tick y al_colocar, los bordes de la búsqueda, los tamaños y qué estrato vale son precisiones nuevas, escritas antes de cualquier dato; ningún ADR las escribe
+clases: [entrada_stop, cierre_stop, cierre_mercado]
+otras_salidas: un cierre con otro motivo (DEAL_REASON distinto de SL y de EXPERT) sale con su nombre y no entra en ninguna clase
+deslizamiento:
+  unidad: puntos enteros
+  signo: + en contra
+  compra: precio del llenado menos el ASK del tick que dispara
+  venta: el BID del tick que dispara menos el precio del llenado
+  lado: el de la ejecución (la entrada de una compra y el cierre de una venta compran; la entrada de una venta y el cierre de una compra venden)
+tick_que_dispara:
+  regla: el primer tick del CSV de ticks de ese llenado con time_msc en (puesta, llenado] cuyo ASK (lo que compra) toca o pasa el nivel por arriba (ASK >= nivel) o cuyo BID (lo que vende) lo toca o lo pasa por abajo (BID <= nivel), como el simulador (engine/llenado.py, la orden stop y el stop de una posición)
+  puesta: entrada_stop, ORDER_TIME_SETUP_MSC de la orden; cierre_stop, DEAL_TIME_MSC del deal de entrada (el stop va en la orden y vive desde el llenado, como lo busca el simulador)
+  bordes: la puesta fuera, como el simulador; el llenado dentro, porque el tick que llena puede compartir milisegundo con el deal
+cierre_mercado:
+  referencia: la cotización del lado que ejecuta (BID si vende, ASK si compra) leída justo antes de pedir el cierre
+  procedencia: ningún ADR la escribe como regla; es la que usa el paso 6 de tools/mql5/MedirDemoFTMO.mq5 desde la 1.1
+sin_tick:
+  regla: un llenado de entrada_stop o de cierre_stop sin tick que dispare en (puesta, llenado]
+  entra_en_la_mediana: false
+  fraccion_maxima_por_clase: "0.05"
+  lectura: si los sin_tick pasan del 5 % de las muestras de una clase (de un estrato), esa clase no da veredicto
+al_colocar:
+  regla: una entrada_stop cuyo nivel ya lo había pasado la cotización leída justo antes de colocarla, o un tick entre esa lectura y la puesta
+  entra_en_la_mediana: false
+  entra_en_sin_tick: false
+  lectura: es un llenado a mercado, no una stop que salta; se cuenta aparte
+estadistico:
+  mediana: por rango más cercano, el percentil 0.5 de scripts/ticks_spread.py (como scripts/leer_historial_f17.py)
+  percentil: el percentil_deslizamiento_f17 de knowledge/cases/criterio_fidelidad.yaml, leído de ahí
+estratos:
+  uno:
+    lotes: "1.00"
+    minimo_por_clase: 100
+    procedencia: un añadido a ADR-0099 §5, que pide lotes del orden de los del bot (P4-06, muestras baratas)
+  bot:
+    lotes: el de ADR-0081 D2 en vivo, rebajado si hace falta para caber en el tope de 1.000 USD del guion
+    minimo_por_clase: 30
+    se_usa: su máximo, que con n >= 29 es una cota del percentil 90 verdadero con un 95 % (0,9^29 ≈ 0,047); su percentil 90 empírico no lo es
+  bot_reducido:
+    regla: una muestra del estrato bot cuyo lote usado es menor que el 90 % del lote de ADR-0081 D2 de ese momento (los dos en su fila)
+    fraccion_minima_del_lote_d2: "0.90"
+    lectura: se cuenta aparte, fuera de los dos estratos
+que_estrato_vale:
+  precision: con el R de 18 puntos (la mediana de D, docs/validation/anexos/DIAGNOSTICO-PREMISA/premisa.txt:67), ±0,05 R son ±0,9 puntos, y 1 punto son 0,056 R, así que la regla de «1 punto o más» se mantiene (P4-06 daba ±0,37 puntos con otro R)
+  diferencia_que_importa_puntos: 1
+  si_la_mediana_bot_no_pasa_de_la_uno: vale la mediana «uno»; el percentil 90 de la clase es el mayor entre el percentil 90 «uno» y el máximo «bot»
+  si_la_pasa_en_1_punto_o_mas: el lote importa; vale solo el estrato «bot», y la clase sale insuficiente hasta tener 100 muestras «bot»
+  bot_minimo_si_el_lote_importa: 100
+  insuficiente: con menos muestras que su mínimo, la clase sale insuficiente
+ventana:
+  regla: solo cuenta el llenado cuyo instante UTC cae en [ventana_inicio, ventana_fin) del día por reloj_de_las_sesiones (la rejilla H4, ADR-0069); lo de fuera se cuenta aparte
+  sin_calendario: la ventana del lector no usa el calendario de cierres
+reloj: el instante del servidor pasa a UTC con broker_offset_base y broker_dst del registro, por zoneinfo y sin ninguna cifra en el código (RelojServidor de scripts/leer_historial_f17.py)
+como_entra_en_adr_0092: no lo decide esta rama; el yaml mide por clase, y la forma de aplicarlo (una mediana por clase a su clase, u otra) la fija, antes de leer la medida, el ADR de Aleks que resuelva C o la rama que la lea; mientras tanto deslizamiento sigue en pendiente_F17 y la puerta no puede dar «pasa»
+lo_que_no_dice: que la prueba gratuita ejecute como el Challenge y la cuenta real no está escrito (P4-08); el veredicto lo repite
+spread_del_grabador: el lector da el spread de FTMO por hora de la ventana de los días grabados y nada más; si el historial no cubre los meses de construcción, cómo se compara con el de Dukascopy se decide y se escribe antes de leer el grabador; usar ticks de FTMO como fuente de una medida pide un ADR que enmiende ADR-0005 y ADR-0024 §4 (ADR-0099 §5)
+lo_visto_antes:
+  fuente: ADR-0090 §7 (dice «siete»; enumera nueve valores, tres por ejecución), declarado por ADR-0070 punto 4
+  buy_stop_llenado_menos_nivel:
+    lotes: el volumen mínimo (0,01)
+    valores: [1, 0, 0]
+  mercado_llenado_menos_cotizacion_previa:
+    ejecucion_1: {lotes: "0.01", apertura: 2, cierre: -2}
+    ejecucion_2: {lotes: "1.00", apertura: 2, cierre: 0}
+    ejecucion_3: {lotes: "1.00", apertura: 0, cierre: 0}
+guion:
+  stop_puntos: 18
+  salida_a_mercado_s: 300
+  espera_llenado_s: 120
+  distancia_entrada_puntos: 5
+no_imprime: ningún precio; solo puntos, recuentos y fracciones
