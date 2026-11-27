@@ -22198,3 +22198,72 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 85 (2026-11-26).
+
+# Registro de cierre · `trabajo/renovar-cierres-2026-11-26` (2026-11-27)
+
+- Orden de cierre de Aleks del 2026-11-27, tras la revisión del consultor de la rama entregada
+  (`2803d5f1`, leída en `fix/renovar-cierres-2026-11-26`), pegada en la conversación de la sesión;
+  después, Aleks lanzó `/cerrar-rama trabajo/renovar-cierres-2026-11-26` (la sesión lo recibió a las
+  05:10, hora de Lima). La orden contaba 4 commits más el de la fila del día y el `chore(cierre)`, 6;
+  `git log --oneline main..trabajo/renovar-cierres-2026-11-26` dio los 4 (`dbae5f7c`, `dcd680e4`,
+  `8b0011a4` y `2803d5f1`). La fila de HOLDOUT del 2026-11-27 no estaba en la rama: entró en su
+  propio commit, sellado, antes de este.
+- Tag: `stable/F39r-renovar-cierres-2026-11-26`. El merge es
+  `git rev-parse "stable/F39r-renovar-cierres-2026-11-26^{commit}"` (su sha queda en
+  `Last Stable Commit`).
+- **Lo hecho** (tramo R5, el paso previo de R5.4 y R5.6; RENOVAR-CIERRES-2025.md):
+  - el calendario de cierres de EURUSD de `ftmo-2step-swing-100k` cubre desde el **2025-01-09** (antes
+    el 2025-12-04; `hasta` sigue en el 2026-10-07), con las Trading Updates del 9-ene al 27-nov-2025
+    leídas el 2026-11-27 (UTC) y la lista sacada del sitemap de FTMO;
+  - dos extraordinarios de 2025: las paradas de plataforma por el cambio de hora de EE. UU. del
+    9-mar-2025 y del 2-nov-2025, las dos dentro del fin de semana; ninguna Trading Update de 2025
+    anuncia un cierre del Forex;
+  - de 228 a 463 cierres juntos; los 218 que tocan el `cubre` de `main` son idénticos en los dos
+    calendarios; ningún cierre largo empieza antes de las 17:00 de Madrid en día laborable;
+  - `mql5/Include/Botsito/Capa/Generado.mqh` regenerado en el mismo commit que el YAML
+    (`CIERRES_N` 463, capa_hash `6c846ba7…`) y compilado con MetaEditor: `Botsito.mq5` y
+    `BotsitoPruebasCapa.mq5`, 0 errores y 0 avisos;
+  - el test nuevo `test_el_calendario_renovado_hacia_atras_cubre_2025_y_niega_por_el_cierre`, que
+    falla con el código de `main` (`cierre_sin_calendario`); el caso parametrizado de `hasta`, de
+    `"2025-01-01"` a `"2024-01-01"`; 2234 funciones de test;
+  - el párrafo de D7 en `docs/runbooks/RENOVAR-CIERRES.md`, condición 1: también se renueva hacia
+    atrás de `desde`, y por adelantado, cuando la hoja de ruta lo pide (ADR-0092 §5).
+- **La decisión de la PARADA (a), entera** (orden de cierre, §1): opción (a). `cubre.desde` se queda
+  en el 2025-01-09. Del 1 al 8 de enero de 2025 no hay fuente de FTMO en lo que se buscó, y no se
+  inventa. Solo lo pide la extensión de R5.6 si llega a enero (N < 100 con mayo a febrero). La
+  pregunta a soporte de FTMO (el horario del Forex en MT5 del 24-12-2024 al 2-01-2025) NO se manda
+  ahora, porque está pendiente su respuesta al correo del 2026-11-26 sobre F17. Se hará cuando FTMO
+  conteste ese correo, y como muy tarde antes de correr la medida de R5.6: la medida es una sola
+  ejecución con su extensión (ADR-0092 §5), y si llegara a enero a mitad de ejecución, el simulador
+  se pararía. Con la respuesta, una rama corta lleva `desde` al 2024-12-12. La opción (c), medirlo
+  con ticks de FTMO, queda descartada mientras no haya datos de FTMO de 2024.
+- **Next Action:** la I, con el texto de RENOVAR-CIERRES-2025.md §8 (de 738 a 600 bytes; ya no
+  espera la renovación), y la N, «cubre hasta el 7-10-2026» → «cubre del 9-1-2025 al 7-10-2026».
+  Ninguna letra entra ni sale.
+- **Hoja de ruta:** R5.4, con el texto de §8 del informe; R5.6, en «Antes:», con el texto de la orden
+  de cierre (no el de §8). Ninguna entrada pasa a HECHA; nada sale ni cambia de nombre.
+- **Commits de la rama** (6):
+  - `dbae5f7c` la apertura (encargo, contrato y Archivo 86 de PROJECT_STATE);
+  - `dcd680e4` el YAML renovado, `Generado.mqh`, los tests, la fase 0 del informe y sus anexos;
+  - `8b0011a4` D7 en el runbook y el informe al día;
+  - `2803d5f1` los hallazgos del revisor, su informe pegado, y la rama lista para revisión;
+  - `0b47a5e3` la fila de HOLDOUT del 2026-11-27, antes de los `make check` del cierre (3816
+    passed, 6 xfailed, `SELLO` sobre el árbol `1fb4b49d…`);
+  - y este, `chore(cierre)`: sale el contrato; entran este registro, la fila de
+    ERRORES-RECURRENTES, la I y la N, y la hoja de ruta.
+- **`make check` de `2803d5f1`**, que el informe no recoge: 3816 passed, 6 xfailed (25 min 50 s),
+  `CONTRATO:` y `G2:` en verde, `SELLO` sobre el árbol `757f3e5e…`, pico de 322 MiB.
+- **CI** de `fix/renovar-cierres-2026-11-26`, los dos con solo `test_state_check_ok_on_real_repo` por
+  el nombre `fix/`, el fallo esperado: sobre `dcd680e4`, run 45935357680 (1 failed, 3719 passed, 102
+  skipped); sobre `2803d5f1`, run **45942893225** (1 failed, 3719 passed, 102 skipped), verificado con
+  `gh` antes del cierre. CI de `main` sobre `93a4fc29`, al abrir: run 45922991122, success.
+- **Filas de HOLDOUT-EXPOSICIONES de la rama** (tres): dos del 2026-11-26 (la apertura y la fase 0, con
+  las Trading Updates públicas de FTMO; lo leído después y el revisor) y la del 2026-11-27 (el
+  cierre). Ningún material del trader ni de días reservados, salvo el M1 que leen todos los
+  `make check`.
+- **Revisor** (opus), una pasada pegada en RENOVAR-CIERRES-2025.md §12: eje (a) 0 bloquea, 3 importa,
+  4 menor; eje (b) 0 bloquea, 3 importa, 1 menor. Todo arreglado salvo a4 (el «02:36» del comentario
+  del YAML y del mensaje de `dcd680e4`), que se dejó con la razón de §11.
+- **Correcciones al informe, que no se toca** (orden de cierre): §5, punto 7, remite a «§7» para las
+  líneas del cierre, que están en §8; la cabecera sigue diciendo «PLANTILLA … se escriben aquí según
+  avanza la rama»; y el `make check` y el run de `2803d5f1` están en este registro, no en el informe.
