@@ -402,10 +402,77 @@ de :1264 a :1270) y de dónde se define `desde` (en `CIERRES-DE-MERCADO.md`:121,
 5. **`knowledge validate` no lee el calendario** (0.2), aunque el runbook lo nombra entre las
    comprobaciones (:54); se corre igual, dentro de `make check`.
 
-## 7. Comprobaciones, CI, revisor y cierre
+## 7. Comprobaciones
 
-Se escriben en los commits siguientes de la rama.
+**`make check`, cada commit con su sello** (`make check > make-check.log 2>&1`, el log leído entero:
+exit 0, ningún `failed`, `CONTRATO:`, `G2:` y `SELLO`):
+
+| Commit | Qué | pytest | Sello | Pico |
+|---|---|---|---|---|
+| `dbae5f7c` | apertura (encargo, contrato, Archivo 86, fila del día) | 3815 passed, 6 xfailed (28 min 33 s) | árbol `df5f46e5…` | 323 MiB |
+| `dcd680e4` | el YAML, `Generado.mqh`, los tests, este informe y sus anexos | 3816 passed, 6 xfailed (27 min 12 s) | árbol `57d6312d…` | 320 MiB |
+
+Antes de cada uno, `uv run botsito state check` (OK), `uv run python scripts/contrato_rama.py`
+(`CONTRATO:` y `G2:` en verde) y `uv run botsito knowledge validate` (sin `ERROR`, log fuera del
+repo). El del commit del runbook, en §9.
+
+**El generador de la capa**: `--comprobar` da «al dia (capa_hash 6c846ba7…)» (§4).
+
+**La CI de Linux** (D6): `git push origin
+trabajo/renovar-cierres-2026-11-26:refs/heads/fix/renovar-cierres-2026-11-26`, run
+**45935357680** sobre `dcd680e4`. Resultado: en curso al sellar el commit del runbook; va en §9.
+
+**`PROJECT_STATE.md`**: 24.322 bytes en la rama (tope 25.000, `tests/unit/test_project_state.py`:21);
+en `main`, 24.154 (los 846 de margen del encargo).
+
+## 8. Para el cierre: las líneas propuestas
+
+Van en el commit del cierre (la hoja de ruta y `PROJECT_STATE.md`), si el consultor las acepta y
+según lo que decida sobre la PARADA (a). Escritas para la opción 1 de §3 (dejarlo en el 2025-01-09).
+
+**`docs/plan/HOJA-DE-RUTA.md`, R5.4** (`:506-507`), en «Qué es», donde dice «antes, renovar hacia
+atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1)»:
+
+> antes, renovar hacia atrás el calendario de cierres (hecho en `trabajo/renovar-cierres-2026-11-26`:
+> cubre desde el 2025-01-09, RENOVAR-CIERRES-2025.md)
+
+R5.4 no pasa a HECHA: falta ingerir diciembre o declararlo reservado (su «Hecho cuando»).
+
+**R5.6** (`:526-527`), en «Antes:», donde dice «el calendario de cierres renovado hacia atrás hasta
+enero de 2025 (NA:N, condición 1)»:
+
+> el calendario de cierres renovado hacia atrás hasta enero de 2025 (hecho: cubre desde el
+> 2025-01-09, `trabajo/renovar-cierres-2026-11-26`; NA:N, condición 1, leída como NA:I por ADR-0092 §5)
+
+**N** (`PROJECT_STATE.md`:46): cambia una palabra, «cubre hasta el 7-10-2026» → «cubre del 9-1-2025 al
+7-10-2026»; lo demás sigue siendo verdad (la condición 2, R6a.5 sin hacer).
+
+**I** (`PROJECT_STATE.md`:36; hoy 739 bytes), más corta, porque ya no espera la renovación:
+
+> I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de Analytics, que no se
+> abren nunca; SIN vídeo), SIN ABRIR y fuera del repo. El calendario de cierres ya lo cubre
+> (RENOVAR-CIERRES-2025.md): entra por su propia rama cuando el consultor decida si es construcción
+> o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de
+> diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04); en la sesión 6 dijo que aún no lo ha grabado con su
+> voz (SESION-06-EXTRACCION.md §3.5). Pesa más desde la 7a: el sesgo de enero depende de diciembre
+> (Technical Debt).
+
+Quita «julio ya entró (ADR-0078)», que ya no explica nada de I, y «(declaración de Aleks, …)», que
+lleva el informe citado. Medida con Python sobre la línea: 738 bytes la de hoy, 600 la propuesta (138 menos); el cambio de N
+añade 7.
+
+**La fila de `docs/runbooks/ERRORES-RECURRENTES.md`** (la escribe el cierre), con las lecciones de la
+rama:
+
+1. **El archivo de Trading Updates de FTMO puede servirse vacío** (8 bytes, `ftmo.com`, desde la
+   caché de Cloudflare): la lista se mide en el sitemap oficial (`trading-updates-sitemap*.xml`).
+2. **Una Trading Update vieja puede haber perdido su tabla** (componente `instruments-table` que hoy
+   sale vacío): se busca «below» seguido de nada en cada una antes de darla por leída.
+3. **La guardia niega un bucle de `curl` con espera** (puede ser una consulta de la CI): varias
+   llamadas `curl` LITERALES en una sola orden, con `sleep` entre ellas, sí pasan.
+4. **Una parada de fin de semana se junta con el cierre semanal**: un test que quiera probar la
+   entrada mira la `fuente` del cierre, no solo el motivo (auditor).
 
 ## Estado
 
-EN CURSO.
+EN CURSO: falta el revisor.
