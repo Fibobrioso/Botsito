@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/f17-ordenes
+main
 
 ## Current Feature
-trabajo/f17-ordenes, EN CURSO (F17, segunda parte: la medida de las ordenes stop y el grabador, sin correr; encargo docs/encargos/trabajo-f17-ordenes.md, informe docs/validation/F17-ORDENES.md).
+Ninguna abierta: trabajo/f17-ordenes cerrada en main (stable/F39q-f17-ordenes). Lo siguiente, en la Next Action (F).
 
 ## Stable Main State
-8066b377 · merge de `trabajo/f17-historial` (tag `stable/F39p-f17-historial`), sobre `stable/F39o-contraste-trader` (96b250fd). Informe docs/validation/F17-HISTORIAL.md; el registro del cierre, al final de HISTORIA.
+4581f529 · merge de `trabajo/f17-ordenes` (tag `stable/F39q-f17-ordenes`), sobre `stable/F39p-f17-historial` (8066b377). Informe docs/validation/F17-ORDENES.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-8066b377 · merge trabajo/f17-historial: F17, primera parte, el historial de ticks de la demo de FTMO con herramientas y sin correr · tag stable/F39p-f17-historial
+4581f529 · merge trabajo/f17-ordenes: F17, segunda parte, la medida de las ordenes stop y el grabador de la demo de FTMO, hechas y compiladas, sin correr · tag stable/F39q-f17-ordenes
 
 ## Tests Currently Passing
 2233 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
