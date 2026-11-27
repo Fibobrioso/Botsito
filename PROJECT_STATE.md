@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/renovar-cierres-2026-11-26
 
 ## Current Feature
-Ninguna abierta: trabajo/f17-ordenes cerrada en main (stable/F39q-f17-ordenes). Lo siguiente, en la Next Action (F).
+trabajo/renovar-cierres-2026-11-26, EN CURSO: el calendario de cierres de EURUSD renovado hacia atrás hasta cubrir 2025 (R5.4 y R5.6, letra I). Encargo docs/encargos/trabajo-renovar-cierres-2026-11-26.md; informe docs/validation/RENOVAR-CIERRES-2025.md.
 
 ## Stable Main State
 4581f529 · merge de `trabajo/f17-ordenes` (tag `stable/F39q-f17-ordenes`), sobre `stable/F39p-f17-historial` (8066b377). Informe docs/validation/F17-ORDENES.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ Ninguna abierta: trabajo/f17-ordenes cerrada en main (stable/F39q-f17-ordenes). 
 4581f529 · merge trabajo/f17-ordenes: F17, segunda parte, la medida de las ordenes stop y el grabador de la demo de FTMO, hechas y compiladas, sin correr · tag stable/F39q-f17-ordenes
 
 ## Tests Currently Passing
-2233 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2234 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -33,7 +33,7 @@ C. La voz que el ASR se salta (v12 a v14), prioridad baja, en los huecos: expone
 
 G. PREREGISTRO.md relleno (ADR-0096, F39g): la rentabilidad de ADR-0092 fijada; F26, diagnóstico con la referencia de ADR-0043 y la regla de las 36 unidades efectivas, sobre febrero de 2026 grabado con vídeo y voz (holdout-1 cerrada mientras tanto); ninguna pregunta ni autorización. Falta, con dueño: Aleks pide febrero al trader (mensaje del consultor); la rama del comando de medida de F26, que abre una sola partición y añade la primera pregunta; la rama corta del arreglo de kappa_entre_sesiones, antes de cualquier autorización de kappa; el hash de la spec, en la rama de la medida de rentabilidad (ADR-0096 §5). fidelidad-1: 4 retirados y 6 medibles; holdout-3: 1 y 7.
 
-I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de estadística, SIN vídeo), SIN ABRIR y fuera del repo; las capturas son de Analytics y no se abren nunca. Entra por su propia rama después de renovar hacia atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1); julio ya entró (ADR-0078). Antes, el consultor decide si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04). En la sesión 6 el trader dijo que aún no lo ha grabado con su voz (declaración de Aleks, SESION-06-EXTRACCION.md §3.5). Pesa más desde la 7a: el sesgo de las sesiones de enero depende de diciembre (Technical Debt).
+I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de Analytics, que no se abren nunca; SIN vídeo), SIN ABRIR y fuera del repo. El calendario de cierres ya lo cubre (RENOVAR-CIERRES-2025.md): entra por su propia rama cuando el consultor decida si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04); en la sesión 6 dijo que aún no lo ha grabado con su voz (SESION-06-EXTRACCION.md §3.5). Pesa más desde la 7a: el sesgo de enero depende de diciembre (Technical Debt).
 
 J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de A-9 que el cuestionario de hoy ya no trae (CASES-REJILLA.md). Rama propia antes de la próxima sesión que etiquete días (G.2).
 
@@ -43,7 +43,7 @@ Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión
 
 M. **El break even de una venta que salta por el ASK** (ADR-0065 §6): sin objeto mientras break_even_condicion sea cierre (ACTIVAR-SESION-07.md).
 
-N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-2026, ya pasado, y se renueva por condición, no cada semana (decisión del consultor del 2026-10-03, stable/F36s-renovar-cierres; docs/runbooks/RENOVAR-CIERRES.md). La condición 2 la cumple la lectura de SymbolInfoSessionTrade de R6a.1 (EA-CONEXION.md §11, el journal de la demo del 2026-10-21 en anexos/EA-CONEXION/demo-20261021-cierre/), y R6a.5 la usa (ADR-0082 D6).
+N. El calendario de cierres (knowledge/cuentas/cierres/) cubre del 9-1-2025 al 7-10-2026, ya pasado, y se renueva por condición, no cada semana (decisión del consultor del 2026-10-03, stable/F36s-renovar-cierres; docs/runbooks/RENOVAR-CIERRES.md). La condición 2 la cumple la lectura de SymbolInfoSessionTrade de R6a.1 (EA-CONEXION.md §11, el journal de la demo del 2026-10-21 en anexos/EA-CONEXION/demo-20261021-cierre/), y R6a.5 la usa (ADR-0082 D6).
 
 ### Pendientes heredados (sin verificar)
 
@@ -169,8 +169,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 85 (2026-11-26).
+— ninguna desde el Archivo 86 (2026-11-26).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 85 (2026-11-26).
+— ninguna desde el Archivo 86 (2026-11-26).

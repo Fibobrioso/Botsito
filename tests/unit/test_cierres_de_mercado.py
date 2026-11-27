@@ -364,6 +364,28 @@ def test_el_calendario_de_ftmo_trae_navidad_y_ano_nuevo_y_cubre_la_construccion(
         assert local.weekday() >= 5 or local.hour >= 17, local
 
 
+NUEVA_YORK = ZoneInfo("America/New_York")
+
+
+def test_el_calendario_renovado_hacia_atras_cubre_2025_y_niega_por_el_cierre() -> None:
+    """trabajo/renovar-cierres-2026-11-26 (docs/validation/RENOVAR-CIERRES-2025.md): `cubre` empieza
+    en o antes del 9-ene-2025 -la Navidad de 2024 queda fuera, porque su tabla no se puede leer en
+    ninguna fuente de FTMO (PARADA a)- y cubre junio a noviembre de 2025 (R5.6) y diciembre de 2025
+    (R5.4). El viernes 7-mar-2025 a las 15:30 de Nueva York cae en la ventana de dos horas del fin
+    de semana que lleva la parada del 9-mar-2025 (Trading Update del 6-mar-2025): se niega por el
+    cierre de mercado, y el cierre lleva el extraordinario. En `main` ese instante ya se negaba,
+    pero con `cierre_sin_calendario`."""
+    assert FTMO.cubre_desde_ms <= _ms(2025, 1, 9, huso=NUEVA_YORK)
+    assert FTMO.cubre_desde_ms <= _ms(2025, 6, 1) and _ms(2025, 12, 1) <= FTMO.cubre_hasta_ms
+    dentro = _ms(2025, 3, 7, 15, 30, huso=NUEVA_YORK)
+    p = ventana_prohibida_por_cierre(dentro, FTMO, MARGEN, MINIMO)
+    assert p is not None and p.motivo == MOTIVO_CIERRE, p
+    assert p.cierre is not None and "extraordinario 2025-03-09" in p.cierre.fuente.split(" + ")
+    # la ventana empieza dos horas antes del cierre del viernes (16:55 de Nueva York), no antes
+    antes = _ms(2025, 3, 7, 14, 54, huso=NUEVA_YORK)
+    assert ventana_prohibida_por_cierre(antes, FTMO, MARGEN, MINIMO) is None
+
+
 def test_gana_la_mas_restrictiva_y_la_discrepancia_se_dice() -> None:
     """Las sesiones de la plataforma (sinteticas) traen un cierre anticipado que el calendario no
     tiene: la union lo toma, y sale como discrepancia."""
@@ -390,7 +412,7 @@ def test_gana_la_mas_restrictiva_y_la_discrepancia_se_dice() -> None:
     [
         ("perfil: ftmo-2step-swing-100k", "perfil: otro", "perfil"),
         ("huso: America/New_York}", "huso: Nueva_York}", "huso"),
-        ('hasta: "2026-10-07"', 'hasta: "2025-01-01"', "hasta"),
+        ('hasta: "2026-10-07"', 'hasta: "2024-01-01"', "hasta"),
         (
             "    fuente: >-\n      Trading Update del 18-dic",
             "    nota: >-\n      Trading Update del 18-dic",

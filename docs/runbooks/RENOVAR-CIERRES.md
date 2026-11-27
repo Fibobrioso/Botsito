@@ -16,6 +16,13 @@ cuesta y no cambia nada. Se renueva en dos casos:
    `tests/unit/test_renovar_cierres.py`, que comprueba que se niega por la fecha simulada y nunca por
    la de hoy. En ese momento se renueva **hacia atrás**, hasta cubrir esos días, con las Trading
    Updates ya publicadas de esas semanas.
+
+   **También se renueva hacia atrás de `desde`, y por adelantado**, cuando una entrada de la hoja de
+   ruta lo pide como paso previo de una medida sobre meses anteriores a `cubre.desde` (ADR-0092 §5:
+   «el calendario de cierres renovado hacia atrás hasta enero de 2025»; la primera vez, en
+   `trabajo/renovar-cierres-2026-11-26`, `docs/validation/RENOVAR-CIERRES-2025.md`). No es el
+   «hacia atrás» de arriba, que lee Trading Updates ya publicadas para días posteriores a `hasta`:
+   aquí se leen las de las semanas anteriores a `desde`, y `desde` pasa al primer jueves revisado.
 2. **Antes de que el bot corra en tiempo real** (demo o real). La rama que lo conecte trae una de
    estas dos cosas:
    - la lectura de las sesiones del símbolo con `SymbolInfoSessionTrade` (ADR-0068 §4, entrada N de

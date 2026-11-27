@@ -13,12 +13,16 @@
 # Regimen: versionado. Cada cierre que entra cita la Trading Update de FTMO (o la medida) de donde
 # sale, y `cubre` solo se alarga cuando se han revisado las Trading Updates del tramo nuevo. Fuera
 # de `cubre`, el bot no abre ni coloca (cierre_sin_calendario) y el simulador no corre.
+# Renovado hacia atras hasta el 9-ene-2025 en docs/validation/RENOVAR-CIERRES-2025.md.
 perfil: ftmo-2step-swing-100k
 simbolo: EURUSD
 cubre:
   # del primer jueves revisado al dia antes del jueves siguiente a la ultima Trading Update leida
-  # (1-oct-2026); revisadas el 2026-10-03 entre las 00:35 y las 01:00 UTC (informe §0.2)
-  desde: "2025-12-04"
+  # (1-oct-2026); revisadas el 2026-10-03 entre las 00:35 y las 01:00 UTC (informe §0.2). El
+  # tramo del 9-ene al 3-dic-2025, hacia atras: las del 9-ene al 27-nov-2025, revisadas el
+  # 2026-11-27 entre las 02:28 y las 02:36 UTC (RENOVAR-CIERRES-2025.md §0.4). La Navidad de
+  # 2024 queda fuera: su tabla no esta en ninguna de las fuentes de FTMO buscadas (PARADA a)
+  desde: "2025-01-09"
   hasta: "2026-10-07"
   huso: America/New_York
 semanal:
@@ -52,3 +56,26 @@ extraordinarios:
       Trading Update del 5-mar-2026: «On Sunday, 8 Mar 2026, the USA will transition to Daylight
       Saving Time (DST). Therefore, trading on all platforms (MT4, MT5, cTrader, and DXtrade) will
       be unavailable between 07:00 GMT+2 and 11:00 GMT+3.» Cae dentro del fin de semana
+  # Renovacion hacia atras (2025), rama trabajo/renovar-cierres-2026-11-26
+  # (docs/validation/RENOVAR-CIERRES-2025.md): las Trading Updates del 9-ene al 27-nov-2025,
+  # consultadas el 2026-11-27 entre las 02:28 y las 02:36 UTC. Solo las dos paradas por el cambio
+  # de hora de EE. UU. tocan a EURUSD; ninguna nombra un cierre del Forex.
+  - inicio: {fecha: "2025-03-09", hora: "07:00", huso: Etc/GMT-2}
+    fin: {fecha: "2025-03-09", hora: "11:00", huso: Etc/GMT-3}
+    fuente: >-
+      Trading Update del 6-mar-2025
+      (https://ftmo.com/en/blog/trading-updates/trading-update-6-mar-2025/, consultada el
+      2026-11-27 a las 02:29:50 UTC): «On Sunday, 9 Mar 2025, the USA will transition to Daylight
+      Saving Time (DST). Therefore, trading on all trading platforms (MT4, MT5, cTrader, and
+      DXtrade) will be unavailable between 07:00 GMT+2 and 11:00 (GMT+3).» Cae dentro del fin de
+      semana
+  - inicio: {fecha: "2025-11-02", hora: "07:00", huso: Etc/GMT-3}
+    fin: {fecha: "2025-11-02", hora: "11:00", huso: Etc/GMT-2}
+    fuente: >-
+      Trading Update del 30-oct-2025
+      (https://ftmo.com/en/blog/trading-updates/trading-update-30-oct-2025/, consultada el
+      2026-11-27 a las 02:33:46 UTC): mantenimiento de «all trading platforms - MT5, MT4, cTrader,
+      and DXtrade - on Sunday, 2 Nov 2025, between 07:00 and 11:00», el dia en que «the United
+      States will end Daylight Saving Time. The corresponding change in platform occurs at 09:00,
+      when clocks are moved back one hour to 08:00». Las 07:00 se leen antes del cambio (GMT+3) y
+      las 11:00 despues (GMT+2), la lectura mas larga. Cae dentro del fin de semana

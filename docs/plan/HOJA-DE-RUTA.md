@@ -504,7 +504,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ### R5.4 · Diciembre de 2025
 - **Refs:** NA:I · NA:N
 - **Qué es:** el backtest de diciembre (sin vídeo), sin abrir; antes, renovar hacia atrás el
-  calendario de cierres (RENOVAR-CIERRES.md, condición 1) y que el consultor decida si es
+  calendario de cierres (hecho en `trabajo/renovar-cierres-2026-11-26`: cubre desde el 2025-01-09,
+  RENOVAR-CIERRES-2025.md) y que el consultor decida si es
   construcción o reservado; si diciembre va a construcción, antes la salida de
   meses_reservados.yaml con su ADR (hoy no existe).
 - **Depende de:** R2.2 (HECHA) y R2.1 (HECHA) y R1.1.
@@ -524,7 +525,9 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   2025 (y su extensión, de uno en uno y solo si N no llega), en la fase fondeada y con la cuenta
   arrastrada, por su propia rama con su ADR y su comando (ADR-0070 punto 6: hoy no existe).
   Antes: la spec sellada en PREREGISTRO (G); el calendario de cierres renovado hacia atrás hasta
-  enero de 2025 (NA:N, condición 1); las velas M1 y los ticks de esos meses, bajados y declarados
+  enero de 2025 (hecho hasta el 2025-01-09 en `trabajo/renovar-cierres-2026-11-26`: del 1 al 8
+  de enero, sin fuente de FTMO en lo buscado, que se le pregunta antes de correr esta medida; NA:N,
+  condición 1, leída como NA:I por ADR-0092 §5); las velas M1 y los ticks de esos meses, bajados y declarados
   según los heredados 7 y 9; el riesgo del spread supuesto por la hora de pared (Technical Debt)
   en noviembre y en la extensión de invierno; y la construcción en el umbral de ADR-0070. La
   puerta no da «pasa» antes de F17 (el deslizamiento, heredado 10).
