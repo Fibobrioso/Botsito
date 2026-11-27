@@ -1,0 +1,82 @@
+rama: trabajo/vad-julio
+riesgo: alto  # toca src/botsito/corpus/ y el ASR de ADR-0007, retranscribe v12 a v14 y prepara F5 (material_sin_video de julio); encargo §0
+artefacto: docs/validation/VAD-JULIO.md
+tramo: R2  # R2.5 de docs/plan/HOJA-DE-RUTA.md; la letra C de la Next Action
+rutas_permitidas:
+  - docs/encargos/trabajo-vad-julio.md
+  - docs/validation/VAD-JULIO.md
+  - docs/validation/anexos/VAD-JULIO/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md  # la fila del dia (G2)
+  - src/botsito/corpus/motor_whisper.py  # D1
+  - src/botsito/corpus/pipeline_transcripcion.py  # D1 y D2
+  - src/botsito/corpus/transcripcion.py  # el motor falso, D1
+  - src/botsito/cli.py  # las opciones de corpus transcribe, D1 y D2
+  - docs/adr/0007-transcripcion-en-dos-capas.md  # solo la enmienda de D1 y su Fecha / fase
+  - tests/unit/test_transcripcion_vad.py  # D1 (i)-(iii) y D2
+  - knowledge/corpus/transcripciones/  # solo manifiestos NUEVOS (el hook impide editar uno)
+  - knowledge/corpus/fuentes.yaml  # solo el comentario de v12 a v14, y solo si lo medido lo contradice
+  - docs/state/HISTORIA.md  # el Archivo 87 de la apertura
+  - PROJECT_STATE.md  # Current Branch, Current Feature, el Archivo y el recuento de tests
+  # SOLO para el commit de F5, tras la respuesta a la PARADA final (encargo §6):
+  - knowledge/cases/criterio_fidelidad.yaml
+  - src/botsito/engine/cableado.py
+  - src/botsito/cases/criterio_fidelidad.py
+  - tests/golden/metodo_adr0092/main-hueco.txt
+  - tests/golden/metodo_adr0092/main-stop.txt
+  - tests/golden/metodo_adr0092/main-viva.txt
+  - tests/unit/test_criterio_campos_adr0092.py
+  - tests/unit/test_metodo_adr0092.py
+rutas_protegidas:
+  - docs/validation/PREREGISTRO.md
+  - docs/validation/VIDEO-JULIO.md  # informe cerrado: no se edita
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/spec/
+  - knowledge/cuentas/
+  - knowledge/simulador/
+  - knowledge/_proposals/
+  - knowledge/cases/dev/
+  - knowledge/cases/fidelidad/
+  - knowledge/cases/fixtures/
+  - knowledge/cases/holdout/
+  - knowledge/cases/kit/
+  - knowledge/cases/visto/
+  - knowledge/cases/meses_reservados.yaml
+  - knowledge/cases/retirados.yaml
+  - knowledge/cases/README.md
+  - knowledge/corpus/libros.yaml
+  - knowledge/corpus/manifest.yaml
+  - knowledge/corpus/tramos_no_citables.yaml
+  - knowledge/corpus/glosario_asr.yaml
+  - knowledge/corpus/criterio_huso.yaml
+  - knowledge/corpus/fotogramas/
+  - knowledge/corpus/fotogramas_obligatorios.yaml
+  - src/botsito/domain/
+  - src/botsito/spec/
+  - src/botsito/evidence/
+  - src/botsito/feedback/
+  - src/botsito/data/
+  - src/botsito/comun/
+  - src/botsito/mql5bridge/
+  - src/botsito/engine/arnes.py
+  - src/botsito/engine/motor.py
+  - src/botsito/engine/simulacion.py
+  - src/botsito/corpus/cuarentena.py  # la unica fuente del filtrado: no se toca
+  - src/botsito/cases/holdout.py
+  - data/
+  - corpus/
+  - scripts/
+  - tools/
+  - config/
+  - mql5/
+  - Makefile
+  - .claude/
+  - .gitignore
+  - docs/plan/HOJA-DE-RUTA.md  # va en el cierre
+comprobaciones:
+  - uv run botsito state check
+  - uv run botsito knowledge validate (con su log en la carpeta de trabajo de la sesion, fuera del repo)
+  - uv run python scripts/contrato_rama.py
+  - uv run botsito corpus transcript check
+  - uv run pytest tests/unit/test_transcripcion_vad.py
+  - make check > make-check.log 2>&1
