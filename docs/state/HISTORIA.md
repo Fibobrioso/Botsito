@@ -21955,3 +21955,67 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 84 (2026-11-25).
+
+# Registro de cierre · `trabajo/f17-ordenes` (2026-11-26)
+
+- Orden de cierre de Aleks del 2026-11-26 (19:40, hora de Lima), tras la revisión del consultor de la
+  rama entregada (`8281df36`), pegada en la conversación de la sesión; después, Aleks lanzó
+  `/cerrar-rama trabajo/f17-ordenes.`. La orden contaba 9 commits sobre `main` e8c20a80 más el del
+  contrato; `git log --oneline main..trabajo/f17-ordenes` dio 8 (de `aa47486b` a `8281df36`), y la
+  sesión lo dijo antes de empezar: con el `chore(cierre)`, 9. La fila de HOLDOUT del 2026-11-26 ya
+  estaba en la rama, así que no hizo falta otro commit.
+- Tag: `stable/F39q-f17-ordenes`. El merge es
+  `git rev-parse "stable/F39q-f17-ordenes^{commit}"` (su sha queda en `Last Stable Commit`).
+- **Lo hecho** (tramo R4, R4.7; F17-ORDENES.md): las dos partes de F17 de ADR-0099 §5 que faltaban,
+  la medida de las órdenes stop y el grabador, hechas, probadas y compiladas, SIN CORRER (nada se
+  conectó a FTMO ni se envió ninguna orden):
+  - **D3, el criterio**, `docs/plan/F17-ORDENES.yaml`, escrito con la respuesta a la PARADA antes de
+    cualquier llenado y fijado por su sha256 `3d453e90…` en `tests/unit/test_f17_ordenes_criterio.py`,
+    commiteado (`1cac097f`) antes que el código que lo lee.
+  - **D1 y D4, la medida** `tools/mql5/MedirOrdenesFTMO.mq5` 1.0: una orden stop cada vez en la DEMO,
+    en dos estratos (1,00 lote y el lote de ADR-0081 D2), con los topes leídos de la cuenta y de su
+    historial y la ventana muerta de 22 a 3 del servidor; su contrato en
+    `tests/contract/test_medir_ordenes_ftmo.py`.
+  - **D2, el grabador** `tools/mql5/GrabarTicksFTMO.mq5` 1.0, de solo lectura, una hora por fichero,
+    atómico; su contrato en `tests/contract/test_grabar_ticks_ftmo.py`.
+  - **D5, el lector** `scripts/leer_ordenes_f17.py` (`medida` y `grabador`); **D7** los esquemas de
+    `f17-ordenes/` y `f17-grabador/` en `data/manifests/README.md` y el runbook
+    `docs/runbooks/F17-ORDENES.md`; **D8** los dos `.mq5` compilados por Aleks con «!», PASA con 0
+    errores y 0 avisos, sobre `8178c600` y, tras el revisor, sobre `52238a1d` (los logs, en los
+    anexos).
+  - **La medida no se lanza hasta que FTMO conteste** el correo de Aleks del 2026-11-26 (si la prueba
+    gratuita ejecuta como la cuenta real, P4-08, y si la medida es práctica prohibida o
+    hiperactividad, R13, R16 y R17); el correo, literal, en F17-ORDENES.md.
+- **Una corrección al informe, que no se toca** (orden de cierre): la desviación 4 de §6 no es una
+  desviación. El consultor revisó el diff de `MedirOrdenesFTMO.mq5` desde `8178c600` a las 18:02 en el
+  disco, antes de su commit, y dio el comando de compilar aparte; el fichero compilado sobre
+  `52238a1d` es byte a byte el revisado (sha256 `69551d4e…`, el del log). Y §5 del informe quedó con
+  dos celdas de antes de la recompilación («falta recompilar», «la frase, tras la recompilación y la
+  CI»), que §3.2, §9 y `## Estado` ya resuelven.
+- **Next Action:** solo la F, «F17 (ADR-0099 §5; F17-HISTORIAL.md y F17-ORDENES.md, sin correr) y el
+  backtest del trader con costes (ADR-0100, R4.10), pendientes.» (+15 bytes). Ninguna letra sale ni
+  entra.
+- **Hoja de ruta:** el «Qué es» de la A.5, la fila F:F17 de «F01-F35 · Estado medido» y el «Estado» de
+  la A.2, con los textos de F17-ORDENES.md §7. Ninguna entrada pasa a HECHA; nada sale ni cambia de
+  nombre.
+- **Commits de la rama** (9):
+  - `aa47486b` la apertura (encargo, contrato y Archivo 85 de PROJECT_STATE);
+  - `f59e07e0` la fase 0 y la PARADA;
+  - `1cac097f` el criterio de D3, fijado por su sha antes de cualquier llenado;
+  - `1d483ce6` la medida, el grabador y su lector, sin correr;
+  - `8178c600` los arreglos de la revisión del consultor de los dos `.mq5`;
+  - `24987139` la compilación de los dos `.mq5`;
+  - `52238a1d` los hallazgos del revisor y las secciones de entrega del informe;
+  - `8281df36` la recompilación tras el revisor, y la rama lista para revisión;
+  - y este, `chore(cierre)`: sale el contrato; entran este registro, la fila de ERRORES-RECURRENTES,
+    la F y la hoja de ruta.
+- **CI** de `fix/f17-ordenes`, los dos con solo `test_state_check_ok_on_real_repo` por el nombre
+  `fix/`, el fallo esperado: sobre `24987139`, run 45904547776 (1 failed, 3701 passed, 102 skipped);
+  sobre `8281df36`, run **45913831131** (1 failed, 3718 passed, 102 skipped). CI de `main` sobre
+  `e8c20a80`, al abrir: run 45864298815, success.
+- **Filas de HOLDOUT-EXPOSICIONES de la rama** (seis, todas del 2026-11-26): la apertura y la fase 0;
+  lo que la fase 0 leyó además; la respuesta a la PARADA y el criterio de D3; el código y sus tests;
+  los arreglos de la revisión de los `.mq5`; la compilación, la CI, el revisor y sus arreglos. Ningún
+  dato de FTMO.
+- **Revisor** (opus), una pasada pegada en F17-ORDENES.md §10: eje (a) 0 bloquea, 0 importa, 2 menor;
+  eje (b) 0 bloquea, 4 importa, 3 menor. Todo arreglado (§4).

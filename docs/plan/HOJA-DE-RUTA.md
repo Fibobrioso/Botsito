@@ -748,7 +748,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Depende de:** la respuesta de FTMO.
 - **Quién:** Aleks pregunta; la sesión registra la respuesta parafraseada (RESPUESTAS-FTMO).
 - **Hecho cuando:** las respuestas están registradas.
-- **Estado:** Registrada la respuesta del 2026-11-20 (ticket MVT-CQNXT-065), parafraseada (ACTIVAR-SESION-08.md, FTMO-REGLAS.md): las lecturas no cuentan para las 2.000 peticiones; se permite un programa propio en Python que decide; los límites valen para Swing. Sin respuesta: P-D1, lo del heredado 27 y la pregunta 6 de A-55; de A-54, las rechazadas, las cancelaciones por separado y qué hace el servidor al pasarse. No paga lo que R6a.7 espera sobre el modo de margen. Reabrir ADR-0082 §4 es un ADR nuevo de Aleks.
+- **Estado:** Registrada la respuesta del 2026-11-20 (ticket MVT-CQNXT-065), parafraseada (ACTIVAR-SESION-08.md, FTMO-REGLAS.md): las lecturas no cuentan para las 2.000 peticiones; se permite un programa propio en Python que decide; los límites valen para Swing. Sin respuesta: P-D1, lo del heredado 27 y la pregunta 6 de A-55; de A-54, las rechazadas, las cancelaciones por separado y qué hace el servidor al pasarse. No paga lo que R6a.7 espera sobre el modo de margen. Reabrir ADR-0082 §4 es un ADR nuevo de Aleks. Enviado el 2026-11-26 (hilo nuevo): si la prueba gratuita ejecuta como el Challenge y la cuenta real (P4-08), y si medir con un guion propio, con dos tamaños de lote, es práctica prohibida, hiperactividad o afecta a un Challenge futuro (R13, R16 y R17); respuesta pendiente, y la medida de F17 no se lanza sin ella (F17-ORDENES.md).
 
 ### A.3 · La agenda con el trader
 - **Refs:** (la confirmación escrita del paso 0 de `docs/runbooks/ENTRADA-MARZO.md`; lo que queda del paso 0 vive en R5.3)
@@ -778,7 +778,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Qué es:** el panel del límite diario, HECHO el 2026-11-07 (medianoche de España; NA:A queda con
   lo opcional de las noticias); el BE de una venta que salta por el ASK (NA:M,
   ADR-0065 §6); y F17 rediseñado (heredado 10; ADR-0099 §5): el historial de ticks del servidor
-  de la demo, el grabador de ticks y spread y la medida de las órdenes stop. El historial: herramientas hechas y sin correr (trabajo/f17-historial, F17-HISTORIAL.md); la corrida, en una prueba gratuita, en su rama. La salida C de ADR-0098 lo pide antes de seguir (R4.7).
+  de la demo, el grabador de ticks y spread y la medida de las órdenes stop. Las tres partes, en código y sin correr: el historial (trabajo/f17-historial, F17-HISTORIAL.md), y el grabador y la medida de las órdenes stop (trabajo/f17-ordenes, F17-ORDENES.md). Las corridas, en pruebas gratuitas y en su rama; la medida pide varias (cuántas, en F17-ORDENES.md) y no se lanza hasta que FTMO conteste el correo del 2026-11-26 (A.2). La salida C de ADR-0098 lo pide antes de seguir (R4.7).
 - **Depende de:** una prueba gratuita de FTMO viva. Se puede repetir cuantas veces haga falta, con una sola activa a la vez (ftmo.com/es/ftmo-free-trial, leído por el consultor el 2026-11-09).
 - **Quién:** Aleks mira el panel; la sesión, con el encargo del consultor, lo demás.
 - **Hecho cuando:** el panel declarado (HECHO el 2026-11-07) y las tres partes de F17 de ADR-0099 §5 hechas (el historial, corrido y leído; el grabador, para lo que no cubra; y la medida de las órdenes stop); M, sin objeto mientras break_even_condicion sea cierre (NA:M).
@@ -922,7 +922,7 @@ sus ambigüedades, sin revisar cada informe a fondo.
 | F:F18, F:F19, F:F20, F:F21 | HECHA, con ambigüedades abiertas | `MOTOR-SESGO-H4.md`, `LIQUIDEZ-M15.md`, `BREAKER-M1.md`, `BE-AL-TICK.md` |
 | F:F14 | PARCIAL: casos y particiones, sin cierre formal | `CASOS-AGOSTO-ABRIL.md`, `GUARDA-DE-HOLDOUT.md` |
 | F:F16 | PARCIAL: ticks congelados en CSV, no Parquet | `TICKS-LLENADO.md` |
-| F:F17 | PARCIAL: el script de medición (tres ejecuciones, ADR-0071 y ADR-0090) y las herramientas del historial, sin correr; no el grabador ni la medida de las órdenes stop | `DEMO-EJECUCION-1.md`, `DEMO-EJECUCIONES-2-3.md`, `F17-HISTORIAL.md` |
+| F:F17 | PARCIAL: el script de medición (tres ejecuciones, ADR-0071 y ADR-0090) y las tres partes de ADR-0099 §5 (el historial, el grabador y la medida de las órdenes stop), en código y sin correr | `DEMO-EJECUCION-1.md`, `DEMO-EJECUCIONES-2-3.md`, `F17-HISTORIAL.md`, `F17-ORDENES.md` |
 | F:F22 | PARCIAL: el motor es un intérprete de la spec | `ARNES-MOTOR.md` |
 | F:F23 | PARCIAL: bucle y reloj, sin journal | `ARNES-MOTOR.md` |
 | F:F24 | PARCIAL: broker, llenado y cuenta, sin contador de N | `CABLEADO-SIMULADOR.md` |
