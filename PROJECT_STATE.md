@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/renovar-cierres-2026-11-26
 
 ## Current Feature
-Ninguna abierta: trabajo/f17-ordenes cerrada en main (stable/F39q-f17-ordenes). Lo siguiente, en la Next Action (F).
+trabajo/renovar-cierres-2026-11-26, EN CURSO: el calendario de cierres de EURUSD renovado hacia atrás hasta cubrir 2025 (R5.4 y R5.6, letra I). Encargo docs/encargos/trabajo-renovar-cierres-2026-11-26.md; informe docs/validation/RENOVAR-CIERRES-2025.md.
 
 ## Stable Main State
 4581f529 · merge de `trabajo/f17-ordenes` (tag `stable/F39q-f17-ordenes`), sobre `stable/F39p-f17-historial` (8066b377). Informe docs/validation/F17-ORDENES.md; el registro del cierre, al final de HISTORIA.
@@ -169,8 +169,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 85 (2026-11-26).
+— ninguna desde el Archivo 86 (2026-11-26).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 85 (2026-11-26).
+— ninguna desde el Archivo 86 (2026-11-26).
