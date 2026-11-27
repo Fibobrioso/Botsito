@@ -16,7 +16,7 @@ trabajo/renovar-cierres-2026-11-26, EN CURSO: el calendario de cierres de EURUSD
 4581f529 · merge trabajo/f17-ordenes: F17, segunda parte, la medida de las ordenes stop y el grabador de la demo de FTMO, hechas y compiladas, sin correr · tag stable/F39q-f17-ordenes
 
 ## Tests Currently Passing
-2233 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2234 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
