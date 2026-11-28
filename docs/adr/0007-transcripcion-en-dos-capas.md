@@ -124,6 +124,13 @@ el campo opcional `transcripcion` (id) sin alterar ids existentes.
   registrado cambia de huella ni de significado, y `tests/unit/test_transcripcion_vad.py` fija
   las huellas de los 28 manifiestos de `main` (calculadas en un clon de `main`). El resto de §3
   sigue igual, y nada se retranscribe salvo lo que diga la rama (VAD-JULIO.md).
+- **Resultado (D3 de `trabajo/vad-julio`).** Con un criterio escrito antes de medir, ninguna
+  candidata lo cumplio: ni sin VAD (`--sin-vad`) ni con `--vad-threshold 0.25
+  --vad-speech-pad-ms 800`. Solo se midio en v14 (donde esta el minuto que escucho Aleks), no en
+  v12 ni en v13. El consultor cerro R2.5 sin retranscribir y sin tocar el criterio (respuesta a la
+  PARADA (b), 2026-11-27): v12, v13 y v14 siguen con sus transcripciones activas y el VAD de
+  siempre, y la configuracion y `--ensayo` quedan para videos y sesiones nuevos. Las medidas y la
+  decision, en `docs/validation/VAD-JULIO.md`.
 
 ## Fecha / fase
 2026-09-05 · F04 (enmienda 2026-09-06, previos de F07; enmienda 2026-11-27, VAD configurable, R2.5, `trabajo/vad-julio`)
