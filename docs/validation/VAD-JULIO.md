@@ -407,7 +407,7 @@ Copiada tal cual (vale también como respuesta a la PARADA final):
 
 - **Punto 1:** R2.5 se cierra sin retranscribir y sin tocar el criterio de D3. No va otra tanda. D1 y
   D2 quedan hechos; v12, v13 y v14 siguen con sus activas (`corpus transcript check`: 28
-  transcripciones, ninguna nueva). Las tres carpetas de ensayo de v14 siguen en
+  transcripciones, ninguna nueva). Las dos carpetas de ensayo de v14 (K1 y K2; K0 es la activa registrada) siguen en
   `data/transcripciones/v14/`, sin borrar.
 - **Punto 2:** F5 no cambia. No hay commit de F5 y no se toca ninguno de sus ficheros de la lista
   blanca (`git diff main --stat -- knowledge/cases/ src/botsito/engine/ src/botsito/cases/ tests/golden/ knowledge/corpus/fuentes.yaml`:
@@ -426,22 +426,29 @@ Simulado en memoria, sin escribir nada, con
 `uv run python docs/validation/anexos/VAD-JULIO/simular_cierre.py .` (salida en
 `anexos/VAD-JULIO/simular-cierre.txt`): `a: []`, `b: []`, `c: []`; letras vivas tras el cierre
 **ADFGIJMNQ**; R2.5 HECHA; `PROJECT_STATE.md` pasa de 24.233 (con el `Current Feature` de
-la entrega) a **24.190 bytes** (tope 25.000: margen de 810). Control: sin el registro de HISTORIA, `b` da «NA:C esta HECHA y HISTORIA no la registra».
+la entrega) a **24.314 bytes** con la línea de Technical Debt corregida tras la segunda pasada del
+revisor (24.190 con la primera; tope 25.000: margen de 686). El cierre reescribe además `Current Feature`
+y `Stable Main State`, así que el margen final se mide en el cierre (revisor, segunda pasada, a5). Control: sin el registro de HISTORIA, `b` da «NA:C esta HECHA y HISTORIA no la registra».
 
 1. **`PROJECT_STATE.md`, Next Action:** sale la línea entera de C (y su línea en blanco). En F,
    «La letra C y R6a, en los huecos.» pasa a «R6a, en los huecos.».
 2. **`PROJECT_STATE.md`, Technical Debt** (primera línea de la sección):
-   «- El texto de julio provisional cita a T, que ya no existe («hasta que T lo compruebe»:
-   `criterio_fidelidad.yaml`, `cableado.py:1467`, `criterio_fidelidad.py:341`, ADR-0092 §11); se
+   «- El texto de julio provisional cita a T, que ya no existe («hasta que T lo compruebe» en
+   `criterio_fidelidad.yaml:59`, `cableado.py:1467`, `criterio_fidelidad.py:341` y los tres goldens
+   `tests/golden/metodo_adr0092/main-{hueco,stop,viva}.txt:18`; «provisional como grabado hasta T»
+   en ADR-0092 §11); se
    reescribe cuando el ADR de la salida C de ADR-0098 decida S-14 (VAD-JULIO.md, respuesta del
    consultor a la PARADA (b), punto 2).»
 3. **`docs/state/HISTORIA.md`**, al final: `# Next Action HECHA · C · sale de PROJECT_STATE.md en
    trabajo/vad-julio (<fecha del cierre>)`, con «Su texto literal en la Next Action (respuesta del
    consultor a la PARADA (b) de trabajo/vad-julio, punto 7; VAD-JULIO.md):» y la línea de C tal
-   cual. No hay ningún registro previo de C en HISTORIA (`grep "Next Action HECHA · C"`: vacío).
-4. **`docs/plan/HOJA-DE-RUTA.md`, R2.5:** `- **Refs:** NA:C · ID:ADR-0078 · ID:ADR-0007` y un
-   `**Estado:**` nuevo al final de la entrada: «HECHA sin cumplir su «Hecho cuando» original
-   (`trabajo/vad-julio`, VAD-JULIO.md): el VAD es configurable por transcripción y hay `--ensayo`
+   cual. No hay ningún registro previo de esta C (`grep "Next Action HECHA · C"`: vacío); la C
+   anterior, otra entrada con la misma letra, está en `# Next Action HECHA · B, C, D y G`
+   (2026-10-02, HISTORIA:1610), y `problemas_b` no la confunde (el control del simulador).
+4. **`docs/plan/HOJA-DE-RUTA.md`, R2.5:** `- **Refs:** NA:C · ID:ADR-0078 · ID:ADR-0007` (la
+   enmienda del VAD vive en ADR-0007) y un `**Estado:**` nuevo al final de la entrada: «HECHA sin
+   cumplir su «Hecho cuando» original (`trabajo/vad-julio`, `stable/F39s-vad-julio`;
+   VAD-JULIO.md): el VAD es configurable por transcripción y hay `--ensayo`
    (ADR-0007, enmienda 2026-11-27), pero ninguna candidata cumplió el criterio escrito antes de medir
    (solo se midió en v14). El consultor la cierra sin retranscribir y sin tocar el criterio (respuesta
    a la PARADA (b), punto 1): v12 a v14 siguen con sus activas y F5 no cambia (julio sigue
@@ -452,7 +459,7 @@ la entrega) a **24.190 bytes** (tope 25.000: margen de 810). Control: sin el reg
    pasa a «revisar el sesgo del material sin vídeo (S-14; la parte de julio no la resuelve el ASR,
    VAD-JULIO.md, y la decide este ADR)». **R2.4 no cambia.**
 6. **`docs/runbooks/ERRORES-RECURRENTES.md`**, la fila de la rama (cuatro columnas):
-   | `trabajo/vad-julio` | Dos pasadas, opus (VAD-JULIO.md, «Informe del revisor» y «Segunda pasada del revisor»). Primera: eje (a) 0 bloquea, 2 importa, 2 menor; eje (b) 0 bloquea, 1 importa, 3 menor. a1 (la desviación 2 no nombraba la exención `# no-negocio:` y decía que usarla «sería rodearla»), a2 (la enmienda de ADR-0007 decía «solo los que cambian» y el código anota todos los dados), b1 (faltaba el encargo punto por punto), b4 (ningún test cubría que `MotorWhisper` use la configuración; test y mutación M6 añadidos); arreglados todos, a3 dejado como errata en el informe. Segunda: <la de la pasada corta> | Error del consultor, apuntado también: (a) el umbral de (iv), 0,10, se fijó sin medir el ruido de la propia medida (dos transcripciones con el mismo VAD y otro corte ya dan 0,142); lección: antes de fijar un umbral sobre una diferencia entre dos salidas, medir con un control cuánto da sin cambio real. (b) El control positivo (i) exigía un token exacto sin saber cómo escribe el ASR ese término. (c) D3 midió en v14, donde estaba el minuto de control, y lo que había que recuperar estaba en v12 y v13; lección: la candidata se mide donde vive lo que se quiere mejorar, y el control se busca allí. (d) El primer borrador de la respuesta a la PARADA (b) daba por medido que «el VAD no las recupera» y cambiaba F5; lo cazó el auditor del consultor antes de entregarla | Nada que el consultor viera y el revisor no. Hallazgo de la sesión: `test_no_business_literals` marca valores técnicos de `src/` que coinciden con cifras de negocio (0,5 y 2000); la exención `# no-negocio:` existe y se mira ANTES de cambiar un diseño |
+   | `trabajo/vad-julio` | Dos pasadas, opus (VAD-JULIO.md, «Informe del revisor» y «Segunda pasada del revisor»). Primera: eje (a) 0 bloquea, 2 importa, 2 menor; eje (b) 0 bloquea, 1 importa, 3 menor. a1 (la desviación 2 no nombraba la exención `# no-negocio:` y decía que usarla «sería rodearla»), a2 (la enmienda de ADR-0007 decía «solo los que cambian» y el código anota todos los dados), b1 (faltaba el encargo punto por punto), b4 (ningún test cubría que `MotorWhisper` use la configuración; test y mutación M6 añadidos); arreglados todos, a3 dejado como errata en el informe. Segunda, corta, sobre la respuesta a la PARADA (b): eje (a) 0 bloquea, 2 importa, 3 menor; eje (b) 0 bloquea, 2 importa, 2 menor. a1 (el `## Estado` final contradecía la cabecera), a2 («tres» carpetas de ensayo, que eran dos), b1 (la respuesta no estaba copiada al final del encargo), b2 (la sección de la CI sin el run 46096122284); arreglados todos | Error del consultor, apuntado también: (a) el umbral de (iv), 0,10, se fijó sin medir el ruido de la propia medida (dos transcripciones con el mismo VAD y otro corte ya dan 0,142); lección: antes de fijar un umbral sobre una diferencia entre dos salidas, medir con un control cuánto da sin cambio real. (b) El control positivo (i) exigía un token exacto sin saber cómo escribe el ASR ese término. (c) D3 midió en v14, donde estaba el minuto de control, y lo que había que recuperar estaba en v12 y v13; lección: la candidata se mide donde vive lo que se quiere mejorar, y el control se busca allí. (d) El primer borrador de la respuesta a la PARADA (b) daba por medido que «el VAD no las recupera» y cambiaba F5; lo cazó el auditor del consultor antes de entregarla | Nada que el consultor viera y el revisor no. Hallazgo de la sesión: `test_no_business_literals` marca valores técnicos de `src/` que coinciden con cifras de negocio (0,5 y 2000); la exención `# no-negocio:` existe y se mira ANTES de cambiar un diseño |
 7. **Tag:** `stable/F39s-vad-julio` (el encargo).
 
 ## El encargo, punto por punto (tras el revisor, b1)
@@ -485,8 +492,8 @@ la entrega) a **24.190 bytes** (tope 25.000: margen de 810). Control: sin el reg
 | D5 F2, F3, F4 y F6 de nuevo | No hecho | PARADA (b); no se hace (respuesta, puntos 1 y 5) |
 | D6 Ni casos, ni evidencia, ni F5 | Hecho | `git diff main -- knowledge/` vacío |
 | §2 Lo que no cambia | Hecho | solo ficheros de la lista blanca (contrato en verde) |
-| §6 PARADA final (F5) | Respondida con la PARADA (b) | F5 no cambia; no hay commit de F5 (respuesta, punto 2) |
-| §7 Commits sellados (código; informe) | Hecho | 65659f26, bb5a0bf9 y el de los hallazgos del revisor |
+| §6 PARADA final (F5) | Hecho de otra forma | F5 no cambia; no hay commit de F5 (respuesta, punto 2) |
+| §7 Commits sellados (código; informe) | Hecho | 65659f26 (código), bb5a0bf9 (D3), f84f4fc9 (revisor), 8994fd3c (ADR-0007, punto 6), 1aaa2284 (la respuesta y el cierre) y el de la segunda pasada |
 | §7 CI de Linux por `fix/vad-julio` | Hecho | «Los `make check` y la CI» |
 | §7 Revisor antes de la PARADA final, con su informe pegado | Hecho (antes de la PARADA (b)) | «Informe del revisor» |
 | §7 Líneas del cierre (R2.5, PROJECT_STATE, HISTORIA, ERRORES-RECURRENTES) | Hecho | «Para la orden de cierre», simuladas contra `test_hoja_de_ruta` |
@@ -662,6 +669,94 @@ Resumen: 0 bloquea, 1 importa, 3 menor. Requisitos: 27 hechos (1 de ellos de otr
 21. Read de: el encargo, contrato.yaml, VAD-JULIO.md, medir_vad.py, medida-v14.txt, control-v14-vieja.txt, test_transcripcion_vad.py, cli.py:3192-3209, y Grep del manifiesto de v12
 (Dos comandos los negó la guardia y no los reescribí para rodearla: un `for` sobre los manifiestos y un `awk` con varias condiciones. Lo mismo lo saqué con Grep y Read.)
 
+## Segunda pasada del revisor (2026-11-27, corta: f84f4fc9, 8994fd3c y lo estadiado de 1aaa2284)
+
+### Lo que se hizo con cada hallazgo
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | Corregido: el `## Estado` final dice «lista para revisión, NO cerrada», como la cabecera y `PROJECT_STATE.md`. |
+| a2 | importa | Corregido: son DOS carpetas de ensayo (K1 y K2); K0 es la activa registrada. |
+| a3 | menor | Corregido: «ningún registro previo de esta C», con la C anterior (otra entrada) en `# Next Action HECHA · B, C, D y G` (HISTORIA:1610), que `problemas_b` no confunde. |
+| a4 | menor | Corregido en la línea de Technical Debt y en el simulador: la frase literal está en `criterio_fidelidad.yaml:59`, `cableado.py:1467`, `criterio_fidelidad.py:341` y los tres goldens (`:18`); ADR-0092 §11 dice «provisional como grabado hasta T». |
+| a5 | menor | Dicho en «Para la orden de cierre»: el cierre reescribe también `Current Feature` y `Stable Main State`, así que el margen final se mide allí. |
+| b1 | importa | Hecho: la respuesta a la PARADA (b), copiada tal cual también al final de `docs/encargos/trabajo-vad-julio.md` (skill `fase-cero`). |
+| b2 | importa | Corregido: «Los `make check` y la CI» con los commits f84f4fc9 y 8994fd3c, el run 46096122284 y lo que queda para el mensaje final. |
+| b3 | menor | Corregido: la nota HECHA de R2.5 lleva el tag `stable/F39s-vad-julio`, como R2.4; `ID:ADR-0007` en Refs se queda, con su razón: la enmienda del VAD vive en ese ADR. |
+| b4 | menor | Corregido: el punto por punto nombra los commits nuevos y §6 va como «Hecho de otra forma». |
+
+### El informe, tal cual
+
+## Informe del revisor · trabajo/vad-julio · 2026-11-27 (segunda pasada, corta)
+
+Alcance: los commits f84f4fc9 y 8994fd3c y lo estadiado ahora (VAD-JULIO.md, `anexos/VAD-JULIO/simular_cierre.py` y `simular-cierre.txt`, la fila nueva de HOLDOUT-EXPOSICIONES y el Current Feature de PROJECT_STATE). No había ningún commit «4c?»: el último es 8994fd3c, el del párrafo «Resultado» de ADR-0007.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 2 importa, 3 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | Lo estadiado dice «lista para revisión» y el Estado del informe dice otra cosa. La cabecera y PROJECT_STATE ya dicen «lista para revisión, NO cerrada», y el punto por punto marca esa línea como «Hecho». Pero el `## Estado` final dice «PENDIENTE de la segunda pasada del revisor (abajo)». Si se commitea así, el informe se contradice y no acaba en su estado (CLAUDE.md, «Un informe por rama ... con su estado al final»). | `VAD-JULIO.md:3`, `:493`, `:683`; `PROJECT_STATE.md:10` (estadiado) |
+| a2 | importa | «Las tres carpetas de ensayo de v14 siguen en data/transcripciones/v14/»: el informe solo nombra dos ensayos (K1 `ensayo-…-3e8940a1` y K2 `ensayo-…-cf5be424`). K0 es la activa registrada, y la fila de HOLDOUT del día dice «dos candidatas de v14 (K1 y K2)». Ninguna cita sostiene el «tres». | `VAD-JULIO.md:410` frente a `:282-284` y la fila de HOLDOUT-EXPOSICIONES de la PARADA |
+| a3 | menor | «No hay ningún registro previo de C en HISTORIA» es cierto para el patrón literal, pero ya hay un registro de una C anterior (la letra se reutilizó): `# Next Action HECHA · B, C, D y G · ... (2026-10-02)`. No rompe nada (`problemas_b` da `[]`); conviene decir «de esta C». | `docs/state/HISTORIA.md:1610`; `VAD-JULIO.md:441` |
+| a4 | menor | Lugares de la línea de Technical Debt: ADR-0092 §11 no trae la frase literal («hasta que T lo compruebe»), sino «provisional como grabado hasta T». Además faltan los tres goldens que sí la llevan. | `docs/adr/0092-…md:283`; `tests/golden/metodo_adr0092/main-{hueco,stop,viva}.txt:18`; `simular_cierre.py:49-52` |
+| a5 | menor | El margen de 810 bytes se mide con el Current Feature de la entrega. El cierre reescribe además Current Feature y Stable Main State, así que la cifra final será otra. Las cifras medidas, eso sí, son exactas: estadiado 24.233, HEAD 24.217 (los 783 del consultor), tras el cierre simulado 24.190. | `git show :PROJECT_STATE.md \| wc -c` → 24233; `git show HEAD:PROJECT_STATE.md \| wc -c` → 24217; `simular-cierre.txt:7` |
+
+Comprobado sin hallazgos:
+- **Contrato** (`uv run python scripts/contrato_rama.py`): «CONTRATO: 17 ficheros dentro del contrato … 6 comprobaciones para el revisor» y «G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-27 para trabajo/vad-julio, estadiada».
+- **`uv run botsito state check`**: «OK: rama 'trabajo/vad-julio' …».
+- **`uv run pytest tests/unit/test_transcripcion_vad.py -q -p no:cacheprovider`**: todo en verde (25 puntos).
+- **F5 sin tocar**: `git diff --stat main -- knowledge/ src/botsito/engine/ src/botsito/cases/ tests/golden/ knowledge/corpus/fuentes.yaml docs/plan/ docs/runbooks/` sale vacío. Solo aparece HISTORIA (el Archivo 87 de 668c7be6), que los commits nuevos no tocan.
+- **ADR-0007**: 8994fd3c solo añade líneas, y su `## Estado` sigue en `ACTIVE`. El párrafo «Resultado» dice lo que pide el punto 6: ninguna candidata cumplió, v12 a v14 siguen con sus activas, solo se midió en v14, y remite a VAD-JULIO.md. Los parámetros de K2 coinciden con `VAD-JULIO.md:284`. El cambio de f84f4fc9 cubre el punto 4: lo dado se anota aunque valga lo mismo que el de defecto, y abre su propia carpeta.
+- **Fila de HOLDOUT**: 5 columnas, del día y de la rama, escrita antes del make check.
+- **Trailers `Fuente:`**: ningún commit nuevo toca `knowledge/spec` ni `knowledge/cases`.
+
+### Eje (b) · Encargo (respuesta a la PARADA (b), puntos 1-7)
+Resumen: 0 bloquea, 2 importa, 2 menor. Requisitos: 9 hechos, 2 parciales, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | P1: cerrar sin retranscribir, D3 intacto | Hecho | `VAD-JULIO.md:408-411`; ningún manifiesto nuevo en el diff |
+| 2 | P2: F5 sin tocar, sin commit de F5 | Hecho | diff vacío (arriba) |
+| 3 | P2: línea de Technical Debt | Hecho | `VAD-JULIO.md` punto 2 de «Para la orden de cierre». El cambio «ADR de C» → «ADR de la salida C de ADR-0098» está declarado en `:415-416` |
+| 4 | P3: las cuatro lecciones, en la columna del consultor | Hecho | `VAD-JULIO.md:455`: la fila tiene 4 columnas y «Error del consultor» va en la columna 3, como en las de renovar-cierres y reabrir (ERRORES-RECURRENTES.md:61-62, contado con Python). Lecciones (a) a (d) fieles |
+| 5 | P4 y P5: desviaciones aceptadas, sin usar `# no-negocio:` | Hecho | `VAD-JULIO.md:417-418`; ADR-0007 (f84f4fc9) |
+| 6 | P6: párrafo de ADR-0007 en commit propio | Hecho | 8994fd3c, solo ese fichero (7 líneas añadidas) |
+| 7 | P7: R2.5 HECHA con su nota, R2.4 sin cambiar, R4.7 con S-14 | Hecho | `simular_cierre.py:59-84`. R2.5 queda igual salvo Refs, Estado y la línea de Prioridad (comparado con `HOJA-DE-RUTA.md:145-155`). R4.7 cambia `:439`. R2.4 no se toca (`:142` dice «Julio sigue provisional») |
+| 8 | P7: C fuera, con registro literal en HISTORIA | Hecho | Simulador ejecutado: «C fuera: True», `a: []`, `b: []`, `c: []`, letras ADFGIJMNQ. El control sin el registro da «NA:C esta HECHA y HISTORIA no la registra». El simulador llama de verdad a `problemas_a/b/c` de `tests/unit/test_hoja_de_ruta.py` |
+| 9 | P7: margen medido | Hecho | ver a5 |
+| 10 | P7: push y número de run | Parcial | ver b2 |
+| 11 | P7: pasada corta pegada y «Rama lista para revisión, NO cerrada.» | Parcial | pendiente de esta pasada (`:683`; `:455` todavía tiene «<la de la pasada corta>») |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | La respuesta a la PARADA (b) está copiada en el informe pero no al final del encargo. La skill `fase-cero` manda «Copiarla TAL CUAL al final de docs/encargos/<rama>.md y en el informe», y el eje (b).5 pide compararlas. El encargo no cambia desde 668c7be6 y termina en `:160` con el §7. La propia respuesta solo nombra el informe, así que basta con declarar por qué no se copió o copiarla. | `.claude/skills/fase-cero/SKILL.md:90`; `git log main..HEAD -- docs/encargos/` → solo 668c7be6 |
+| b2 | importa | «Los make check y la CI» no está al día. `:673` sigue diciendo «Los hallazgos del revisor (este commit)». Falta la CI de f84f4fc9: run **46096122284**, failure solo por `test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/vad-julio'; la rama actual es 'fix/vad-julio'»), `1 failed, 3743 passed, 103 skipped`. Faltan también el make check de 8994fd3c y su CI: no se ha empujado. | `gh run list --branch fix/vad-julio` → solo 46096122284 y 46091156994; `gh run view 46096122284 --log-failed` |
+| b3 | menor | Lo que el consultor no pidió en R2.5, sin justificar: añadir `ID:ADR-0007` a Refs, y una nota HECHA sin tag `stable/F39s-vad-julio` (R2.4 lo lleva). | `VAD-JULIO.md:442`; `HOJA-DE-RUTA.md:138` |
+| b4 | menor | El punto por punto no está al día. «§7 Commits sellados» no nombra f84f4fc9 ni 8994fd3c. «§6» lleva el estado «Respondida con la PARADA (b)», que no es ninguno de los cuatro estados. | `VAD-JULIO.md:488-489` |
+
+### Lo que no pude comprobar
+- **Copia literal de la respuesta**: el original está en el chat, no en el repo. Solo comprobé que es coherente por dentro. Empieza por «Modelo: Opus 5.5 · Esfuerzo: alto» y «RESPUESTA DEL CONSULTOR A LA PARADA (b)», los puntos 1-7 están completos y los «:142» y «:439» casan con la hoja de ruta.
+- **Sellos de make check** de 8994fd3c y de lo estadiado: el make check está corriendo y reescribe `make-check.log`.
+- **El «tres» de a2**: no listé `data/transcripciones/v14/`, porque se me pidió no abrir `data/`.
+- **«28 transcripciones»**: no ejecuté `corpus transcript check` (lee crudas por las funciones autorizadas).
+
+### Comandos ejecutados
+1. `git branch --show-current`, `git log --format='%h %s' main..HEAD`, `git status --short`, `git diff --cached --stat`
+2. `git show --stat f84f4fc9 8994fd3c`, `git diff --cached -- PROJECT_STATE.md docs/validation/HOLDOUT-EXPOSICIONES.md`, `git diff --cached -- docs/validation/VAD-JULIO.md`
+3. `git log main..HEAD -- docs/encargos/`; greps de encabezados del informe y del encargo; Read del encargo (:100-160), de `fase-cero/SKILL.md` y de `simular_cierre.py` / `simular-cierre.txt`
+4. `grep` de R2.4, R2.5, R4.7 y S-14 en HOJA-DE-RUTA.md; `git show :PROJECT_STATE.md | wc -c`, `git show HEAD:PROJECT_STATE.md | wc -c`
+5. `uv run python docs/validation/anexos/VAD-JULIO/simular_cierre.py .`
+6. Grep de «hasta que T lo compruebe»; grep de las secciones de ADR-0092
+7. `uv run python -c …` para contar las columnas de las filas de ERRORES-RECURRENTES y de la propuesta
+8. `git show 8994fd3c` / `f84f4fc9` sobre ADR-0007
+9. `gh run list --branch fix/vad-julio --limit 5`; `gh run view 46096122284 --log-failed | grep …`
+10. `uv run python scripts/contrato_rama.py`; `uv run botsito state check`; `uv run pytest tests/unit/test_transcripcion_vad.py -q -p no:cacheprovider`
+11. `git diff --stat main -- knowledge/ src/botsito/engine/ src/botsito/cases/ tests/golden/ knowledge/corpus/fuentes.yaml docs/plan/ docs/runbooks/ docs/state/`
+12. Grep de `# Next Action HECHA` en HISTORIA.md. Un `sed` con `$(...)` lo negó la guardia; lo sustituí por Grep.
+
+Fichero principal: C:\Users\USER\Desktop\Bot v3\docs\validation\VAD-JULIO.md
+
 ## Los `make check` y la CI
 
 - Apertura (668c7be6): exit 0, `3816 passed, 6 xfailed`, `CONTRATO:` y `G2:` en verde, `SELLO`.
@@ -670,8 +765,15 @@ Resumen: 0 bloquea, 1 importa, 3 menor. Requisitos: 27 hechos (1 de ellos de otr
 - Código (65659f26): exit 0, `3838 passed, 6 xfailed`, `CONTRATO:` (13 ficheros) y `G2:`, `SELLO`.
 - Informe y anexos de D3 (bb5a0bf9): exit 0, `3838 passed, 6 xfailed`, `CONTRATO:` (15 ficheros)
   y `G2:`, `SELLO`.
-- Los hallazgos del revisor (este commit): su `make check` y su CI, en el mensaje final de la
-  sesión y en la orden de cierre (el informe no puede citar el run de su propio commit).
+- Hallazgos del revisor (f84f4fc9): exit 0, `3841 passed, 6 xfailed`, `SELLO`; **CI run
+  46096122284**: `failure` solo por lo aceptado (`test_state_check_ok_on_real_repo`, «la rama
+  actual es 'fix/vad-julio'»), `1 failed, 3743 passed, 103 skipped`.
+- El párrafo «Resultado» de ADR-0007 (8994fd3c, punto 6): exit 0, `3841 passed, 6 xfailed`,
+  `SELLO`.
+- La respuesta a la PARADA (b) y las líneas del cierre (1aaa2284): exit 0, `SELLO`.
+- La segunda pasada del revisor (este commit): su `make check` y la CI de la punta de la rama
+  (8994fd3c y los dos siguientes, empujados juntos), en el mensaje final de la sesión y en la
+  orden de cierre: el informe no puede citar el run de su propio commit.
 - **CI de Linux sobre bb5a0bf9** (`git push origin trabajo/vad-julio:refs/heads/fix/vad-julio`):
   run **46091156994**, `failure` solo por lo aceptado (`RITUAL.md`:105-107):
   `FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo` («ERROR: PROJECT_STATE declara
@@ -680,4 +782,10 @@ Resumen: 0 bloquea, 1 importa, 3 menor. Requisitos: 27 hechos (1 de ellos de otr
 
 ## Estado
 
-PENDIENTE de la segunda pasada del revisor (abajo).
+Lista para revisión, NO cerrada. Ninguna candidata cumplió D3; el consultor cierra R2.5 sin
+retranscribir y sin tocar el criterio, y F5 no cambia (respuesta a la PARADA (b)). Hecho: D1 y
+D2 (el VAD configurable y `--ensayo`, con sus tests y la enmienda de ADR-0007), la medida de D3,
+las líneas del cierre simuladas contra `test_hoja_de_ruta` y dos pasadas del revisor, con sus
+hallazgos resueltos.
+
+Rama lista para revisión, NO cerrada.

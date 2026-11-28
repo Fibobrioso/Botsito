@@ -4,5 +4,5 @@ b: []
 c: []
 letras vivas tras el cierre: ADFGIJMNQ
 R2.5 HECHA: True
-bytes de PROJECT_STATE: hoy 24233 -> tras el cierre 24190 (tope 25000)
+bytes de PROJECT_STATE: hoy 24233 -> tras el cierre 24314 (tope 25000)
 control: sin el registro de HISTORIA, b da: ['R2 «R2.5 · La voz que el ASR se salta (v12 a v14)»: NA:C esta HECHA y HISTORIA no la registra']

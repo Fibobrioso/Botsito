@@ -46,8 +46,10 @@ assert lineas[i + 1] == ""
 ps2 = "\n".join(lineas[:i] + lineas[i + 2 :])
 ps2 = sustituir(ps2, " La letra C y R6a, en los huecos.", " R6a, en los huecos.")
 DEUDA = (
-    "- El texto de julio provisional cita a T, que ya no existe («hasta que T lo compruebe»: "
-    "`criterio_fidelidad.yaml`, `cableado.py:1467`, `criterio_fidelidad.py:341`, ADR-0092 §11); "
+    "- El texto de julio provisional cita a T, que ya no existe («hasta que T lo compruebe» en "
+    "`criterio_fidelidad.yaml:59`, `cableado.py:1467`, `criterio_fidelidad.py:341` y los tres "
+    "goldens `tests/golden/metodo_adr0092/main-{hueco,stop,viva}.txt:18`; «provisional como "
+    "grabado hasta T» en ADR-0092 §11); "
     "se reescribe cuando el ADR de la salida C de ADR-0098 decida S-14 (VAD-JULIO.md, respuesta "
     "del consultor a la PARADA (b), punto 2)."
 )
@@ -65,7 +67,8 @@ R25_HECHA = """### R2.5 · La voz que el ASR se salta (v12 a v14)
 - **Depende de:** R2.4 (HECHA).
 - **Quién:** la sesión, con encargo del consultor.
 - **Hecho cuando:** los huecos están retranscritos y medidos, y F5 tiene decisión con ellos.
-- **Estado:** HECHA sin cumplir su «Hecho cuando» original (`trabajo/vad-julio`, VAD-JULIO.md):
+- **Estado:** HECHA sin cumplir su «Hecho cuando» original (`trabajo/vad-julio`,
+  `stable/F39s-vad-julio`; VAD-JULIO.md):
   el VAD es configurable por transcripción y hay `--ensayo` (ADR-0007, enmienda 2026-11-27), pero
   ninguna candidata cumplió el criterio escrito antes de medir (solo se midió en v14). El consultor
   la cierra sin retranscribir y sin tocar el criterio (respuesta a la PARADA (b), punto 1): v12 a
