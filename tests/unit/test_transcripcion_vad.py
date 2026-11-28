@@ -28,6 +28,7 @@ from botsito.corpus.motor_whisper import (
     VAD_PARAMETROS,
     ConfiguracionVad,
     ConfiguracionWhisper,
+    MotorWhisper,
     argumentos_vad,
     describir_vad,
 )
@@ -180,6 +181,65 @@ def test_i_la_descripcion_por_defecto_reproduce_la_de_cada_manifiesto_de_main() 
 
 def test_i_el_motor_falso_por_defecto_describe_lo_de_siempre() -> None:
     assert MotorFalso().describir() == {"motor": "falso", "modelo": "falso"}
+
+
+# --- el adaptador real, sin GPU: describir() y transcribir() usan la configuracion ---------------
+
+
+class _ModeloQueApunta:
+    """Lo minimo de `WhisperModel` para ver con que argumentos se le llama."""
+
+    def __init__(self) -> None:
+        self.llamadas: list[dict[str, object]] = []
+
+    def transcribe(self, wav: str, **kwargs: object) -> tuple[list[object], None]:
+        self.llamadas.append(kwargs)
+        return [], None
+
+
+def _motor_sin_gpu(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, vad: ConfiguracionVad
+) -> tuple[MotorWhisper, _ModeloQueApunta]:
+    motor = MotorWhisper(ConfiguracionWhisper(vad=vad))
+    modelo = _ModeloQueApunta()
+
+    def cargar() -> _ModeloQueApunta:
+        motor._ruta_modelo = tmp_path  # sin model.bin: modelo_sha256 = "?"
+        return modelo
+
+    monkeypatch.setattr(motor, "_cargar", cargar)
+    return motor, modelo
+
+
+@pytest.mark.parametrize(
+    ("vad", "descrito", "argumentos"),
+    [
+        (ConfiguracionVad(), {"vad_filter": True}, {"vad_filter": True, "vad_parameters": None}),
+        (
+            ConfiguracionVad.desde(activo=False),
+            {"vad_filter": False},
+            {"vad_filter": False, "vad_parameters": None},
+        ),
+        (
+            ConfiguracionVad.desde(threshold=0.25, speech_pad_ms=800),
+            {"vad_filter": True, "vad_parameters": {"speech_pad_ms": 800, "threshold": 0.25}},
+            {"vad_filter": True, "vad_parameters": {"speech_pad_ms": 800, "threshold": 0.25}},
+        ),
+    ],
+)
+def test_motor_whisper_describe_y_transcribe_con_su_vad(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    vad: ConfiguracionVad,
+    descrito: dict[str, object],
+    argumentos: dict[str, object],
+) -> None:
+    motor, modelo = _motor_sin_gpu(tmp_path, monkeypatch, vad)
+    d = motor.describir()
+    assert {k: v for k, v in d.items() if k.startswith("vad")} == descrito
+    assert motor.transcribir(tmp_path / "x.wav") == []
+    (llamada,) = modelo.llamadas
+    assert {k: llamada.get(k) for k in ("vad_filter", "vad_parameters")} == argumentos
 
 
 # --- (ii) y D2, sobre el clip con el motor falso -----------------------------------------------

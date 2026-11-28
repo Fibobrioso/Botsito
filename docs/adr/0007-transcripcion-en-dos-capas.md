@@ -108,9 +108,10 @@ el campo opcional `transcripcion` (id) sin alterar ids existentes.
   `faster_whisper/vad.py`: 0,5, ninguno, 0, infinito, 2000 y 400). La descripcion del VAD es una
   funcion pura (`motor_whisper.describir_vad`), sin cargar el modelo. Los valores por
   defecto no se copian al codigo (lo que no se da lo pone el paquete); un parametro que se da se
-  anota siempre, y uno fuera de rango es un error antes de gastar GPU. Con
-  parametros dados, el manifiesto anota `vad_filter: false` o `vad_parameters` (solo los que
-  cambian) y entran en la huella, asi que la transcripcion abre su propia carpeta. Y `--ensayo`
+  anota siempre (aunque valga lo mismo que el de defecto), y uno fuera de rango es un error
+  antes de gastar GPU. Con `--sin-vad` el manifiesto anota `vad_filter: false`; con parametros
+  dados, `vad_parameters` con TODOS los dados. Los dos entran en la huella, asi que la
+  transcripcion abre su propia carpeta. Y `--ensayo`
   corre una candidata sin registrarla: escribe la cruda en
   `data/transcripciones/<video>/ensayo-<motor>-<hash8>/` con un `ensayo.json` local, sin
   manifiesto, sin tocar la activa y sin `--reemplaza-a`.

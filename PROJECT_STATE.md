@@ -16,7 +16,7 @@ d44f3e58 · merge de `trabajo/renovar-cierres-2026-11-26` (tag `stable/F39r-reno
 d44f3e58 · merge trabajo/renovar-cierres-2026-11-26: el calendario de cierres de EURUSD de FTMO renovado hacia atras hasta el 2025-01-09, con la capa regenerada · tag stable/F39r-renovar-cierres-2026-11-26
 
 ## Tests Currently Passing
-2248 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2249 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
