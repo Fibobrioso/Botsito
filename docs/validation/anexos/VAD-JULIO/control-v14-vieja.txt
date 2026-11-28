@@ -1,0 +1,13 @@
+# medir_vad.py · v14 · K0 = tr-v14-large-v3-int8-float16-1d289df6 (transcripciones/v14/large-v3-int8-float16-d3b9ac2d)
+# huecos de mas de 30 s de K0: 7, 2384.2 s
+
+| Candidata | Carpeta | Segmentos visibles | Ocultos | Utiles | Seg. utiles (s) | (i) bias y bajista | (ii) otras palabras | (iii) gana (s) | (iv) pierde | (v) sospecha | Cumple |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| K0 | `transcripciones/v14/large-v3-int8-float16-d3b9ac2d` | 47 | 0 | 36 | 152.6 | no | 0 (si) | 0.0 | 0.000 | 0.000 | referencia |
+| Kvieja | `transcripciones/v14/large-v3-int8-float16` | 29 | 0 | 29 | 172.6 | no | 0 (si) | 3.4 | 0.142 | 0.000 | no |
+
+- K0: palabras utiles del minuto de control: []
+- K0: (iii) por hueco de K0: 24.1-333.7: 0.0 s; 334.8-901.6: 0.0 s; 1226.1-1270.6: 0.0 s; 1403.7-1977.0: 0.0 s; 1985.3-2522.1: 0.0 s; 2670.0-2987.2: 0.0 s; 3362.5-3398.5: 0.0 s
+- Kvieja: palabras utiles del minuto de control: []
+- Kvieja: (iii) por hueco de K0: 24.1-333.7: 0.5 s; 334.8-901.6: 2.7 s; 1226.1-1270.6: 0.0 s; 1403.7-1977.0: 0.0 s; 1985.3-2522.1: 0.0 s; 2670.0-2987.2: 0.0 s; 3362.5-3398.5: 0.2 s
+- Kvieja: segmentos utiles con palabras en los huecos de K0 (s, sin texto): 22.7-340.5, 3288.7-3417.9

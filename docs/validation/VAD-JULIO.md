@@ -1,9 +1,9 @@
 # VAD-JULIO · La voz que el VAD del ASR se salta en v12 a v14 (R2.5, letra C)
 
-> PLANTILLA: informe de la rama `trabajo/vad-julio`. Estado: EN CURSO. La fase 0, el criterio de
-> D3 (copiado antes de las corridas), la tabla de candidatas, D4 por vídeo, D5, las desviaciones,
-> las comprobaciones, la PARADA final, las líneas del cierre y el informe del revisor se escriben
-> aquí según avanza la rama.
+> PLANTILLA: informe de la rama `trabajo/vad-julio`. Estado: EN CURSO, en la PARADA (b) (ninguna
+> candidata cumple D3; D4, D5 y la PARADA final esperan). La fase 0, el código, el criterio de D3
+> (copiado antes de las corridas), la tabla de candidatas, las desviaciones, las comprobaciones y el
+> informe del revisor se escriben aquí según avanza la rama.
 
 Rama `trabajo/vad-julio`, abierta el 2026-11-27 desde `main` en 139800f5 (commit de estado sobre
 el merge d44f3e58 del tag `stable/F39r-renovar-cierres-2026-11-26`). Encargo:
@@ -185,6 +185,21 @@ lo que se hace:
   fuera de rango con `ERROR:` y el nombre del parámetro, sin escribir nada; y D2, el ensayo no
   registra nada. Con el motor `falso`. `PROJECT_STATE.md`: 2248 funciones de test.
 
+### D1 · Los tests rompen a propósito (clon desechable, 2026-11-27)
+
+En `git worktree add --detach C:/cm/rama HEAD` (65659f26), una mutación cada vez con un guion de la
+carpeta de trabajo de la sesión (`mutar.py`), `uv run pytest tests/unit/test_transcripcion_vad.py`
+y `git checkout -- src` entre una y otra; el clon, retirado después (`git worktree list` sin él):
+
+| Mutación | Qué cambia | Tests que fallan |
+|---|---|---|
+| M1 | la descripción por defecto gana `vad_parameters: None` | `test_por_defecto_la_descripcion_es_la_de_hoy`, `test_i_la_descripcion_por_defecto_reproduce_la_de_cada_manifiesto_de_main` |
+| M2 | `CLAVES_FUERA_DE_HUELLA` deja fuera `vad_filter` y `vad_parameters` | `test_i_las_huellas_de_main_no_cambian`, `test_i_la_descripcion_por_defecto_reproduce…`, `test_ii_otra_configuracion_cambia_la_huella_y_queda_anotada` |
+| M3 | los parámetros dados no se anotan | `test_un_parametro_no_dado_no_se_anota_y_uno_dado_si`, `test_otros_valores_quedan_anotados_y_ordenados`, `test_ii_…`, `test_iii_la_cli_anota_la_configuracion_en_un_ensayo` |
+| M4 | sin la comprobación de rango de `threshold` y `neg_threshold` | `test_fuera_de_rango_es_un_error_de_dominio` ×3, `test_iii_la_cli_rechaza_lo_fuera_de_rango` |
+| M5 | el ensayo sigue y escribe el manifiesto | `test_d2_el_ensayo_no_registra_nada`, `test_iii_la_cli_anota_la_configuracion_en_un_ensayo` |
+| control | sin mutación | 21 pasan, 1 se salta (el clon no tiene el grupo `asr`: `faster_whisper` no está, como en la CI) |
+
 ## D3 · El criterio, copiado del encargo ANTES de correr ninguna candidata
 
 Copiado tal cual (encargo, §5, D3):
@@ -242,3 +257,97 @@ corrida; las concreciones, declaradas):
    siendo la de siempre; uno que se da se anota siempre, aunque coincida con el de defecto (cambia la
    huella, no el resultado). El test compara los nombres con los campos de `VadOptions`. Los valores,
    en 0.3 de este informe y en la enmienda de ADR-0007. Coste: un `make check` más.
+
+## D3 · Las corridas sobre v14 (2026-11-27, después del commit del código y de copiar el criterio)
+
+`uv run botsito corpus transcribe --video v14 --ensayo <VAD> --objetivo-s 300 --min-s 180 --max-s 420`,
+una tras otra, sin `make check` a la vez; ninguna registra nada (`corpus transcript check`: «OK: 28
+transcripciones coherentes con el disco y el glosario»; `knowledge/corpus/transcripciones/` sigue
+con 28 manifiestos):
+
+| Candidata | VAD | Ensayo (`data/transcripciones/v14/…`) | `transcripcion_id` del ensayo | Segmentos | GPU (s, `segundos_motor` de `ensayo.json`) |
+|---|---|---|---|---|---|
+| K0 | el de defecto (la activa) | `large-v3-int8-float16-d3b9ac2d` (registrada) | `tr-v14-large-v3-int8-float16-1d289df6` | 47 | — (no se volvió a correr) |
+| K1 | `--sin-vad` | `ensayo-large-v3-int8-float16-3e8940a1` | `tr-v14-large-v3-int8-float16-3d963731` | 415 | 484,1 |
+| K2 | `--vad-threshold 0.25 --vad-speech-pad-ms 800` | `ensayo-large-v3-int8-float16-cf5be424` | `tr-v14-large-v3-int8-float16-67e2da0d` | 50 | 101,5 |
+
+La medida, con el guion escrito antes de correr (`uv run python docs/validation/anexos/VAD-JULIO/medir_vad.py
+--repo . --datos data --video v14 --salida docs/validation/anexos/VAD-JULIO/medida-v14.txt
+--candidata K1=… --candidata K2=…`; salida entera en `anexos/VAD-JULIO/medida-v14.txt`). Ningún
+segmento oculto en ninguna de las tres (v14 no tiene tramos no citables y julio es libre):
+
+| Candidata | Segmentos visibles / ocultos | Útiles | Palabras útiles (s) | (i) «bias» y «bajista» | (ii) otras palabras (≤ 4) | (iii) gana en los huecos de K0 (s) | (iv) pierde (≤ 0,10) | (v) sospecha (≤ 0,05) | Cumple |
+|---|---|---|---|---|---|---|---|---|---|
+| K0 | 47 / 0 | 36 | 152,6 | no | 0 | 0,0 | 0,000 | 0,000 | referencia |
+| K1 | 415 / 0 | 361 | 1109,0 | **no** | **10** | 607,2 | **0,250** | **0,053** | **no** |
+| K2 | 50 / 0 | 46 | 279,0 | **no** | 3 | 31,3 | **0,130** | 0,000 | **no** |
+
+- **El minuto de control (v14 0:10:00-0:11:00).** K0 no tiene ninguna palabra útil en él (es el
+  hueco). **K1 y K2 tienen palabras útiles en ese minuto, y entre ellas está «bajista», que casa con
+  lo que oyó Aleks; «bias» no está en ninguna de las dos**, ni tras el glosario. Así que (i) no se
+  cumple en ninguna. Lo que el ASR escribe en ese minuto, en el anexo, como salida del ASR y no como
+  hecho. K1 tiene además 10 palabras útiles que no son «bias» ni «bajista» en un minuto en el que,
+  según Aleks, el trader no dice nada más: (ii) tampoco se cumple; K2 tiene 3.
+- **(iii) por hueco de K0** (anexo): K1 gana en los siete (100,5, 103,0, 10,6, 172,0, 119,0, 91,6 y
+  10,5 s); K2, poco en cada uno (0,7, 9,2, 4,7, 4,1, 6,8, 3,5 y 2,5 s), con segmentos útiles muy
+  largos y pocas palabras (900,7-1064,8 s, 1563,3-1710,3 s, 2516,7-2636,5 s).
+- **(iv)**: K1 deja sin cubrir con palabras útiles el 25,0 % de lo que K0 cubre; K2, el 13,0 %.
+- **(v)**: K1, 22 de 415 segmentos visibles fuera de «útil» solo por repetirse 3 o más veces
+  (0,053); K2, ninguno.
+- **Un control, que no es candidata ni cambia el criterio** (`anexos/VAD-JULIO/control-v14-vieja.txt`):
+  la versión reemplazada de v14 (`tr-v14-…-2253ec10`, el MISMO VAD por defecto, con el corte de
+  600/420/780) frente a K0 da (iv) = **0,142**. Dos transcripciones del mismo vídeo con el VAD de
+  siempre ya se quedan por encima de 0,10 solo por cambiar el corte. No es un suelo de ruido de las
+  candidatas (ellas tienen el corte de K0), pero dice que el umbral de (iv) es estrecho para esta
+  medida, que compara palabras por sus tiempos.
+
+**Resultado: ninguna candidata cumple el criterio de D3. Es la PARADA (b)**: no se retranscribe v12
+ni v13 (encargo, §4 b), y tampoco v14, porque D4 la registra «con la ganadora» y no la hay. Por eso
+D4 y D5 no se hacen: no hay transcripción nueva con la que volver a medir F2, F3, F4 ni F6, ni
+propuesta de F5 (PARADA final) con datos nuevos. Las tres crudas de ensayo se quedan en `data/` (no
+viajan en git) para lo que se decida.
+
+## PARADA (b) · Lo que necesito que decidas (2026-11-27)
+
+Ninguna candidata cumple D3: K1 falla (i), (ii), (iv) y (v); K2 falla (i) y (iv). Hecho y
+commiteado lo que no depende de esto: D1 y D2 (el VAD configurable y el ensayo, con sus tests y la
+enmienda de ADR-0007), la medida y este informe. Ningún manifiesto nuevo, ninguna activa cambiada, y
+F5 sigue como está (`material_sin_video` sin tocar; julio provisional).
+
+1. **Qué hacer con R2.5.** Opciones:
+   - (a) **Otra tanda de candidatas con el MISMO criterio**, escrita por el consultor antes de
+     correrla (por ejemplo, entre K0 y K2: `threshold` 0,35 con `speech_pad_ms` 800; o solo
+     `speech_pad_ms` 800; o `min_silence_duration_ms` menor). Cada corrida de v14 cuesta de 2 a 8
+     minutos de GPU (K2 101,5 s, K1 484,1 s) y la medida es el mismo guion. Con (i) tal como está,
+     ninguna pasa si el ASR no escribe «bias» (punto 2).
+   - (b) **Revisar el criterio** antes de otra tanda: (i) exige el token «bias», y en las dos
+     candidatas sale «bajista» pero no «bias»; y (iv) ≤ 0,10 queda por debajo de lo que separa dos
+     transcripciones con el VAD de siempre y otro corte (0,142, control de D3). Cambiar un umbral
+     después de medir es decisión del consultor, no de la sesión, y lo dejo aquí sin proponer cifra.
+   - (c) **Cerrar R2.5 sin retranscribir**: el VAD queda configurable para quien lo necesite (la
+     sesión 9 o un vídeo nuevo), v12 a v14 siguen con sus activas, F5 sigue como lo dejó VIDEO-JULIO
+     (julio provisional, la tercera salida de la PARADA 4) y el informe lo dice.
+   Recomiendo **(b) y luego (a)**: el criterio pide a la vez que la candidata recupere la voz corta y
+   que no pierda casi nada de K0, y la medida no separa bien «perder voz» de «alinear distinto».
+   Una salida sería medir (iv) por segmentos que se pisan y no por milisegundos de palabra. Pero
+   la decide el consultor, antes de correr nada.
+2. **El glosario y «bias».** Si el consultor quiere que (i) acepte lo que el ASR escribe donde Aleks
+   oyó «bias», hace falta una sustitución del glosario con su ejemplo verificado (ADR-0007 §5), y
+   `knowledge/corpus/glosario_asr.yaml` está protegido en esta rama. Sería otra rama, o ampliar el
+   contrato. No lo propongo como hecho: lo que el ASR escribe ahí es salida del ASR.
+3. **Lo que espera a esta decisión:** D4, D5, la PARADA final (F5) y las líneas del cierre de R2.5.
+   Lo que no espera, y sigue en esta rama: la CI de Linux (toca `src/`) y el revisor.
+
+## Los `make check` y la CI
+
+- Apertura (668c7be6): exit 0, `3816 passed, 6 xfailed`, `CONTRATO:` y `G2:` en verde, `SELLO`.
+- Código, primer intento: exit 2, `1 failed` (`test_no_business_literals`, desviación 2); no se
+  commiteó.
+- Código (65659f26): exit 0, `3838 passed, 6 xfailed`, `CONTRATO:` (13 ficheros) y `G2:`, `SELLO`.
+- Este informe y los anexos: abajo, con su commit.
+- CI de Linux (`fix/vad-julio`): abajo.
+
+## Estado
+
+EN CURSO, en la **PARADA (b)**: ninguna candidata cumple D3. D4, D5 y la PARADA final esperan la
+decisión del consultor; la rama NO está lista para revisión.
