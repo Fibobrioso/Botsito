@@ -7,7 +7,7 @@
 trabajo/vad-julio
 
 ## Current Feature
-trabajo/vad-julio EN CURSO, en la PARADA (b) (R2.5, letra C): el VAD del ASR configurable; ninguna candidata cumple D3 y v12 a v14 siguen sin retranscribir. Encargo docs/encargos/trabajo-vad-julio.md; informe docs/validation/VAD-JULIO.md.
+trabajo/vad-julio lista para revisión, NO cerrada (R2.5, letra C): el VAD del ASR configurable; ninguna candidata cumplió D3 y el consultor cierra R2.5 sin retranscribir. Encargo docs/encargos/trabajo-vad-julio.md; informe docs/validation/VAD-JULIO.md.
 
 ## Stable Main State
 d44f3e58 · merge de `trabajo/renovar-cierres-2026-11-26` (tag `stable/F39r-renovar-cierres-2026-11-26`), sobre `stable/F39q-f17-ordenes` (4581f529). Informe docs/validation/RENOVAR-CIERRES-2025.md; el registro del cierre, al final de HISTORIA.

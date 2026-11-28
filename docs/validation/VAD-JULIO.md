@@ -1,7 +1,8 @@
 # VAD-JULIO · La voz que el VAD del ASR se salta en v12 a v14 (R2.5, letra C)
 
-> PLANTILLA: informe de la rama `trabajo/vad-julio`. Estado: EN CURSO, en la PARADA (b) (ninguna
-> candidata cumple D3; D4, D5 y la PARADA final esperan). La fase 0, el código, el criterio de D3
+> PLANTILLA: informe de la rama `trabajo/vad-julio`. Estado: lista para revisión, NO cerrada (ninguna
+> candidata cumplió D3; el consultor cierra R2.5 sin retranscribir y F5 no cambia, respuesta a la
+> PARADA (b)). La fase 0, el código, el criterio de D3
 > (copiado antes de las corridas), la tabla de candidatas, las desviaciones, las comprobaciones y el
 > informe del revisor se escriben aquí según avanza la rama.
 
@@ -354,6 +355,106 @@ F5 sigue como está (`material_sin_video` sin tocar; julio provisional).
 3. **Lo que espera a esta decisión:** D4, D5, la PARADA final (F5) y las líneas del cierre de R2.5.
    Lo que no espera, y sigue en esta rama: la CI de Linux (toca `src/`) y el revisor.
 
+## Respuesta del consultor a la PARADA (b) (2026-11-27)
+
+Copiada tal cual (vale también como respuesta a la PARADA final):
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> RESPUESTA DEL CONSULTOR A LA PARADA (b) de `trabajo/vad-julio` (2026-11-27). Vale también como respuesta a la PARADA final. Cópiala tal cual al informe, en una sección «Respuesta del consultor a la PARADA (b)», y aplícala punto por punto. Leída sobre `f84f4fc` en `fix/vad-julio`.
+>
+> 1. **R2.5: salida (c). Se cierra sin retranscribir, y el criterio de D3 no se toca.**
+>    - D3 se escribió antes de medir y no se relaja después para que pase una candidata. No va ni (b) ni otra tanda (a).
+>    - Es una decisión de coste y beneficio, no algo medido. En v14:
+>      - K1 (sin VAD) gana 607 s en los huecos, pero escribe 10 palabras en un minuto en el que Aleks no oyó más voz. Queda la salvedad que el revisor dejó abierta: no está medido que el minuto del reproductor y el eje de la cruda coincidan al segundo.
+>      - K2 gana solo 31 s.
+>    - La pregunta que importaba para F3 era si un VAD distinto recupera las operaciones pendientes de v12 y v13, y eso no se midió: D3 corrió solo sobre v14, que no tiene ninguna operación de F3. Además, 16 de las 24 pendientes son «sin ver» por motivos que no son del ASR (capturas sin eje o sin marcas).
+>    - Seguir midiendo cuesta ramas y GPU para un resultado que, como mucho, toca un diagnóstico que ningún umbral lee. Por eso se para aquí.
+>    - Queda hecho el VAD configurable y el ensayo (D1 y D2), útil para vídeos y sesiones nuevas. v12 a v14 siguen con sus activas. Las crudas de ensayo se quedan en `data/transcripciones/v14/` (fuera de git), sin borrar.
+>
+> 2. **F5: NO cambia. Julio sigue provisional** (la tercera salida de la respuesta a la PARADA 4 de VIDEO-JULIO).
+>    - Siguen en pie dos respuestas anteriores del consultor:
+>      - la de la PARADA 4, punto 3: «si alguna no está comprobada, el bloque no cambia»;
+>      - la de la PARADA final, punto 1: no marcar «sin vídeo» ocho días que F2 midió como grabados, salvo la tarde del 10.
+>    - El §6 del encargo las sustituía «tras D5», y D5 no se hizo.
+>    - Comprobar las 24 operaciones pendientes ya no es trabajo del ASR: pasa al ADR de la salida C como parte del sesgo del material sin vídeo (S-14, R4.7).
+>    - No se toca `criterio_fidelidad.yaml`, `cableado.py`, `criterio_fidelidad.py`, los goldens, `fuentes.yaml` ni ningún test de F5. No hay commit de F5.
+>    - Lo que sigue diciendo «hasta que T lo compruebe» (T ya no es una letra viva) queda como una línea de Technical Debt propuesta para el cierre: «el texto de julio provisional cita a T, que ya no existe; se reescribe cuando el ADR de C decida S-14».
+>
+> 3. **Lecciones del consultor.** El cierre las apunta en ERRORES-RECURRENTES como «Error del consultor, apuntado también», como en las filas de renovar-cierres y de reabrir-y-fuente-documental, y no en la columna que mide al revisor.
+>    - (a) Fijé el umbral de (iv) en 0,10 sin medir antes el ruido de la propia medida: dos transcripciones con el mismo VAD y otro corte ya dan 0,142. Lección: antes de fijar un umbral sobre una diferencia entre dos salidas, medir con un control cuánto da sin cambio real.
+>    - (b) El control positivo (i) exigía un token exacto sin saber cómo escribe ese término el ASR.
+>    - (c) D3 midió en v14, donde estaba el minuto de control, pero las operaciones que había que recuperar estaban en v12 y v13. Lección: la candidata se mide donde vive lo que se quiere mejorar, y el control se busca allí.
+>    - (d) En el primer borrador de esta respuesta, el consultor dio por medido que «el VAD no las recupera» y cambiaba F5. Lo cazó su auditor antes de entregarla.
+>
+> 4. **Desviación 2: ACEPTADA.** Los valores por defecto del VAD se quedan fuera del código y solo se guardan los nombres. Así el código no copia valores de una versión del paquete, y esa versión ya está en la huella. Que un valor dado a mano igual al de defecto abra otra carpeta con el mismo resultado es un coste aceptable, y la enmienda de ADR-0007 lo dice. No se usa la exención `# no-negocio:`.
+>
+> 5. **Desviación 1: ACEPTADA.** Los huecos se toman del manifiesto y no de §1.5. En la práctica ya no aplica, porque D5 no se hace.
+>
+> 6. **La enmienda de ADR-0007** gana, en un commit propio, un párrafo final: el resultado de D3 (ninguna candidata cumplió; v12 a v14 siguen con sus activas), que solo se midió en v14, y la remisión a `VAD-JULIO.md`.
+>
+> 7. **Después:**
+>    - `make check` sellado en cada commit.
+>    - Push a `fix/vad-julio` y el número de run (solo con el fallo aceptado de `state check`).
+>    - Una pasada corta del revisor sobre los commits nuevos, con su informe pegado y sus hallazgos resueltos.
+>    - En el informe, las líneas propuestas para el cierre, comprobadas contra `test_hoja_de_ruta`:
+>      - Hoja de ruta: R2.5 HECHA, con una nota de que se cierra sin cumplir su «Hecho cuando» original, por la decisión del punto 1 y con este informe. R2.4 (:142, «julio sigue provisional») no cambia. En R4.7 (:439, S-14), que la parte de julio no la resuelve el ASR y la decide el ADR de C.
+>      - `PROJECT_STATE.md`: la letra C sale, con su texto literal a HISTORIA bajo «# Next Action HECHA · C ·» (no hay ningún registro previo de C), más la línea de Technical Debt del punto 2. Mide el margen: hoy, en la rama, quedan unos 783 bytes.
+>      - ERRORES-RECURRENTES: la fila de la rama, con el revisor y las cuatro lecciones del punto 3.
+>    - Termina con «Rama lista para revisión, NO cerrada.»
+
+### Cómo se aplica
+
+- **Punto 1:** R2.5 se cierra sin retranscribir y sin tocar el criterio de D3. No va otra tanda. D1 y
+  D2 quedan hechos; v12, v13 y v14 siguen con sus activas (`corpus transcript check`: 28
+  transcripciones, ninguna nueva). Las tres carpetas de ensayo de v14 siguen en
+  `data/transcripciones/v14/`, sin borrar.
+- **Punto 2:** F5 no cambia. No hay commit de F5 y no se toca ninguno de sus ficheros de la lista
+  blanca (`git diff main --stat -- knowledge/cases/ src/botsito/engine/ src/botsito/cases/ tests/golden/ knowledge/corpus/fuentes.yaml`:
+  vacío). La línea de Technical Debt, en las líneas del cierre; dice «el ADR de la salida C de
+  ADR-0098» en vez de «el ADR de C», para que no se lea como la letra C que sale.
+- **Puntos 3 a 5:** las cuatro lecciones van a la fila de ERRORES-RECURRENTES propuesta (abajo), en la
+  columna del consultor. Las desviaciones 1 y 2, aceptadas; la 2 deja el diseño como está.
+- **Punto 6:** el párrafo final de la enmienda de ADR-0007 («Resultado (D3 de `trabajo/vad-julio`)»),
+  en su commit propio, con su `make check` sellado.
+- **Punto 7:** las líneas del cierre, simuladas en memoria contra `test_hoja_de_ruta`, abajo; la
+  pasada corta del revisor y la CI, al final.
+
+## Para la orden de cierre (cada línea, comprobada contra `test_hoja_de_ruta`)
+
+Simulado en memoria, sin escribir nada, con
+`uv run python docs/validation/anexos/VAD-JULIO/simular_cierre.py .` (salida en
+`anexos/VAD-JULIO/simular-cierre.txt`): `a: []`, `b: []`, `c: []`; letras vivas tras el cierre
+**ADFGIJMNQ**; R2.5 HECHA; `PROJECT_STATE.md` pasa de 24.233 (con el `Current Feature` de
+la entrega) a **24.190 bytes** (tope 25.000: margen de 810). Control: sin el registro de HISTORIA, `b` da «NA:C esta HECHA y HISTORIA no la registra».
+
+1. **`PROJECT_STATE.md`, Next Action:** sale la línea entera de C (y su línea en blanco). En F,
+   «La letra C y R6a, en los huecos.» pasa a «R6a, en los huecos.».
+2. **`PROJECT_STATE.md`, Technical Debt** (primera línea de la sección):
+   «- El texto de julio provisional cita a T, que ya no existe («hasta que T lo compruebe»:
+   `criterio_fidelidad.yaml`, `cableado.py:1467`, `criterio_fidelidad.py:341`, ADR-0092 §11); se
+   reescribe cuando el ADR de la salida C de ADR-0098 decida S-14 (VAD-JULIO.md, respuesta del
+   consultor a la PARADA (b), punto 2).»
+3. **`docs/state/HISTORIA.md`**, al final: `# Next Action HECHA · C · sale de PROJECT_STATE.md en
+   trabajo/vad-julio (<fecha del cierre>)`, con «Su texto literal en la Next Action (respuesta del
+   consultor a la PARADA (b) de trabajo/vad-julio, punto 7; VAD-JULIO.md):» y la línea de C tal
+   cual. No hay ningún registro previo de C en HISTORIA (`grep "Next Action HECHA · C"`: vacío).
+4. **`docs/plan/HOJA-DE-RUTA.md`, R2.5:** `- **Refs:** NA:C · ID:ADR-0078 · ID:ADR-0007` y un
+   `**Estado:**` nuevo al final de la entrada: «HECHA sin cumplir su «Hecho cuando» original
+   (`trabajo/vad-julio`, VAD-JULIO.md): el VAD es configurable por transcripción y hay `--ensayo`
+   (ADR-0007, enmienda 2026-11-27), pero ninguna candidata cumplió el criterio escrito antes de medir
+   (solo se midió en v14). El consultor la cierra sin retranscribir y sin tocar el criterio (respuesta
+   a la PARADA (b), punto 1): v12 a v14 siguen con sus activas y F5 no cambia (julio sigue
+   provisional); las 24 operaciones sin comprobar pasan al ADR de la salida C (S-14, R4.7).» El resto
+   de la entrada, igual. (La línea «Prioridad baja, en los huecos» sale: una entrada HECHA ya no
+   tiene prioridad.)
+5. **`docs/plan/HOJA-DE-RUTA.md`, R4.7, «Qué es»:** «revisar el sesgo del material sin vídeo (S-14)»
+   pasa a «revisar el sesgo del material sin vídeo (S-14; la parte de julio no la resuelve el ASR,
+   VAD-JULIO.md, y la decide este ADR)». **R2.4 no cambia.**
+6. **`docs/runbooks/ERRORES-RECURRENTES.md`**, la fila de la rama (cuatro columnas):
+   | `trabajo/vad-julio` | Dos pasadas, opus (VAD-JULIO.md, «Informe del revisor» y «Segunda pasada del revisor»). Primera: eje (a) 0 bloquea, 2 importa, 2 menor; eje (b) 0 bloquea, 1 importa, 3 menor. a1 (la desviación 2 no nombraba la exención `# no-negocio:` y decía que usarla «sería rodearla»), a2 (la enmienda de ADR-0007 decía «solo los que cambian» y el código anota todos los dados), b1 (faltaba el encargo punto por punto), b4 (ningún test cubría que `MotorWhisper` use la configuración; test y mutación M6 añadidos); arreglados todos, a3 dejado como errata en el informe. Segunda: <la de la pasada corta> | Error del consultor, apuntado también: (a) el umbral de (iv), 0,10, se fijó sin medir el ruido de la propia medida (dos transcripciones con el mismo VAD y otro corte ya dan 0,142); lección: antes de fijar un umbral sobre una diferencia entre dos salidas, medir con un control cuánto da sin cambio real. (b) El control positivo (i) exigía un token exacto sin saber cómo escribe el ASR ese término. (c) D3 midió en v14, donde estaba el minuto de control, y lo que había que recuperar estaba en v12 y v13; lección: la candidata se mide donde vive lo que se quiere mejorar, y el control se busca allí. (d) El primer borrador de la respuesta a la PARADA (b) daba por medido que «el VAD no las recupera» y cambiaba F5; lo cazó el auditor del consultor antes de entregarla | Nada que el consultor viera y el revisor no. Hallazgo de la sesión: `test_no_business_literals` marca valores técnicos de `src/` que coinciden con cifras de negocio (0,5 y 2000); la exención `# no-negocio:` existe y se mira ANTES de cambiar un diseño |
+7. **Tag:** `stable/F39s-vad-julio` (el encargo).
+
 ## El encargo, punto por punto (tras el revisor, b1)
 
 | Punto del encargo | Estado | Dónde |
@@ -380,16 +481,16 @@ F5 sigue como está (`material_sin_video` sin tocar; julio provisional).
 | D3 Criterio copiado antes de la primera corrida | Hecho | entra en 65659f26 (19:19), antes de K1 |
 | D3 K0, K1, K2 sobre v14, corte de la activa; tabla (i)-(v) con GPU | Hecho | «D3 · Las corridas» |
 | §4 (b) Parar sin retranscribir v12 ni v13 | Hecho | PARADA (b) |
-| D4 v12, v13 y v14 con la ganadora | No hecho | PARADA (b) |
-| D5 F2, F3, F4 y F6 de nuevo | No hecho | PARADA (b) |
+| D4 v12, v13 y v14 con la ganadora | No hecho | PARADA (b); el consultor cierra sin retranscribir (respuesta, punto 1) |
+| D5 F2, F3, F4 y F6 de nuevo | No hecho | PARADA (b); no se hace (respuesta, puntos 1 y 5) |
 | D6 Ni casos, ni evidencia, ni F5 | Hecho | `git diff main -- knowledge/` vacío |
 | §2 Lo que no cambia | Hecho | solo ficheros de la lista blanca (contrato en verde) |
-| §6 PARADA final (F5) | No hecho | espera a la PARADA (b) |
+| §6 PARADA final (F5) | Respondida con la PARADA (b) | F5 no cambia; no hay commit de F5 (respuesta, punto 2) |
 | §7 Commits sellados (código; informe) | Hecho | 65659f26, bb5a0bf9 y el de los hallazgos del revisor |
 | §7 CI de Linux por `fix/vad-julio` | Hecho | «Los `make check` y la CI» |
 | §7 Revisor antes de la PARADA final, con su informe pegado | Hecho (antes de la PARADA (b)) | «Informe del revisor» |
-| §7 Líneas del cierre (R2.5 y PROJECT_STATE) | No hecho | dependen de la decisión de la PARADA (b) |
-| §7 «Rama lista para revisión, NO cerrada» | No | la rama está en la PARADA (b) |
+| §7 Líneas del cierre (R2.5, PROJECT_STATE, HISTORIA, ERRORES-RECURRENTES) | Hecho | «Para la orden de cierre», simuladas contra `test_hoja_de_ruta` |
+| §7 «Rama lista para revisión, NO cerrada» | Hecho | «Estado», tras la segunda pasada del revisor |
 
 ## Informe del revisor (2026-11-27, sobre 668c7be6 y 65659f26 más lo estadiado de bb5a0bf9)
 
@@ -579,5 +680,4 @@ Resumen: 0 bloquea, 1 importa, 3 menor. Requisitos: 27 hechos (1 de ellos de otr
 
 ## Estado
 
-EN CURSO, en la **PARADA (b)**: ninguna candidata cumple D3. D4, D5 y la PARADA final esperan la
-decisión del consultor; la rama NO está lista para revisión.
+PENDIENTE de la segunda pasada del revisor (abajo).
