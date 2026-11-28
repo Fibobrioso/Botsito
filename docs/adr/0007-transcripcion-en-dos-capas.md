@@ -99,8 +99,33 @@ el campo opcional `transcripcion` (id) sin alterar ids existentes.
 - Las transcripciones `tr-*` con el vocabulario v1 quedan reemplazadas por las del glosario v2
   via `reemplaza_a`; sus manifiestos no cambian.
 
+## Enmienda 2026-11-27 (VAD configurable, R2.5)
+- **Que cambia.** El VAD de Silero que faster-whisper aplica antes del ASR (`vad_filter`, §3) se
+  configura por transcripcion: `corpus transcribe` gana `--sin-vad` y una opcion por cada
+  parametro de `VadOptions` de faster-whisper 1.2.1, con su nombre (`--vad-threshold`,
+  `--vad-neg-threshold`, `--vad-min-speech-duration-ms`, `--vad-max-speech-duration-s`,
+  `--vad-min-silence-duration-ms`, `--vad-speech-pad-ms`; valores por defecto leidos en
+  `faster_whisper/vad.py`: 0,5, ninguno, 0, infinito, 2000 y 400). La descripcion del VAD es una
+  funcion pura (`motor_whisper.describir_vad`), sin cargar el modelo. Los valores por
+  defecto no se copian al codigo (lo que no se da lo pone el paquete); un parametro que se da se
+  anota siempre, y uno fuera de rango es un error antes de gastar GPU. Con
+  parametros dados, el manifiesto anota `vad_filter: false` o `vad_parameters` (solo los que
+  cambian) y entran en la huella, asi que la transcripcion abre su propia carpeta. Y `--ensayo`
+  corre una candidata sin registrarla: escribe la cruda en
+  `data/transcripciones/<video>/ensayo-<motor>-<hash8>/` con un `ensayo.json` local, sin
+  manifiesto, sin tocar la activa y sin `--reemplaza-a`.
+- **Por que.** En v14, de 0:10:00 a 0:11:00, Aleks escucho al trader decir «bias bajista» y nada
+  mas (VIDEO-JULIO.md, «El minuto de escucha», 2026-11-09), y ninguna transcripcion lo tenia: el
+  VAD con sus parametros por defecto se salta frases cortas. Retranscribir con otro corte no lo
+  arreglo (VIDEO-JULIO.md §1.7).
+- **Que no cambia.** Con la configuracion por defecto, la descripcion del motor y la huella son
+  EXACTAMENTE las de antes (`vad_filter: true` y ninguna clave nueva): ningun manifiesto
+  registrado cambia de huella ni de significado, y `tests/unit/test_transcripcion_vad.py` fija
+  las huellas de los 28 manifiestos de `main` (calculadas en un clon de `main`). El resto de §3
+  sigue igual, y nada se retranscribe salvo lo que diga la rama (VAD-JULIO.md).
+
 ## Fecha / fase
-2026-09-05 · F04 (enmienda 2026-09-06, previos de F07)
+2026-09-05 · F04 (enmienda 2026-09-06, previos de F07; enmienda 2026-11-27, VAD configurable, R2.5, `trabajo/vad-julio`)
 
 ## Estado
 ACTIVE

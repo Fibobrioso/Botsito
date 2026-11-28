@@ -277,15 +277,37 @@ def corpus_transcribe(repo: Path, args: argparse.Namespace) -> int:
     except (InventarioError, GlosarioError) as exc:
         print(f"ERROR: {exc}")
         return 1
+    # El VAD (ADR-0007, enmienda 2026-11-27): se valida ANTES de gastar GPU, y la descripcion
+    # pura no carga el modelo.
+    from botsito.corpus.motor_whisper import ConfiguracionVad, describir_vad
+
+    try:
+        if args.ensayo and args.reemplaza_a:
+            raise TranscripcionError(
+                "un ensayo no registra nada: --ensayo no va con --reemplaza-a (la ganadora se "
+                "registra despues, sin --ensayo)"
+            )
+        vad = ConfiguracionVad.desde(
+            activo=not args.sin_vad,
+            threshold=args.vad_threshold,
+            neg_threshold=args.vad_neg_threshold,
+            min_speech_duration_ms=args.vad_min_speech_duration_ms,
+            max_speech_duration_s=args.vad_max_speech_duration_s,
+            min_silence_duration_ms=args.vad_min_silence_duration_ms,
+            speech_pad_ms=args.vad_speech_pad_ms,
+        )
+    except TranscripcionError as exc:
+        print(f"ERROR: {exc}")
+        return 1
     motor: MotorAsr
     if args.motor == "falso":
-        motor = MotorFalso()
+        motor = MotorFalso(vad=None if vad.por_defecto else describir_vad(vad))
     else:
         from botsito.corpus.motor_whisper import ConfiguracionWhisper, MotorWhisper
 
         motor = MotorWhisper(
             ConfiguracionWhisper(
-                args.modelo, args.dispositivo, args.compute_type, glosario.prompt_inicial
+                args.modelo, args.dispositivo, args.compute_type, glosario.prompt_inicial, vad
             )
         )
     try:
@@ -313,10 +335,15 @@ def corpus_transcribe(repo: Path, args: argparse.Namespace) -> int:
             parametros,
             progreso,
             reemplaza_a=args.reemplaza_a,
+            ensayo=args.ensayo,
         )
     except (AudioError, TranscripcionError, ImportError, OSError, RuntimeError, ValueError) as exc:
         print(f"ERROR: {exc}")  # RuntimeError/ValueError: faster-whisper, ctranslate2 y CUDA
         return 1
+    if not r.registrado:
+        print(f"ENSAYO: {r.transcripcion_id} ({len(r.segmentos)} segmentos), sin manifiesto")
+        print(f"  carpeta: {r.carpeta} (no es la activa; nada registrado)")
+        return 0
     print(f"OK: {r.transcripcion_id} ({len(r.segmentos)} segmentos)")
     print(f"  cruda: {r.cruda}")
     print(
@@ -3165,6 +3192,20 @@ def build_parser() -> argparse.ArgumentParser:
     tr.add_argument("--min-s", dest="min_s", type=float, default=420.0)
     tr.add_argument("--max-s", dest="max_s", type=float, default=780.0)
     tr.add_argument("--reemplaza-a", dest="reemplaza_a", help="transcripcion_id que sustituye")
+    # El VAD de Silero de faster-whisper (ADR-0007, enmienda 2026-11-27): por defecto, el de
+    # siempre; cada opcion lleva el nombre del parametro de `VadOptions`.
+    tr.add_argument("--sin-vad", dest="sin_vad", action="store_true", help="vad_filter=False")
+    tr.add_argument("--vad-threshold", dest="vad_threshold", type=float)
+    tr.add_argument("--vad-neg-threshold", dest="vad_neg_threshold", type=float)
+    tr.add_argument("--vad-min-speech-duration-ms", dest="vad_min_speech_duration_ms", type=int)
+    tr.add_argument("--vad-max-speech-duration-s", dest="vad_max_speech_duration_s", type=float)
+    tr.add_argument("--vad-min-silence-duration-ms", dest="vad_min_silence_duration_ms", type=int)
+    tr.add_argument("--vad-speech-pad-ms", dest="vad_speech_pad_ms", type=int)
+    tr.add_argument(
+        "--ensayo",
+        action="store_true",
+        help="corre una candidata sin registrarla: cruda en data/transcripciones/<video>/ensayo-*",
+    )
     ga = corpus_sub.add_parser("glossary", help="glosario de correcciones del ASR")
     ga_sub = ga.add_subparsers(dest="glossary_cmd", required=True)
     gap = ga_sub.add_parser("apply", help="regenera corregida.jsonl = cruda + glosario")

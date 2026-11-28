@@ -10,6 +10,8 @@ Disposicion bajo la carpeta de datos (`[rutas].data`, ignorada por git):
     data/transcripciones/<video_id>/audio.sha256_video  (marca: video del que salio el WAV)
     data/transcripciones/<video_id>/<nombre>/{huella.txt,video.sha256}  (marcas de la carpeta;
                                                         ver corpus/trabajo.py)
+    data/transcripciones/<video_id>/ensayo-<nombre>-<hash8>/  (un ENSAYO: la cruda y su
+                                    `ensayo.json`, sin manifiesto; ADR-0007, enmienda 2026-11-27)
 
 y el manifiesto INMUTABLE, versionado, en `knowledge/corpus/transcripciones/<transcripcion_id>.yaml`
 con `transcripcion_id = tr-<video_id>-<nombre>-<hash8 del sha256 de cruda.jsonl>`. `<nombre>` es
@@ -19,6 +21,7 @@ el del motor (modelo + compute) y `reemplaza_a` enlaza retranscripciones.
 from __future__ import annotations
 
 import json
+import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -73,6 +76,11 @@ FICHERO_CORRECCIONES = "correcciones.jsonl"
 FICHERO_LEGIBLE = "cruda.txt"
 MARCA_WAV = "audio.sha256_video"  # el WAV se reextrae si el video cambio
 SCHEMA_VERSION = 1
+# Un ensayo (`corpus transcribe --ensayo`) corre una candidata sin registrarla: su carpeta cuelga
+# del video (la guardia de los tramos la sigue viendo como de ese video) pero no es la activa ni
+# la de ningun manifiesto, y lleva una descripcion local en vez de manifiesto.
+PREFIJO_ENSAYO = "ensayo-"
+FICHERO_ENSAYO = "ensayo.json"
 
 
 @dataclass(frozen=True, slots=True)
@@ -80,8 +88,11 @@ class Resultado:
     transcripcion_id: str
     carpeta: Path
     cruda: Path
+    # El manifiesto registrado en knowledge/; en un ensayo, su `ensayo.json` LOCAL (bajo data/,
+    # que no viaja en git) y `registrado` es False: no se registra nada.
     manifiesto: Path
     segmentos: list[Segmento]
+    registrado: bool = True
 
 
 def carpeta_video(carpeta_datos: Path, video_id: str) -> Path:
@@ -106,7 +117,13 @@ def transcribir_video(
     progreso: Callable[[Any, int], None] | None = None,
     comprobar_hash_video: bool = True,
     reemplaza_a: str | None = None,
+    ensayo: bool = False,
 ) -> Resultado:
+    if ensayo and reemplaza_a:
+        raise TranscripcionError(
+            "un ensayo no registra nada: --ensayo no va con --reemplaza-a (la ganadora se "
+            "registra despues, sin --ensayo)"
+        )
     parametros = parametros or ParametrosCorte()
     if not ids.es_id_de("transcripcion", id_transcripcion(video_id, motor.nombre, "0" * 8)):
         raise TranscripcionError(
@@ -140,29 +157,38 @@ def transcribir_video(
     descripcion_motor = motor.describir()
     huella = huella_de(parametros.como_dict(), descripcion_motor)
     registrados = manifiestos_crudos(repo / DIRECTORIO_MANIFIESTOS, TranscripcionError)
-    carpeta = carpeta_para(
-        cv,
-        motor.nombre,
-        huella,
-        sha256_video,
-        _carpeta_base_registrada_ajena(registrados, video_id, motor.nombre, huella, sha256_video),
-    )
+    if ensayo:
+        carpeta = cv / f"{PREFIJO_ENSAYO}{motor.nombre}-{hash_corto(huella + sha256_video)}"
+        carpeta.mkdir(parents=True, exist_ok=True)
+    else:
+        carpeta = carpeta_para(
+            cv,
+            motor.nombre,
+            huella,
+            sha256_video,
+            _carpeta_base_registrada_ajena(
+                registrados, video_id, motor.nombre, huella, sha256_video
+            ),
+        )
     carpeta_rel = f"{CARPETA_DATOS}/{video_id}/{carpeta.name}"
-    comprobar_activa(
-        registrados,
-        "transcripcion_id",
-        video_id,
-        carpeta_rel,
-        reemplaza_a,
-        TranscripcionError,
-        "transcripcion",
-    )
+    if not ensayo:
+        comprobar_activa(
+            registrados,
+            "transcripcion_id",
+            video_id,
+            carpeta_rel,
+            reemplaza_a,
+            TranscripcionError,
+            "transcripcion",
+        )
     silencios = detectar_silencios(wav, parametros.umbral_db, parametros.silencio_minimo_s)
     cortes = puntos_de_corte(n_muestras, silencios, parametros)
     fragmentos = cortar_wav(wav, cortes.puntos_m, carpeta / "fragmentos")
+    inicio_motor = time.monotonic()
     por_fragmento = transcribir_fragmentos(
         fragmentos, motor, carpeta / "parciales", huella, progreso
     )
+    segundos_motor = time.monotonic() - inicio_motor
     fusion = fusionar(por_fragmento, fin_ms)
     if not fusion.segmentos:
         raise TranscripcionError(f"{video_id}: la transcripcion no produjo ningun segmento")
@@ -187,6 +213,31 @@ def transcribir_video(
     escribir_atomico(cruda, texto_cruda)
     escribir_atomico(carpeta / FICHERO_LEGIBLE, a_texto_legible(fusion.segmentos))
     corregir(carpeta, fusion.segmentos, glosario, tid)
+    if ensayo:
+        # Sin manifiesto: una descripcion LOCAL (data/ no viaja en git) para quien mida la cruda.
+        escribir_atomico(
+            carpeta / FICHERO_ENSAYO,
+            json.dumps(
+                {
+                    "transcripcion_id": tid,
+                    "video_id": video_id,
+                    "sha256_video": sha256_video,
+                    "sha256_cruda": sha_cruda,
+                    "huella": huella,
+                    "motor": descripcion_motor,
+                    "corte": parametros.como_dict(),
+                    "segmentos": len(fusion.segmentos),
+                    "huecos": huecos(fusion.segmentos, fin_ms),
+                    "segundos_motor": round(segundos_motor, 1),
+                    "generado_el": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                },
+                ensure_ascii=False,
+                indent=1,
+                sort_keys=True,
+            )
+            + "\n",
+        )
+        return Resultado(tid, carpeta, cruda, carpeta / FICHERO_ENSAYO, fusion.segmentos, False)
     manifiesto: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "transcripcion_id": tid,

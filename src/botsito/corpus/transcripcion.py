@@ -99,17 +99,25 @@ class MotorAsr(Protocol):
 
 class MotorFalso:
     """Segmentos deterministas por fragmento: uno por cada 5 s de audio, o lo que diga
-    `generar`. Sirve para tests y para la CLI sin modelo."""
+    `generar`. Sirve para tests y para la CLI sin modelo. `vad` es la descripcion de un VAD que
+    no es el de defecto (`motor_whisper.describir_vad`): no cambia los segmentos, solo lo que se
+    anota y entra en la huella, para probar sin GPU lo que hace una configuracion distinta. Sin
+    `vad`, la descripcion es la de siempre."""
 
-    def __init__(self, generar: Callable[[Path], list[SegmentoRelativo]] | None = None) -> None:
+    def __init__(
+        self,
+        generar: Callable[[Path], list[SegmentoRelativo]] | None = None,
+        vad: dict[str, Any] | None = None,
+    ) -> None:
         self._generar = generar
+        self._vad = dict(vad) if vad else {}
 
     @property
     def nombre(self) -> str:
         return "falso"
 
     def describir(self) -> dict[str, Any]:
-        return {"motor": "falso", "modelo": "falso"}
+        return {"motor": "falso", "modelo": "falso", **self._vad}
 
     def transcribir(self, wav: Path) -> list[SegmentoRelativo]:
         if self._generar is not None:
